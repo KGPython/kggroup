@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>单卡销售</title>
+</head>
+<body>
+{% include 'common/head.html' %}
+<!--containt-part-->
+<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb">
+            <a data-original-title="Go to Home" href="#" title="" class="tip-bottom">
+                <span class="glyphicon glyphicon-home" aria-hidden="true"> </span> 首页
+            </a>
+            <a href="#" class="">售卡</a>
+            <a href="#" class="current">单卡销售</a>
+        </div>
+    </div>
+    <div class="widget-box">
+        <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+            <h5>单卡销售</h5>
+        </div>
+        <div class="widget-content nopadding">
+            <div class="container-fluid">
+                <form action="">
+                    <div class="widget-box">
+                        <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+                            <h5>单卡查询</h5>
+                        </div>
+                        <div class="widget-content nopadding">
+                            <table class="table table-striped table-hover table-form-my">
+                                <thead>
+                                    <tr>
+                                        <th class="hidden-phone">编号</th>
+                                        <th class="hidden-480">面值</th>
+                                        <th class="hidden-480">余额</th>
+                                        <th>状态</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><input class="form-control" type="text"></td>
+                                        <td><input type='text' class='form-control' readonly="readonly"></td>
+                                        <td><input type='text' class='form-control' readonly="readonly"></td>
+                                        <td class="hidden-phone">
+                                            <input type='text' class='form-control' readonly="readonly">
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="enter-box"><button class="btn btn-primary pull-right" type="button">确定</button></div>
+                        </div>
+                    </div>
+                    <div class="widget-box">
+                        <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+                            <h5>支付管理</h5>
+                        </div>
+                        <div class="widget-content nopadding">
+                            <table class="table table-striped table-hover table-form-my">
+                                <thead>
+                                    <tr>
+                                        <th class="hidden-phone">选择</th>
+                                        <th class="hidden-480">支付方式</th>
+                                        <th class="hidden-480">支付额度</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><input id="" value="option1" type="checkbox"></td>
+                                        <td></td>
+                                        <td><input type='text' class='form-control'></td>
+                                    </tr>
+                                    <tr>
+                                        <td><input id="" value="option1" type="checkbox"></td>
+                                        <td></td>
+                                        <td><input type='text' class='form-control'></td>
+                                    </tr>
+                                    <tr>
+                                        <td><input id="" value="option1" type="checkbox"></td>
+                                        <td></td>
+                                        <td><input type='text' class='form-control'></td>
+                                    </tr>
+                                    <tr>
+                                        <td><input id="" value="option1" type="checkbox"></td>
+                                        <td></td>
+                                        <td><input type='text' class='form-control'></td>
+                                    </tr>
+                                    <tr>
+                                        <td><input id="" value="option1" type="checkbox"></td>
+                                        <td></td>
+                                        <td><input type='text' class='form-control'></td>
+                                    </tr>
+                                    <tr>
+                                        <td><input id="" value="option1" type="checkbox"></td>
+                                        <td></td>
+                                        <td><input type='text' class='form-control'></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="enter-box"><button class="btn btn-primary pull-right" type="button">确定</button></div>
+                        </div>
+                    </div>
+                    <div class="widget-box">
+                        <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+                            <h5>合计</h5>
+                        </div>
+                        <div class="widget-content nopadding">
+                            <p class="text">合计卡数：</p>
+                            <p class="text">合计金额：</p>
+                            <p class="text">实收金额：</p>
+                        </div>
+                    </div>
+                    <div class="widget-box">
+                        <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+                            <h5>优惠管理</h5>
+                            <span class="icon-add-btn"><button type="button" class="btn btn-warning btn-xs btn-add">添加记录</button></span>
+                        </div>
+                        <div class="widget-content nopadding">
+                            <p class="text">优惠金额：</p>
+                            <table class="table table-striped table-hover table-form-my">
+                                <thead>
+                                    <tr>
+                                        <th class="hidden-phone">卡号</th>
+                                        <th class="hidden-480">面值</th>
+                                        <th class="hidden-480">余额</th>
+                                        <th>状态</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><input class="form-control" type="text"></td>
+                                        <td><input type='text' class='form-control' readonly="readonly"></td>
+                                        <td><input type='text' class='form-control' readonly="readonly"></td>
+                                        <td><input type='text' class='form-control' readonly="readonly"></td>
+                                        <td><button type="button" class="btn btn-danger btn-xs btn-del">删除</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="enter-box"><button class="btn btn-primary pull-right" type="button">确定</button></div>
+                            <p class="text">合计卡数：</p>
+                            <p class="text">合计金额：</p>
+                        </div>
+                    </div>
+                    <div class="enter-box"><button class="btn btn-success pull-right" type="button">提交订单</button></div>
+                </form>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+<!--end-containt-part-->
+
+
+<!--Footer-part-->
+<div class="row-fluid">
+    <div id="footer" class="span12"> Copyright &copy; Goonic All rights reserved.</div>
+</div>
+<!--end-Footer-part-->
+{% include "common/foot.html" %}
+</body>
+</html>
