@@ -25,7 +25,7 @@ SECRET_KEY = 'ognxg1tv@%3z7%^0#c0#81tcymq4j)$%j_)gk@*luvg3w2#fd^'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.122.146','127.0.0.1','localhost']
 
 
 # Application definition
@@ -76,9 +76,17 @@ WSGI_APPLICATION = 'kggroup.wsgi.application'
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    # }
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'kggroup',
+        'USER': 'root',
+        'PASSWORD': '10233201sn',
+        'HOST': '192.168.122.146',
+        'PORT': '3306',
     }
 }
 
