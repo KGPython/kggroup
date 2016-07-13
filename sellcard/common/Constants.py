@@ -1,11 +1,11 @@
 __author__ = 'admin'
 
 
-SCM_DB_SERVER = ''
-SCM_DB_PORT = ''
-SCM_DB_USER = ''
-SCM_DB_PASSWORD = ''
-SCM_DB_DATABASE = ''
+SCM_DB_SERVER = '192.168.250.226'
+SCM_DB_PORT = '1433'
+SCM_DB_USER = 'eaa'
+SCM_DB_PASSWORD = 'KG20131226#'
+SCM_DB_DATABASE = 'myshopcmcard'
 
 
 # SCM_DB_SERVER = "192.168.250.11"
