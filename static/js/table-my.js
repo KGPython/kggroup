@@ -2,7 +2,7 @@ $(document).ready(function(){
     $(document).on('click','.table tr .btn-del',function(){
         $(this).parents('tr').remove();
     });
-    $('.widget-box .btn-add').click(function(){
+    /*$('.widget-box .btn-add').click(function(){
         var table = $(this).parent().parent().siblings('.widget-content').find('table')[0];
         var thead = $(table).find('thead')[0];
         var tbody = $(table).find('tbody')[0];
@@ -21,7 +21,7 @@ $(document).ready(function(){
             $(row).append(td);
         }
         $(tbody).append(row)
-    });
+    });*/
 
 
     $(document).on('click','.formline .btn-add',function(){

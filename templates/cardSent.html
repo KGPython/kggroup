@@ -4,7 +4,7 @@
     <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>批量销售</title>
+    <title>领卡</title>
 </head>
 <body>
 {% include 'common/head.html' %}
@@ -15,52 +15,89 @@
             <a data-original-title="Go to Home" href="#" title="" class="tip-bottom">
                 <span class="glyphicon glyphicon-home" aria-hidden="true"> </span> 首页
             </a>
-            <a href="#" class="">售卡</a>
-            <a href="#" class="current">批量销售</a>
+            <a href="#" class="current">领卡</a>
         </div>
     </div>
     <div class="widget-box">
         <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
-            <h5>批量售卡管理</h5>
+            <h5>领卡管理</h5>
         </div>
-        <div class="widget-content nopadding">
-            <div class="container-fluid">
-                <form action="">
-                    <div class="widget-box">
-                        <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-search"> </span></span>
-                            <h5 data-toggle="collapse" data-target="#demo">批量查询</h5>
-                        </div>
-                        <div id="demo" class="collapse in widget-content">
-                            <form name="" id="" method="">
-                                <div class="row formline">
-                                    <label for="" class="col-xs-1 formline-label">面值：</label>
-                                    <div class="col-xs-3">
-                                        <select name="" id="" class="form-control">
-                                            <option id="meituan">美团</option>
-                                            <option id="nuomi">糯米</option>
-                                        </select>
-                                    </div>
-                                    <label for="" class="col-xs-1 formline-label">号段开始：</label>
-                                    <div class="col-xs-3">
-                                        <input type="text" class="form-control" placeholder="">
-                                    </div>
-                                    <label for="" class="col-xs-1 formline-label">号段结束：</label>
-                                    <div class="col-xs-3">
-                                        <input type="text" class="form-control" placeholder="">
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
+        <div class="widget-box">
+            <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+                <h5>领卡管理</h5>
+                <span class="icon-add-btn"><button type="button" class="btn btn-warning btn-xs btn-add">添加记录</button></span>
+            </div>
+            <div class="widget-content nopadding">
+                <table class="table table-striped table-hover table-form-my">
+                    <thead>
+                        <tr>
+                            <th class="hidden-phone">面值</th>
+                            <th class="hidden-480">起始卡号</th>
+                            <th class="hidden-480">结束卡号</th>
+                            <th class="hidden-480">小计</th>
+                        </tr>
+                    </thead>
+                    <tbody class="discount">
+                        <tr>
+                            <td>
+                                <select name="" id="" class="form-control">
+                                    <option value=""></option>
+                                    <option value=""></option>
+                                </select>
+                            </td>
+                            <td><input type='text' class='form-control'></td>
+                            <td><input type='text' class='form-control'></td>
+                            <td><input type='text' class='form-control'></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="row formline" style="margin-top: 15px;">
+                    <label for="" class="col-xs-1 formline-label">领取门店：</label>
+                    <div class="col-xs-3">
+                        <select name="" id="" class="form-control">
+                            <option value=""></option>
+                            <option value=""></option>
+                        </select>
                     </div>
-
-                    <div class="enter-box"><button class="btn btn-success pull-right" type="button">提交订单</button></div>
-                </form>
+                </div>
+                <div class="row formline" style="margin-top: 15px;">
+                    <label for="" class="col-xs-1 formline-label">领取人：</label>
+                    <div class="col-xs-3">
+                        <input type="text" class="form-control" placeholder="">
+                    </div>
+                </div>
             </div>
         </div>
+        <div class="enter-box"><button class="btn btn-success pull-right" type="button">提交订单</button></div>
     </div>
 </div>
 <!--end-containt-part-->
 
 {% include "common/foot.html" %}
+<script>
+    $('.widget-box .btn-add').click(function(){
+        var table = $(this).parent().parent().siblings('.widget-content').find('table')[0];
+        var thead = $(table).find('thead')[0];
+        var tbody = $(table).find('tbody')[0];
+        var columsL = $(thead).find('tr').find('th').length;
+        var row = $("<tr></tr>");
+        for(var i=0;i<columsL;i++){
+            var td = $("<td></td>");
+            if(i==0){
+                var obj = $("<select type='text' class='form-control'></select>");
+                var list=[{'id':'20','name':'20元'},{'id':'50','name':'50元'},{'id':'100','name':'100元'}];
+                for(var j=0;j<list.length;j++){
+                    var option = $("<option></option>").val(list[j].id).text(list[j].name);
+                    $(obj).append(option)
+                }
+            }else{
+                var obj = $('<input type="text" class="form-control">');
+            }
+            $(td).append(obj);
+            $(row).append(td);
+        }
+        $(tbody).append(row)
+    });
+</script>
 </body>
 </html>
