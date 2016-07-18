@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>批量销售</title>
+</head>
+<body>
+{% include 'common/head.html' %}
+<!--containt-part-->
+<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb">
+            <a data-original-title="Go to Home" href="#" title="" class="tip-bottom">
+                <span class="glyphicon glyphicon-home" aria-hidden="true"> </span> 首页
+            </a>
+            <a href="#" class="">售卡</a>
+            <a href="#" class="current">批量销售</a>
+        </div>
+    </div>
+    <div class="widget-box">
+        <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+            <h5>批量售卡管理</h5>
+        </div>
+        <div class="widget-content nopadding">
+            <div class="container-fluid">
+                <form action="">
+                    <div class="widget-box">
+                        <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-search"> </span></span>
+                            <h5 data-toggle="collapse" data-target="#demo">批量查询</h5>
+                        </div>
+                        <div id="demo" class="collapse in widget-content">
+                            <form name="" id="" method="">
+                                <div class="row formline">
+                                    <label for="" class="col-xs-1 formline-label">面值：</label>
+                                    <div class="col-xs-3">
+                                        <select name="" id="" class="form-control">
+                                            <option id="meituan">美团</option>
+                                            <option id="nuomi">糯米</option>
+                                        </select>
+                                    </div>
+                                    <label for="" class="col-xs-1 formline-label">号段开始：</label>
+                                    <div class="col-xs-3">
+                                        <input type="text" class="form-control" placeholder="">
+                                    </div>
+                                    <label for="" class="col-xs-1 formline-label">号段结束：</label>
+                                    <div class="col-xs-3">
+                                        <input type="text" class="form-control" placeholder="">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="enter-box"><button class="btn btn-success pull-right" type="button">提交订单</button></div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!--end-containt-part-->
+
+{% include "common/foot.html" %}
+</body>
+</html>

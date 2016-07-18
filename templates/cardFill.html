@@ -4,7 +4,7 @@
     <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>单卡销售</title>
+    <title>补卡</title>
 </head>
 <body>
 {% include 'common/head.html' %}
@@ -58,9 +58,9 @@
                             <table class="table table-striped table-hover table-form-my">
                                 <thead>
                                 <tr>
-                                    <th class="hidden-phone">编号</th>
-                                    <th class="hidden-480">面值</th>
-                                    <th class="hidden-480">余额</th>
+                                    <th>编号</th>
+                                    <th>面值</th>
+                                    <th>余额</th>
                                     <th>状态</th>
                                 </tr>
                                 </thead>
@@ -89,54 +89,111 @@
                             <table class="table table-striped table-hover table-form-my">
                                 <thead>
                                 <tr>
-                                    <th class="hidden-phone">选择</th>
-                                    <th class="hidden-480">支付方式</th>
-                                    <th class="hidden-480">支付额度</th>
+                                    <th>选择</th>
+                                    <th>支付方式</th>
+                                    <th>支付额度</th>
+                                    <th>备注</th>
                                 </tr>
                                 </thead>
-                                <tbody>
-                                <tr>
-                                    <td><input id="" value="option1" type="checkbox"></td>
-                                    <td></td>
-                                    <td><input type='text' class='form-control'></td>
-                                </tr>
-                                <tr>
-                                    <td><input id="" value="option1" type="checkbox"></td>
-                                    <td></td>
-                                    <td><input type='text' class='form-control'></td>
-                                </tr>
-                                <tr>
-                                    <td><input id="" value="option1" type="checkbox"></td>
-                                    <td></td>
-                                    <td><input type='text' class='form-control'></td>
-                                </tr>
-                                <tr>
-                                    <td><input id="" value="option1" type="checkbox"></td>
-                                    <td></td>
-                                    <td><input type='text' class='form-control'></td>
-                                </tr>
-                                <tr>
-                                    <td><input id="" value="option1" type="checkbox"></td>
-                                    <td></td>
-                                    <td><input type='text' class='form-control'></td>
-                                </tr>
-                                <tr>
-                                    <td><input id="" value="option1" type="checkbox"></td>
-                                    <td></td>
-                                    <td><input type='text' class='form-control'></td>
-                                </tr>
+                                <tbody class="payList">
+                                    <tr>
+                                        <td><input id="" value="option1" type="checkbox"></td>
+                                        <td><input type='text' class='form-control' id="cash" value="现金" disabled></td>
+                                        <td><input type='text' class='form-control payVal'></td>
+                                        <td><input type='text' class='form-control'></td>
+                                    </tr>
+                                    <tr>
+                                        <td><input id="" value="option1" type="checkbox"></td>
+                                        <td><input type='text' class='form-control' id="voucher" value="代金卷" disabled></td>
+                                        <td><input type='text' class='form-control payVal'></td>
+                                        <td><input type='text' class='form-control'></td>
+                                    </tr>
+                                    <tr>
+                                        <td><input id="" value="option1" type="checkbox"></td>
+                                        <td><input type='text' class='form-control' id="brank" value="银行打款" disabled></td>
+                                        <td><input type='text' class='form-control payVal'></td>
+                                        <td><input type='text' class='form-control'></td>
+                                    </tr>
+                                    <tr>
+                                        <td><input id="" value="option1" type="checkbox"></td>
+                                        <td><input type='text' class='form-control' id="CHMobile" value="移动积分" disabled></td>
+                                        <td><input type='text' class='form-control payVal'></td>
+                                        <td><input type='text' class='form-control'></td>
+                                    </tr>
+                                    <tr>
+                                        <td><input id="" value="option1" type="checkbox"></td>
+                                        <td>
+                                            <select name="" id="" class="form-control">
+                                                <option id="meituan">美团</option>
+                                                <option id="nuomi">糯米</option>
+                                            </select>
+                                        </td>
+                                        <td><input type='text' class='form-control payVal'></td>
+                                        <td><input type='text' class='form-control'></td>
+                                    </tr>
+                                    <tr>
+                                        <td><input id="" value="option1" type="checkbox"></td>
+                                        <td><input type='text' class='form-control' id="parter" value="合作方" disabled></td>
+                                        <td><input type='text' class='form-control payVal'></td>
+                                        <td><input type='text' class='form-control'></td>
+                                    </tr>
                                 </tbody>
                             </table>
-                            <div class="enter-box"><button class="btn btn-primary pull-right" type="button">确定</button></div>
+                            <div class="enter-box">
+                                <button class="btn btn-primary pull-right" type="button" id="pay-btn">确定</button>
+                            </div>
                         </div>
                     </div>
                     <div class="widget-box">
                         <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
                             <h5>合计</h5>
                         </div>
+                        <div class="widget-content nopadding Total">
+                            <p class="text" id="totalNum">卡合计数量：<b>0</b>张</p>
+                            <p class="text" id="totalVal">卡合计金额：<b>0.00</b>元</p>
+                            <p class="text" id="">折扣额度：<b>0.00%</b></p>
+                            <p class="text" id="">优惠金额（赠卡）：<b>0.00</b>元</p>
+                            <p class="text" id="payInfo">
+                                <b>支付详细：</b>
+                                <span></span>
+                            </p>
+                            <p class="text" id="payTotal">支付合计：<b>0.00</b>元</p>
+                        </div>
+                    </div>
+                    <div class="widget-box">
+                        <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+                            <h5>用户信息</h5>
+                        </div>
                         <div class="widget-content nopadding">
-                            <p class="text">合计金额：</p>
-                            <p class="text">实收金额：</p>
+                            <div id="demo" class="collapse in widget-content">
+                                <div class="row formline">
+                                    <label for="" class="col-xs-1 formline-label">客户姓名：</label>
+                                    <div class="col-xs-5">
+                                        <input class="form-control" placeholder="" type="text">
+                                    </div>
+                                </div>
+                                <div class="row formline">
+                                    <label for="" class="col-xs-1 formline-label">联系电话：</label>
+                                    <div class="col-xs-5">
+                                        <input class="form-control" placeholder="" type="text">
+                                    </div>
+                                </div>
+                                <div class="row formline">
+                                    <label for="" class="col-xs-1 formline-label">单位名称：</label>
+                                    <div class="col-xs-5">
+                                        <input class="form-control" placeholder="" type="text">
+                                    </div>
+                                </div>
+                                <div class="row formline">
+                                    <label for="" class="col-xs-1 formline-label">订单状态：</label>
+                                    <div class="col-xs-5">
+                                        <select name="" id="" class="form-control">
+                                            <option id="meituan">1</option>
+                                            <option id="nuomi">2</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="enter-box"><button class="btn btn-success pull-right" type="button">提交订单</button></div>
@@ -149,12 +206,6 @@
 </div>
 <!--end-containt-part-->
 
-
-<!--Footer-part-->
-<div class="row-fluid">
-    <div id="footer" class="span12"> Copyright &copy; Goonic All rights reserved.</div>
-</div>
-<!--end-Footer-part-->
 {% include "common/foot.html" %}
 </body>
 </html>
