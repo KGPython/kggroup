@@ -35,6 +35,13 @@ $(document).ready(function(){
 
 //$('.table').find('.cardId').eq(0).focus();
 $(document).on("keyup",".cardId",function(){
+    //查询卡信息
+    var cardId = $(this).val();
+    $.ajax({
+        url:"{% url 'zeroStockTop' %}",
+    })
+
+    //table增加一行空白记录
     var tbody = $(this).parent().parent().parent()[0];
     var columsL =$(tbody).find('tr').eq(0).find('td').length;
     var trsL = $(tbody).find('tr').length;
@@ -54,6 +61,7 @@ $(document).on("keyup",".cardId",function(){
     $(tbody).append(row);
     $(this).parent().parent().next('tr').find('td').eq(0).find('input').focus();
 
+    //计算合计
     var parentTbody = $(this).parent().parent().parent()[0];
     var cls = '';
     if($(parentTbody).hasClass('discount')){
@@ -73,6 +81,8 @@ $(document).on("keyup",".cardId",function(){
         totalVal +=  val;
     }
     $('.'+cls+' #totalVal b').text(totalVal);
+
+
 });
 $(document).on('click','#pay-btn',function(){
     palyList = $('.payList').find('tr');
