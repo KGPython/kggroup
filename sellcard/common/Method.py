@@ -1,6 +1,9 @@
 __author__ = 'admin'
-import pymssql
+import pymssql,random,hashlib
+from PIL import Image, ImageDraw, ImageFont
 from sellcard.common import Constants
+from django.conf import settings
+
 def getMssqlConn(as_dict=True):
     conn = pymssql.connect(host=Constants.SCM_DB_SERVER,
                            port=Constants.SCM_DB_PORT,
@@ -10,3 +13,63 @@ def getMssqlConn(as_dict=True):
                            charset='utf8',
                            as_dict=as_dict)
     return conn
+
+def getReqVal(request,key,default=None):
+
+    if request.method=="GET":
+        val = request.GET.get(key,default)
+    elif request.method=="POST":
+        val = request.POST.get(key,default)
+
+    return val
+
+#md5
+def md5(str):
+
+    md5 = hashlib.md5()
+    if str:
+        md5.update(str.encode(encoding='utf-8'))
+
+    return md5.hexdigest()
+
+#生成验证码
+def   verifycode(request,key):
+    # 随机颜色1:
+    def rndColor():
+        return (random.randint(64, 255), random.randint(64, 255), random.randint(64, 255))
+
+    # 随机颜色2:
+    def rndColor2():
+        return (random.randint(32, 127), random.randint(32, 127), random.randint(32, 127))
+
+    # 240 x 60:
+    width = 60 * 4
+    height = 80
+    image = Image.new('RGB', (width, height), (255, 255, 255))
+    # 创建Font对象:
+    root = settings.BASE_DIR+Constants.FONT_ARIAL
+    font = ImageFont.truetype(root, 80)     #36 - 字体大小，数值大字体大
+    # 创建Draw对象:
+    draw = ImageDraw.Draw(image)
+    # 填充每个像素:
+    for x in range(width):
+        for y in range(height):
+            draw.point((x, y), fill=rndColor())
+
+    # 输出文字:
+    chars=['0','1','2','3','4','5','6','7','8','9',
+           #'a','b','c','d','e','f','g','h','i','j','k','m','n','o','p','q','r','s','t','u','v','w','x','y','z',
+           #'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
+           ]
+    y = [y for y in [random.randint(x-x, len(chars)-1) for x in range(4)] ]
+    charlist = [chars[i] for i in y]
+
+    rcode = ''.join(map(str,charlist))
+
+    for t in range(len(charlist)):
+        draw.text((60 * t + 10, 3), charlist[t], font=font, fill=rndColor2())
+
+    #将验证码转换成小写的，并保存到session中
+    request.session[key] =rcode
+
+    return image

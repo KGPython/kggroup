@@ -209,7 +209,7 @@ hr{ border-top-color:#dadada;}
 	width: auto;
 }
 #content-header {
-	position: abslute;
+	position: absolute;
 	width: 100%;
 	margin-top: -40px;
 	z-index: 20;
@@ -455,7 +455,7 @@ hr{ border-top-color:#dadada;}
 	margin-bottom: 3px;
 	margin-top: 6px;
 }
-.stat-boxes .peity_bar_good, .stat-boxes .peity_line_good, {
+.stat-boxes .peity_bar_good, .stat-boxes .peity_line_good{
  color: #459D1C;
 }
 .stat-boxes .peity_bar_neutral, .stat-boxes .peity_line_neutral {
@@ -1260,7 +1260,7 @@ form {
 	padding:6px 5px 2px;
 }
 .input-prepend input, .input-append input, .input-prepend input[class*="span"], .input-append input[class*="span"] {
-	width:none;
+	width:auto;
 }
 .input-append input, .input-append select, .input-prepend span, .input-prepend input {
 	border-radius:0px!important;
@@ -1403,7 +1403,7 @@ form {
 	position:absolute;
 	width:100%;
 	min-width:100%;
-	border-radius:none;
+	border-radius:0;
 }
 #sidebar > ul li ul li {
 	list-style-type:none;
@@ -1646,7 +1646,7 @@ div.dataTables_wrapper .ui-widget-header {
     background-image: -moz-linear-gradient(top, #fdfdfd 0%, #eaeaea 100%);
     background-image: -ms-linear-gradient(top, #fdfdfd 0%, #eaeaea 100%);
     background-image: -o-linear-gradient(top, #fdfdfd 0%, #eaeaea 100%);
-    background-image: -linear-gradient(top, #fdfdfd 0%, #eaeaea 100%);
+    /*background-image: -linear-gradient(top, #fdfdfd 0%, #eaeaea 100%);*/
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fdfdfd', endColorstr='#eaeaea',GradientType=0 ); /* IE6-9 */
 }
 
@@ -1655,7 +1655,7 @@ div.dataTables_wrapper .ui-widget-header {
 .pages_line .pagination > li > a,.pages_line .pagination > li > span{
 	color:#333;
     background-color: #f5f5f5;
-    background-image: -moz-linear-gradient(center top , #FFFFFF, #E6E6E6);
+    background-image: -moz-linear-gradient(top , #FFFFFF, #E6E6E6);
     background-image: -ms-linear-gradient(top, #ffffff, #e6e6e6);
     background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
     background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
@@ -1665,7 +1665,7 @@ div.dataTables_wrapper .ui-widget-header {
 
 .pages_line .pagination > li > a:hover,.pages_line .pagination > li > span:hover{
     background-color: #e8e8e8;
-    background-image: -moz-linear-gradient(center top , #f0f0f0, #dadada);
+    background-image: -moz-linear-gradient(top , #f0f0f0, #dadada);
     background-image: -ms-linear-gradient(top, #f0f0f0, #dadada);
     background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#f0f0f0), to(#dadada));
     background-image: -webkit-linear-gradient(top, #f0f0f0, #dadada);
@@ -1676,7 +1676,7 @@ div.dataTables_wrapper .ui-widget-header {
     cursor: pointer;}
 .pages_line .pagination > .active > a{
 	background-color: #414141 !important;
-    background-image: -moz-linear-gradient(center top , #555555, #222222) !important;
+    background-image: -moz-linear-gradient(top , #555555, #222222) !important;
     background-image: -ms-linear-gradient(top, #555555, #222222) !important;
     background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#555555), to(#222222)) !important;
     background-image: -webkit-linear-gradient(top, #555555, #222222); !important
@@ -1726,7 +1726,7 @@ div.dataTables_wrapper .ui-widget-header {
 .order-table-role .selectwith{ width:auto;}
 .order-table-role small{ font-weight:100;}
 
-.modalline{ margin:0; margin-bottom:10px; vertical-align:middlel;}
+.modalline{ margin:0; margin-bottom:10px; vertical-align:middle;}
 .modalline [class*="col-xs"]{ padding:0;}
 .form-horizontal .modalline .control-label {
   padding-top:7px; padding-right:5px; width:16.6%; text-align:left;
@@ -1777,8 +1777,8 @@ div.dataTables_wrapper .ui-widget-header {
 .widget-title span.noborder{ border:0 none;}
 
 .menu-a{ position:fixed !important; position:absolute; width:11px; height:90px; left:0; top:50%; margin-top:-45px; z-index:999; cursor:pointer;}
-.aone{display:block; left:219px; background:url("../images/tab_lf.png") no-repeat;}
-.atwo{display:none; left:0;background:url("../images/tab_lr.png") no-repeat;}
+/*.aone{display:block; left:219px; background:url("../images/tab_lf.png") no-repeat;}*/
+/*.atwo{display:none; left:0;background:url("../images/tab_lr.png") no-repeat;}*/
 
 /* Spinner */
 .ui-spinner-button {

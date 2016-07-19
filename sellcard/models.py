@@ -65,6 +65,7 @@ class NavList(models.Model):
     nav_name = models.CharField(max_length=45)
     parent_id = models.IntegerField()
     url = models.CharField(max_length=120)
+    icon = models.CharField(max_length=16)
     sort_id = models.IntegerField()
     flag = models.CharField(max_length=1)
 
