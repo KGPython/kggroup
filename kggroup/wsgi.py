@@ -14,6 +14,6 @@ from django.core.wsgi import get_wsgi_application
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 sys.path.insert(0, BASE_DIR)
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "kggroup.settings")
+os.environ["DJANGO_SETTINGS_MODULE"]="kggroup.settings"
 
 application = get_wsgi_application()
