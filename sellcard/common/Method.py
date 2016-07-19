@@ -1,5 +1,4 @@
 __author__ = 'admin'
-
 import pymssql,random,hashlib
 from PIL import Image, ImageDraw, ImageFont
 from sellcard.common import Constants

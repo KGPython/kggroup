@@ -104,7 +104,6 @@ class OrderPaymentInfo(models.Model):
         managed = False
         db_table = 'order_payment_info'
 
-
 class Orders(models.Model):
     order_sn = models.CharField(max_length=20)
     user_id = models.SmallIntegerField()
