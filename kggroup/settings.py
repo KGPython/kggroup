@@ -113,8 +113,8 @@ STATIC_URL = '/static/'
 STATIC_ROOT="comm_static"
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
-    #'/home/system/djangoapps/scm/static',
+    #os.path.join(BASE_DIR, "static"),
+    '/home/system/djangoapps/kggroup/static',
 ]
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
