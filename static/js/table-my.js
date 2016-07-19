@@ -1,5 +1,24 @@
 $(document).ready(function(){
     $(document).on('click','.table tr .btn-del',function(){
+        var parentTbody = $(this).parent().parent().parent()[0];
+        var cls = '';
+        if($(parentTbody).hasClass('discount')){
+            cls = 'discountTotal';
+        }else if($(parentTbody).hasClass('cardIn')){
+            cls = 'cardInTotal';
+        }else if($(parentTbody).hasClass('cardOut')){
+            cls = 'cardOutTotal';
+        }else{
+            cls = 'Total';
+        }
+        var thisVal = $(this).parent().parent().find('td').eq(2).find('input').val();
+        var totalNum = parseInt($('.'+cls+' #totalNum b').text());
+        var totalVal = parseFloat($('.'+cls+' #totalVal b').text());
+        totalVal -= parseInt(thisVal);
+        totalNum--;
+
+        $('.'+cls+' #totalVal b').text(parseFloat(totalVal).toFixed(2));
+        $('.'+cls+' #totalNum b').text(totalNum);
         $(this).parents('tr').remove();
     });
     /*$('.widget-box .btn-add').click(function(){
@@ -159,7 +178,7 @@ function setTotal(obj,data){
 
 
         });*/
-$(document).on('click','#pay-btn',function(){
+$(document).on('blur','.payList .payVal',function(){
     palyList = $('.payList').find('tr');
     var totalStr = '';
     var payTotal=0;
@@ -182,24 +201,8 @@ $(document).on('click','#pay-btn',function(){
         }
     }
 });
-$(document).on('blur','.payList .payVal',function(){
-    var totalStr = $('.Total #payInfo span').text();
-    var parentTr = $(this).parent().parent();
-    var checkBox = $(parentTr).find('td').eq(0).find('input')[0];
-    var flag = $(checkBox).is(':checked');
-    var payName = '';
-    var payVal = '';
-    if(flag){
-        if($(parentTr).find('td').eq(1).find('select')[0]){
-            payName = $(parentTr).find('td').eq(1).find('select option:selected').text();
-        }else{
-            payName = $(parentTr).find('td').eq(1).find('input').val();
-        }
-        payVal= $(parentTr).find('td').eq(2).find('input').val();
-        totalStr += payName +' : '+payVal+', ';
-        $('.Total #payInfo span').html(totalStr)
-    }
-});
+
+
 //支付方式--三方平台
 $(document).on('change','.payList #parter',function(){
     var val = $(this).val();
