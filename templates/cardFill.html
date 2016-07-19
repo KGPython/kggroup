@@ -39,9 +39,9 @@
                                     <th>状态</th>
                                 </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="car_list">
                                 <tr>
-                                    <td><input class="form-control" type="text"></td>
+                                    <td><input class="form-control" type="text" id="carno"></td>
                                     <td><input type='text' class='form-control' readonly="readonly"></td>
                                     <td><input type='text' class='form-control' readonly="readonly"></td>
                                     <td><input type='text' class='form-control' readonly="readonly"></td>
@@ -66,7 +66,7 @@
                                 </thead>
                                 <tbody>
                                 <tr>
-                                    <td><input class="form-control" type="text"></td>
+                                    <td><input class="form-control cardId" type="text"></td>
                                     <td><input type='text' class='form-control' readonly="readonly"></td>
                                     <td><input type='text' class='form-control' readonly="readonly"></td>
                                     <td class="hidden-phone">
@@ -76,6 +76,7 @@
                                 </tbody>
                             </table>
                             <div class="enter-box">
+                                <label for="" class="pull-right">&nbsp;元</label>
                                 <input type="text" class="pull-right col-xs-1">
                                 <label for="" class="pull-right">应补差额:</label>
                             </div>
@@ -188,8 +189,8 @@
                                     <label for="" class="col-xs-1 formline-label">订单状态：</label>
                                     <div class="col-xs-5">
                                         <select name="" id="" class="form-control">
-                                            <option id="meituan">1</option>
-                                            <option id="nuomi">2</option>
+                                            <option id="meituan">待领卡</option>
+                                            <option id="nuomi">已领卡</option>
                                         </select>
                                     </div>
                                 </div>
@@ -199,13 +200,18 @@
                     <div class="enter-box"><button class="btn btn-success pull-right" type="button">提交订单</button></div>
                 </form>
             </div>
-
         </div>
-
     </div>
 </div>
 <!--end-containt-part-->
-
 {% include "common/foot.html" %}
+<script language="text/javascript">
+    $(document).on("keyup",".cardId",function(){
+        var cardId = $(this).val();
+        var ajaxOpt = {'url':'{% url 'cardcheck' %}?cardId='+cardId,'method':'get'};
+        doAjax(this,ajaxOpt,showCardIfno,setTotal);
+        addRow(this);
+    });
+</script>
 </body>
 </html>
