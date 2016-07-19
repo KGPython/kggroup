@@ -34,7 +34,6 @@ def saveOrder(requset):
     buyerName = requset.POST.get('buyerName','')
     buyerPhone = requset.POST.get('buyerPhone','')
     buyerCompany = requset.POST.get('buyerCompany','')
-
     try:
         order = Orders()
         order.buyer_name = buyerName
