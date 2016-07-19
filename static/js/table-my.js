@@ -80,17 +80,24 @@ function doAjax(obj,ajaxOpt,showCardIfno,setTotal){
         type:ajaxOpt.method,
         dataType:'json',
         success:function(data){
-            if(data[0]){
-                var res = data[0].fields;
-                showCardIfno(obj,res);
-                setTotal(obj,res);
-            }
+            var res = data[0] ? data[0].fields : [];
+            showCardIfno(obj,res);
+            setTotal(obj,res);
         }
     })
 }
 function showCardIfno(obj,data){
     var cardVal = data.card_value;
-    var cardStu = data.card_status;
+
+    if(data.card_status==1){
+        var cardStu ='未激活';
+    }else if(data.card_status==2){
+        var cardStu ='已激活';
+    }else if(data.card_status==3){
+        var cardStu ='待作废';
+    }else if(data.card_status==4){
+        var cardStu ='已作废';
+    }
     $(obj).parent().parent().find('td').eq(2).find('input').eq(0).val(cardVal);
     $(obj).parent().parent().find('td').eq(3).find('input').eq(0).val(cardStu);
 }
@@ -107,13 +114,27 @@ function setTotal(obj,data){
         cls = 'Total';
     }
     //计算合计
-    var totalNum = parseInt($('.'+cls+' #totalNum b').text());
-    var totalVal = parseFloat($('.'+cls+' #totalVal b').text());
-    totalVal += parseInt(data.card_value);
-    totalNum++;
-
+    var cardList = $('#cardList').find('tr');
+    var totalNum = 0;
+    var totalVal = 0.00;
+    for(var i=0;i<cardList.length;i++){
+        var status = $(cardList[i]).find('td').eq(3).find('input').val();
+        var val = $(cardList[i]).find('td').eq(2).find('input').val();
+        if(status=='未激活'){
+            totalNum++;
+            totalVal += parseInt(val);
+        }
+    }
     $('.'+cls+' #totalVal b').text(parseFloat(totalVal).toFixed(2));
     $('.'+cls+' #totalNum b').text(totalNum);
+
+    //增卡补差
+    var YtotalVal = parseFloat($('.discountTotal #totalVal b').text());
+    if(YtotalVal){
+        var discountVal = parseFloat($('.Total #discountVal b').text());
+        var Ybalance = YtotalVal - discountVal;
+        $('.discountTotal #balance b').text(Ybalance);
+    }
 
 }
 /*$(document).on("keyup",".cardId",function(){
@@ -178,7 +199,7 @@ function setTotal(obj,data){
 
 
         });*/
-$(document).on('blur','.payList .payVal',function(){
+$(document).on('blur','.payList tr',function(){
     palyList = $('.payList').find('tr');
     var totalStr = '';
     var payTotal=0;
@@ -194,11 +215,19 @@ $(document).on('blur','.payList .payVal',function(){
                 payName = $(palyList[i]).find('td').eq(1).find('input').val();
             }
             payVal= $(palyList[i]).find('td').eq(2).find('input').val();
-            totalStr += payName +' : '+payVal+'元, ';
-            $('.Total #payInfo span').html(totalStr);
+            totalStr += payName +' : '+payVal+'元 ';
+            remarks = $(palyList[i]).find('td').eq(3).find('input').val();
+            if(remarks){
+                totalStr += '(备注：'+remarks+'), ';
+            }else{
+                totalStr += ', ';
+            }
             payTotal +=parseFloat(payVal);
-            $('.Total #payTotal b').html(payTotal)
         }
+
+        $('.Total #payInfo span').html(totalStr);
+
+        $('.Total #payTotal b').html(payTotal)
     }
 });
 

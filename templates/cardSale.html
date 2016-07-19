@@ -198,7 +198,7 @@
 </script>
 {% include "common/foot.html" %}
 <script>
-    $(document).on("keyup",".cardId",function(){
+    $(document).on("change",".cardId",function(){
         var cardId = $(this).val();
         var ajaxOpt = {'url':'{% url 'cardcheck' %}?cardId='+cardId,'method':'get'};
         doAjax(this,ajaxOpt,showCardIfno,setTotal);
