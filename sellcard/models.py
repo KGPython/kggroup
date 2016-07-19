@@ -18,8 +18,8 @@ class AdminUser(models.Model):
     salt = models.CharField(max_length=10, blank=True, null=True)
     last_login = models.DateTimeField()
     last_ip = models.CharField(max_length=15)
-    role_id = models.IntegerField()
-    shop_id = models.IntegerField()
+    role_id = models.CharField(max_length=11)
+    shop_id = models.CharField(max_length=11)
 
     class Meta:
         managed = False
@@ -32,6 +32,7 @@ class CardInventory(models.Model):
     card_status = models.CharField(max_length=1)
     card_action = models.CharField(max_length=1)
     card_addtime = models.DateTimeField()
+    shop_id = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -42,7 +43,6 @@ class CardReceive(models.Model):
     shop_id = models.IntegerField()
     rec_sn = models.CharField(max_length=45)
     rec_name = models.CharField(max_length=60)
-    total = models.IntegerField()
     add_time = models.DateTimeField()
 
     class Meta:
@@ -60,11 +60,22 @@ class DjangoMigrations(models.Model):
         db_table = 'django_migrations'
 
 
+class DjangoSession(models.Model):
+    session_key = models.CharField(primary_key=True, max_length=40)
+    session_data = models.TextField()
+    expire_date = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'django_session'
+
+
 class NavList(models.Model):
-    nav_id = models.IntegerField()
+    nav_id = models.CharField(max_length=32)
     nav_name = models.CharField(max_length=45)
-    parent_id = models.IntegerField()
+    parent_id = models.CharField(max_length=32)
     url = models.CharField(max_length=120)
+    logo = models.CharField(max_length=16, blank=True, null=True)
     sort_id = models.IntegerField()
     flag = models.CharField(max_length=1)
 
@@ -105,6 +116,7 @@ class Orders(models.Model):
     buyer_tel = models.CharField(max_length=11, blank=True, null=True)
     buyer_company = models.CharField(max_length=60, blank=True, null=True)
     add_time = models.DateTimeField()
+    order_status = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -123,6 +135,8 @@ class ReceiveInfo(models.Model):
     rec_id = models.IntegerField()
     card_value = models.IntegerField()
     card_nums = models.IntegerField()
+    card_id_start = models.CharField(max_length=32)
+    card_id_end = models.CharField(max_length=32)
 
     class Meta:
         managed = False
@@ -131,26 +145,26 @@ class ReceiveInfo(models.Model):
 
 class Role(models.Model):
     role_name = models.CharField(max_length=45)
-    user_type = models.CharField(max_length=45)
-    shop_id = models.IntegerField()
 
     class Meta:
         managed = False
         db_table = 'role'
 
 
-class RoleList(models.Model):
-    user_type = models.CharField(max_length=45)
-    nav_id = models.IntegerField()
+class RoleNav(models.Model):
+    id = models.BigIntegerField(primary_key=True)
+    role_id = models.IntegerField(blank=True, null=True)
+    nav_id = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
-        db_table = 'role_list'
+        db_table = 'role_nav'
 
 
 class Shops(models.Model):
     id = models.IntegerField(primary_key=True)
     shop_name = models.CharField(max_length=60)
+    shop_code = models.CharField(max_length=16, blank=True, null=True)
 
     class Meta:
         managed = False
