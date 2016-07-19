@@ -83,8 +83,16 @@ def cardCheck(request):
     findCardById = serializers.serialize('json',findCardById)
     return HttpResponse(findCardById,content_type="application/json")
 
-def setOrderSn(request):
+def setOrderSn():
     start = datetime.date.today().strftime('%Y-%m-%d 00:00:00')
     end = datetime.date.today().strftime('%Y-%m-%d 23:59:59')
     count  = Orders.objects.filter(add_time__gte=start,add_time__lte=end).count()
-    return count
+    if count<10:
+        sn = datetime.date.today().strftime('%y%m%d')+'000'+str(count+1)
+    elif count>=10 and count<100:
+        sn = datetime.date.today().strftime('%y%m%d')+'00'+str(count+1)
+    elif count>=100 and count<1000:
+        sn = datetime.date.today().strftime('%y%m%d')+'0'+str(count+1)
+    elif count>=1000 and count<10000:
+        sn = datetime.date.today().strftime('%y%m%d')+str(count+1)
+    return sn

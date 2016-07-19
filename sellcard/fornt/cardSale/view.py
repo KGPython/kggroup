@@ -5,7 +5,7 @@ from django.http import HttpResponse
 import json
 from django.views.decorators.csrf import csrf_exempt
 import datetime
-
+from sellcard.common import Method as mtu
 
 def index(requset):
     return render(requset,'cardSale.html',locals())
@@ -40,14 +40,14 @@ def saveOrder(requset):
         order.buyer_name = buyerName
         order.buyer_tel = buyerPhone
         order.buyer_company = buyerCompany
-        order.total_amount = totalVal+YtotalVal
+        order.total_amount = float(totalVal)+float(YtotalVal)
         order.paid_amount = totalVal
         order.disc_amount = YtotalVal
         order.shop_id = shopId
         order.user_id = operator
         order.action_type = 1
         order.add_time = datetime.datetime.now()
-        order.order_sn='1321321321'
+        order.order_sn=mtu.setOrderSn()
         order.order_status=1
         order.save()
         res["flag"] = 1
