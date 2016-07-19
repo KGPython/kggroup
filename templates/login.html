@@ -22,7 +22,7 @@
         </div>
         <div id="loginbox">
 
-            <form action="" id="loginForm">
+            <form id="loginForm">
 			  <div class="form-group icons-lg">
 				<span class="icons-user"></span>
 				<input type="text" class="form-control" id="user_name" name="user_name" placeholder="账 号" required="required">
@@ -45,7 +45,7 @@
                 <span style="color:red;" id="error_msg">&nbsp;</span>
             </div>
 			  <div class="form-group">
-				  <button type="submit" class="btn btn-success bg_lg"  id="loginId">登 录</button>
+				  <button type="button" class="btn btn-success bg_lg"  id="loginId">登 录</button>
 			  </div>
 			</form>
       </div>
@@ -55,7 +55,7 @@
 <script src="{{ static }}/js/jquery.form.js"></script>
 <script type="text/javascript">
     $(function(){
-          $('#loginId').bind("click",function(){
+          $('#loginId').bind("click",function(){alert(1);
                var ajax_option= {
                     url: "{% url 'login' %}",
                     data:$('#loginForm').serialize(),
@@ -75,6 +75,7 @@
                         }else if(status=='4'){
                             setCnt("msg","账号尚未分配权限，请与系统管理员联系","red");
                         }else{
+                            console.log(result.homeurl);
                             window.location.href=result.homeurl;
                         }
                     }
