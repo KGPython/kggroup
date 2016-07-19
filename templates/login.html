@@ -55,7 +55,7 @@
 <script src="{{ static }}/js/jquery.form.js"></script>
 <script type="text/javascript">
     $(function(){
-          $('#loginId').bind("click",function(){alert(1);
+          $('#loginId').bind("click",function(){
                var ajax_option= {
                     url: "{% url 'login' %}",
                     data:$('#loginForm').serialize(),
@@ -75,7 +75,6 @@
                         }else if(status=='4'){
                             setCnt("msg","账号尚未分配权限，请与系统管理员联系","red");
                         }else{
-                            console.log(result.homeurl);
                             window.location.href=result.homeurl;
                         }
                     }
