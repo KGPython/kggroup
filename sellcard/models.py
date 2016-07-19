@@ -150,7 +150,6 @@ class Role(models.Model):
         managed = False
         db_table = 'role'
 
-
 class RoleNav(models.Model):
     id = models.BigIntegerField(primary_key=True)
     role_id = models.IntegerField(blank=True, null=True)

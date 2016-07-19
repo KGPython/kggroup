@@ -6,6 +6,7 @@ import json
 from django.views.decorators.csrf import csrf_exempt
 import datetime
 
+
 def index(requset):
     return render(requset,'cardSale.html',locals())
 
