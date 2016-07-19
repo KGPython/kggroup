@@ -46,6 +46,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    'sellcard.common.middlewares.LoginMiddleware',  #
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -110,7 +111,13 @@ USE_TZ = False
 
 STATIC_URL = '/static/'
 STATIC_ROOT="comm_static"
+
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
     #'/home/system/djangoapps/scm/static',
 ]
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+LOGIN_URL ="kg/sellcard/loginpage/"
+LOGIN_EXEMPT_URLS=["kg/sellcard/login/","kg/sellcard/logout/","kg/sellcard/vcode/","favicon.ico"]

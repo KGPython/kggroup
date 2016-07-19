@@ -20,37 +20,89 @@
    <div id="logo">
             <!--<img src="app/images/erp_login.png" alt="logo">-->
         </div>
-        <div id="loginbox">            
-            <form action="">
+        <div id="loginbox">
+
+            <form action="" id="loginForm">
 			  <div class="form-group icons-lg">
 				<span class="icons-user"></span>
-				  <input type="text" class="form-control" id="inputuser" placeholder="账 号" required="required">
+				<input type="text" class="form-control" id="user_name" name="user_name" placeholder="账 号" required="required">
 			  </div>
 			  <div class="form-group icons-lg">
-				
 				  <span class="icons-psd"></span>
-				  <input type="password" class="form-control" id="inputPassword" placeholder="密 码" required="required">
-				
+				  <input type="password" class="form-control" id="password" name="password" placeholder="密 码" required="required">
 			  </div>
 			  <div class="form-group icons-lg">
 				<div class="col-xs-6">
 				  <span class="icons-yzh"></span>
-				  <input type="text" class="form-control" id="inputyanzh" placeholder="验证码" required="required">
+				  <input type="text" class="form-control" id="vcode" name="vcode" placeholder="验证码" required="required">
 				  </div>
-				  <div class="col-xs-6">
-				  <img src="app/images/yzmimg.jpg" alt="验证码">
-				  </div>			
+				  <div class="col-xs-6">&nbsp;
+                        <img align="absmiddle"  id="validateImg"  src="{% url 'vcode' %}" width="100px;" height="60px;" onclick="changeValidateCode('validateImg')" title="点击刷新" alt="点击刷新">
+                        <a href="##" onclick="changeValidateCode('validateImg')" style="font-size: 16px;">[刷新]</a>
+				  </div>
 			  </div>
+            <div class="form-group">
+                <span style="color:red;" id="error_msg">&nbsp;</span>
+            </div>
 			  <div class="form-group">
-				  
-				  <button type="submit" class="btn btn-success bg_lg">登 录</button>
-				
+				  <button type="submit" class="btn btn-success bg_lg"  id="loginId">登 录</button>
 			  </div>
 			</form>
-            
-        </div>
+      </div>
 </div>
 <!-- JS Part -->
 <script src="{{ static }}/js/jquery.min.js"></script>
+<script src="{{ static }}/js/jquery.form.js"></script>
+<script type="text/javascript">
+    $(function(){
+          $('#loginId').bind("click",function(){
+               var ajax_option= {
+                    url: "{% url 'login' %}",
+                    data:$('#loginForm').serialize(),
+                    type:'post',
+                    dataType:'json',
+                    async:false,
+                    cache: false,
+                    beforeSubmit:function(a,f,o){},
+                    success: function (result) {
+                        var status = result.status;
+                        if(status=='1'){
+                            setCnt("msg","用户名不存在","red");
+                        }else if(status=='2'){
+                            setCnt("msg","密码输入错误","red");
+                        }else if(status=='3'){
+                            setCnt("msg","验证码输入错误","red");
+                        }else if(status=='4'){
+                            setCnt("msg","账号尚未分配权限，请与系统管理员联系","red");
+                        }else{
+                            window.location.href=result.homeurl;
+                        }
+                    }
+               }
+
+               $('#loginForm').ajaxSubmit(ajax_option);
+           });
+
+          document.onkeydown = function(e){
+              var ev = document.all ? window.event : e;
+              if(ev.keyCode==13) {
+                  $('#loginId').click();
+              }
+          };
+    });
+
+    function setCnt(id,content,color){
+        $("#error_"+id).html(content)
+        if(color!='')
+            $("#error_"+id).css({"color":color,"font-size":"12px"})
+        else
+            $("#error_"+id).css({"font-size":"12px"})
+    }
+
+    function changeValidateCode(id) {
+        var timenow = new Date().getTime();
+        $('#'+id).attr("src",'{% url 'vcode' %}?nocache='+timenow);
+    }
+</script>
 </body>
 </html>

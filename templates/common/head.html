@@ -18,34 +18,31 @@
 <div id="user-nav">
     <ul class="nav">
         <li class=""><a title="" href="#"><span class="glyphicon glyphicon-lock" aria-hidden="true"> </span><span class="text">修改密码</span></a></li>
-        <li class=""><a title="" href="login.html"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"> </span><span class="text">退出登录</span></a></li>
+        <li class=""><a title="" href="{% url 'logout' %}"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"> </span><span class="text">退出登录</span></a></li>
     </ul>
 </div>
 <!--sidebar-menu-->
 <div id="sidebar"> <a class="hidden" href="#"><span class="glyphicon glyphicon-list"> </span>系统菜单</a>
     <ul>
-        <li class="submenu">
-            <a href="#">
-                <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"> </span>
-                <span>卡销售</span>
-            </a>
-            <ul>
-                <li><a href="">单卡销售</a></li>
-                <li><a href="">批量销售</a></li>
-            </ul>
-        </li>
-        <li class="">
-            <a title="" href="">
-                <span class="glyphicon glyphicon-transfer" aria-hidden="true"> </span>
-                <span class="text">换卡</span>
-            </a>
-        </li>
-        <li class="submenu">
-            <a href="">
-                <span class="glyphicon glyphicon-erase" aria-hidden="true"> </span>
-                <span>补卡</span>
-            </a>
-        </li>
+        {% for item in  request.session.s_umenu %}
+             <li class="submenu">
+                 <a href="#">
+                    <span class="glyphicon {{ item.icon }}" aria-hidden="true"></span>
+                    <span>{{ item.nav_name }}</span>
+                </a>
+                {% if item.sub %}
+                     <ul>
+                        {% for itm in item.sub %}
+                            <li>
+                                <li><a href="{{ itm.url }}">{{ itm.nav_name }}</a></li>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+
+                {% endif %}
+            </li>
+        {% endfor %}
     </ul>
 </div>
 <!--end-sidebar-menu-->

@@ -43,6 +43,7 @@ class CardReceive(models.Model):
     shop_id = models.IntegerField()
     rec_sn = models.CharField(max_length=45)
     rec_name = models.CharField(max_length=60)
+    total = models.IntegerField()
     add_time = models.DateTimeField()
 
     class Meta:
@@ -75,7 +76,7 @@ class NavList(models.Model):
     nav_name = models.CharField(max_length=45)
     parent_id = models.CharField(max_length=32)
     url = models.CharField(max_length=120)
-    logo = models.CharField(max_length=16, blank=True, null=True)
+    icon = models.CharField(max_length=16)
     sort_id = models.IntegerField()
     flag = models.CharField(max_length=1)
 
@@ -145,6 +146,8 @@ class ReceiveInfo(models.Model):
 
 class Role(models.Model):
     role_name = models.CharField(max_length=45)
+    user_type = models.CharField(max_length=45)
+    shop_id = models.IntegerField()
 
     class Meta:
         managed = False

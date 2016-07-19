@@ -5,91 +5,12 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>ERP后台管理系统</title>
-<link rel="stylesheet" href="../css/bootstrap.min.css" />
-<link rel="stylesheet" href="../css/matrix-style.css" />
-<link rel="stylesheet" href="../css/matrix-media.css" />
-<link rel="stylesheet" href="../css/bootstrap-datetimepicker.min.css" />
-<link rel="shortcut icon" href="favicon.ico" />
-<link rel="icon" href="favicon.ico" type="image/gif" />
-    <!--[if lt IE 9]>
-      <script src="../js/html5shiv.min.js"></script>
-      <script src="../js/respond.min.js"></script>
-    <![endif]-->
 </head>
 <body>
 
 <!--Header-part-->
-<div id="header">
-  <h1><a href="#">宽广储值卡销售管理系统</a></h1>
-</div>
-<!--close-Header-part--> 
-
-<!--top-Header-menu-->
-<div id="user-nav">
-	 <ul class="nav">
-	    <li class="">
-	    	<a title="" href="#">
-	    		<span class="glyphicon glyphicon-lock" aria-hidden="true"> </span>
-	    		<span class="text">修改密码</span>
-	    	</a>
-	    </li>
-	    <li class="">
-	    	<a title="" href="login.html">
-	    		<span class="glyphicon glyphicon-share-alt" aria-hidden="true"> </span>
-	    		<span class="text">退出登录</span>
-	    	</a>
-	    </li>
-	 </ul>
-  
-</div>
-<!--sidebar-menu-->
-<div id="sidebar"> <a class="hidden" href="#"><span class="glyphicon glyphicon-list"> </span>系统菜单</a>
-	<ul>
-		<li class="submenu">
-			<a href="#">
-				<span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"> </span>
-				<span>充值卡管理</span>
-			</a>
-			<ul>
-				<li><a href="">售卡明细</a></li>
-				<li><a href="">更换卡明细</a></li>
-				<li><a href="">补办卡明细</a></li>
-				<li><a href="">作废卡明细</a></li>
-			</ul>
-		</li>
-		<li class="submenu">
-			<a href="#">
-				<span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"> </span>
-				<span>订单管理</span>
-			</a>
-			<ul>
-				<li><a href="">门店查询</a></li>
-				<li><a href="">角色查询</a></li>
-			</ul>
-		</li>
-        <li class="submenu">
-            <a href="#">
-                <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"> </span>
-                <span>用户管理</span>
-            </a>
-            <ul>
-                <li><a href="">用户管理</a></li>
-                <li><a href="">权限管理</a></li>
-            </ul>
-        </li>
-        <li class="submenu">
-            <a href="#">
-                <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"> </span>
-                <span>盘点管理</span>
-            </a>
-            <ul>
-                <li><a href="">期初盘点</a></li>
-                <li><a href="">盘点数量</a></li>
-            </ul>
-        </li>
-	</ul>
-</div>
-<!--end-sidebar-menu-->
+ {% include 'common/head.html' %}
+<!--close-Header-part-->
 
 <!--containt-part-->
 <div id="content">
@@ -102,10 +23,8 @@
 <div class="row-fluid">
 	<div id="footer" class="span12"> Copyright &copy; Goonic All rights reserved.</div>
 </div>
+{% include "common/foot.html" %}
 <!--end-Footer-part-->
-<script src="../js/jquery.min.js"></script>
-<script src="../js/bootstrap.min.js"></script>
-<script src="../js/matrix.js"></script>
 
 </body>
 </html>
