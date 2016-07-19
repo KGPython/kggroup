@@ -1,46 +1,9 @@
 $(document).ready(function(){
     $(document).on('click','.table tr .btn-del',function(){
-        var parentTbody = $(this).parent().parent().parent()[0];
-        var cls = '';
-        if($(parentTbody).hasClass('discount')){
-            cls = 'discountTotal';
-        }else if($(parentTbody).hasClass('cardIn')){
-            cls = 'cardInTotal';
-        }else if($(parentTbody).hasClass('cardOut')){
-            cls = 'cardOutTotal';
-        }else{
-            cls = 'Total';
-        }
-        var thisVal = $(this).parent().parent().find('td').eq(2).find('input').val();
-        var totalNum = parseInt($('.'+cls+' #totalNum b').text());
-        var totalVal = parseFloat($('.'+cls+' #totalVal b').text());
-        totalVal -= parseInt(thisVal);
-        totalNum--;
-
-        $('.'+cls+' #totalVal b').text(parseFloat(totalVal).toFixed(2));
-        $('.'+cls+' #totalNum b').text(totalNum);
+        setTotal(this);
         $(this).parents('tr').remove();
     });
-    /*$('.widget-box .btn-add').click(function(){
-        var table = $(this).parent().parent().siblings('.widget-content').find('table')[0];
-        var thead = $(table).find('thead')[0];
-        var tbody = $(table).find('tbody')[0];
-        var columsL = $(thead).find('tr').find('th').length;
-        var row = $("<tr></tr>");
-        for(var i=0;i<columsL;i++){
-            var td = $("<td></td>");
-            if(i==0){
-                var input = $("<input type='text' class='form-control'>");
-            }else if(i==columsL-1){
-                var input = $('<button type="button" class="btn btn-danger btn-xs btn-del">删除</button>');
-            }else{
-                var input = $('<input type="text" class="form-control" readonly="readonly">');
-            }
-            $(td).append(input);
-            $(row).append(td);
-        }
-        $(tbody).append(row)
-    });*/
+
 
 
     $(document).on('click','.formline .btn-add',function(){
@@ -82,7 +45,7 @@ function doAjax(obj,ajaxOpt,showCardIfno,setTotal){
         success:function(data){
             var res = data[0] ? data[0].fields : [];
             showCardIfno(obj,res);
-            setTotal(obj,res);
+            setTotal(obj);
         }
     })
 }
@@ -101,7 +64,7 @@ function showCardIfno(obj,data){
     $(obj).parent().parent().find('td').eq(2).find('input').eq(0).val(cardVal);
     $(obj).parent().parent().find('td').eq(3).find('input').eq(0).val(cardStu);
 }
-function setTotal(obj,data){
+function setTotal(obj){
     var parentTbody = $(obj).parent().parent().parent()[0];
     var cls = '';
     if($(parentTbody).hasClass('discount')){
@@ -114,12 +77,14 @@ function setTotal(obj,data){
         cls = 'Total';
     }
     //计算合计
-    var cardList = $('#cardList').find('tr');
+    var parentTbody = $(obj).parent().parent().parent()[0];
+    var trs = $(parentTbody).find('tr');
     var totalNum = 0;
     var totalVal = 0.00;
-    for(var i=0;i<cardList.length;i++){
-        var status = $(cardList[i]).find('td').eq(3).find('input').val();
-        var val = $(cardList[i]).find('td').eq(2).find('input').val();
+
+    for(var i=0;i<trs.length;i++){
+        var status = $(trs[i]).find('td').eq(3).find('input').val();
+        var val = $(trs[i]).find('td').eq(2).find('input').val();
         if(status=='未激活'){
             totalNum++;
             totalVal += parseInt(val);
