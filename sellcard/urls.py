@@ -8,6 +8,7 @@ urlpatterns = [
     #url(r'^sellcard/cardfill/','sellcard.fornt.cardFill.view.index',name='cardfill'),
     url(r'^sellcard/queryfill/','sellcard.fornt.bulkSale.view.queryFill',name='queryfill'),
     url(r'^sellcard/bulksale/','sellcard.fornt.bulkSale.view.index',name='bulksale'),
+    #url(r'^sellcard/cardsent/', 'sellcard.fornt.cardSent.view.index',name='cardsent'),
 
     url(r'^sellcard/loginpage/', 'sellcard.login.index',name="login_index"),
     url(r'^sellcard/login/', 'sellcard.login.login',name="login"),

@@ -4,8 +4,6 @@ $(document).ready(function(){
         $(this).parents('tr').remove();
     });
 
-
-
     $(document).on('click','.formline .btn-add',function(){
         var formBox = $(this).parent().parent().parent()[0];
         var formLine = $(this).parent().parent().clone();
@@ -61,6 +59,7 @@ function showCardIfno(obj,data){
     }else if(data.card_status==4){
         var cardStu ='已作废';
     }
+    $(obj).parent().parent().find('td').eq(1).find('input').eq(0).val(cardVal);
     $(obj).parent().parent().find('td').eq(2).find('input').eq(0).val(cardVal);
     $(obj).parent().parent().find('td').eq(3).find('input').eq(0).val(cardStu);
 }
@@ -93,7 +92,7 @@ function setTotal(obj){
     $('.'+cls+' #totalVal b').text(parseFloat(totalVal).toFixed(2));
     $('.'+cls+' #totalNum b').text(totalNum);
 
-    //增卡补差
+    //赠卡补差
     var YtotalVal = parseFloat($('.discountTotal #totalVal b').text());
     if(YtotalVal){
         var discountVal = parseFloat($('.Total #discountVal b').text());
@@ -102,68 +101,6 @@ function setTotal(obj){
     }
 
 }
-/*$(document).on("keyup",".cardId",function(){
-    //查询卡信息
-    var cardId = $(this).val();
-    var _this = $(this);
-    $.ajax({
-        url:ajaxUrl+"?cardId="+cardId,
-        method:'get',
-        dataType:'json',
-        success:function(data){
-            var cardInfo = data[0].fields;
-            var cardVal = cardInfo.card_value;
-            var cardStu = cardInfo.card_status;
-            $(_this).parent().parent().find('td').eq(2).find('input').eq(0).val(cardVal);
-            $(_this).parent().parent().find('td').eq(3).find('input').eq(0).val(cardStu);
-
-            //table增加一行空白记录
-            var tbody = $(_this).parent().parent().parent()[0];
-            var columsL =$(tbody).find('tr').eq(0).find('td').length;
-            var trsL = $(tbody).find('tr').length;
-
-            var row = $("<tr></tr>");
-            for(var i=0;i<columsL;i++){
-                var td = $("<td></td>");
-                if(i==0){
-                    var input = $("<input type='text' class='form-control cardId'>");
-                }else{
-                    var input = $("<input type='text' class='form-control' readonly='readonly'>");
-                }
-                $(td).append(input);
-                $(row).append(td);
-                $(row).find('td').eq(0).find('input').eq(0).focus();
-            }
-            $(tbody).append(row);
-            $(_this).parent().parent().next('tr').find('td').eq(0).find('input').focus();
-
-            //计算合计
-            var parentTbody = $(_this).parent().parent().parent()[0];
-            var cls = '';
-            if($(parentTbody).hasClass('discount')){
-                cls = 'discountTotal';
-            }else if($(parentTbody).hasClass('cardIn')){
-                cls = 'cardInTotal';
-            }else if($(parentTbody).hasClass('cardOut')){
-                cls = 'cardOutTotal';
-            }else{
-                cls = 'Total';
-            }
-            $('.'+cls+' #totalNum b').text(trsL);
-            var totalVal = 0;
-            for(var j=0;j<trsL;j++){
-                var val = $(tbody).find('tr').eq(j).find('td').eq(2).find('input').val();
-                val = val!=='' ? parseInt(val): 0.00;
-                totalVal +=  val;
-            }
-            $('.'+cls+' #totalVal b').html(parseFloat(totalVal).toFixed(2));
-        }
-    });
-
-
-
-
-        });*/
 $(document).on('blur','.payList tr',function(){
     palyList = $('.payList').find('tr');
     var totalStr = '';

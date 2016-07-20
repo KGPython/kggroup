@@ -89,6 +89,8 @@ class OrderInfo(models.Model):
     order_id = models.IntegerField()
     card_id = models.IntegerField()
     card_balance = models.IntegerField()
+    card_action = models.CharField(max_length=1)
+    is_give = models.CharField(max_length=1)
 
     class Meta:
         managed = False
@@ -99,10 +101,12 @@ class OrderPaymentInfo(models.Model):
     order_id = models.IntegerField()
     pay_id = models.IntegerField()
     pay_value = models.IntegerField()
+    remarks = models.TextField(blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'order_payment_info'
+
 
 class Orders(models.Model):
     order_sn = models.CharField(max_length=20)
@@ -117,6 +121,7 @@ class Orders(models.Model):
     buyer_company = models.CharField(max_length=60, blank=True, null=True)
     add_time = models.DateTimeField()
     order_status = models.IntegerField(blank=True, null=True)
+    diff_price = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -152,6 +157,7 @@ class Role(models.Model):
         managed = False
         db_table = 'role'
 
+
 class RoleNav(models.Model):
     id = models.BigIntegerField(primary_key=True)
     role_id = models.IntegerField(blank=True, null=True)
@@ -170,3 +176,38 @@ class Shops(models.Model):
     class Meta:
         managed = False
         db_table = 'shops'
+
+
+class CompressedTextField(models.TextField):
+    """
+    转化数据库中的字符到python的变量
+    """
+
+    def from_db_value(self, value, expression, connection, context):
+        if not value:
+            return value
+        try:
+            return value.decode('base64').decode('bz2').decode('utf-8')
+        except Exception:
+            return value
+
+    def to_python(self, value):
+        if not value:
+            return value
+        try:
+            return value.decode('base64').decode('bz2').decode('utf-8')
+        except Exception:
+            return value
+
+
+    def get_prep_value(self, value):
+        if not value:
+            return value
+        try:
+            value.decode('base64')
+            return value
+        except Exception:
+            try:
+                return value.encode('utf-8').encode('bz2').encode('base64')
+            except Exception:
+                return value
