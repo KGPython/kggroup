@@ -180,7 +180,7 @@ class Shops(models.Model):
 
 class CompressedTextField(models.TextField):
     """
-    杞寲鏁版嵁搴撲腑鐨勫瓧绗﹀埌python鐨勫彉閲?
+    转化数据库中的字符到python的变量
     """
 
     def from_db_value(self, value, expression, connection, context):
