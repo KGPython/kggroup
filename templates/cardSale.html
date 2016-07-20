@@ -106,9 +106,6 @@
                                 </tr>
                             </tbody>
                         </table>
-                        <div class="enter-box">
-                            <button class="btn btn-primary pull-right" type="button" id="pay-btn">确定</button>
-                        </div>
                     </div>
                 </div>
                 <div class="widget-box">
@@ -198,7 +195,7 @@
 </script>
 {% include "common/foot.html" %}
 <script>
-    $(document).on("keyup",".cardId",function(){
+    $(document).on("change",".cardId",function(){
         var cardId = $(this).val();
         var ajaxOpt = {'url':'{% url 'cardcheck' %}?cardId='+cardId,'method':'get'};
         doAjax(this,ajaxOpt,showCardIfno,setTotal);
