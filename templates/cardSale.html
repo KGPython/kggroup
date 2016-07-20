@@ -34,8 +34,8 @@
                             <thead>
                                 <tr>
                                     <th>编号</th>
-                                    <th>面值</th>
-                                    <th>余额</th>
+                                    <th>面值(单位：元)</th>
+                                    <th>余额(单位：元)</th>
                                     <th>状态</th>
                                     <th>操作</th>
                                 </tr>
@@ -68,26 +68,26 @@
                             </thead>
                             <tbody class="payList">
                                 <tr>
-                                    <td><input id="" value="cash" type="checkbox"></td>
-                                    <td><input type='text' class='form-control' value="现金" disabled></td>
+                                    <td><input id="" value="1" type="checkbox"></td>
+                                    <td><input type='text' class='form-control payName' value="现金" disabled></td>
                                     <td><input type='text' class='form-control payVal'></td>
                                     <td><input type='text' class='form-control'></td>
                                 </tr>
                                 <tr>
-                                    <td><input id="" value="voucher" type="checkbox"></td>
-                                    <td><input type='text' class='form-control' value="代金卷" disabled></td>
+                                    <td><input id="" value="2" type="checkbox"></td>
+                                    <td><input type='text' class='form-control payName' value="代金卷" disabled></td>
                                     <td><input type='text' class='form-control payVal'></td>
                                     <td><input type='text' class='form-control'></td>
                                 </tr>
                                 <tr>
-                                    <td><input id="" value="brank" type="checkbox"></td>
-                                    <td><input type='text' class='form-control' value="银行打款" disabled></td>
+                                    <td><input id="" value="3" type="checkbox"></td>
+                                    <td><input type='text' class='form-control payName' value="银行打款" disabled></td>
                                     <td><input type='text' class='form-control payVal'></td>
                                     <td><input type='text' class='form-control'></td>
                                 </tr>
                                 <tr>
-                                    <td><input id="" value="CHMobile" type="checkbox"></td>
-                                    <td><input type='text' class='form-control' value="移动积分" disabled></td>
+                                    <td><input id="" value="4" type="checkbox"></td>
+                                    <td><input type='text' class='form-control payName' value="移动积分" disabled></td>
                                     <td><input type='text' class='form-control payVal'></td>
                                     <td><input type='text' class='form-control'></td>
                                 </tr>
@@ -96,9 +96,9 @@
                                     <td>
                                         <select name="" id="parter" class="form-control">
                                             <option value="">请选择</option>
-                                            <option value="meituan">美团</option>
-                                            <option value="nuomi">糯米</option>
-                                            <option value="hjsh">黄金手</option>
+                                            <option value="5">美团</option>
+                                            <option value="6">糯米</option>
+                                            <option value="7">黄金手</option>
                                         </select>
                                     </td>
                                     <td><input type='text' class='form-control payVal'></td>
@@ -130,7 +130,6 @@
 {#                            <span class="icon-add-btn"><button type="button" class="btn btn-warning btn-xs btn-add">添加记录</button></span>#}
                     </div>
                     <div class="widget-content nopadding">
-
                         <table class="table table-striped table-hover table-form-my">
                             <thead>
                                 <tr>
@@ -151,7 +150,6 @@
                                 </tr>
                             </tbody>
                         </table>
-{#                              <div class="enter-box"><button class="btn btn-primary pull-right" type="button">确定</button></div>#}
                         <div class="discountTotal">
                             <p class="text" id="totalNum">卡合计数量：<b>0</b>张</p>
                             <p class="text" id="totalVal">卡合计金额：<b>0.00</b>元</p>
@@ -164,13 +162,13 @@
                         <h5>用户信息</h5>
                     </div>
                     <div class="widget-content nopadding">
-                        <div id="demo" class="collapse in widget-content">
+                        <div id="buyerInfo" class="collapse in widget-content">
                             <div class="row formline">
-                                <label for="" class="col-xs-1 formline-label">客户名称：</label>
+                                <label for="" class="col-xs-1 formline-label"><span class="red">*</span>客户名称：</label>
                                 <div class="col-xs-2">
                                     <input class="form-control" placeholder="" type="text" id="buyerName">
                                 </div>
-                                <label for="" class="col-xs-1 formline-label">联系电话：</label>
+                                <label for="" class="col-xs-1 formline-label"><span class="red">*</span>联系电话：</label>
                                 <div class="col-xs-2">
                                     <input class="form-control" placeholder="" type="text" id="buyerPhone">
                                 </div>
@@ -195,23 +193,28 @@
 </script>
 {% include "common/foot.html" %}
 <script>
-    $(document).on("change",".cardId",function(){
-        var cardId = $(this).val();
-        var ajaxOpt = {'url':'{% url 'cardcheck' %}?cardId='+cardId,'method':'get'};
-        doAjax(this,ajaxOpt,showCardIfno,setTotal);
-        addRow(this);
-    });
+    function getCardIds(obj){
+        var list = [];
+        var trs = $(obj).find('tr');
+        for(var j=0;j<trs.length;j++){
+            var cardId = $(trs[j]).find('td').eq(0).find('input').val();
+            if(cardId){
+                list.push(cardId)
+            }
+        }
+        return list;
+    }
     function getCardList(obj){
         var list = [];
         var trs = $(obj).find('tr');
         for(var j=0;j<trs.length;j++){
             var item = {};
             var val = $(trs[j]).find('td').eq(2).find('input').val();
-            if(val!==''){
+            if(val){
                 var cardId = $(trs[j]).find('td').eq(0).find('input').val();
+                item = {'cardId':cardId,'cardVal':val};
+                list.push(item)
             }
-            item = {'cardId':cardId,'cardVal':val};
-            list.push(item)
         }
         return list;
     }
@@ -225,12 +228,37 @@
             if(flag){
                 var payId = $(checkBox).val();
                 var payVal= $(trs[j]).find('td').eq(2).find('input').val();
+                var payRmarks = $(trs[j]).find('td').eq(3).find('input').val();
+                item = {'payId':payId,'payVal':payVal,'payRmarks':payRmarks};
+                list.push(item)
             }
-            item = {'payId':payId,'payVal':payVal};
-            list.push(item)
         }
         return list;
     }
+    var cards = [];
+    $(document).on("change",".cardId",function(){
+        var cardId = $(this).val();
+        //检查是否有重复卡号
+        if(cards.indexOf(cardId)>-1){
+            alert('卡号：'+cardId+'已经存在于售卡或赠卡列表中,请更换');
+            $(this).val('');
+            return false;
+        }else{
+            cards.push(cardId);
+        }
+        var cardList = $('#cardList');
+        var YcardList =$('#YcardList');
+        var arr1 = getCardIds(cardList);
+        var arr2 = getCardIds(YcardList);
+        arr1=arr1.concat(arr2);
+        cards = arr1;
+
+        //卡校验
+        var ajaxOpt = {'url':'{% url 'cardcheck' %}?cardId='+cardId,'method':'get'};
+        doAjax(this,ajaxOpt,showCardIfno,setTotal);
+        addRow(this);
+    });
+
     $(document).on('click','#btn-enter',function(){
         //售卡列表
         var cardList = getCardList($('#cardList'));
@@ -250,12 +278,21 @@
         var buyerName = $('#buyerName').val();
         var buyerPhone = $('#buyerPhone').val();
         var buyerCompany = $('#buyerCompany').val();
+
+        if(totalVal==0){
+            alert('还未添加售卡信息，请核对后再尝试提交！');
+            return false;
+        }
         if(payTotal!=totalVal){
             alert('交款合计与售卡合计面值匹配，请核对后再尝试提交！');
             return false;
         }
         if(discountVal>0 && YtotalVal==0){
             alert('请完善优惠列表后再尝试提交！');
+            return false;
+        }
+        if(!buyerName || !buyerName){
+            alert('请完善买卡人员信息后再尝试提交！');
             return false;
         }
         $.ajax({
@@ -277,10 +314,17 @@
 
             },
             success:function(data){
-
+                if(data.msg==1){
+                    alert('订单提交成功');
+                    window.location.reload();
+                    $('input[type=text]').not('.payName').val('');
+                    $('input[type=checkbox]').prop('checked',false);
+                }else if(data.msg==0){
+                    alert('订单提交失败');
+                }
             },
             error:function(XMLHttpRequest, textStatus, errorThrown){
-
+                alert('error');
                 alert(errorThrown);
             }
         })

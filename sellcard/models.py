@@ -89,6 +89,8 @@ class OrderInfo(models.Model):
     order_id = models.IntegerField()
     card_id = models.IntegerField()
     card_balance = models.IntegerField()
+    card_action = models.CharField(max_length=1)
+    is_give = models.CharField(max_length=1)
 
     class Meta:
         managed = False
@@ -99,10 +101,12 @@ class OrderPaymentInfo(models.Model):
     order_id = models.IntegerField()
     pay_id = models.IntegerField()
     pay_value = models.IntegerField()
+    remarks = models.TextField(blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'order_payment_info'
+
 
 class Orders(models.Model):
     order_sn = models.CharField(max_length=20)
@@ -117,6 +121,7 @@ class Orders(models.Model):
     buyer_company = models.CharField(max_length=60, blank=True, null=True)
     add_time = models.DateTimeField()
     order_status = models.IntegerField(blank=True, null=True)
+    diff_price = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -151,6 +156,7 @@ class Role(models.Model):
     class Meta:
         managed = False
         db_table = 'role'
+
 
 class RoleNav(models.Model):
     id = models.BigIntegerField(primary_key=True)
