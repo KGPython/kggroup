@@ -6,10 +6,10 @@ from re import compile
 from django.http import HttpResponseRedirect as redirect
 from django.shortcuts import render
 
-EXEMPT_URLS=[compile(settings.LOGIN_URL.lstrip('/'))]
+EXEMPT_URLS=[compile(settings.KGGROUP_LOGIN_URL.lstrip('/'))]
 
-if hasattr(settings,'LOGIN_EXEMPT_URLS'):
-	EXEMPT_URLS += [compile(expr) for expr in settings.LOGIN_EXEMPT_URLS]
+if hasattr(settings,'KGGROUP_LOGIN_EXEMPT_URLS'):
+	EXEMPT_URLS += [compile(expr) for expr in settings.KGGROUP_LOGIN_EXEMPT_URLS]
 
 class KgLoginMiddleware(object):
 
@@ -22,7 +22,7 @@ class KgLoginMiddleware(object):
             if 's_uname' not in request.session or not request.session.get("s_uname",default=None):
                     if not any(m.match(path) for m in EXEMPT_URLS):
                         print(">>>>>>>>>user not logged in ，url invalid："+path)
-                        return redirect(settings.LOGIN_URL)
+                        return redirect(settings.KGGROUP_LOGIN_URL)
                     else:
                         print(">>>>>>>>>begin login ："+path)
             else:

@@ -12,9 +12,10 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+#windows
+BASE_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+#linux
+# BASE_ROOT = "/home/system/djangoapps/kggroup"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
@@ -57,7 +58,7 @@ ROOT_URLCONF = 'kggroup.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [os.path.join(BASE_ROOT, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -113,11 +114,9 @@ STATIC_URL = '/static/'
 STATIC_ROOT="comm_static"
 
 STATICFILES_DIRS = [
-    #os.path.join(BASE_DIR, "static"),
-    '/home/system/djangoapps/kggroup/static',
+    os.path.join(BASE_ROOT, "static"),
 ]
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-LOGIN_URL ="/kg/sellcard/loginpage/"
-LOGIN_EXEMPT_URLS=["kg/sellcard/login/","kg/sellcard/logout/","kg/sellcard/vcode/","favicon.ico"]
+KGGROUP_LOGIN_URL ="/kg/sellcard/loginpage/"
+KGGROUP_LOGIN_EXEMPT_URLS=["kg/sellcard/login/","kg/sellcard/logout/","kg/sellcard/vcode/","favicon.ico"]
