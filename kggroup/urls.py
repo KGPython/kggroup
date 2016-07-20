@@ -17,8 +17,8 @@ from django.conf.urls import include, url
 from django.contrib import admin
 import os
 
-root_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+# root_path = "/home/system/djangoapps/kggroup"
+root_path =  os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 urlpatterns = [
     url(r'^css/(?P<path>.*)$', 'django.views.static.serve', {'document_root': root_path+'/static/css'}),
     url(r'^js/(?P<path>.*)$', 'django.views.static.serve', {'document_root': root_path+'/static/js'}),

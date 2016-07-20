@@ -1,3 +1,4 @@
+#-*- coding:utf-8 -*-
 __author__ = 'admin'
 import pymssql,random,hashlib
 from PIL import Image, ImageDraw, ImageFont
@@ -10,11 +11,11 @@ from sellcard.models import Orders
 import datetime
 
 def getMssqlConn(as_dict=True):
-    conn = pymssql.connect(host=Constants.SCM_DB_SERVER,
-                           port=Constants.SCM_DB_PORT,
-                           user=Constants.SCM_DB_USER,
-                           password=Constants.SCM_DB_PASSWORD,
-                           database=Constants.SCM_DB_DATABASE,
+    conn = pymssql.connect(host=Constants.KGGROUP_DB_SERVER,
+                           port=Constants.KGGROUP_DB_PORT,
+                           user=Constants.KGGROUP_DB_USER,
+                           password=Constants.KGGROUP_DB_PASSWORD,
+                           database=Constants.KGGROUP_DB_DATABASE,
                            charset='utf8',
                            as_dict=as_dict)
     return conn
@@ -36,13 +37,13 @@ def md5(str):
 
     return md5.hexdigest()
 
-#Éú³ÉÑéÖ¤Âë
+#ç”ŸæˆéªŒè¯ç 
 def   verifycode(request,key):
-    # Ëæ»úÑÕÉ«1:
+    # éšæœºé¢œè‰²1:
     def rndColor():
         return (random.randint(64, 255), random.randint(64, 255), random.randint(64, 255))
 
-    # Ëæ»úÑÕÉ«2:
+    # éšæœºé¢œè‰²2:
     def rndColor2():
         return (random.randint(32, 127), random.randint(32, 127), random.randint(32, 127))
 
@@ -50,17 +51,17 @@ def   verifycode(request,key):
     width = 60 * 4
     height = 80
     image = Image.new('RGB', (width, height), (255, 255, 255))
-    # ´´½¨Font¶ÔÏó:
-    root = settings.BASE_DIR+Constants.FONT_ARIAL
-    font = ImageFont.truetype(root, 80)     #36 - ×ÖÌå´óĞ¡£¬ÊıÖµ´ó×ÖÌå´ó
-    # ´´½¨Draw¶ÔÏó:
+    # åˆ›å»ºFontå¯¹è±¡:
+    root = settings.BASE_ROOT+Constants.FONT_ARIAL
+    font = ImageFont.truetype(root, 80)     #36 - å­—ä½“å¤§å°ï¼Œæ•°å€¼å¤§å­—ä½“å¤§
+    # åˆ›å»ºDrawå¯¹è±¡:
     draw = ImageDraw.Draw(image)
-    # Ìî³äÃ¿¸öÏñËØ:
+    # å¡«å……æ¯ä¸ªåƒç´ :
     for x in range(width):
         for y in range(height):
             draw.point((x, y), fill=rndColor())
 
-    # Êä³öÎÄ×Ö:
+    # è¾“å‡ºæ–‡å­—:
     chars=['0','1','2','3','4','5','6','7','8','9',
            #'a','b','c','d','e','f','g','h','i','j','k','m','n','o','p','q','r','s','t','u','v','w','x','y','z',
            #'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
@@ -73,7 +74,7 @@ def   verifycode(request,key):
     for t in range(len(charlist)):
         draw.text((60 * t + 10, 3), charlist[t], font=font, fill=rndColor2())
 
-    #½«ÑéÖ¤Âë×ª»»³ÉĞ¡Ğ´µÄ£¬²¢±£´æµ½sessionÖĞ
+    #å°†éªŒè¯ç è½¬æ¢æˆå°å†™çš„ï¼Œå¹¶ä¿å­˜åˆ°sessionä¸­
     request.session[key] =rcode
 
     return image
