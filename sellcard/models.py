@@ -7,7 +7,6 @@
 #
 # Also note: You'll have to insert the output of 'django-admin sqlcustom [app_label]'
 # into your database.
-#-*- coding:utf-8 -*-
 from __future__ import unicode_literals
 
 from django.db import models
@@ -34,7 +33,8 @@ class CardInventory(models.Model):
     card_action = models.CharField(max_length=1)
     card_addtime = models.DateTimeField()
     shop_id = models.IntegerField(blank=True, null=True)
-    card_blance = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+    card_blance = models.DecimalField(max_digits=12, decimal_places=2)
+    charge_time = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -45,7 +45,6 @@ class CardReceive(models.Model):
     shop_id = models.IntegerField()
     rec_sn = models.CharField(max_length=45)
     rec_name = models.CharField(max_length=60)
-    total = models.IntegerField()
     add_time = models.DateTimeField()
 
     class Meta:
@@ -78,7 +77,7 @@ class NavList(models.Model):
     nav_name = models.CharField(max_length=45)
     parent_id = models.CharField(max_length=32)
     url = models.CharField(max_length=120)
-    icon = models.CharField(max_length=16)
+    icon = models.CharField(max_length=16, blank=True, null=True)
     sort_id = models.IntegerField()
     flag = models.CharField(max_length=1)
 
@@ -90,7 +89,7 @@ class NavList(models.Model):
 class OrderInfo(models.Model):
     order_id = models.IntegerField()
     card_id = models.IntegerField()
-    card_balance = models.IntegerField()
+    card_balance = models.DecimalField(max_digits=11, decimal_places=2)
     card_action = models.CharField(max_length=1)
     is_give = models.CharField(max_length=1)
 
@@ -124,6 +123,7 @@ class Orders(models.Model):
     add_time = models.DateTimeField()
     order_status = models.IntegerField(blank=True, null=True)
     diff_price = models.IntegerField(blank=True, null=True)
+    remarks = models.TextField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -152,8 +152,6 @@ class ReceiveInfo(models.Model):
 
 class Role(models.Model):
     role_name = models.CharField(max_length=45)
-    user_type = models.CharField(max_length=45)
-    shop_id = models.IntegerField()
 
     class Meta:
         managed = False
@@ -178,38 +176,3 @@ class Shops(models.Model):
     class Meta:
         managed = False
         db_table = 'shops'
-
-
-# class CompressedTextField(models.TextField):
-#     """
-#     ת�����ݿ��е��ַ���python�ı���
-#     """
-#
-#     def from_db_value(self, value, expression, connection, context):
-#         if not value:
-#             return value
-#         try:
-#             return value.decode('base64').decode('bz2').decode('utf-8')
-#         except Exception:
-#             return value
-#
-#     def to_python(self, value):
-#         if not value:
-#             return value
-#         try:
-#             return value.decode('base64').decode('bz2').decode('utf-8')
-#         except Exception:
-#             return value
-#
-#
-#     def get_prep_value(self, value):
-#         if not value:
-#             return value
-#         try:
-#             value.decode('base64')
-#             return value
-#         except Exception:
-#             try:
-#                 return value.encode('utf-8').encode('bz2').encode('base64')
-#             except Exception:
-#                 # return value

@@ -13,7 +13,7 @@ def index(request):
     return render(request,'cardSale.html',locals())
 
 @csrf_exempt
-@transaction.atomic
+@transaction.non_atomic_requests
 def saveOrder(request):
     operator = request.session.get('s_uid','')
     shopId = request.session.get('s_shopid','')
@@ -36,7 +36,7 @@ def saveOrder(request):
     YtotalNum = request.POST.get('YtotalNum',0)
     YtotalVal = request.POST.get('YtotalVal',0.00)
     Ybalance = request.POST.get('Ybalance',0.00)
-    print(cardList,YcardList,payList)
+
     #买卡人信息
     buyerName = request.POST.get('buyerName','')
     buyerPhone = request.POST.get('buyerPhone','')
@@ -47,13 +47,13 @@ def saveOrder(request):
         order.buyer_name = buyerName
         order.buyer_tel = buyerPhone
         order.buyer_company = buyerCompany
-        order.total_amount = float(totalVal)+float(YtotalVal)
+        order.total_amount = int(totalVal)+int(YtotalVal)
         order.paid_amount = totalVal
         order.disc_amount = YtotalVal
         order.diff_price = Ybalance
         order.shop_id = shopId
         order.user_id = operator
-        order.action_type = 1
+        order.action_type = actionType
         order.add_time = datetime.datetime.now()
         order_sn = mtu.setOrderSn()
         order.order_sn = order_sn
@@ -64,15 +64,15 @@ def saveOrder(request):
             orderInfo = OrderInfo()
             orderInfo.order_id = order_sn
             orderInfo.card_id = card['cardId']
-            orderInfo.card_balance = card['cardVal']
-            orderInfo.card_action = actionType
+            orderInfo.card_balance = float(card['cardVal'])
+            orderInfo.card_action = '0'
             orderInfo.is_give = '0'
             orderInfo.save()
         for Ycard in YcardList:
             YorderInfo = OrderInfo()
             YorderInfo.order_id = order_sn
             YorderInfo.card_id = Ycard['cardId']
-            YorderInfo.card_balance = Ycard['cardVal']
+            YorderInfo.card_balance = float(Ycard['cardVal'])
             YorderInfo.card_action = '0'
             YorderInfo.is_give = '1'
             YorderInfo.save()
@@ -80,8 +80,7 @@ def saveOrder(request):
             orderPay = OrderPaymentInfo()
             orderPay.order_id = order_sn
             orderPay.pay_id = pay['payId']
-            orderPay.pay_value = ''
-            # orderPay.pay_value = pay['payVal']
+            orderPay.pay_value = pay['payVal']
             orderPay.remarks = pay['payRmarks']
             orderPay.save()
 
@@ -89,9 +88,12 @@ def saveOrder(request):
         cardIdList = []
         for card in cardListTotal:
             cardIdList.append(card['cardId'])
-        CardInventory.objects.filter(card_no__in=cardIdList).update(card_status=2)
+        CardInventory.objects.filter(card_no__in=cardIdList).update(card_status='2',card_action='0')
         res["msg"] = 1
     except Exception as e:
         print(e)
         res["msg"] = 0
+        transaction.rollback()
+    else:
+        transaction.commit()
     return HttpResponse(json.dumps(res))

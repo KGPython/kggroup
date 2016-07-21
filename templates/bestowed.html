@@ -50,56 +50,48 @@
                                 </tr>
                             </tbody>
                         </table>
+                        <div class="Total row formline">
+                            <p class="text col-xs-3" id="totalNum">卡合计数量：<b>0</b>张</p>
+                            <p class="text col-xs-3" id="totalVal">卡合计金额：<b>0.00</b>元</p>
+                            <p class="text col-xs-3" id="balance">应补差额：<b>0.00</b>元</p>
+                        </div>
                     </div>
                 </div>
-                <div class="widget-box">
-                    <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
-                        <h5>合计</h5>
-                    </div>
-                    <div class="widget-content nopadding Total">
-                        <p class="text col-xs-3" id="totalNum">卡合计数量：<b>0</b>张</p>
-                        <p class="text col-xs-3" id="totalVal">卡合计金额：<b>0.00</b>元</p>
-                        <p class="text col-xs-3" id="discount">折扣额度：<input type="text" value="0.00" disabled="disabled">%</p>
-                        <p class="text col-xs-3" id="discountVal">优惠金额（赠卡）：<b>10.00</b>元</p>
-                        <p class="text col-xs-12" id="payInfo">
-                            <b>支付详细：</b>
-                            <span></span>
-                        </p>
-                        <p class="text" id="payTotal">支付合计：<b>0.00</b>元</p>
-                    </div>
-                </div>
+
                 <div class="widget-box">
                     <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
                         <h5>备注信息</h5>
                     </div>
                     <div class="widget-content nopadding check-operat">
-                        <textarea name="" id="" rows="10" style="width: 100%"></textarea>
+                        <textarea name="" id="" rows="10" style="width: 100%" class="remarks"></textarea>
                     </div>
                 </div>
                 <div class="widget-box">
                     <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
-                        <h5>顾客信息</h5>
+                        <h5>赠送单位信息</h5>
                     </div>
                     <div class="widget-content nopadding">
                         <div id="buyerInfo" class="collapse in widget-content">
                             <div class="row formline">
-                                <label for="" class="col-xs-1 formline-label"><span class="red">*</span>客户名称：</label>
-                                <div class="col-xs-2">
-                                    <input class="form-control" placeholder="" type="text" id="buyerName">
+                                <label for="" class="col-xs-1 formline-label"><span class="red">*</span>单位名称：</label>
+                                <div class="col-xs-5">
+                                    <input class="form-control" placeholder="" type="text" id="buyerCompany" required>
                                 </div>
                                 <label for="" class="col-xs-1 formline-label"><span class="red">*</span>联系电话：</label>
                                 <div class="col-xs-2">
-                                    <input class="form-control" placeholder="" type="text" id="buyerPhone">
+                                    <input class="form-control" placeholder="" type="text" id="buyerPhone" required>
                                 </div>
-                                <label for="" class="col-xs-1 formline-label">单位名称：</label>
-                                <div class="col-xs-5">
-                                    <input class="form-control" placeholder="" type="text" id="buyerCompany">
+                                <label for="" class="col-xs-1 formline-label"><span class="red">*</span>负责人姓名：</label>
+                                <div class="col-xs-2">
+                                    <input class="form-control" placeholder="" type="text" id="buyerName" required>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="enter-box"><button class="btn btn-success pull-right" type="button">提交订单</button></div>
+                <div class="enter-box">
+                    <button class="btn btn-success pull-right" id="btn-enter" type="button">提交订单</button>
+                </div>
             </div>
         </div>
     </div>
@@ -125,9 +117,54 @@
 
         //卡校验
         var ajaxOpt = {'url':'{% url 'cardcheck' %}?cardId='+cardId,'method':'get'};
-        doAjax(this,ajaxOpt,showCardIfno,setTotal);
+        var cardtype = '1';
+        doAjax(this,ajaxOpt,showCardIfno,setTotal,cardtype);
         addRow(this);
     });
+    $(document).on('click','#btn-enter',function(){
+        var cardList = getCardList($('#cardList'));
+        var totalNum = parseInt($('.Total #totalNum b').text());
+        var totalVal = parseFloat($('.Total #totalVal b').text());//卡合计金额
+        var remarks =$('.remarks').val().trim();
+        if(totalVal==0){
+            alert('还未添加赠卡信息，请核对后再尝试提交！');
+            return false;
+        }
+        //赠送对象信息
+        var buyerName = $('#buyerName').val();
+        var buyerPhone = $('#buyerPhone').val();
+        var buyerCompany = $('#buyerCompany').val();
+        if(!buyerName || !buyerName || !buyerCompany){
+            alert('请完善赠送对象信息后再尝试提交！');
+            return false;
+        }
+        $.ajax({
+            url:"{% url 'bestowedSave' %}",
+            method:'post',
+            dataType:'json',
+            data:{
+                'cardsStr':JSON.stringify(cardList),
+                'totalNum':totalNum,
+                'totalVal':totalVal,
+                'remarks':remarks,
+                'buyerName':buyerName,
+                'buyerPhone':buyerPhone,
+                'buyerCompany':buyerCompany
+            },
+            success:function(data){
+                if(data.msg==1){
+                    alert('订单提交成功');
+                    window.location.reload();
+                    $('input[type=text]').val('');
+                }else if(data.msg==0){
+                    alert('订单提交失败');
+                }
+            },
+            error:function(){
+
+            }
+        })
+    })
 </script>
 </body>
 </html>

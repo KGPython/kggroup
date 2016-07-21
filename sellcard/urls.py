@@ -12,8 +12,8 @@ urlpatterns = [
     #url(r'^sellcard/cardfill/','sellcard.fornt.cardFill.view.index',name='cardfill'),
     url(r'^sellcard/queryfill/', 'sellcard.fornt.cardFill.view.query',name='queryfill'),
     #大宗赠卡
-    url(r'^sellcard/bestowed/', 'sellcard.fornt.bestowed.view.index',name='bestowed'),
-    #url(r'^sellcard/cardsent/', 'sellcard.fornt.cardSent.view.index',name='cardsent'),
+    url(r'^sellcard/bestowed/$', 'sellcard.fornt.bestowed.view.index',name='bestowed'),
+    url(r'^sellcard/bestowed/save', 'sellcard.fornt.bestowed.view.saveOrder',name='bestowedSave'),
 
     url(r'^sellcard/loginpage/', 'sellcard.login.index',name="login_index"),
     url(r'^sellcard/login/', 'sellcard.login.login',name="login"),

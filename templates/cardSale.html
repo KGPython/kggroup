@@ -209,7 +209,8 @@
 
         //卡校验
         var ajaxOpt = {'url':'{% url 'cardcheck' %}?cardId='+cardId,'method':'get'};
-        doAjax(this,ajaxOpt,showCardIfno,setTotal);
+        var cardtype = '1';
+        doAjax(this,ajaxOpt,showCardIfno,setTotal,cardtype);
         addRow(this);
     });
     $(document).on('click','#btn-enter',function(){

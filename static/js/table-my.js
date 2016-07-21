@@ -2,7 +2,8 @@ $(document).ready(function(){
     $(document).on('click','.table tr .btn-del',function(){
         var parnetTbody = $(this).parent().parent().parent()[0];
         $(this).parents('tr').remove();
-        setTotal(parnetTbody);
+        cardType='1';
+        setTotal(parnetTbody,cardType);
     });
 
     $(document).on('click','.formline .btn-add',function(){
@@ -36,7 +37,7 @@ function addRow(obj){
     $(obj).parent().parent().next('tr').find('td').eq(0).find('input').focus();
 }
 //卡校验
-function doAjax(obj,ajaxOpt,showCardIfno,setTotal){
+function doAjax(obj,ajaxOpt,showCardIfno,setTotal,cardtype){
     $.ajax({
         url:ajaxOpt.url,
         type:ajaxOpt.method,
@@ -45,7 +46,7 @@ function doAjax(obj,ajaxOpt,showCardIfno,setTotal){
             var res = data[0] ? data[0].fields : [];
             showCardIfno(obj,res);
             var parnetTbody = $(obj).parent().parent().parent()[0];
-            setTotal(parnetTbody);
+            setTotal(parnetTbody,cardtype);
         }
     })
 }
@@ -68,7 +69,7 @@ function showCardIfno(obj,data){
     $(obj).parent().parent().find('td').eq(3).find('input').eq(0).val(cardStu);
 }
 //计算合计
-function setTotal(obj){
+function setTotal(obj,cardtype){
     var parentTbody = obj;
     var cls = '';
     if($(parentTbody).hasClass('discount')){
@@ -89,10 +90,18 @@ function setTotal(obj){
     for(var i=0;i<trs.length;i++){
         var status = $(trs[i]).find('td').eq(3).find('input').val();
         var val = $(trs[i]).find('td').eq(2).find('input').val();
-        if(status=='未激活'){
-            totalNum++;
-            totalVal += parseInt(val);
+        if(cardtype=='1'){
+            if(status=='未激活'){
+                totalNum++;
+                totalVal += parseInt(val);
+            }
+        }else if(cardtype=='2'){
+            if(status=='已激活'){
+                totalNum++;
+                totalVal += parseInt(val);
+            }
         }
+
     }
     $('.'+cls+' #totalVal b').text(parseFloat(totalVal).toFixed(2));
     $('.'+cls+' #totalNum b').text(totalNum);

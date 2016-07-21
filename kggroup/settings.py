@@ -84,6 +84,7 @@ DATABASES = {
         'HOST': '192.168.122.146',
         'PORT': '3306',
         'ATOMIC_REQUESTS':True,
+        'AUTOCOMMIT':False,
     }
 }
 

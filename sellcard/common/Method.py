@@ -9,6 +9,7 @@ from django.core import serializers
 from django.http import HttpResponse
 from sellcard.models import Orders
 import datetime
+import pymysql
 
 def getMssqlConn(as_dict=True):
     conn = pymssql.connect(host=Constants.KGGROUP_DB_SERVER,
@@ -97,3 +98,14 @@ def setOrderSn():
     elif count>=1000 and count<10000:
         sn = datetime.date.today().strftime('%y%m%d')+str(count+1)
     return sn
+
+#获取mysql数据库连接
+def getMysqlConn():
+    conn = pymysql.connect(host=Constants.SCM_DB_MYSQL_SERVER,
+                           port=Constants.SCM_DB_MYSQL_PORT,
+                           user=Constants.SCM_DB_MYSQL_USER,
+                           password=Constants.SCM_DB_MYSQL_PASSWORD,
+                           db=Constants.SCM_DB_MYSQL_DATABASE,
+                           charset='utf8mb4',
+                           cursorclass=pymysql.cursors.DictCursor)
+    return conn

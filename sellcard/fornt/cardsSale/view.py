@@ -2,6 +2,8 @@
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from sellcard.models import CardInventory
+from sellcard.common import Method as mtu
+
 @csrf_exempt
 def index(request):
     operator = request.session.get('s_uid','')
@@ -10,7 +12,15 @@ def index(request):
     if request.method == 'POST':
         cardStart = request.POST.get('cardStart','')
         cardEnd = request.POST.get('cardEnd','')
-        cardList = CardInventory.objects.values('card_no','card_value','card_status').filter(card_no__gte=cardStart,card_no__lte=cardEnd).order_by('card_no')
+
+        conn = mtu.getMysqlConn()
+        sql = 'SELECT card_no,card_value,card_status,card_blance FROM card_inventory ' \
+              'WHERE card_no >='+cardStart+' and card_no <='+cardEnd+' ORDER BY card_no'
+        cur = conn.cursor()
+        cur.execute(sql)
+        cardList = cur.fetchall()
+        conn.close()
+
         cardTotalVal = 0
         cardTotalNum = 0
         for card in cardList:
