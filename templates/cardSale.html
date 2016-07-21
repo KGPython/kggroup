@@ -40,7 +40,7 @@
                                     <th>操作</th>
                                 </tr>
                             </thead>
-                            <tbody  id="cardList">
+                            <tbody id="cardList">
                                 <tr>
                                     <td><input class="form-control cardId" type="text" name="cardId"></td>
                                     <td><input type='text' class='form-control' readonly="readonly"></td>
@@ -115,9 +115,9 @@
                     <div class="widget-content nopadding Total">
                         <p class="text col-xs-3" id="totalNum">卡合计数量：<b>0</b>张</p>
                         <p class="text col-xs-3" id="totalVal">卡合计金额：<b>0.00</b>元</p>
-                        <p class="text col-xs-3" id="discount">折扣额度：<b>0.00%</b></p>
+                        <p class="text col-xs-3" id="discount">折扣额度：<input type="text" value="0.00" disabled="disabled">%</p>
                         <p class="text col-xs-3" id="discountVal">优惠金额（赠卡）：<b>10.00</b>元</p>
-                        <p class="text" id="payInfo">
+                        <p class="text col-xs-12" id="payInfo">
                             <b>支付详细：</b>
                             <span></span>
                         </p>
@@ -127,7 +127,6 @@
                 <div class="widget-box">
                     <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
                         <h5>优惠管理</h5>
-{#                            <span class="icon-add-btn"><button type="button" class="btn btn-warning btn-xs btn-add">添加记录</button></span>#}
                     </div>
                     <div class="widget-content nopadding">
                         <table class="table table-striped table-hover table-form-my">
@@ -150,10 +149,10 @@
                                 </tr>
                             </tbody>
                         </table>
-                        <div class="discountTotal">
-                            <p class="text" id="totalNum">卡合计数量：<b>0</b>张</p>
-                            <p class="text" id="totalVal">卡合计金额：<b>0.00</b>元</p>
-                            <p class="text" id="balance">应补差额：<b>0.00</b>元</p>
+                        <div class="discountTotal row formline">
+                            <p class="text col-xs-3" id="totalNum">卡合计数量：<b>0</b>张</p>
+                            <p class="text col-xs-3" id="totalVal">卡合计金额：<b>0.00</b>元</p>
+                            <p class="text col-xs-3" id="balance">应补差额：<b>0.00</b>元</p>
                         </div>
                     </div>
                 </div>
@@ -193,65 +192,20 @@
 </script>
 {% include "common/foot.html" %}
 <script>
-    function getCardIds(obj){
-        var list = [];
-        var trs = $(obj).find('tr');
-        for(var j=0;j<trs.length;j++){
-            var cardId = $(trs[j]).find('td').eq(0).find('input').val();
-            if(cardId){
-                list.push(cardId)
-            }
-        }
-        return list;
-    }
-    function getCardList(obj){
-        var list = [];
-        var trs = $(obj).find('tr');
-        for(var j=0;j<trs.length;j++){
-            var item = {};
-            var val = $(trs[j]).find('td').eq(2).find('input').val();
-            if(val){
-                var cardId = $(trs[j]).find('td').eq(0).find('input').val();
-                item = {'cardId':cardId,'cardVal':val};
-                list.push(item)
-            }
-        }
-        return list;
-    }
-    function getPayList(obj){
-        var list = [];
-        var trs = $(obj).find('tr');
-        for(var j=0;j<trs.length;j++){
-            var item = {};
-            var checkBox = $(trs[j]).find('td').eq(0).find('input')[0];
-            var flag = $(checkBox).is(':checked');
-            if(flag){
-                var payId = $(checkBox).val();
-                var payVal= $(trs[j]).find('td').eq(2).find('input').val();
-                var payRmarks = $(trs[j]).find('td').eq(3).find('input').val();
-                item = {'payId':payId,'payVal':payVal,'payRmarks':payRmarks};
-                list.push(item)
-            }
-        }
-        return list;
-    }
-    var cards = [];
     $(document).on("change",".cardId",function(){
         var cardId = $(this).val();
         //检查是否有重复卡号
-        if(cards.indexOf(cardId)>-1){
-            alert('卡号：'+cardId+'已经存在于售卡或赠卡列表中,请更换');
+        var cardList = $('#cardList');
+        var arr1 = getCardIds(cardList);
+        var YcardList =$('#YcardList');
+        var arr2 = getCardIds(YcardList);
+        arr1 = arr1.concat(arr2);
+        arr1.remove(cardId);
+        if(arr1.indexOf(cardId)>-1){
+            alert('卡号：'+cardId+',已经存在于售卡或赠卡列表中,请更换');
             $(this).val('');
             return false;
-        }else{
-            cards.push(cardId);
         }
-        var cardList = $('#cardList');
-        var YcardList =$('#YcardList');
-        var arr1 = getCardIds(cardList);
-        var arr2 = getCardIds(YcardList);
-        arr1=arr1.concat(arr2);
-        cards = arr1;
 
         //卡校验
         var ajaxOpt = {'url':'{% url 'cardcheck' %}?cardId='+cardId,'method':'get'};
@@ -259,74 +213,9 @@
         addRow(this);
     });
     $(document).on('click','#btn-enter',function(){
-        //售卡列表
-        var cardList = getCardList($('#cardList'));
-        var totalNum = parseInt($('.Total #totalNum b').text());
-        var totalVal = parseFloat($('.Total #totalVal b').text());
-        var payTotal = parseFloat($('.Total #payTotal b').text());
-        var discount = parseFloat($('.Total #discount b').text());
-        var discountVal = parseFloat($('.Total #discountVal b').text());
-        //赠卡列表
-        var YcardList = getCardList($('#YcardList'));
-        var YtotalNum =parseInt($('.discountTotal #totalNum b').text());
-        var YtotalVal =parseFloat($('.discountTotal #totalVal b').text());
-        var Ybalance =parseFloat($('.discountTotal #balance b').text());//优惠补差
-        //支付列表
-        var payList = getPayList($('.payList'));
-        //买卡人信息
-        var buyerName = $('#buyerName').val();
-        var buyerPhone = $('#buyerPhone').val();
-        var buyerCompany = $('#buyerCompany').val();
-
-        if(totalVal==0){
-            alert('还未添加售卡信息，请核对后再尝试提交！');
-            return false;
-        }
-        if(payTotal!=totalVal){
-            alert('交款合计与售卡合计面值匹配，请核对后再尝试提交！');
-            return false;
-        }
-        if(discountVal>0 && YtotalVal==0){
-            alert('请完善优惠列表后再尝试提交！');
-            return false;
-        }
-        if(!buyerName || !buyerName){
-            alert('请完善买卡人员信息后再尝试提交！');
-            return false;
-        }
-        $.ajax({
-            url:"{% url 'saveorder' %}",
-            type:'post',
-            dataType:'json',
-            data:{
-                'cardStr':JSON.stringify(cardList),
-                'totalNum':totalNum,
-                'totalVal':totalVal,
-                'YcardStr':JSON.stringify(YcardList),
-                'YtotalNum':YtotalNum,
-                'YtotalVal':YtotalVal,
-                'Ybalance':Ybalance,
-                'payStr':JSON.stringify(payList),
-                'buyerName':buyerName,
-                'buyerPhone':buyerPhone,
-                'buyerCompany':buyerCompany
-
-            },
-            success:function(data){
-                if(data.msg==1){
-                    alert('订单提交成功');
-                    window.location.reload();
-                    $('input[type=text]').not('.payName').val('');
-                    $('input[type=checkbox]').prop('checked',false);
-                }else if(data.msg==0){
-                    alert('订单提交失败');
-                }
-            },
-            error:function(XMLHttpRequest, textStatus, errorThrown){
-                alert('error');
-                alert(errorThrown);
-            }
-        })
+        var action_type = '1';
+        var url = "{% url 'saveorder' %}";
+        saveCardSaleOrder(action_type,url);
     })
 </script>
 </body>

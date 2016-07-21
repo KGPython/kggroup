@@ -1,16 +1,16 @@
 $(document).ready(function(){
     $(document).on('click','.table tr .btn-del',function(){
-        setTotal(this);
+        var parnetTbody = $(this).parent().parent().parent().parent()[0];
         $(this).parents('tr').remove();
+        setTotal(parnetTbody);
     });
 
     $(document).on('click','.formline .btn-add',function(){
         var formBox = $(this).parent().parent().parent()[0];
         var formLine = $(this).parent().parent().clone();
-        $(formBox).append(formLine)
+        $(formBox).append(formLine);
     })
 });
-
 
 function addRow(obj){
     var tbody = $(obj).parent().parent().parent()[0];
@@ -35,6 +35,7 @@ function addRow(obj){
     $(tbody).append(row);
     $(obj).parent().parent().next('tr').find('td').eq(0).find('input').focus();
 }
+//卡校验
 function doAjax(obj,ajaxOpt,showCardIfno,setTotal){
     $.ajax({
         url:ajaxOpt.url,
@@ -43,10 +44,12 @@ function doAjax(obj,ajaxOpt,showCardIfno,setTotal){
         success:function(data){
             var res = data[0] ? data[0].fields : [];
             showCardIfno(obj,res);
-            setTotal(obj);
+            var parnetTbody = $(obj).parent().parent().parent().parent()[0];
+            setTotal(parnetTbody);
         }
     })
 }
+//卡校验信息展示
 function showCardIfno(obj,data){
     var cardVal = data.card_value;
 
@@ -63,8 +66,9 @@ function showCardIfno(obj,data){
     $(obj).parent().parent().find('td').eq(2).find('input').eq(0).val(cardVal);
     $(obj).parent().parent().find('td').eq(3).find('input').eq(0).val(cardStu);
 }
+//计算合计
 function setTotal(obj){
-    var parentTbody = $(obj).parent().parent().parent()[0];
+    var parentTbody = obj;
     var cls = '';
     if($(parentTbody).hasClass('discount')){
         cls = 'discountTotal';
@@ -101,6 +105,52 @@ function setTotal(obj){
     }
 
 }
+//获取卡号
+function getCardIds(obj){
+        var list = [];
+        var trs = $(obj).find('tr');
+        for(var j=0;j<trs.length;j++){
+            var cardId = $(trs[j]).find('td').eq(0).find('input').val();
+            if(cardId){
+                list.push(cardId)
+            }
+        }
+        return list;
+    }
+//获取卡信息列表
+function getCardList(obj){
+    var list = [];
+    var trs = $(obj).find('tr');
+    for(var j=0;j<trs.length;j++){
+        var item = {};
+        var status = $(trs[j]).find('td').eq(3).find('input').val();
+        if(status=='未激活'){
+            var cardId = $(trs[j]).find('td').eq(0).find('input').val();
+            var val = $(trs[j]).find('td').eq(2).find('input').val();
+            item = {'cardId':cardId,'cardVal':val};
+            list.push(item)
+        }
+    }
+    return list;
+}
+//获取支付列表
+function getPayList(obj){
+    var list = [];
+    var trs = $(obj).find('tr');
+    for(var j=0;j<trs.length;j++){
+        var item = {};
+        var checkBox = $(trs[j]).find('td').eq(0).find('input')[0];
+        var flag = $(checkBox).is(':checked');
+        if(flag){
+            var payId = $(checkBox).val();
+            var payVal= $(trs[j]).find('td').eq(2).find('input').val();
+            var payRmarks = $(trs[j]).find('td').eq(3).find('input').val();
+            item = {'payId':payId,'payVal':payVal,'payRmarks':payRmarks};
+            list.push(item)
+        }
+    }
+    return list;
+}
 $(document).on('blur','.payList tr',function(){
     palyList = $('.payList').find('tr');
     var totalStr = '';
@@ -133,7 +183,83 @@ $(document).on('blur','.payList tr',function(){
     }
 });
 
+function saveCardSaleOrder(action_type,url){
+    //售卡列表
+    var cardList = getCardList($('#cardList'));
+    console.log(cardList);
+    var totalNum = parseInt($('.Total #totalNum b').text());
+    var totalVal = parseFloat($('.Total #totalVal b').text());//卡合计金额
+    var payTotal = parseFloat($('.Total #payTotal b').text());//支付合计
+    var discount = parseFloat($('.Total #discount input').text());
+    var discountVal = parseFloat($('.Total #discountVal b').text());
+    //赠卡列表
+    var YcardList = getCardList($('#YcardList'));
+    var YtotalNum =parseInt($('.discountTotal #totalNum b').text());
+    var YtotalVal =parseFloat($('.discountTotal #totalVal b').text());
+    var Ybalance =parseFloat($('.discountTotal #balance b').text());//优惠补差
+    //支付列表
+    var payList = getPayList($('.payList'));
+    //买卡人信息
+    var buyerName = $('#buyerName').val();
+    var buyerPhone = $('#buyerPhone').val();
+    var buyerCompany = $('#buyerCompany').val();
+    if(totalVal==0){
+        alert('还未添加售卡信息，请核对后再尝试提交！');
+        return false;
+    }
+    if(payTotal!=totalVal){
+        alert('交款合计与售卡合计面值匹配，请核对后再尝试提交！');
+        return false;
+    }
+    if(discountVal>0 && YtotalVal==0){
+        alert('请完善优惠列表后再尝试提交！');
+        return false;
+    }
+    if(!buyerName || !buyerName){
+        alert('请完善买卡人员信息后再尝试提交！');
+        return false;
+    }
+    $.ajax({
+        url:url,
+        type:'post',
+        dataType:'json',
+        data:{
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            'actionType':action_type,
+            'cardStr':JSON.stringify(cardList),
+            'totalNum':totalNum,
+            'totalVal':totalVal,
+            'YcardStr':JSON.stringify(YcardList),
+            'YtotalNum':YtotalNum,
+            'YtotalVal':YtotalVal,
+            'Ybalance':Ybalance,//
+            'payStr':JSON.stringify(payList),
+            'buyerName':buyerName,
+            'buyerPhone':buyerPhone,
+            'buyerCompany':buyerCompany
 
+        },
+        success:function(data){
+            if(data.msg==1){
+                alert('订单提交成功');
+                window.location.reload();
+                $('input[type=text]').not('.payName').val('');
+                $('input[type=checkbox]').prop('checked',false);
+            }else if(data.msg==0){
+                alert('订单提交失败');
+            }
+        },
+        error:function(XMLHttpRequest, textStatus, errorThrown){
+            alert(errorThrown);
+        }
+    })
+}
+Array.prototype.remove = function(val) {
+    var index = this.indexOf(val);
+    if (index > -1) {
+    this.splice(index, 1);
+    }
+};
 //支付方式--三方平台
 $(document).on('change','.payList #parter',function(){
     var val = $(this).val();
@@ -144,7 +270,6 @@ $(document).ready(function(){
     var parterVal = $('#parter').val();
     $('#parterId').val(parterVal)
 });
-
 
 
 

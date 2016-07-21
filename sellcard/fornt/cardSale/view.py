@@ -9,36 +9,38 @@ from sellcard.common import Method as mtu
 from django.db import transaction
 
 
-def index(requset):
-    return render(requset,'cardSale.html',locals())
+def index(request):
+    return render(request,'cardSale.html',locals())
 
 @csrf_exempt
-# @transaction.non_atomic_requests
 @transaction.atomic
-def saveOrder(requset):
-    operator = requset.session.get('user',1)
-    shopId = requset.session.get('group',10)
+def saveOrder(request):
+    operator = request.session.get('s_uid','')
+    shopId = request.session.get('s_shopid','')
+    roleid= request.session.get("s_roleid",'')
+
     res = {}
+    actionType = request.POST.get('actionType','')
     #售卡列表
-    cardStr = requset.POST.get('cardStr','')
+    cardStr = request.POST.get('cardStr','')
     cardList = json.loads(cardStr)
     #赠卡列表
-    YcardStr = requset.POST.get('YcardStr','')
+    YcardStr = request.POST.get('YcardStr','')
     YcardList = json.loads(YcardStr)
     #支付方式
-    payStr = requset.POST.get('payStr','')
+    payStr = request.POST.get('payStr','')
     payList = json.loads(payStr)
     #合计信息
-    totalNum = requset.POST.get('totalNum',0)
-    totalVal = requset.POST.get('totalVal',0.00)
-    YtotalNum = requset.POST.get('YtotalNum',0)
-    YtotalVal = requset.POST.get('YtotalVal',0.00)
-    Ybalance = requset.POST.get('Ybalance',0.00)
-
+    totalNum = request.POST.get('totalNum',0)
+    totalVal = request.POST.get('totalVal',0.00)
+    YtotalNum = request.POST.get('YtotalNum',0)
+    YtotalVal = request.POST.get('YtotalVal',0.00)
+    Ybalance = request.POST.get('Ybalance',0.00)
+    print(cardList,YcardList,payList)
     #买卡人信息
-    buyerName = requset.POST.get('buyerName','')
-    buyerPhone = requset.POST.get('buyerPhone','')
-    buyerCompany = requset.POST.get('buyerCompany','')
+    buyerName = request.POST.get('buyerName','')
+    buyerPhone = request.POST.get('buyerPhone','')
+    buyerCompany = request.POST.get('buyerCompany','')
     order_sn = ''
     try:
         order = Orders()
@@ -63,7 +65,7 @@ def saveOrder(requset):
             orderInfo.order_id = order_sn
             orderInfo.card_id = card['cardId']
             orderInfo.card_balance = card['cardVal']
-            orderInfo.card_action = '0'
+            orderInfo.card_action = actionType
             orderInfo.is_give = '0'
             orderInfo.save()
         for Ycard in YcardList:
@@ -78,7 +80,8 @@ def saveOrder(requset):
             orderPay = OrderPaymentInfo()
             orderPay.order_id = order_sn
             orderPay.pay_id = pay['payId']
-            orderPay.pay_value = pay['payVal']
+            orderPay.pay_value = ''
+            # orderPay.pay_value = pay['payVal']
             orderPay.remarks = pay['payRmarks']
             orderPay.save()
 

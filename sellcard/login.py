@@ -39,7 +39,7 @@ def login(request):
                 request.session["s_uname"] = user.user_name
                 request.session["s_roleid"] = user.role_id
                 request.session["s_shopid"] = user.shop_id
-
+                request.session["s_uid"] = user.id
                 if user.role_id in ["2","3","5"]:
                     #售卡前台
                     response_data['homeurl'] = cts.URL_HOME[1]
