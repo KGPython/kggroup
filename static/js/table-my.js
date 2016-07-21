@@ -52,6 +52,7 @@ function doAjax(obj,ajaxOpt,showCardIfno,setTotal){
 //卡校验信息展示
 function showCardIfno(obj,data){
     var cardVal = data.card_value;
+    var cardBlance = data.card_blance;
 
     if(data.card_status==1){
         var cardStu ='未激活';
@@ -63,7 +64,7 @@ function showCardIfno(obj,data){
         var cardStu ='已作废';
     }
     $(obj).parent().parent().find('td').eq(1).find('input').eq(0).val(cardVal);
-    $(obj).parent().parent().find('td').eq(2).find('input').eq(0).val(cardVal);
+    $(obj).parent().parent().find('td').eq(2).find('input').eq(0).val(cardBlance);
     $(obj).parent().parent().find('td').eq(3).find('input').eq(0).val(cardStu);
 }
 //计算合计

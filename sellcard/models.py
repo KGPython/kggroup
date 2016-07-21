@@ -34,6 +34,7 @@ class CardInventory(models.Model):
     card_action = models.CharField(max_length=1)
     card_addtime = models.DateTimeField()
     shop_id = models.IntegerField(blank=True, null=True)
+    card_blance = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -181,7 +182,7 @@ class Shops(models.Model):
 
 # class CompressedTextField(models.TextField):
 #     """
-#     ×ª»¯Êý¾Ý¿âÖÐµÄ×Ö·ûµ½pythonµÄ±äÁ¿
+#     ×ªï¿½ï¿½ï¿½ï¿½ï¿½Ý¿ï¿½ï¿½Ðµï¿½ï¿½Ö·ï¿½ï¿½ï¿½pythonï¿½Ä±ï¿½ï¿½ï¿½
 #     """
 #
 #     def from_db_value(self, value, expression, connection, context):
