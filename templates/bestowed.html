@@ -25,107 +25,81 @@
         </div>
         <div class="widget-content nopadding">
             <div class="container-fluid">
-                <form action="">
-                    <div class="widget-box">
-                        <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
-                            <h5>用户信息</h5>
-                        </div>
-                        <div class="widget-content nopadding">
-                            <div id="demo" class="collapse in widget-content">
-                                <div class="row formline">
-                                    <label for="" class="col-xs-1 formline-label">客户/单位名称：</label>
-                                    <div class="col-xs-5">
-                                        <input class="form-control" placeholder="" type="text">
-                                    </div>
-                                </div>
-                                <div class="row formline">
-                                    <label for="" class="col-xs-1 formline-label">联系电话：</label>
-                                    <div class="col-xs-5">
-                                        <input class="form-control" placeholder="" type="text">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                <div class="widget-box">
+                    <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+                        <h5>单卡查询</h5>
                     </div>
-                    <div class="widget-box">
-                        <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-search"> </span></span>
-                            <h5 data-toggle="collapse" data-target="#demo">批量查询</h5>
-                        </div>
-                        <div class="collapse in widget-content">
-                            <form name="" id="" method="">
-                                <div class="row formline">
-                                    <label for="" class="col-xs-1 formline-label">号段开始：</label>
-                                    <div class="col-xs-3">
-                                        <input type="text" class="form-control" placeholder="">
-                                    </div>
-                                    <label for="" class="col-xs-1 formline-label">号段结束：</label>
-                                    <div class="col-xs-3">
-                                        <input type="text" class="form-control" placeholder="">
-                                    </div>
-                                    <div class="col-xs-2 pull-right">
-                                        <button type="submit" class="btn btn-info">查询</button>
-                                        <button type="reset" class="btn btn-warning btn-add">添加</button>
-                                    </div>
+                    <div class="widget-content nopadding">
+                        <table class="table table-striped table-hover table-form-my">
+                            <thead>
+                                <tr>
+                                    <th>编号</th>
+                                    <th>面值(单位：元)</th>
+                                    <th>余额(单位：元)</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cardList">
+                                <tr>
+                                    <td><input class="form-control cardId" type="text" name="cardId"></td>
+                                    <td><input type='text' class='form-control' readonly="readonly"></td>
+                                    <td><input type='text' class='form-control' readonly="readonly"></td>
+                                    <td><input type='text' class='form-control' readonly="readonly"></td>
+                                    <td><button type="button" class="btn btn-danger btn-xs btn-del">删除</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="widget-box">
+                    <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+                        <h5>合计</h5>
+                    </div>
+                    <div class="widget-content nopadding Total">
+                        <p class="text col-xs-3" id="totalNum">卡合计数量：<b>0</b>张</p>
+                        <p class="text col-xs-3" id="totalVal">卡合计金额：<b>0.00</b>元</p>
+                        <p class="text col-xs-3" id="discount">折扣额度：<input type="text" value="0.00" disabled="disabled">%</p>
+                        <p class="text col-xs-3" id="discountVal">优惠金额（赠卡）：<b>10.00</b>元</p>
+                        <p class="text col-xs-12" id="payInfo">
+                            <b>支付详细：</b>
+                            <span></span>
+                        </p>
+                        <p class="text" id="payTotal">支付合计：<b>0.00</b>元</p>
+                    </div>
+                </div>
+                <div class="widget-box">
+                    <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+                        <h5>备注信息</h5>
+                    </div>
+                    <div class="widget-content nopadding check-operat">
+                        <textarea name="" id="" rows="10" style="width: 100%"></textarea>
+                    </div>
+                </div>
+                <div class="widget-box">
+                    <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+                        <h5>顾客信息</h5>
+                    </div>
+                    <div class="widget-content nopadding">
+                        <div id="buyerInfo" class="collapse in widget-content">
+                            <div class="row formline">
+                                <label for="" class="col-xs-1 formline-label"><span class="red">*</span>客户名称：</label>
+                                <div class="col-xs-2">
+                                    <input class="form-control" placeholder="" type="text" id="buyerName">
                                 </div>
-                            </form>
-                        </div>
-                    </div>
-                    <div class="widget-box">
-                        <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
-                            <h5>查询结果</h5>
-                        </div>
-                        <div class="widget-content nopadding check-operat">
-                            <table class="table table-striped table-hover data-table table-form-my">
-                                <thead>
-                                    <tr>
-                                        <th>卡号</th>
-                                        <th>面值</th>
-                                        <th>余额</th>
-                                        <th>状态</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td><input class="form-control" type="text" value=""></td>
-                                        <td><input class="form-control" type="text" value=""></td>
-                                        <td><input class="form-control" type="text" value=""></td>
-                                        <td><input class="form-control" type="text" value=""></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="widget-box">
-                        <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
-                            <h5>备注信息</h5>
-                        </div>
-                        <div class="widget-content nopadding check-operat">
-                            <textarea name="" id="" rows="10" style="width: 100%"></textarea>
-                        </div>
-                    </div>
-                    <div class="widget-box">
-                        <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
-                            <h5>用户信息</h5>
-                        </div>
-                        <div class="widget-content nopadding">
-                            <div id="demo" class="collapse in widget-content">
-                                <div class="row formline">
-                                    <label for="" class="col-xs-1 formline-label">客户/单位名称：</label>
-                                    <div class="col-xs-5">
-                                        <input class="form-control" placeholder="" type="text">
-                                    </div>
+                                <label for="" class="col-xs-1 formline-label"><span class="red">*</span>联系电话：</label>
+                                <div class="col-xs-2">
+                                    <input class="form-control" placeholder="" type="text" id="buyerPhone">
                                 </div>
-                                <div class="row formline">
-                                    <label for="" class="col-xs-1 formline-label">联系电话：</label>
-                                    <div class="col-xs-5">
-                                        <input class="form-control" placeholder="" type="text">
-                                    </div>
+                                <label for="" class="col-xs-1 formline-label">单位名称：</label>
+                                <div class="col-xs-5">
+                                    <input class="form-control" placeholder="" type="text" id="buyerCompany">
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="enter-box"><button class="btn btn-success pull-right" type="button">提交订单</button></div>
-                </form>
+                </div>
+                <div class="enter-box"><button class="btn btn-success pull-right" type="button">提交订单</button></div>
             </div>
         </div>
     </div>
@@ -133,5 +107,27 @@
 <!--end-containt-part-->
 
 {% include "common/foot.html" %}
+<script>
+    $(document).on("change",".cardId",function(){
+        var cardId = $(this).val();
+        //检查是否有重复卡号
+        var cardList = $('#cardList');
+        var arr1 = getCardIds(cardList);
+        var YcardList =$('#YcardList');
+        var arr2 = getCardIds(YcardList);
+        arr1 = arr1.concat(arr2);
+        arr1.remove(cardId);
+        if(arr1.indexOf(cardId)>-1){
+            alert('卡号：'+cardId+',已经存在于售卡或赠卡列表中,请更换');
+            $(this).val('');
+            return false;
+        }
+
+        //卡校验
+        var ajaxOpt = {'url':'{% url 'cardcheck' %}?cardId='+cardId,'method':'get'};
+        doAjax(this,ajaxOpt,showCardIfno,setTotal);
+        addRow(this);
+    });
+</script>
 </body>
 </html>

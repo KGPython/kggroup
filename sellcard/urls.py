@@ -7,6 +7,7 @@ urlpatterns = [
     url(r'^sellcard/cardsale/saveorder','sellcard.fornt.cardSale.view.saveOrder',name='saveorder'),
     #批量售卡
     url(r'^sellcard/cardssale/','sellcard.fornt.cardsSale.view.index',name='cardssale'),
+
     url(r'^sellcard/cardchange/','sellcard.fornt.cardChange.view.index',name='cardchange'),
     #url(r'^sellcard/cardfill/','sellcard.fornt.cardFill.view.index',name='cardfill'),
     url(r'^sellcard/queryfill/', 'sellcard.fornt.cardFill.view.query',name='queryfill'),
