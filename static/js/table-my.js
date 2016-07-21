@@ -1,6 +1,6 @@
 $(document).ready(function(){
     $(document).on('click','.table tr .btn-del',function(){
-        var parnetTbody = $(this).parent().parent().parent().parent()[0];
+        var parnetTbody = $(this).parent().parent().parent()[0];
         $(this).parents('tr').remove();
         setTotal(parnetTbody);
     });
