@@ -44,7 +44,7 @@ function doAjax(obj,ajaxOpt,showCardIfno,setTotal){
         success:function(data){
             var res = data[0] ? data[0].fields : [];
             showCardIfno(obj,res);
-            var parnetTbody = $(obj).parent().parent().parent().parent()[0];
+            var parnetTbody = $(obj).parent().parent().parent()[0];
             setTotal(parnetTbody);
         }
     })
