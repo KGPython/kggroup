@@ -101,7 +101,7 @@ class OrderInfo(models.Model):
 class OrderPaymentInfo(models.Model):
     order_id = models.IntegerField()
     pay_id = models.IntegerField()
-    pay_value = models.IntegerField()
+    pay_value = models.DecimalField(max_digits=11, decimal_places=2)
     remarks = models.TextField(blank=True, null=True)
 
     class Meta:
@@ -114,15 +114,15 @@ class Orders(models.Model):
     user_id = models.SmallIntegerField()
     shop_id = models.IntegerField()
     action_type = models.CharField(max_length=1)
-    total_amount = models.IntegerField()
-    paid_amount = models.IntegerField()
-    disc_amount = models.IntegerField()
+    total_amount = models.DecimalField(max_digits=11, decimal_places=2)
+    paid_amount = models.DecimalField(max_digits=11, decimal_places=2)
+    disc_amount = models.DecimalField(max_digits=11, decimal_places=2)
     buyer_name = models.CharField(max_length=45, blank=True, null=True)
     buyer_tel = models.CharField(max_length=11, blank=True, null=True)
     buyer_company = models.CharField(max_length=60, blank=True, null=True)
     add_time = models.DateTimeField()
     order_status = models.IntegerField(blank=True, null=True)
-    diff_price = models.IntegerField(blank=True, null=True)
+    diff_price = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
     remarks = models.TextField(blank=True, null=True)
 
     class Meta:
