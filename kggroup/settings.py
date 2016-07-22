@@ -83,8 +83,8 @@ DATABASES = {
         'PASSWORD': '10233201sn',
         'HOST': '192.168.122.146',
         'PORT': '3306',
-        'ATOMIC_REQUESTS':True,
-        'AUTOCOMMIT':False,
+        # 'ATOMIC_REQUESTS':True,
+        # 'AUTOCOMMIT':False,
     }
 }
 

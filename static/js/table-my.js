@@ -196,7 +196,6 @@ $(document).on('blur','.payList tr',function(){
 function saveCardSaleOrder(action_type,url){
     //售卡列表
     var cardList = getCardList($('#cardList'));
-    console.log(cardList);
     var totalNum = parseInt($('.Total #totalNum b').text());
     var totalVal = parseFloat($('.Total #totalVal b').text());//卡合计金额
     var payTotal = parseFloat($('.Total #payTotal b').text());//支付合计
@@ -259,9 +258,9 @@ function saveCardSaleOrder(action_type,url){
                 alert('订单提交失败');
             }
         },
-        error:function(XMLHttpRequest, textStatus, errorThrown){
+        /*error:function(XMLHttpRequest, textStatus, errorThrown){
             alert(errorThrown);
-        }
+        }*/
     })
 }
 Array.prototype.remove = function(val) {
