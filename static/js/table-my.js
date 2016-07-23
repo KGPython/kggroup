@@ -152,7 +152,6 @@ function setTotal(obj,cardtype){
         var status = $(trs[i]).find('td').eq(3).find('input').val();
         var val = $(trs[i]).find('td').eq(2).find('input').val();
         var type = $(trs[i]).find('td').eq(1).find('input').val();
-         console.log(status);
         if(cardtype=='1'){
             if(status=='未激活'&& parseFloat(val)==parseFloat(type)){
                 totalNum++;
