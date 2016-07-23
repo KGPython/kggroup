@@ -8,7 +8,7 @@ from django.conf import settings
 from django.core import serializers
 from django.http import HttpResponse
 from sellcard.models import Orders
-import datetime
+import datetime,json
 import pymysql
 
 def getMssqlConn(as_dict=True):
@@ -39,7 +39,7 @@ def md5(str):
     return md5.hexdigest()
 
 #生成验证码
-def   verifycode(request,key):
+def  verifycode(request,key):
     # 随机颜色1:
     def rndColor():
         return (random.randint(64, 255), random.randint(64, 255), random.randint(64, 255))
@@ -79,6 +79,41 @@ def   verifycode(request,key):
     request.session[key] =rcode
 
     return image
+
+def cardCheck_Mssql(request):
+    cardId = request.GET.get('cardId','')
+    #cardId='501410070'
+    item = {}
+    item.setdefault("card_no", cardId)
+    try:
+        conn = getMssqlConn()
+        cur = conn.cursor()
+        sql = "select cardno,cardtype,sheetid,mode,detail,memo " \
+              "from guest where cardno='{cardId}'".format(cardId=cardId)
+        cur.execute(sql)
+        item1 = cur.fetchone()
+
+        if item1:
+            sql = "select sheetid,cardtype,money,amount from batchsalecarditem " \
+                  "where cast(beginno as bigint)<={cardId} and cast(endno as bigint)>={cardId} ".format(cardId=cardId)
+            cur.execute(sql)
+            item2 = cur.fetchone()
+
+            item.setdefault("card_value",str(item2["money"]))
+            item.setdefault("card_blance",str(item1["detail"]))
+            item.setdefault("card_status",str(item1["mode"]))
+        else:
+            item.setdefault("card_value", '0.0')
+            item.setdefault("card_blance", '0.0')
+            item.setdefault("card_status", "-1")
+    except Exception as e:
+        print(e)
+        item.setdefault("card_value", '0.0')
+        item.setdefault("card_blance", '0.0')
+        item.setdefault("card_status", "-1")
+
+    return HttpResponse(json.dumps(item),content_type="application/json")
+
 def cardCheck(request):
     cardId = request.GET.get('cardId','')
     findCardById = CardInventory.objects.all().filter(card_no=cardId)

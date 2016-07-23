@@ -28,5 +28,8 @@ urlpatterns = [
     url(r'^sellcard/setSn/', 'sellcard.common.Method.setOrderSn',name='setSn'),
 
     url(r'^sellcard/cardfill/index/','sellcard.fornt.cardFill.view.index',name='cardfill_index'),
+    url(r'^sellcard/cardfill/save', 'sellcard.fornt.cardFill.view.save', name='cardfill_save'),
     url(r'^sellcard/cardfill/query/','sellcard.fornt.cardFill.view.query',name='cardfill_query'),
+
+    url(r'^sellcard/cardcheck2/', 'sellcard.common.Method.cardCheck_Mssql', name='cardcheck_mssql'),
 ]
