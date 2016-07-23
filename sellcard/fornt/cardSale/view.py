@@ -34,6 +34,8 @@ def saveOrder(request):
     #合计信息
     totalNum = request.POST.get('totalNum',0)
     totalVal = request.POST.get('totalVal',0.00)
+
+    discountRate = request.POST.get('discount',0.00)
     YtotalNum = request.POST.get('YtotalNum',0)
     YtotalVal = request.POST.get('YtotalVal',0.00)
     Ybalance = request.POST.get('Ybalance',0.00)
@@ -44,52 +46,60 @@ def saveOrder(request):
     buyerCompany = request.POST.get('buyerCompany','')
     order_sn = ''
     try:
-        order_sn = mtu.setOrderSn()
-        for card in cardList:
-            orderInfo = OrderInfo()
-            orderInfo.order_id = order_sn
-            orderInfo.card_id = card['cardId']
-            orderInfo.card_balance = float(card['cardVal'])
-            orderInfo.card_action = '0'
-            orderInfo.card_attr = '1'
-            orderInfo.save()
-        for Ycard in YcardList:
-            YorderInfo = OrderInfo()
-            YorderInfo.order_id = order_sn
-            YorderInfo.card_id = Ycard['cardId']
-            YorderInfo.card_balance = float(Ycard['cardVal'])
-            YorderInfo.card_action = '0'
-            YorderInfo.card_attr = '2'
-            YorderInfo.save()
-        for pay in payList:
-            orderPay = OrderPaymentInfo()
-            orderPay.order_id = order_sn
-            orderPay.pay_id = pay['payId']
-            orderPay.pay_value = pay['payVal']
-            orderPay.remarks = pay['payRmarks']
-            orderPay.save()
-        order = Orders()
-        order.buyer_name = buyerName
-        order.buyer_tel = buyerPhone
-        order.buyer_company = buyerCompany
-        order.total_amount = float(totalVal)+float(YtotalVal)
-        order.paid_amount = totalVal
-        order.disc_amount = YtotalVal
-        order.diff_price = Ybalance
-        order.shop_id = shopId
-        order.user_id = operator
-        order.action_type = actionType
-        order.add_time = datetime.datetime.now()
+        with transaction.atomic():
+            order_sn = mtu.setOrderSn()
+            for card in cardList:
+                orderInfo = OrderInfo()
+                orderInfo.order_id = order_sn
+                orderInfo.card_id = card['cardId']
+                orderInfo.card_balance = float(card['cardVal'])
+                orderInfo.card_action = '0'
+                orderInfo.card_attr = '1'
+                orderInfo.save()
+            for Ycard in YcardList:
+                YorderInfo = OrderInfo()
+                YorderInfo.order_id = order_sn
+                YorderInfo.card_id = Ycard['cardId']
+                YorderInfo.card_balance = float(Ycard['cardVal'])
+                YorderInfo.card_action = '0'
+                YorderInfo.card_attr = '2'
+                YorderInfo.save()
+            for pay in payList:
+                orderPay = OrderPaymentInfo()
+                orderPay.order_id = order_sn
+                orderPay.pay_id = pay['payId']
+                orderPay.pay_value = pay['payVal']
+                orderPay.remarks = pay['payRmarks']
+                orderPay.save()
 
-        order.order_sn = order_sn
-        order.order_status = 1
-        order.save()
-        cardListTotal = cardList+YcardList
-        cardIdList = []
-        for card in cardListTotal:
-            cardIdList.append(card['cardId'])
-        CardInventory.objects.filter(card_no__in=cardIdList).update(card_status='2',card_action='0')
-        res["msg"] = 1
+            cardListTotal = cardList+YcardList
+            cardIdList = []
+            for card in cardListTotal:
+                cardIdList.append(card['cardId'])
+
+            mtu.updateCard(cardIdList,'2')
+            CardInventory.objects.filter(card_no__in=cardIdList).update(card_status='2',card_action='0')
+
+            order = Orders()
+            order.buyer_name = buyerName
+            order.buyer_tel = buyerPhone
+            order.buyer_company = buyerCompany
+            order.total_amount = float(totalVal)+float(YtotalVal)
+            order.paid_amount = totalVal
+            order.disc_amount = YtotalVal
+            order.diff_price = Ybalance
+            order.shop_id = shopId
+            order.user_id = operator
+            order.action_type = actionType
+            order.add_time = datetime.datetime.now()
+            order.discount_rate = discountRate/100
+
+            order.order_sn = order_sn
+            order.order_status = 1
+            order.save()
+
+
+            res["msg"] = 1
     except Exception as e:
         print(e)
         res["msg"] = 0

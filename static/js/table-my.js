@@ -47,7 +47,7 @@ function doAjax(obj,ajaxOpt,showCardIfno,setTotal,cardType){
             var res = data[0] ? data[0].fields : [];
             showCardIfno(obj,res);
             var parnetTbody = $(obj).parent().parent().parent()[0];
-            setTotal(parnetTbody,cardtype);
+            setTotal(parnetTbody,cardType);
         }
     })
 }
@@ -284,7 +284,7 @@ function saveCardSaleOrder(action_type,url){
     var totalNum = parseInt($('.Total #totalNum b').text());
     var totalVal = parseFloat($('.Total #totalVal b').text());//卡合计金额
     var payTotal = parseFloat($('.Total #payTotal b').text());//支付合计
-    var discount = parseFloat($('.Total #discount input').text());
+    var discount = parseFloat($('.Total #discount input').val());
     var discountVal = parseFloat($('.Total #discountVal b').text());
     //赠卡列表
     var YcardList = getCardList($('#YcardList'));
@@ -323,6 +323,7 @@ function saveCardSaleOrder(action_type,url){
             'cardStr':JSON.stringify(cardList),
             'totalNum':totalNum,
             'totalVal':totalVal,
+            'discount':discount,
             'YcardStr':JSON.stringify(YcardList),
             'YtotalNum':YtotalNum,
             'YtotalVal':YtotalVal,

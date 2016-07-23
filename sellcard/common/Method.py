@@ -121,6 +121,19 @@ def cardCheck(request):
     findCardById = serializers.serialize('json',findCardById)
     return HttpResponse(findCardById,content_type="application/json")
 
+def updateCard(list,mode):
+    cards = "'"
+    for obj in list:
+        cards += str(obj)
+        cards += "','"
+    cards = cards[0:len(cards)-2]
+    sql = "UPDATE guest SET Mode ='"+mode+"' WHERE CardNO in ("+cards+")"
+    conn = getMssqlConn()
+    print(sql)
+    cur = conn.cursor()
+    cur.execute(sql)
+    return True
+
 def setOrderSn():
     start = datetime.date.today().strftime('%Y-%m-%d 00:00:00')
     end = datetime.date.today().strftime('%Y-%m-%d 23:59:59')

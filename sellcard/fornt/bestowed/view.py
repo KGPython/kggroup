@@ -35,36 +35,38 @@ def saveOrder(request):
     order_sn = ''
 
     try:
-        order_sn = mtu.setOrderSn()
-        for card in cardList:
-            orderInfo = OrderInfo()
-            orderInfo.order_id = order_sn
-            orderInfo.card_id = card['cardId']
-            orderInfo.card_balance = float(card['cardVal'])
-            orderInfo.card_action = '0'
-            orderInfo.card_attr = '2'
-            orderInfo.save()
-        order = Orders()
-        order.buyer_name = buyerName
-        order.buyer_tel = buyerPhone
-        order.buyer_company = buyerCompany
-        order.total_amount = float(totalVal)
-        order.paid_amount = 0
-        order.disc_amount = float(totalVal)
-        order.diff_price = 0
-        order.shop_id = shopId
-        order.user_id = operator
-        order.action_type = '5'
-        order.add_time = datetime.datetime.now()
-        order.order_sn = order_sn
-        order.order_status = 1
-        order.remarks = remarks
-        order.save()
-        cardIdList = []
-        for card in cardList:
-            cardIdList.append(card['cardId'])
-        CardInventory.objects.filter(card_no__in=cardIdList).update(card_status=2,card_action='0')
-        res["msg"] = 1
+        with transaction.atomic():
+            order_sn = mtu.setOrderSn()
+            for card in cardList:
+                orderInfo = OrderInfo()
+                orderInfo.order_id = order_sn
+                orderInfo.card_id = card['cardId']
+                orderInfo.card_balance = float(card['cardVal'])
+                orderInfo.card_action = '0'
+                orderInfo.card_attr = '2'
+                orderInfo.save()
+            order = Orders()
+            order.buyer_name = buyerName
+            order.buyer_tel = buyerPhone
+            order.buyer_company = buyerCompany
+            order.total_amount = float(totalVal)
+            order.paid_amount = 0
+            order.disc_amount = float(totalVal)
+            order.diff_price = 0
+            order.shop_id = shopId
+            order.user_id = operator
+            order.action_type = '5'
+            order.add_time = datetime.datetime.now()
+            order.order_sn = order_sn
+            order.order_status = 1
+            order.remarks = remarks
+            order.save()
+            cardIdList = []
+            for card in cardList:
+                cardIdList.append(card['cardId'])
+            mtu.updateCard(cardIdList,'1')
+            CardInventory.objects.filter(card_no__in=cardIdList).update(card_status=2,card_action='0')
+            res["msg"] = 1
     except Exception as e:
         print(e)
         res["msg"] = 0

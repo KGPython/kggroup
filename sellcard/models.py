@@ -20,6 +20,7 @@ class AdminUser(models.Model):
     last_ip = models.CharField(max_length=15)
     role_id = models.CharField(max_length=11)
     shop_code = models.CharField(max_length=11)
+    shop_id = models.IntegerField()
 
     class Meta:
         managed = False
