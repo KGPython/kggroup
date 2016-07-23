@@ -182,6 +182,36 @@ class Payment(models.Model):
         managed = False
         db_table = 'payment'
 
+class OrderUpCard(models.Model):
+    order_sn = models.CharField(max_length=20, blank=True, null=True)
+    action_type = models.CharField(max_length=1)
+    total_amount = models.IntegerField(blank=True, null=True)
+    total_price = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
+    diff_price = models.DecimalField(max_digits=11, decimal_places=2)
+    user_name = models.CharField(max_length=32, blank=True, null=True)
+    user_phone = models.CharField(max_length=16, blank=True, null=True)
+    state = models.SmallIntegerField(blank=True, null=True)
+    shop_id = models.IntegerField()
+    operator_id = models.IntegerField()
+    created_time = models.DateTimeField(blank=True, null=True,auto_now_add=True)
+    modified_time = models.DateTimeField(blank=True, null=True,auto_now_add=True)
+
+    class Meta:
+        managed = False
+        db_table = 'order_up_card'
+
+
+class OrderUpCardInfo(models.Model):
+    order_sn = models.CharField(max_length=20)
+    card_no = models.CharField(max_length=32)
+    card_attr = models.CharField(max_length=1)
+    card_value = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
+    card_balance = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
+    created_time = models.DateTimeField(blank=True, null=True,auto_now_add=True)
+
+    class Meta:
+        managed = False
+        db_table = 'order_up_card_info'
 
 class ReceiveInfo(models.Model):
     rec_id = models.IntegerField()

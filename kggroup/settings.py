@@ -83,10 +83,11 @@ DATABASES = {
         'PASSWORD': '10233201sn',
         'HOST': '192.168.122.146',
         'PORT': '3306',
-        # 'ATOMIC_REQUESTS':True,
+        'ATOMIC_REQUESTS':True,
         # 'AUTOCOMMIT':False,
     }
 }
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
