@@ -424,6 +424,57 @@ function saveCardFillOrder(url){
     })
 }
 
+function updateCardFillOrder(url){
+    //入卡列表
+    var cardOutList = getCardFillList($('#cardOutList'),"1");
+   
+    var cardOutTotalNum = parseInt($('.cardOutTotal #totalNum b').text());
+    var cardOutTotalVal = parseFloat($('.cardOutTotal #totalVal b').text());
+    var cardOutBalance = parseFloat($('.cardOutTotal #balance b').text());
+
+    //订单信息
+    var order_sn = $('#order_sn').val();
+    var paymoney = $('#paymoney').val();
+    if(!paymoney){
+        paymoney = 0.0
+    }else{
+        paymoney = parseFloat(paymoney)
+    }
+    if(cardOutTotalNum==0){
+        alert('还未添加出卡信息，请核对后再尝试提交！');
+        return false;
+    }
+    if(cardOutBalance!=paymoney){
+        alert('实收补差金额与应收补差金额不等，请核实后提交！');
+        return false;
+    }
+
+    $.ajax({
+        url:url,
+        type:'post',
+        dataType:'json',
+        data:{
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            'cardOutStr':JSON.stringify(cardOutList),
+            'cardOutTotalNum':cardOutTotalNum,
+            'cardOutTotalVal':cardOutTotalVal,
+            'order_sn':order_sn,
+            'paymoney':paymoney,
+        },
+        success:function(data){
+            if(data.msg==1){
+                alert('操作成功');
+                window.location.href="{% url 'cardfill_query' %}"
+            }else if(data.msg==0){
+                alert('操作失败');
+            }
+        },
+        error:function(XMLHttpRequest, textStatus, errorThrown){
+            alert(errorThrown);
+        }
+    })
+}
+
 Array.prototype.remove = function(val) {
     var index = this.indexOf(val);
     if (index > -1) {

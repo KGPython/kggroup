@@ -21,3 +21,41 @@
 .enter-box label{margin-right: 15px;color: #a94442;line-height: 25px;}
 .enter-box input{border: 1px solid #ccc;outline: none}
 .Total input{border: 1px solid #ccc;outline: none;background:#fff;width: 50px;}
+
+
+/*
+***************************************分页按钮****************************************
+*/
+.page{
+	text-align: center;
+	margin-bottom: 20px;
+	margin-top: 20px;
+    font-size: 14px;
+    float:right;
+    padding-right: 50px;
+}
+.page a{
+	display: inline-block;
+	height: 24px;
+	line-height: 24px;
+	padding:0 12px;
+	margin:0 2px;
+}
+.page span{
+	display: inline-block;
+	height: 24px;
+	line-height: 24px;
+	_line-height: 20px;
+	padding:0 12px;
+	margin:0 2px;
+}
+.page .pageTxt{
+	width:29px;
+	padding:0 3px;
+	height: 24px;
+	line-height: 24px\9;
+	_line-height: 28px\9;
+	color:#333;
+	text-align: center;
+}
+

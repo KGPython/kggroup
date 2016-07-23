@@ -2,19 +2,42 @@
 from django.shortcuts import render
 from sellcard.models import OrderUpCard,OrderUpCardInfo,CardInventory
 from django.http import HttpResponse
-import json
 from django.views.decorators.csrf import csrf_exempt
-import datetime
+from django.core.paginator import Paginator
 from sellcard.common import Method as mtu
 from django.db import transaction
 
-def index(reauest):
+import datetime,json
 
-    return render(reauest,'cardFill.html',locals())
+__EACH_PAGE_SHOW_NUMBER=10
 
-def query(reauest):
+def index(request):
 
-    return render(reauest,'cardFillQuery.html',locals())
+    return render(request,'cardFill.html',locals())
+
+@csrf_exempt
+def query(request):
+    pageNum =mtu.getReqVal(request,"pageNum","1")
+    user_phone = request.POST.get("user_phone","")
+    state = request.POST.get("state","")
+
+    karrs = {}
+    karrs.setdefault("state__in",[0,1])
+    if user_phone:
+        karrs.setdefault("user_phone__contains",user_phone)
+    if state:
+        karrs.setdefault("state",state)
+
+    order_list = OrderUpCard.objects.values("order_sn","total_amount","total_price","action_type","user_name",
+                               "user_phone","state","created_time",)\
+        .filter(**karrs)\
+        .order_by("-order_sn")
+
+    page = Paginator(order_list, __EACH_PAGE_SHOW_NUMBER, allow_empty_first_page=True).page(int(pageNum))
+    result = {"page": page, "pageNum": str(pageNum)}
+    result.setdefault("user_phone", user_phone)
+    result.setdefault("state", state)
+    return render(request,'cardFillQuery.html',result)
 
 @csrf_exempt
 @transaction.atomic
@@ -37,7 +60,7 @@ def save(request):
 
     try:
         with transaction.atomic():
-            order_sn = mtu.setOrderSn()
+            order_sn = setOrderSn()
 
             order = OrderUpCard()
             order.order_sn=order_sn
@@ -48,7 +71,7 @@ def save(request):
             order.user_phone=user_phone
             order.state=1
             order.shop_id=shop_id
-            order.operator_id=operator_id
+            order.created_id=operator_id
             order.created_time=datetime.datetime.today()
             order.save()
 
@@ -76,14 +99,73 @@ def save(request):
 
     return HttpResponse(json.dumps(res))
 
-def update(request):
-    pass
-    # 激活新卡
-    # if orderStatus=="1":
-    #     cardIdOutList = []
-    #     for card2 in cardOutList:
-    #         cardIdOutList.append(card2['cardId'])
-    #     CardInventory.objects.filter(card_no__in=cardIdOutList).update(card_status=2)
+def setOrderSn():
+    start = datetime.date.today().strftime('%Y-%m-%d 00:00:00')
+    end = datetime.date.today().strftime('%Y-%m-%d 23:59:59')
+    count  = OrderUpCard.objects.filter(created_time__gte=start,created_time__lte=end).count()
+    if count<10:
+        sn = datetime.date.today().strftime('%y%m%d')+'000'+str(count+1)
+    elif count>=10 and count<100:
+        sn = datetime.date.today().strftime('%y%m%d')+'00'+str(count+1)
+    elif count>=100 and count<1000:
+        sn = datetime.date.today().strftime('%y%m%d')+'0'+str(count+1)
+    elif count>=1000 and count<10000:
+        sn = datetime.date.today().strftime('%y%m%d')+str(count+1)
+    return sn
 
-    # 回写卡库，待完成
+def gotcard(request):
+    order_sn = mtu.getReqVal(request,"order_sn","")
+    if order_sn:
+        try:
+            order = OrderUpCard.objects.values("order_sn","total_amount","total_price","action_type","user_name",
+                               "user_phone","state","created_time",).get(order_sn=order_sn)
+            orderInfoList = OrderUpCardInfo.objects.values("card_no","card_value","card_balance",).filter(order_sn=order_sn,card_attr=1)
+        except Exception as e:
+            print(e)
+    return render(request,'cardFillModify.html',locals())
+
+@csrf_exempt
+def update(request):
+    operator_id = request.session.get('s_uid', '')
+
+    res = {}
+    # 出卡列表
+    cardOutStr = request.POST.get('cardOutStr', '')
+    cardOutList = json.loads(cardOutStr)
+    # 出卡合计
+    cardOutTotalNum = request.POST.get('cardOutTotalNum', 0)
+    cardOutTotalVal = request.POST.get('cardOutTotalVal', 0.00)
+
+    order_sn = request.POST.get('order_sn', '')
+    paymoney = request.POST.get('paymoney', '')
+
+    try:
+        with transaction.atomic():
+            #更新订单信息
+            OrderUpCard.objects.filter(order_sn=order_sn).update(fill_amount=cardOutTotalNum,fill_price=cardOutTotalVal,diff_price=paymoney,state=0,operator_id=operator_id,modified_time=datetime.datetime.today())
+            # 订单明细：入卡,待补的卡即待作废的卡
+            cardIdOutList = []
+            for card in cardOutList:
+                info = OrderUpCardInfo()
+                info.order_sn = order_sn
+                info.card_no = card["cardId"]
+                info.card_value = card["cardVal"]
+                info.card_balance = card["balance"]
+                info.card_attr =2
+                info.created_time = datetime.datetime.today()
+                info.save()
+
+                cardIdOutList.append(card['cardId'])
+
+            # 激活新卡
+            CardInventory.objects.filter(card_no__in=cardIdOutList).update(card_status=2)
+            #回写卡库
+            pass
+
+            res["msg"] = 1
+    except Exception as e:
+        print(e)
+        res["msg"] = 0
+
+    return HttpResponse(json.dumps(res))
 
