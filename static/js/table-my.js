@@ -427,7 +427,7 @@ function saveCardFillOrder(url){
     })
 }
 
-function updateCardFillOrder(url){
+function updateCardFillOrder(url,target_url){
     //入卡列表
     var cardOutList = getCardFillList($('#cardOutList'),"1");
    
@@ -467,7 +467,7 @@ function updateCardFillOrder(url){
         success:function(data){
             if(data.msg==1){
                 alert('操作成功');
-                window.location.href="{% url 'cardfill_query' %}"
+                window.location.href=target_url;
             }else if(data.msg==0){
                 alert('操作失败');
             }

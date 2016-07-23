@@ -169,3 +169,17 @@ def update(request):
 
     return HttpResponse(json.dumps(res))
 
+
+def info(request):
+    order_sn = mtu.getReqVal(request,"order_sn","")
+    if order_sn:
+        try:
+            order = OrderUpCard.objects.values("order_sn","total_amount","total_price","action_type","user_name",
+                               "user_phone","state","created_time","fill_price","fill_amount","diff_price").get(order_sn=order_sn)
+            cardInList = OrderUpCardInfo.objects.values("card_no","card_value","card_balance",).filter(order_sn=order_sn,card_attr=1)
+            cardOutList = OrderUpCardInfo.objects.values("card_no", "card_value", "card_balance", ).filter(order_sn=order_sn, card_attr=2)
+            diff_amount = order["fill_price"] - order["total_price"]
+        except Exception as e:
+            print(e)
+    return render(request,'cardFillInfo.html',locals())
+

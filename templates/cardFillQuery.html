@@ -88,9 +88,9 @@
                                                 <td>{{ row.created_time|date:'Y-m-i H:m' }}</td>
                                                 <td>
                                                     {% ifequal row.state 1 %}
-                                                        <button type="button" class="btn btn-primary btn-sm" onclick="gotCard('{{ row.order_sn }}');">领卡</button>
+                                                        <button type="button" class="btn btn-primary btn-sm" onclick="gotCard('{% url 'cardfill_gotcard' %}','{{ row.order_sn }}');">领卡</button>
                                                     {% else %}
-                                                        <button type="button" class="btn btn-success btn-sm">已领</button>
+                                                        <button type="button" class="btn btn-success btn-sm" onclick="gotCard('{% url 'cardfill_info' %}','{{ row.order_sn }}');">已领</button>
                                                     {% endifequal %}
 
                                                 </td>
@@ -151,8 +151,8 @@
             $("#codeForm").submit();
         });
     });
-    function gotCard(order_sn) {
-        window.location.href="{% url 'cardfill_gotcard' %}?order_sn="+order_sn;
+    function gotCard(url,order_sn) {
+        window.location.href=url+"?order_sn="+order_sn;
     }
 </script>
 </body>
