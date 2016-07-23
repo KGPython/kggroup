@@ -160,7 +160,7 @@ def update(request):
             # 激活新卡
             CardInventory.objects.filter(card_no__in=cardIdOutList).update(card_status=2)
             #回写卡库
-            pass
+            #mtu.updateCard(cardIdOutList,"1")
 
             res["msg"] = 1
     except Exception as e:
