@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.db import transaction
 import json
-from sellcard.models import Orders,OrderInfo,OrderPaymentInfo,CardInventory
+from sellcard.models import Orders,OrderInfo,CardInventory
 import datetime
 from sellcard.common import Method as mtu
 from django.http import HttpResponse
@@ -14,7 +14,7 @@ def index(reauest):
     return render(reauest,'bestowed.html',locals())
 
 @csrf_exempt
-@transaction.non_atomic_requests
+@transaction.atomic
 def saveOrder(request):
     operator = request.session.get('s_uid','')
     shopId = request.session.get('s_shopid','')
@@ -35,6 +35,15 @@ def saveOrder(request):
     order_sn = ''
 
     try:
+        order_sn = mtu.setOrderSn()
+        for card in cardList:
+            orderInfo = OrderInfo()
+            orderInfo.order_id = order_sn
+            orderInfo.card_id = card['cardId']
+            orderInfo.card_balance = float(card['cardVal'])
+            orderInfo.card_action = '0'
+            orderInfo.card_attr = '2'
+            orderInfo.save()
         order = Orders()
         order.buyer_name = buyerName
         order.buyer_tel = buyerPhone
@@ -47,21 +56,10 @@ def saveOrder(request):
         order.user_id = operator
         order.action_type = '5'
         order.add_time = datetime.datetime.now()
-        order_sn = mtu.setOrderSn()
         order.order_sn = order_sn
         order.order_status = 1
         order.remarks = remarks
         order.save()
-
-        for card in cardList:
-            orderInfo = OrderInfo()
-            orderInfo.order_id = order_sn
-            orderInfo.card_id = card['cardId']
-            orderInfo.card_balance = float(card['cardVal'])
-            orderInfo.card_action = '0'
-            orderInfo.is_give = '1'
-            orderInfo.save()
-
         cardIdList = []
         for card in cardList:
             cardIdList.append(card['cardId'])
@@ -70,7 +68,4 @@ def saveOrder(request):
     except Exception as e:
         print(e)
         res["msg"] = 0
-        transaction.rollback()
-    else:
-        transaction.commit()
     return HttpResponse(json.dumps(res))

@@ -19,7 +19,7 @@ class AdminUser(models.Model):
     last_login = models.DateTimeField()
     last_ip = models.CharField(max_length=15)
     role_id = models.CharField(max_length=11)
-    shop_id = models.CharField(max_length=11)
+    shop_code = models.CharField(max_length=11)
 
     class Meta:
         managed = False
@@ -28,13 +28,14 @@ class AdminUser(models.Model):
 
 class CardInventory(models.Model):
     card_no = models.CharField(max_length=32)
-    card_value = models.IntegerField()
+    card_value = models.DecimalField(max_digits=12, decimal_places=2)
     card_status = models.CharField(max_length=1)
     card_action = models.CharField(max_length=1)
     card_addtime = models.DateTimeField()
     shop_id = models.IntegerField(blank=True, null=True)
     card_blance = models.DecimalField(max_digits=12, decimal_places=2)
     charge_time = models.DateTimeField(blank=True, null=True)
+    order_sn = models.CharField(max_length=32)
 
     class Meta:
         managed = False
@@ -50,6 +51,17 @@ class CardReceive(models.Model):
     class Meta:
         managed = False
         db_table = 'card_receive'
+
+
+class DiscountRate(models.Model):
+    shopcode = models.CharField(max_length=16)
+    val_min = models.DecimalField(max_digits=12, decimal_places=2)
+    val_max = models.DecimalField(max_digits=12, decimal_places=2)
+    discount_rate = models.DecimalField(max_digits=6, decimal_places=2)
+
+    class Meta:
+        managed = False
+        db_table = 'discount_rate'
 
 
 class DjangoMigrations(models.Model):
@@ -91,7 +103,7 @@ class OrderInfo(models.Model):
     card_id = models.IntegerField()
     card_balance = models.DecimalField(max_digits=11, decimal_places=2)
     card_action = models.CharField(max_length=1)
-    is_give = models.CharField(max_length=1)
+    card_attr = models.CharField(max_length=1)
 
     class Meta:
         managed = False
@@ -109,6 +121,38 @@ class OrderPaymentInfo(models.Model):
         db_table = 'order_payment_info'
 
 
+class OrderUpCard(models.Model):
+    order_sn = models.CharField(max_length=20, blank=True, null=True)
+    action_type = models.CharField(max_length=1)
+    total_amount = models.IntegerField(blank=True, null=True)
+    total_price = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
+    diff_price = models.DecimalField(max_digits=11, decimal_places=2)
+    user_name = models.CharField(max_length=32, blank=True, null=True)
+    user_phone = models.CharField(max_length=16, blank=True, null=True)
+    state = models.SmallIntegerField(blank=True, null=True)
+    shop_id = models.IntegerField()
+    operator_id = models.IntegerField()
+    created_time = models.DateTimeField(blank=True, null=True)
+    modified_time = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'order_up_card'
+
+
+class OrderUpCardInfo(models.Model):
+    order_sn = models.CharField(max_length=20)
+    card_no = models.CharField(max_length=32)
+    card_attr = models.CharField(max_length=1)
+    card_value = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
+    card_balance = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
+    created_time = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'order_up_card_info'
+
+
 class Orders(models.Model):
     order_sn = models.CharField(max_length=20)
     user_id = models.SmallIntegerField()
@@ -124,6 +168,7 @@ class Orders(models.Model):
     order_status = models.IntegerField(blank=True, null=True)
     diff_price = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
     remarks = models.TextField(blank=True, null=True)
+    discount_rate = models.DecimalField(max_digits=6, decimal_places=2)
 
     class Meta:
         managed = False

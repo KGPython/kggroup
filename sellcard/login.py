@@ -8,8 +8,8 @@ from django.db import connection
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
-
-from sellcard.models import AdminUser
+import decimal
+from sellcard.models import AdminUser,DiscountRate
 from sellcard.common import Method as mtu,Constants as cts
 
 
@@ -35,11 +35,22 @@ def login(request):
             user = AdminUser.objects.get(user_name=user_name)
             upwd = user.password
             password = mtu.md5(password)
+            shop_code=user.shop_code
+            rates = DiscountRate.objects.values('val_min','val_max','discount_rate').filter(shopcode=shop_code)
+            rateList=[]
+            for rate in rates:
+                item={}
+                item['val_min']=float(rate['val_min'])
+                item['val_max']=float(rate['val_max'])
+                item['discount_rate']=float(rate['discount_rate'])
+                rateList.append(item)
+
             if upwd == password:
                 request.session["s_uname"] = user.user_name
                 request.session["s_roleid"] = user.role_id
-                request.session["s_shopid"] = user.shop_id
+                request.session["s_shopid"] = user.shop_code
                 request.session["s_uid"] = user.id
+                request.session["s_rates"] = rateList
                 if user.role_id in ["2","3","5"]:
                     #售卡前台
                     response_data['homeurl'] = cts.URL_HOME[1]

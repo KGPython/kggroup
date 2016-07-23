@@ -1,19 +1,27 @@
 #-*- coding:utf-8 -*-
 from django.conf.urls import include,url
 urlpatterns = [
+    ###卡销售
     #单卡售卡
     url(r'^sellcard/cardsale/$','sellcard.fornt.cardSale.view.index',name='cardsale'),
     #单卡和批量售卡的订单保存
     url(r'^sellcard/cardsale/saveorder','sellcard.fornt.cardSale.view.saveOrder',name='saveorder'),
     #批量售卡
     url(r'^sellcard/cardssale/','sellcard.fornt.cardsSale.view.index',name='cardssale'),
+    #大宗赠卡
+    url(r'^sellcard/bestowed/$', 'sellcard.fornt.bestowed.view.index',name='bestowed'),
+    url(r'^sellcard/bestowed/save', 'sellcard.fornt.bestowed.view.saveOrder',name='bestowedSave'),
+
+    ###卡管理
+    #入库管理
+    url(r'^sellcard/cardmanage/cardinstore', 'sellcard.fornt.cardManage.view.cardInStore',name='cardInStore'),
+
+
 
     url(r'^sellcard/cardchange/','sellcard.fornt.cardChange.view.index',name='cardchange'),
     #url(r'^sellcard/cardfill/','sellcard.fornt.cardFill.view.index',name='cardfill'),
     url(r'^sellcard/queryfill/', 'sellcard.fornt.cardFill.view.query',name='queryfill'),
-    #大宗赠卡
-    url(r'^sellcard/bestowed/$', 'sellcard.fornt.bestowed.view.index',name='bestowed'),
-    url(r'^sellcard/bestowed/save', 'sellcard.fornt.bestowed.view.saveOrder',name='bestowedSave'),
+
 
     url(r'^sellcard/loginpage/', 'sellcard.login.index',name="login_index"),
     url(r'^sellcard/login/', 'sellcard.login.login',name="login"),

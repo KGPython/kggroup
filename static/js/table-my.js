@@ -52,6 +52,9 @@ function doAjax(obj,ajaxOpt,showCardIfno,setTotal,cardtype){
 }
 //卡校验信息展示
 function showCardIfno(obj,data){
+    if(data.length==0){
+         var cardStu ='不存在';
+    }
     var cardVal = data.card_value;
     var cardBlance = data.card_blance;
 
@@ -60,14 +63,25 @@ function showCardIfno(obj,data){
     }else if(data.card_status==2){
         var cardStu ='已激活';
     }else if(data.card_status==3){
-        var cardStu ='待作废';
+        var cardStu ='已冻结';
     }else if(data.card_status==4){
         var cardStu ='已作废';
+    }
+
+    if(data.card_status!=1 || cardVal!=cardBlance){
+        $(obj).parent().parent().find('td').eq(3).find('input').eq(0).addClass('red')
     }
     $(obj).parent().parent().find('td').eq(1).find('input').eq(0).val(cardVal);
     $(obj).parent().parent().find('td').eq(2).find('input').eq(0).val(cardBlance);
     $(obj).parent().parent().find('td').eq(3).find('input').eq(0).val(cardStu);
 }
+$('.Total #discount input').blur(function(){
+    var rate = $(this).val()/100;
+    var totalVal = parseFloat($('.Total #totalVal b').text());
+    var discount = rate*totalVal;
+    $('.Total #discountVal b').text(discount);
+
+});
 //计算合计
 function setTotal(obj,cardtype){
     var parentTbody = obj;
@@ -82,16 +96,15 @@ function setTotal(obj,cardtype){
         cls = 'Total';
     }
     //计算合计
-    var parentTbody = $(obj).parent().parent().parent()[0];
     var trs = $(parentTbody).find('tr');
     var totalNum = 0;
     var totalVal = 0.00;
-
     for(var i=0;i<trs.length;i++){
         var status = $(trs[i]).find('td').eq(3).find('input').val();
         var val = $(trs[i]).find('td').eq(2).find('input').val();
+        var type = $(trs[i]).find('td').eq(1).find('input').val();
         if(cardtype=='1'){
-            if(status=='未激活'){
+            if(status=='未激活'&& parseFloat(val)==parseFloat(type)){
                 totalNum++;
                 totalVal += parseInt(val);
             }
@@ -101,15 +114,30 @@ function setTotal(obj,cardtype){
                 totalVal += parseInt(val);
             }
         }
-
     }
     $('.'+cls+' #totalVal b').text(parseFloat(totalVal).toFixed(2));
     $('.'+cls+' #totalNum b').text(totalNum);
 
+    var rateInput  = $('.Total #discount input')[0];
+    var rate= 0,discountVal=0;
+    if(rateInput){
+        if(typeof(rates)!='undefined'){
+            for(var j=0;j<rates.length;j++){
+                if(rates[j].val_min<=parseFloat(totalVal) && rates[j].val_max>=parseFloat(totalVal)){
+                    rate=rates[j].discount_rate;
+                    discountVal = parseFloat(totalVal)*rate;
+                }
+                $(rateInput).val(rate*100);
+                $('.Total #discountVal b').text(discountVal);
+            }
+        }
+    }
+
     //赠卡补差
     var YtotalVal = parseFloat($('.discountTotal #totalVal b').text());
-    if(YtotalVal){
-        var discountVal = parseFloat($('.Total #discountVal b').text());
+    discountVal = parseFloat($('.Total #discountVal b').text());
+    if(YtotalVal && discountVal){
+        discountVal = isNaN(discountVal) ? 0:discountVal;
         var Ybalance = YtotalVal - discountVal;
         $('.discountTotal #balance b').text(Ybalance);
     }
@@ -134,9 +162,10 @@ function getCardList(obj){
     for(var j=0;j<trs.length;j++){
         var item = {};
         var status = $(trs[j]).find('td').eq(3).find('input').val();
-        if(status=='未激活'){
+        var type = $(trs[j]).find('td').eq(1).find('input').val();
+        var val = $(trs[j]).find('td').eq(2).find('input').val();
+        if(status=='未激活' && parseFloat(val)==parseFloat(type) ){
             var cardId = $(trs[j]).find('td').eq(0).find('input').val();
-            var val = $(trs[j]).find('td').eq(2).find('input').val();
             item = {'cardId':cardId,'cardVal':val};
             list.push(item)
         }
@@ -212,6 +241,7 @@ function saveCardSaleOrder(action_type,url){
     var buyerName = $('#buyerName').val();
     var buyerPhone = $('#buyerPhone').val();
     var buyerCompany = $('#buyerCompany').val();
+
     if(totalVal==0){
         alert('还未添加售卡信息，请核对后再尝试提交！');
         return false;
@@ -258,9 +288,9 @@ function saveCardSaleOrder(action_type,url){
                 alert('订单提交失败');
             }
         },
-        /*error:function(XMLHttpRequest, textStatus, errorThrown){
-            alert(errorThrown);
-        }*/
+        error:function(XMLHttpRequest, textStatus, errorThrown){
+            alert('订单提交失败,失败原因：'+errorThrown);
+        }
     })
 }
 Array.prototype.remove = function(val) {

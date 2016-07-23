@@ -50,9 +50,39 @@
                 </div>
                 <div class="widget-box">
                     <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
-                        <h5>查询结果</h5>
+                        <h5>异常数据</h5>
                     </div>
                     <div class="widget-content nopadding check-operat">
+                        <table class="table table-striped table-hover data-table table-form-my">
+                            <thead>
+                                <tr>
+                                    <th>卡号</th>
+                                    <th>面值</th>
+                                    <th>余额</th>
+                                    <th>状态</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for card in cardList %}
+                                    {% if card.card_status == '2' or card.card_status == '3' or card.card_status == '4' or card.card_value != card.card_blance %}
+                                        <tr>
+                                            <td><input class="form-control" type="text" value="{{ card.card_no }}" disabled></td>
+                                            <td><input class="form-control" type="text" value="{{ card.card_value }}" disabled></td>
+                                            <td><input class="form-control" type="text" value="{{ card.card_blance }}" disabled></td>
+                                            <td><input class="form-control red" type="text" value="{% if card.card_status == '1' %}未激活{% elif card.card_status == '2' %}已激活{% elif card.card_status == '3' %}已冻结{% elif card.card_status == '4' %}已作废{% endif %}" disabled></td>
+                                        </tr>
+                                    {% endif %}
+
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="widget-box">
+                    <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+                        <h5>正常数据</h5>
+                    </div>
+                    <div class="widget-content nopadding check-operat" style="max-height: 200px;overflow-y: auto;">
                         <table class="table table-striped table-hover data-table table-form-my">
                             <thead>
                                 <tr>
@@ -65,17 +95,18 @@
                             </thead>
                             <tbody id="cardList">
                                 {% for card in cardList %}
-                                <tr>
-                                    <td><input class="form-control" type="text" value="{{ card.card_no }}" disabled></td>
-                                    <td><input class="form-control" type="text" value="{{ card.card_value }}" disabled></td>
-                                    <td><input class="form-control" type="text" value="{{ card.card_value }}" disabled></td>
-                                    <td><input class="form-control" type="text" value="{% if card.card_status == '1' %}未激活{% elif card.card_status == '2' %}已激活{% elif card.card_status == '3' %}待作废{% elif card.card_status == '4' %}已作废{% endif %}" disabled></td>
-                                    <td><button type="button" class="btn btn-danger btn-xs btn-del">删除</button></td>
-                                </tr>
+                                    {% if card.card_status == '1' and card.card_value == card.card_blance %}
+                                    <tr>
+                                        <td><input class="form-control" type="text" value="{{ card.card_no }}" disabled></td>
+                                        <td><input class="form-control" type="text" value="{{ card.card_value }}" disabled></td>
+                                        <td><input class="form-control" type="text" value="{{ card.card_blance }}" disabled></td>
+                                        <td><input class="form-control" type="text" value="未激活" disabled></td>
+                                        <td><button type="button" class="btn btn-danger btn-xs btn-del">删除</button></td>
+                                    </tr>
+                                    {% endif %}
                                 {% endfor %}
                             </tbody>
                         </table>
-{#                            <div class="enter-box"><button class="btn btn-primary pull-right" type="button">确定</button></div>#}
                     </div>
                 </div>
                 <div class="widget-box">
@@ -139,15 +170,15 @@
                         <h5>合计</h5>
                     </div>
                     <div class="widget-content nopadding Total">
-                        <p class="text col-xs-3" id="totalNum">卡合计数量：<b>{{ cardTotalNum }}</b>张</p>
-                        <p class="text col-xs-3" id="totalVal">卡合计金额：<b>{{ cardTotalVal | floatformat:2 }}</b>元</p>
-                        <p class="text col-xs-3" id="discount">折扣额度：<input type="text" value="0.00" {% if roleid != 2 %}disabled{% endif %}>%</p>
-                        <p class="text col-xs-3" id="discountVal">优惠金额（赠卡）：<b>10.00</b>元</p>
+                        <p class="text col-xs-3" id="totalNum">卡合计数量：<b class="red">{{ cardTotalNum }}</b>张</p>
+                        <p class="text col-xs-3" id="totalVal">卡合计金额：<b class="red">{{ cardTotalVal | floatformat:2 }}</b>元</p>
+                        <p class="text col-xs-3" id="discount">折扣额度：<input type="text" value="{{ rate }}" {% if roleid != 2 %}disabled{% endif %}>%</p>
+                        <p class="text col-xs-3" id="discountVal">优惠金额（赠卡）：<b class="red">{{ discountVal }}</b>元</p>
                         <p class="text col-xs-12" id="payInfo">
                             <b>支付详细：</b>
                             <span></span>
                         </p>
-                        <p class="text" id="payTotal">支付合计：<b>0.00</b>元</p>
+                        <p class="text" id="payTotal">支付合计：<b class="red">0.00</b>元</p>
                     </div>
                 </div>
                 <div class="widget-box">
@@ -213,6 +244,9 @@
     </div>
 </div>
 <!--end-containt-part-->
+<script>
+    var rates = {{ rates | safe }};
+</script>
 {% include "common/foot.html" %}
 <script>
     $('#cardsForm .enter-btn').click(function(){

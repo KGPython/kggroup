@@ -113,15 +113,15 @@
                         <h5>合计</h5>
                     </div>
                     <div class="widget-content nopadding Total">
-                        <p class="text col-xs-3" id="totalNum">卡合计数量：<b>0</b>张</p>
-                        <p class="text col-xs-3" id="totalVal">卡合计金额：<b>0.00</b>元</p>
+                        <p class="text col-xs-3" id="totalNum">卡合计数量：<b class="red">0</b>张</p>
+                        <p class="text col-xs-3" id="totalVal">卡合计金额：<b class="red">0.00</b>元</p>
                         <p class="text col-xs-3" id="discount">折扣额度：<input type="text" value="0.00" disabled="disabled">%</p>
-                        <p class="text col-xs-3" id="discountVal">优惠金额（赠卡）：<b>10.00</b>元</p>
+                        <p class="text col-xs-3" id="discountVal">优惠金额（赠卡）：<b class="red">0.00</b>元</p>
                         <p class="text col-xs-12" id="payInfo">
                             <b>支付详细：</b>
                             <span></span>
                         </p>
-                        <p class="text" id="payTotal">支付合计：<b>0.00</b>元</p>
+                        <p class="text" id="payTotal">支付合计：<b class="red">0.00</b>元</p>
                     </div>
                 </div>
                 <div class="widget-box">
@@ -188,7 +188,7 @@
 </div>
 <!--end-containt-part-->
 <script>
-    var ajaxUrl = "{% url 'cardcheck' %}"
+    var rates = {{ rates | safe }};
 </script>
 {% include "common/foot.html" %}
 <script>

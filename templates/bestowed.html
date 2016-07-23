@@ -160,8 +160,8 @@
                     alert('订单提交失败');
                 }
             },
-            error:function(){
-
+            error:function(XMLHttpRequest, textStatus, errorThrown){
+                alert('订单提交失败,失败原因：'+errorThrown);
             }
         })
     })

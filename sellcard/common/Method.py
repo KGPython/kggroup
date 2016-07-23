@@ -10,6 +10,7 @@ from django.http import HttpResponse
 from sellcard.models import Orders
 import datetime
 import pymysql
+import decimal
 
 def getMssqlConn(as_dict=True):
     conn = pymssql.connect(host=Constants.KGGROUP_DB_SERVER,
@@ -109,3 +110,24 @@ def getMysqlConn():
                            charset='utf8mb4',
                            cursorclass=pymysql.cursors.DictCursor)
     return conn
+
+def convertToStr(val,*arg):
+    if arg:
+        fmt,divisor = arg[0],arg[1]
+    else:
+        fmt,divisor = None,None
+
+    if not fmt:
+        fmt = "0.00"
+    if not divisor:
+        divisor = 10000
+
+    if isinstance(val,decimal.Decimal):
+        return str(float((val/divisor).quantize(decimal.Decimal(str(fmt)))))
+    else:
+        if val:
+            return str(float(val))
+        else:
+            return "0.00"
+
+

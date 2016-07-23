@@ -10,6 +10,7 @@ from django.db import transaction
 
 
 def index(request):
+    rates = request.session.get('s_rates')
     return render(request,'cardSale.html',locals())
 
 @csrf_exempt
@@ -43,13 +44,14 @@ def saveOrder(request):
     buyerCompany = request.POST.get('buyerCompany','')
     order_sn = ''
     try:
+        order_sn = mtu.setOrderSn()
         for card in cardList:
             orderInfo = OrderInfo()
             orderInfo.order_id = order_sn
             orderInfo.card_id = card['cardId']
             orderInfo.card_balance = float(card['cardVal'])
             orderInfo.card_action = '0'
-            orderInfo.is_give = '0'
+            orderInfo.card_attr = '1'
             orderInfo.save()
         for Ycard in YcardList:
             YorderInfo = OrderInfo()
@@ -57,7 +59,7 @@ def saveOrder(request):
             YorderInfo.card_id = Ycard['cardId']
             YorderInfo.card_balance = float(Ycard['cardVal'])
             YorderInfo.card_action = '0'
-            YorderInfo.is_give = '1'
+            YorderInfo.card_attr = '2'
             YorderInfo.save()
         for pay in payList:
             orderPay = OrderPaymentInfo()
@@ -70,7 +72,7 @@ def saveOrder(request):
         order.buyer_name = buyerName
         order.buyer_tel = buyerPhone
         order.buyer_company = buyerCompany
-        order.total_amount = ''
+        order.total_amount = float(totalVal)+float(YtotalVal)
         order.paid_amount = totalVal
         order.disc_amount = YtotalVal
         order.diff_price = Ybalance
@@ -78,7 +80,7 @@ def saveOrder(request):
         order.user_id = operator
         order.action_type = actionType
         order.add_time = datetime.datetime.now()
-        order_sn = mtu.setOrderSn()
+
         order.order_sn = order_sn
         order.order_status = 1
         order.save()
@@ -91,7 +93,4 @@ def saveOrder(request):
     except Exception as e:
         print(e)
         res["msg"] = 0
-    else:
-        pass
-        # transaction.commit()
     return HttpResponse(json.dumps(res))
