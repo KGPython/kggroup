@@ -144,6 +144,11 @@
         var url = "{% url 'cardfill_update' %}";
         updateCardFillOrder(url);
     })
+   $(document).on('click','.table tr .btn-del',function(){
+        var parnetTbody = $(this).parent().parent().parent()[0];
+        $(this).parents('tr').remove();
+        setTotal(parnetTbody,'1');
+    });
 </script>
 </body>
 </html>

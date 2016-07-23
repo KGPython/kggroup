@@ -142,6 +142,7 @@ function setTotal(obj,cardtype){
     }else{
         cls = 'Total';
     }
+
     //计算合计
     var trs = $(parentTbody).find('tr');
     var totalNum = 0;
@@ -151,18 +152,20 @@ function setTotal(obj,cardtype){
         var status = $(trs[i]).find('td').eq(3).find('input').val();
         var val = $(trs[i]).find('td').eq(2).find('input').val();
         var type = $(trs[i]).find('td').eq(1).find('input').val();
+         console.log(status);
         if(cardtype=='1'){
             if(status=='未激活'&& parseFloat(val)==parseFloat(type)){
                 totalNum++;
-                totalVal += parseInt(val);
+                totalVal += parseFloat(val);
             }
         }else if(cardtype=='2'){
             if(status=='已激活'){
                 totalNum++;
-                totalVal += parseInt(val);
+                totalVal += parseFloat(val);
             }
         }
-
+    console.log(cls);
+    console.log(totalVal);
     }
     $('.'+cls+' #totalVal b').text(parseFloat(totalVal).toFixed(2));
     $('.'+cls+' #totalNum b').text(totalNum);
