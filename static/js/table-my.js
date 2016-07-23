@@ -397,7 +397,6 @@ function saveCardFillOrder(url){
         alert('请完善补卡人员信息后再尝试提交！');
         return false;
     }
-
     $.ajax({
         url:url,
         type:'post',
