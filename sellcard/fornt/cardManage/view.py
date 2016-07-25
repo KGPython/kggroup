@@ -26,13 +26,13 @@ def cardInStore(request):
             try:
                 for card in cardList:
                     model = CardInventory()
-                    # model.card_no = card['CardNO']
-                    # model.card_blance = card['detail']
-                    # model.card_value = card['detail']
-                    # model.card_status = '1'
-                    # model.card_action = '1'
-                    # model.card_addtime = datetime.datetime.now()
-                    # model.save()
+                    model.card_no = card['CardNO']
+                    model.card_blance = card['detail']
+                    model.card_value = card['detail']
+                    model.card_status = '1'
+                    model.card_action = '1'
+                    model.card_addtime = datetime.datetime.now()
+                    model.save()
                 res['msg']='2'
             except Exception as e:
                 print(e)
