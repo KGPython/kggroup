@@ -139,17 +139,17 @@ def setOrderSn(mode=None):
     end = datetime.date.today().strftime('%Y-%m-%d 23:59:59')
     count=0
     if mode:
-        count = mode.objects.filter(add_time__gte=start,add_time__lte=end).count()
+        count = mode.objects.filter(add_time__gte=start,add_time__lte=end).count()+1
     else:
-        count = Orders.objects.filter(add_time__gte=start,add_time__lte=end).count()
+        count = Orders.objects.filter(add_time__gte=start,add_time__lte=end).count()+1
     if count<10:
-        sn = datetime.date.today().strftime('%y%m%d')+'000'+str(count+1)
+        sn = datetime.date.today().strftime('%y%m%d')+'000'+str(count)
     elif count>=10 and count<100:
-        sn = datetime.date.today().strftime('%y%m%d')+'00'+str(count+1)
+        sn = datetime.date.today().strftime('%y%m%d')+'00'+str(count)
     elif count>=100 and count<1000:
-        sn = datetime.date.today().strftime('%y%m%d')+'0'+str(count+1)
+        sn = datetime.date.today().strftime('%y%m%d')+'0'+str(count)
     elif count>=1000 and count<10000:
-        sn = datetime.date.today().strftime('%y%m%d')+str(count+1)
+        sn = datetime.date.today().strftime('%y%m%d')+str(count)
     return sn
 
 #获取mysql数据库连接

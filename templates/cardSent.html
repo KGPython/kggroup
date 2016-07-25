@@ -146,7 +146,8 @@
                 }else if(data.msg=='1'){
                     alert('数据提交失败')
                 }else if(data.msg=='2'){
-                    alert('卡号')
+                    var cardNo =data.cardId;
+                    alert('考号：'+cardNo+'在数据库中已经存在，请核查')
                 }
 
             }

@@ -102,15 +102,15 @@ def save(request):
 def setOrderSn():
     start = datetime.date.today().strftime('%Y-%m-%d 00:00:00')
     end = datetime.date.today().strftime('%Y-%m-%d 23:59:59')
-    count  = OrderUpCard.objects.filter(created_time__gte=start,created_time__lte=end).count()
+    count  = OrderUpCard.objects.filter(created_time__gte=start,created_time__lte=end).count()+1
     if count<10:
-        sn = datetime.date.today().strftime('%y%m%d')+'000'+str(count+1)
+        sn = datetime.date.today().strftime('%y%m%d')+'000'+str(count)
     elif count>=10 and count<100:
-        sn = datetime.date.today().strftime('%y%m%d')+'00'+str(count+1)
+        sn = datetime.date.today().strftime('%y%m%d')+'00'+str(count)
     elif count>=100 and count<1000:
-        sn = datetime.date.today().strftime('%y%m%d')+'0'+str(count+1)
+        sn = datetime.date.today().strftime('%y%m%d')+'0'+str(count)
     elif count>=1000 and count<10000:
-        sn = datetime.date.today().strftime('%y%m%d')+str(count+1)
+        sn = datetime.date.today().strftime('%y%m%d')+str(count)
     return sn
 
 def gotcard(request):
