@@ -51,37 +51,13 @@
       </div>
 </div>
 <!-- JS Part -->
-<script src="{{ static }}/js/jquery.min.js"></script>
-<script src="{{ static }}/js/jquery.form.js"></script>
+{% include "common/foot.html" %}
 <script type="text/javascript">
     $(function(){
           $('#loginId').bind("click",function(){
-               var ajax_option= {
-                    url: "{% url 'login' %}",
-                    data:$('#loginForm').serialize(),
-                    type:'post',
-                    dataType:'json',
-                    async:false,
-                    cache: false,
-                    beforeSubmit:function(a,f,o){},
-                    success: function (result) {
-                        console.log(result);
-                        var status = result.status;
-                        if(status=='1'){
-                            setCnt("msg","用户名不存在","red");
-                        }else if(status=='2'){
-                            setCnt("msg","密码输入错误","red");
-                        }else if(status=='3'){
-                            setCnt("msg","验证码输入错误","red");
-                        }else if(status=='4'){
-                            setCnt("msg","账号尚未分配权限，请与系统管理员联系","red");
-                        }else{
-                            window.location.href=result.homeurl;
-                        }
-                    }
-               }
-
-               $('#loginForm').ajaxSubmit(ajax_option);
+                //开启加密锁验证
+                //soft_key_validator.checkKey(loginSubmit,"{% url 'login' %}",$("#user_name").val());
+                loginSubmit("{% url 'login' %}");
            });
 
           document.onkeydown = function(e){
@@ -91,6 +67,36 @@
               }
           };
     });
+
+    function loginSubmit(url){
+          console.log(">>>>>>>>>>>>>>>>>>>>"+url);
+          var ajax_option= {
+                url: url,
+                data:$('#loginForm').serialize(),
+                type:'post',
+                dataType:'json',
+                async:false,
+                cache: false,
+                beforeSubmit:function(a,f,o){},
+                success: function (result) {
+                    console.log(result);
+                    var status = result.status;
+                    if(status=='1'){
+                        setCnt("msg","用户名不存在","red");
+                    }else if(status=='2'){
+                        setCnt("msg","密码输入错误","red");
+                    }else if(status=='3'){
+                        setCnt("msg","验证码输入错误","red");
+                    }else if(status=='4'){
+                        setCnt("msg","账号尚未分配权限，请与系统管理员联系","red");
+                    }else{
+                        window.location.href=result.homeurl;
+                    }
+                }
+           }
+
+           $('#loginForm').ajaxSubmit(ajax_option);
+    }
 
     function setCnt(id,content,color){
         $("#error_"+id).html(content)

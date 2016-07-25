@@ -8,3 +8,10 @@
 <script src="{{ static }}/js/matrix.js"></script>
 <script src="{{ static }}/js/table-my.js"></script>
 <script src="{{ static }}/js/jquery.form.js"></script>
+<script src="{{ static }}/js/softkey/md5.js"></script>
+<script src="{{ static }}/js/softkey/Syunew3.js"></script>
+<script src="{{ static }}/js/softkey/softkeyvalidator.js" charset="utf-8"></script>
+<script type="text/javascript">
+    var soft_key_validator = new SoftKeyValidator('101','{{ SOFTKEY_URL }}');
+    soft_key_validator.loadSoftKey();
+</script>
