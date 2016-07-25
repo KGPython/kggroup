@@ -7,7 +7,7 @@ from sellcard.common import Method as mtu
 @csrf_exempt
 def index(request):
     operator = request.session.get('s_uid','')
-    shopId = request.session.get('s_shopid','')
+    shopcode = request.session.get('s_shopcode','')
     roleid= request.session.get("s_roleid",'')
     rates = request.session.get('s_rates')
     if request.method == 'POST':

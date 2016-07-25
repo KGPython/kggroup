@@ -17,7 +17,7 @@ def index(request):
 @transaction.atomic
 def saveOrder(request):
     operator = request.session.get('s_uid','')
-    shopId = request.session.get('s_shopid','')
+    shopcode = request.session.get('s_shopcode','')
     roleid= request.session.get("s_roleid",'')
 
     res = {}
@@ -88,7 +88,7 @@ def saveOrder(request):
             order.paid_amount = totalVal
             order.disc_amount = YtotalVal
             order.diff_price = Ybalance
-            order.shop_id = shopId
+            order.shop_code = shopcode
             order.user_id = operator
             order.action_type = actionType
             order.add_time = datetime.datetime.now()

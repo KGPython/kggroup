@@ -25,14 +25,8 @@ def cardInStore(request):
             conn.close()
             try:
                 for card in cardList:
-                    model = CardInventory()
-                    model.card_no = card['CardNO']
-                    model.card_blance = card['detail']
-                    model.card_value = card['detail']
-                    model.card_status = '1'
-                    model.card_action = '1'
-                    model.card_addtime = datetime.datetime.now()
-                    model.save()
+                    model = CardInventory().objects.filter(card_no=card['CardNO'])\
+                            .update(card_blance =card['detail'],card_status='1',card_action='1',charge_time=datetime.datetime.now())
                 res['msg']='2'
             except Exception as e:
                 print(e)

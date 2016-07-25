@@ -33,10 +33,10 @@ class CardInventory(models.Model):
     card_status = models.CharField(max_length=1)
     card_action = models.CharField(max_length=1)
     card_addtime = models.DateTimeField()
-    shop_id = models.IntegerField(blank=True, null=True)
+    shop_code = models.CharField(max_length=16, blank=True, null=True)
     card_blance = models.DecimalField(max_digits=12, decimal_places=2)
     charge_time = models.DateTimeField(blank=True, null=True)
-    order_sn = models.CharField(max_length=32)
+    order_sn = models.CharField(max_length=32, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -44,7 +44,7 @@ class CardInventory(models.Model):
 
 
 class CardReceive(models.Model):
-    shop_id = models.IntegerField()
+    shop_code = models.CharField(max_length=16)
     rec_sn = models.CharField(max_length=45)
     rec_name = models.CharField(max_length=60)
     add_time = models.DateTimeField()
@@ -52,6 +52,15 @@ class CardReceive(models.Model):
     class Meta:
         managed = False
         db_table = 'card_receive'
+
+
+class CardType(models.Model):
+    card_type_name = models.CharField(max_length=12)
+    card_type_code = models.CharField(max_length=6)
+
+    class Meta:
+        managed = False
+        db_table = 'card_type'
 
 
 class DiscountRate(models.Model):
@@ -123,16 +132,19 @@ class OrderPaymentInfo(models.Model):
 
 
 class OrderUpCard(models.Model):
-    order_sn = models.CharField(max_length=20, blank=True, null=True)
+    order_sn = models.CharField(max_length=20)
     action_type = models.CharField(max_length=1)
     total_amount = models.IntegerField(blank=True, null=True)
     total_price = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
-    diff_price = models.DecimalField(max_digits=11, decimal_places=2)
+    fill_amount = models.IntegerField(blank=True, null=True)
+    fill_price = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
+    diff_price = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
     user_name = models.CharField(max_length=32, blank=True, null=True)
     user_phone = models.CharField(max_length=16, blank=True, null=True)
     state = models.SmallIntegerField(blank=True, null=True)
     shop_id = models.IntegerField()
     operator_id = models.IntegerField()
+    created_id = models.IntegerField(blank=True, null=True)
     created_time = models.DateTimeField(blank=True, null=True)
     modified_time = models.DateTimeField(blank=True, null=True)
 
@@ -157,7 +169,7 @@ class OrderUpCardInfo(models.Model):
 class Orders(models.Model):
     order_sn = models.CharField(max_length=20)
     user_id = models.SmallIntegerField()
-    shop_id = models.IntegerField()
+    shop_code = models.CharField(max_length=16)
     action_type = models.CharField(max_length=1)
     total_amount = models.DecimalField(max_digits=11, decimal_places=2)
     paid_amount = models.DecimalField(max_digits=11, decimal_places=2)
@@ -183,39 +195,6 @@ class Payment(models.Model):
         managed = False
         db_table = 'payment'
 
-class OrderUpCard(models.Model):
-    order_sn = models.CharField(max_length=20, blank=True, null=True)
-    action_type = models.CharField(max_length=1)
-    total_amount = models.IntegerField(blank=True, null=True)
-    total_price = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
-    fill_amount = models.IntegerField(blank=True, null=True)
-    fill_price = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
-    diff_price = models.DecimalField(max_digits=11, decimal_places=2)
-    user_name = models.CharField(max_length=32, blank=True, null=True)
-    user_phone = models.CharField(max_length=16, blank=True, null=True)
-    state = models.SmallIntegerField(blank=True, null=True)
-    shop_id = models.IntegerField()
-    operator_id = models.IntegerField()
-    created_id = models.IntegerField()
-    created_time = models.DateTimeField(blank=True, null=True,auto_now_add=True)
-    modified_time = models.DateTimeField(blank=True, null=True,auto_now_add=True)
-
-    class Meta:
-        managed = False
-        db_table = 'order_up_card'
-
-
-class OrderUpCardInfo(models.Model):
-    order_sn = models.CharField(max_length=20)
-    card_no = models.CharField(max_length=32)
-    card_attr = models.CharField(max_length=1)
-    card_value = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
-    card_balance = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
-    created_time = models.DateTimeField(blank=True, null=True,auto_now_add=True)
-
-    class Meta:
-        managed = False
-        db_table = 'order_up_card_info'
 
 class ReceiveInfo(models.Model):
     rec_id = models.IntegerField()

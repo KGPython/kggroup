@@ -23,12 +23,7 @@
             <h5>领卡管理</h5>
         </div>
         <div class="widget-box">
-            <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
-                <h5>领卡管理</h5>
-                <span class="icon-add-btn"><button type="button" class="btn btn-warning btn-xs btn-add">添加记录</button></span>
-            </div>
-            <div class="widget-content nopadding">
-                <table class="table table-striped table-hover table-form-my">
+            <table class="table table-striped table-hover table-form-my">
                     <thead>
                         <tr>
                             <th class="hidden-phone">面值</th>
@@ -37,67 +32,126 @@
                             <th class="hidden-480">小计</th>
                         </tr>
                     </thead>
-                    <tbody class="discount">
+                    <tbody class="cardSent">
                         <tr>
                             <td>
-                                <select name="" id="" class="form-control">
-                                    <option value=""></option>
+                                <select name="" id="" class="form-control type">
+                                    {% for type in cardTypes %}
+                                        <option value="{{ type.card_type_code }}">{{ type.card_type_name }}元</option>
+                                    {% endfor %}
                                     <option value=""></option>
                                 </select>
                             </td>
-                            <td><input type='text' class='form-control'></td>
-                            <td><input type='text' class='form-control'></td>
-                            <td><input type='text' class='form-control'></td>
+                            <td><input type='text' class='form-control start'></td>
+                            <td><input type='text' class='form-control end'></td>
+                            <td><input type='text' class='form-control subTotal'></td>
                         </tr>
                     </tbody>
                 </table>
-                <div class="row formline" style="margin-top: 15px;">
+            <div class="row formline" style="margin-top: 15px;">
                     <label for="" class="col-xs-1 formline-label">领取门店：</label>
-                    <div class="col-xs-3">
-                        <select name="" id="" class="form-control">
-                            <option value=""></option>
-                            <option value=""></option>
+                    <div class="col-xs-4">
+                        <select name="" id="shop" class="form-control" required="required">
+                            {% for shop in shops %}
+                                <option value="{{ shop.shop_code }}">{{ shop.shop_name }}</option>
+                            {% endfor %}
                         </select>
                     </div>
-                </div>
-                <div class="row formline" style="margin-top: 15px;">
                     <label for="" class="col-xs-1 formline-label">领取人：</label>
-                    <div class="col-xs-3">
-                        <input type="text" class="form-control" placeholder="">
+                    <div class="col-xs-4">
+                        <input type="text" class="form-control" id="person" placeholder="" required="required">
                     </div>
                 </div>
-            </div>
         </div>
-        <div class="enter-box"><button class="btn btn-success pull-right" type="button">提交订单</button></div>
+        <div class="enter-box"><button class="btn btn-success pull-right btn-enter" type="button">提交订单</button></div>
     </div>
 </div>
 <!--end-containt-part-->
 
 {% include "common/foot.html" %}
 <script>
-    $('.widget-box .btn-add').click(function(){
-        var table = $(this).parent().parent().siblings('.widget-content').find('table')[0];
-        var thead = $(table).find('thead')[0];
-        var tbody = $(table).find('tbody')[0];
-        var columsL = $(thead).find('tr').find('th').length;
+    $(document).on('change','.cardSent .end',function(){
+        //计算小计
+        var parentTr = $(this).parent().parent();
+        var start = parentTr.find('.start').val();
+        var end = parentTr.find('.end').val();
+        parentTr.find('.subTotal').val(parseInt(end)-parseInt(start)+1);
+        //创建新的一行
+        var tbody = $(".cardSent");
+        var columsL = tbody.find('tr').eq(0).find('td').length;
         var row = $("<tr></tr>");
         for(var i=0;i<columsL;i++){
             var td = $("<td></td>");
             if(i==0){
-                var obj = $("<select type='text' class='form-control'></select>");
-                var list=[{'id':'20','name':'20元'},{'id':'50','name':'50元'},{'id':'100','name':'100元'}];
+                var obj = $("<select type='text' class='form-control type'></select>");
+                var list={{ cardTypes | safe}};
                 for(var j=0;j<list.length;j++){
-                    var option = $("<option></option>").val(list[j].id).text(list[j].name);
+                    var option = $("<option></option>").val(list[j].card_type_code).text(list[j].card_type_name+'元');
                     $(obj).append(option)
                 }
-            }else{
-                var obj = $('<input type="text" class="form-control">');
+            }else if(i==1){
+                var obj = $('<input type="text" class="form-control start">');
+            }else if(i==2){
+                var obj = $('<input type="text" class="form-control end">');
+            }else if(i==3){
+                var obj = $('<input type="text" class="form-control subTotal">');
             }
             $(td).append(obj);
             $(row).append(td);
         }
-        $(tbody).append(row)
+        tbody.append(row)
     });
+
+    $('.btn-enter').click(function(){
+        //卡列表
+        var list=[];
+        trs = $('.cardSent').find('tr');
+        for(var i=0;i<trs.length;i++){
+            var item ={};
+            var cardType = $(trs[i]).find('td').eq(0).find('select option:selected').text();
+            var start = $(trs[i]).find('td').eq(1).find('input').val();
+            var end = $(trs[i]).find('td').eq(2).find('input').val();
+            var subTotal = $(trs[i]).find('td').eq(3).find('input').val();
+            if(subTotal){
+                item['cardType'] = cardType;
+                item['start'] = start;
+                item['end'] = end;
+                item['subTotal'] = subTotal;
+                list.push(item);
+            }
+        }
+        if(list.length<1){
+            alert('请完善领卡列表后，再尝试提交');
+            return false;
+        }
+        //领取人信息
+        var shop = $('#shop').val();
+        var person = $('#person').val();
+        if(!shop || !person){
+            alert('请完善领卡人员后，再尝试提交');
+            return false;
+        }
+        $.ajax({
+            url:'{% url 'sentOrderSave' %}',
+            dataType:'json',
+            method:'post',
+            data:{
+                'list':JSON.stringify(list),
+                'shop':shop,
+                'person':person
+            },
+            success:function(data){
+                if(data.msg=='0'){
+                    alert('数据提交成功')
+                }else if(data.msg=='1'){
+                    alert('数据提交失败')
+                }else if(data.msg=='2'){
+                    alert('卡号')
+                }
+
+            }
+        })
+    })
 </script>
 </body>
 </html>

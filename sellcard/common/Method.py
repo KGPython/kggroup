@@ -134,10 +134,14 @@ def updateCard(list,mode):
     cur.execute(sql)
     return True
 
-def setOrderSn():
+def setOrderSn(mode=None):
     start = datetime.date.today().strftime('%Y-%m-%d 00:00:00')
     end = datetime.date.today().strftime('%Y-%m-%d 23:59:59')
-    count  = Orders.objects.filter(add_time__gte=start,add_time__lte=end).count()
+    count=0
+    if mode:
+        count = mode.objects.filter(add_time__gte=start,add_time__lte=end).count()
+    else:
+        count = Orders.objects.filter(add_time__gte=start,add_time__lte=end).count()
     if count<10:
         sn = datetime.date.today().strftime('%y%m%d')+'000'+str(count+1)
     elif count>=10 and count<100:
