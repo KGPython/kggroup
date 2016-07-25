@@ -388,8 +388,7 @@ function SoftKeyValidator(call,check_url){
             call:call,
             jsonStr: JSON.stringify(jsonStr)
         };
-        console.log(check_url);
-        console.log(data);
+
         $.ajax({
             url:check_url,
             type: "POST",
@@ -398,7 +397,6 @@ function SoftKeyValidator(call,check_url){
             jsonpCallback:"callBack",
             cache: false,
             success: function(result){
-                console.log(result);
                 var succ = result.success.replace(/\"/g,"");
                 if(succ == '1'){
                     alert('加密锁未启用');
@@ -406,7 +404,6 @@ function SoftKeyValidator(call,check_url){
                 }else if(succ == '2'){
                     if(param){
                         param += "&key_state="+succ;
-                        console.log(">>>>>>>>>>>>>>>>>>>>[param]"+param);
                         func(param);
                     }else{
                         func();
