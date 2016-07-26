@@ -13,9 +13,6 @@ from sellcard.models import CardReceive,ReceiveInfo,CardInventory,MyError
 def index(request):
     shops = base.findShop()
     cardTypes = base.findCardType()
-
-
-
     return render(request,'cardSent.html',locals())
 
 @csrf_exempt
@@ -46,7 +43,7 @@ def sentOrderSave(request):
                 obj.card_id_start = card['start']
                 obj.card_id_end = card['end']
                 obj.card_nums = card['subTotal']
-                obj.card_value = int(card['cardType'][0:len(card['cardType'])-1])
+                obj.card_value = int(card['cardType'])
                 obj.save()
                 for i in range(int(card['start']),int(card['end'])+1):
                     diff = len(card['start'])-len(str(int(card['start'])))
@@ -60,7 +57,7 @@ def sentOrderSave(request):
                     if(num>0):
                         raise MyError(prefix+str(i))
                     else:
-                        item.card_value = int(card['cardType'][0:len(card['cardType'])-1])
+                        item.card_value = int(card['cardType'])
                         item.card_action = '1'
                         item.card_status = '1'
                         item.shop_code = shop

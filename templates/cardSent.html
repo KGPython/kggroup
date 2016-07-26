@@ -37,7 +37,7 @@
                             <td>
                                 <select name="" id="" class="form-control type">
                                     {% for type in cardTypes %}
-                                        <option value="{{ type.card_type_code }}">{{ type.card_type_name }}元</option>
+                                        <option value="{{ type.card_type_name }}">{{ type.card_type_name }}元</option>
                                     {% endfor %}
                                     <option value=""></option>
                                 </select>
@@ -86,7 +86,7 @@
                 var obj = $("<select type='text' class='form-control type'></select>");
                 var list={{ cardTypes | safe}};
                 for(var j=0;j<list.length;j++){
-                    var option = $("<option></option>").val(list[j].card_type_code).text(list[j].card_type_name+'元');
+                    var option = $("<option></option>").val(list[j].card_type_name).text(list[j].card_type_name+'元');
                     $(obj).append(option)
                 }
             }else if(i==1){
@@ -108,7 +108,7 @@
         trs = $('.cardSent').find('tr');
         for(var i=0;i<trs.length;i++){
             var item ={};
-            var cardType = $(trs[i]).find('td').eq(0).find('select option:selected').text();
+            var cardType = $(trs[i]).find('td').eq(0).find('select').val();
             var start = $(trs[i]).find('td').eq(1).find('input').val();
             var end = $(trs[i]).find('td').eq(2).find('input').val();
             var subTotal = $(trs[i]).find('td').eq(3).find('input').val();
@@ -142,14 +142,14 @@
             },
             success:function(data){
                 if(data.msg=='0'){
-                    alert('数据提交成功')
+                    alert('数据提交成功');
+                    $('input[type=text]').val('')
                 }else if(data.msg=='1'){
                     alert('数据提交失败')
                 }else if(data.msg=='2'){
                     var cardNo =data.cardId;
-                    alert('考号：'+cardNo+'在数据库中已经存在，请核查')
+                    alert('考号：'+cardNo+', 在数据库中已经存在，请核查')
                 }
-
             }
         })
     })
