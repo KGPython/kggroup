@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>换卡</title>
 </head>
 <body>
@@ -18,14 +18,15 @@
         </div>
     </div>
     <div class="widget-box">
-        <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+        <div class="widget-title"><span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
             <h5>换卡管理</h5>
         </div>
         <div class="widget-content nopadding">
             <div class="container-fluid">
                 <form action="">
                     <div class="widget-box">
-                        <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+                        <div class="widget-title"><span class="icon"> <span
+                                class="glyphicon glyphicon-th"> </span></span>
                             <h5>入卡查询</h5>
                         </div>
                         <div class="widget-content nopadding">
@@ -36,27 +37,32 @@
                                     <th>面值</th>
                                     <th>余额</th>
                                     <th>状态</th>
+                                    <th>操作</th>
                                 </tr>
                                 </thead>
-                                <tbody class="cardIn">
-                                    <tr>
-                                        <td><input class="form-control cardId" type="text"></td>
-                                        <td><input type='text' class='form-control' readonly="readonly"></td>
-                                        <td><input type='text' class='form-control' readonly="readonly"></td>
-                                        <td><input type='text' class='form-control' readonly="readonly"></td>
-                                    </tr>
+                                <tbody class="cardIn" id="ListIn">
+                                <tr>
+                                    <td><input class="form-control cardId" type="text"></td>
+                                    <td><input type='text' class='form-control' readonly="readonly"></td>
+                                    <td><input type='text' class='form-control' readonly="readonly"></td>
+                                    <td><input type='text' class='form-control' readonly="readonly"></td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger btn-xs btn-del">删除</button>
+                                    </td>
+                                </tr>
                                 </tbody>
                             </table>
-                            <div class="cardInTotal">
+                            <div class="cardInTotal discount">
                                 <p class="text" id="totalNum">卡合计数量：<b>0</b>张</p>
                                 <p class="text" id="totalVal">卡合计金额：<b>0.00</b>元</p>
                             </div>
                         </div>
                     </div>
                     <div class="widget-box">
-                        <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+                        <div class="widget-title"><span class="icon"> <span
+                                class="glyphicon glyphicon-th"> </span></span>
                             <h5>出卡查询</h5>
-{#                            <span class="icon-add-btn"><button type="button" class="btn btn-warning btn-xs btn-add">添加记录</button></span>#}
+                            {#                            <span class="icon-add-btn"><button type="button" class="btn btn-warning btn-xs btn-add">添加记录</button></span>#}
                         </div>
                         <div class="widget-content nopadding">
                             <table class="table table-striped table-hover table-form-my">
@@ -66,15 +72,19 @@
                                     <th>面值</th>
                                     <th>余额</th>
                                     <th>状态</th>
+                                    <th>操作</th>
                                 </tr>
                                 </thead>
-                                <tbody class="cardOut">
-                                    <tr>
-                                        <td><input class="form-control cardId" type="text"></td>
-                                        <td><input type='text' class='form-control' readonly="readonly"></td>
-                                        <td><input type='text' class='form-control' readonly="readonly"></td>
-                                        <td><input type='text' class='form-control' readonly="readonly"></td>
-                                    </tr>
+                                <tbody class="cardOut" id="ListOut">
+                                <tr>
+                                    <td><input class="form-control cardId2" type="text"></td>
+                                    <td><input type='text' class='form-control' readonly="readonly"></td>
+                                    <td><input type='text' class='form-control' readonly="readonly"></td>
+                                    <td><input type='text' class='form-control' readonly="readonly"></td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger btn-xs btn-del">删除</button>
+                                    </td>
+                                </tr>
                                 </tbody>
                             </table>
                             <div class="cardOutTotal">
@@ -84,7 +94,8 @@
                         </div>
                     </div>
                     <div class="widget-box">
-                        <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+                        <div class="widget-title"><span class="icon"> <span
+                                class="glyphicon glyphicon-th"> </span></span>
                             <h5>用户信息</h5>
                         </div>
                         <div class="widget-content nopadding">
@@ -104,7 +115,9 @@
                             </div>
                         </div>
                     </div>
-                    <div class="enter-box"><button class="btn btn-success pull-right" type="button">提交订单</button></div>
+                    <div class="enter-box">
+                        <button class="btn btn-success pull-right" type="button">提交订单</button>
+                    </div>
                 </form>
             </div>
 
@@ -113,7 +126,56 @@
     </div>
 </div>
 <!--end-containt-part-->
-
+<script>
+    var rates = {{ rates | safe }};
+</script>
 {% include "common/foot.html" %}
+<script>
+    // 入卡
+    $(document).on("change", ".cardId", function () {
+        var cardId = $(this).val();
+        //检查是否有重复卡号
+        var cardInList = $('#ListIn');
+        var arr1 = getCardIds(cardInList);
+        arr1.remove(cardId);
+        if (arr1.indexOf(cardId) > -1) {
+            alert('卡号：' + cardId + ',已经存在于入卡列表中,请更换');
+            $(this).val('');
+            return false;
+        }
+
+        //卡校验
+        var ajaxOpt = {'url': '{% url 'cardcheck' %}?cardId=' + cardId, 'method': 'get'};
+        var cardtype = '2';
+        doAjax(this, ajaxOpt, showCardIfno, setTotal, cardtype);
+        addRow(this);
+    });
+
+    // 出卡
+    $(document).on("change", ".cardId2", function () {
+        var cardId2 = $(this).val();
+        //检查是否有重复卡号
+        var cardOutList = $('#ListOut');
+        var arr2 = getCardIds(cardOutList);
+        //检查是否有重复卡号
+        arr2.remove(cardId2);
+        if (arr2.indexOf(cardId2) > -1) {
+            alert('卡号：' + cardId2 + ',已经存在于入卡列表中,请更换');
+            $(this).val('');
+            return false;
+        }
+
+        //卡校验
+        var ajaxOpt = {'url': '{% url 'cardcheck' %}?cardId=' + cardId2, 'method': 'get'};
+        var cardtype = '1';
+        doAjax(this, ajaxOpt, showCardIfno, setTotal, cardtype);
+        addRow(this);
+    });
+    $(document).on('click', '#btn-enter', function () {
+        var action_type = '1';
+        var url = "{% url 'saveorder' %}";
+        saveCardSaleOrder(action_type, url);
+    });
+</script>
 </body>
 </html>
