@@ -19,7 +19,7 @@ def findCardType(cardTypeCode=None):
     if cardTypeCode:
         q.add(Q(card_type_code=cardTypeCode), Q.AND)
 
-    cardList = CardType.objects.values("card_type_name", "card_type_code").filter(q).order_by('card_type_code')
+    cardList = CardType.objects.values("card_type_name").filter(q)
     return cardList
 
 def index(request):

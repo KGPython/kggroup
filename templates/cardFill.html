@@ -91,7 +91,7 @@
 <!--end-containt-part-->
 {% include "common/foot.html" %}
 <script>
-    $(document).on("keyup",".cardId",function(){
+    $(document).on("change",".cardId",function(){
         var cardId = $(this).val();
         //检查是否有重复卡号
         var cardInList = $('#cardInList');

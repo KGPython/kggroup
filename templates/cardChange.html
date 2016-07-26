@@ -138,6 +138,7 @@
         var cardInList = $('#ListIn');
         var arr1 = getCardIds(cardInList);
         arr1.remove(cardId);
+
         if (arr1.indexOf(cardId) > -1) {
             alert('卡号：' + cardId + ',已经存在于入卡列表中,请更换');
             $(this).val('');
@@ -159,6 +160,7 @@
         var arr2 = getCardIds(cardOutList);
         //检查是否有重复卡号
         arr2.remove(cardId2);
+        console.log(arr2);
         if (arr2.indexOf(cardId2) > -1) {
             alert('卡号：' + cardId2 + ',已经存在于入卡列表中,请更换');
             $(this).val('');
