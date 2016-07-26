@@ -236,7 +236,7 @@ class Shops(models.Model):
         db_table = 'shops'
 
 
-#自定义异常
+
 class MyError(Exception):
     def __init__(self, value):
         self.value = value
