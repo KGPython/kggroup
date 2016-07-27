@@ -19,7 +19,6 @@ def index(request):
 def save(request):
     operator = request.session.get('s_uid','')
     shopId = request.session.get('s_shopid','')
-    roleid= request.session.get("s_roleid",'')
 
     res = {}
     actionType = request.POST.get('actionType','')
@@ -30,8 +29,6 @@ def save(request):
     #入卡合计
     totalNumIn = request.POST.get('totalNumIn',0)
     totalValIn = request.POST.get('totalValIn',0.00)
-    #入卡余额
-    balanceIn = request.POST.get('balanceIn',0.00)
 
     #出卡列表
     cardListOut = request.POST.get('cardListOut','')
@@ -39,38 +36,36 @@ def save(request):
     #出卡合计
     totalNumOut = request.POST.get('totalNumOut',0)
     totalValOut = request.POST.get('totalValOut',0.00)
-    #出卡余额
-    balanceOut = request.POST.get('balanceOut',0.00)
 
     #买卡人信息
     buyerName = request.POST.get('buyerName','')
     buyerPhone = request.POST.get('buyerPhone','')
-    buyerCompany = request.POST.get('buyerCompany','')
+
     order_sn = ''
     try:
         with transaction.atomic():
-            order_sn = mtu.setOrderSn()
+            order_sn = mtu.setOrderSn(OrderChangeCard)
             created_time=datetime.datetime.today()
+            print(cardListIn,cardListOut)
             # 入卡插入订单详情
             for cardIn in cardListIn:
                 orderInfo = OrderChangeCardInfo()
                 orderInfo.order_sn = order_sn
                 orderInfo.card_no = cardIn['cardId']
                 orderInfo.card_attr = '1'
-                orderInfo.card_value = cardIn['cardValue']
-                orderInfo.card_balance = float(cardIn['balanceIn'])
-                orderInfo.create_time = created_time
-                # OrderChangeCard.card_action = '1'
-                # OrderChangeCard.card_attr = '3'
+                orderInfo.card_value = float(cardIn['cardVal'])
+                orderInfo.card_balance = float(cardIn['cardVal'])
+                orderInfo.add_time = created_time
                 orderInfo.save()
             for cardOut in cardListOut:
-                order = OrderChangeCard()
-                order.order_id = order_sn
-                order.card_id = cardOut['cardId']
-                order.card_balance = float(cardOut['cardValOut'])
-                order.card_action = '0'
-                order.card_attr = '3'
-                order.save()
+                orderInfo = OrderChangeCardInfo()
+                orderInfo.order_sn = order_sn
+                orderInfo.card_no = cardOut['cardId']
+                orderInfo.card_attr = '0'
+                orderInfo.card_value = float(cardOut['cardVal'])
+                orderInfo.card_balance = float(cardOut['cardVal'])
+                orderInfo.add_time = created_time
+                orderInfo.save()
 
             cardListTotal = cardListIn+cardListOut
             cardIdList = []
@@ -80,22 +75,17 @@ def save(request):
             mtu.updateCard(cardIdList,'2')
             CardInventory.objects.filter(card_no__in=cardIdList).update(card_status='2',card_action='0')
 
-            order = Orders()
-            order.buyer_name = buyerName
-            order.buyer_tel = buyerPhone
-            order.buyer_company = buyerCompany
-            order.total_amount = float(totalVal)+float(YtotalVal)
-            order.paid_amount = totalVal
-            order.disc_amount = YtotalVal
-            order.diff_price = Ybalance
-            order.shop_code = shopcode
-            order.user_id = operator
-            order.action_type = actionType
-            order.add_time = datetime.datetime.now()
-            order.discount_rate = discountRate/100
-
+            order = OrderChangeCard()
             order.order_sn = order_sn
-            order.order_status = 1
+            order.operator_id = operator
+            order.shop_id = shopId
+            order.user_name = buyerName
+            order.user_phone = buyerPhone
+            order.total_in_amont = totalNumIn
+            order.total_in_price = totalValIn
+            order.total_out_amount = totalNumOut
+            order.total_out_price = totalValOut
+            order.add_time = created_time
             order.save()
 
 

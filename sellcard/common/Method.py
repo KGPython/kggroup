@@ -9,7 +9,7 @@ from django.core import serializers
 from django.http import HttpResponse
 from sellcard.models import Orders
 import datetime,json
-import pymysql
+import pymysql,_mssql
 import decimal
 
 def getMssqlConn(as_dict=True):
@@ -20,6 +20,14 @@ def getMssqlConn(as_dict=True):
                            database=Constants.KGGROUP_DB_DATABASE,
                            charset='utf8',
                            as_dict=as_dict)
+    return conn
+def get_MssqlConn():
+    conn = _mssql.connect(server=Constants.KGGROUP_DB_SERVER,
+                           port=Constants.KGGROUP_DB_PORT,
+                           user=Constants.KGGROUP_DB_USER,
+                           password=Constants.KGGROUP_DB_PASSWORD,
+                           database=Constants.KGGROUP_DB_DATABASE,
+                           charset='utf8')
     return conn
 def getReqVal(request,key,default=None):
 
@@ -129,9 +137,13 @@ def updateCard(list,mode):
     cards = cards[0:len(cards)-2]
     sql = "UPDATE guest SET Mode ='"+mode+"' WHERE CardNO in ("+cards+")"
     conn = getMssqlConn()
+    conn.autocommit(False)
     print(sql)
     cur = conn.cursor()
     cur.execute(sql)
+    conn.commit()
+    cur.close()
+    conn.close()
     return True
 
 def setOrderSn(mode=None):

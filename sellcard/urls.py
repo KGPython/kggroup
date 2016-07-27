@@ -14,6 +14,7 @@ urlpatterns = [
     #换卡
     url(r'^sellcard/cardchange/$', 'sellcard.fornt.cardChange.view.index', name='cardchange'),
     url(r'^sellcard/cardchange/save', 'sellcard.fornt.cardChange.view.save', name='cardchange_save'),
+
     ###卡管理
     #入库管理
     url(r'^sellcard/cardmanage/cardinstore', 'sellcard.fornt.cardManage.view.cardInStore',name='cardInStore'),
@@ -23,9 +24,8 @@ urlpatterns = [
     url(r'^sellcard/cardSent/$', 'sellcard.fornt.cardSent.view.index',name='cardSent'),
     url(r'^sellcard/cardSent/save', 'sellcard.fornt.cardSent.view.sentOrderSave',name='sentOrderSave'),
 
-    url(r'^sellcard/cardchange/','sellcard.fornt.cardChange.view.index',name='cardchange'),
-    #url(r'^sellcard/cardfill/','sellcard.fornt.cardFill.view.index',name='cardfill'),
-    url(r'^sellcard/queryfill/', 'sellcard.fornt.cardFill.view.query',name='queryfill'),
+
+    # url(r'^sellcard/queryfill/', 'sellcard.fornt.cardFill.view.query',name='queryfill'),
 
 
     url(r'^sellcard/loginpage/', 'sellcard.login.index',name="login_index"),
@@ -38,7 +38,6 @@ urlpatterns = [
 
     url(r'^sellcard/cardcheck/', 'sellcard.common.Method.cardCheck',name='cardcheck'),
 
-    url(r'^sellcard/setSn/', 'sellcard.common.Method.setOrderSn',name='setSn'),
 
     url(r'^sellcard/cardfill/index/','sellcard.fornt.cardFill.view.index',name='cardfill_index'),
     url(r'^sellcard/cardfill/save', 'sellcard.fornt.cardFill.view.save', name='cardfill_save'),

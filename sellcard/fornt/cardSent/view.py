@@ -7,7 +7,8 @@ from django.db import transaction
 import datetime,json
 
 from sellcard.common import Method as mth
-from sellcard.models import CardReceive,ReceiveInfo,CardInventory,MyError
+from sellcard.models import CardReceive,ReceiveInfo,CardInventory
+from sellcard.common.model import MyError
 
 @csrf_exempt
 def index(request):

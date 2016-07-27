@@ -163,8 +163,6 @@ function setTotal(obj,cardtype){
                 totalVal += parseFloat(val);
             }
         }
-    console.log(cls);
-    console.log(totalVal);
     }
     $('.'+cls+' #totalVal b').text(parseFloat(totalVal).toFixed(2));
     $('.'+cls+' #totalNum b').text(totalNum);
@@ -212,21 +210,36 @@ function getCardIds(obj){
         }
         return list;
     }
-//获取卡信息列表
-function getCardList(obj){
+
+/*
+* 获取出卡信息列表
+* obj:卡列表所在table的tbody
+* flag:操作类型（1：售卡(卡出库)，2：换卡）
+*/
+function getCardList(obj,flag){
     var list = [];
     var trs = $(obj).find('tr');
     for(var j=0;j<trs.length;j++){
         var item = {};
         var status = $(trs[j]).find('td').eq(3).find('input').val();
-        var type = $(trs[j]).find('td').eq(1).find('input').val();
+        var cardType = $(trs[j]).find('td').eq(1).find('input').val();
         var val = $(trs[j]).find('td').eq(2).find('input').val();
-        if(status=='未激活' && parseFloat(val)==parseFloat(type) ){
-            var cardId = $(trs[j]).find('td').eq(0).find('input').val();
-            var val = $(trs[j]).find('td').eq(2).find('input').val();
-            item = {'cardId':cardId,'cardVal':val};
-            list.push(item)
+        if(flag=='1'){
+            if(status=='未激活' && parseFloat(val)==parseFloat(cardType) ){
+                var cardId = $(trs[j]).find('td').eq(0).find('input').val();
+                var val = $(trs[j]).find('td').eq(2).find('input').val();
+                item = {'cardId':cardId,'cardVal':val};
+                list.push(item)
+            }
+        }else if(flag=='2'){
+            if(status=='已激活' && parseFloat(val)==parseFloat(cardType) ){
+                var cardId = $(trs[j]).find('td').eq(0).find('input').val();
+                var val = $(trs[j]).find('td').eq(2).find('input').val();
+                item = {'cardId':cardId,'cardVal':val};
+                list.push(item)
+            }
         }
+
     }
     return list;
 }
@@ -282,14 +295,14 @@ $(document).on('blur','.payList tr',function(){
 
 function saveCardSaleOrder(action_type,url){
     //售卡列表
-    var cardList = getCardList($('#cardList'));
+    var cardList = getCardList($('#cardList'),'1');
     var totalNum = parseInt($('.Total #totalNum b').text());
     var totalVal = parseFloat($('.Total #totalVal b').text());//卡合计金额
     var payTotal = parseFloat($('.Total #payTotal b').text());//支付合计
     var discount = parseFloat($('.Total #discount input').val());
     var discountVal = parseFloat($('.Total #discountVal b').text());
     //赠卡列表
-    var YcardList = getCardList($('#YcardList'));
+    var YcardList = getCardList($('#YcardList'),'1');
     var YtotalNum =parseInt($('.discountTotal #totalNum b').text());
     var YtotalVal =parseFloat($('.discountTotal #totalVal b').text());
     var Ybalance =parseFloat($('.discountTotal #balance b').text());//优惠补差
@@ -352,7 +365,7 @@ function saveCardSaleOrder(action_type,url){
     })
 }
 
-//获取卡信息列表
+//获取补卡信息列表
 function getCardFillList(obj,type){
     var list = [];
     var trs = $(obj).find('tr');
@@ -497,11 +510,11 @@ $(document).ready(function(){
 // 更换卡
 function saveCardChangeOrder(action_type,url){
     //入卡列表
-    var cardListIn = getCardList($('#ListIn'));
+    var cardListIn = getCardList($('#ListIn'),'2');
     var totalNumIn = parseInt($('.cardInTotal #totalNum b').text());// 卡张数合计
     var totalValIn = parseFloat($('.cardInTotal #totalVal b').text());//卡合计金额
     //出卡列表
-    var cardListOut = getCardList($('#ListOut'));
+    var cardListOut = getCardList($('#ListOut'),'1');
     var totalNumOut =parseInt($('.cardOutTotal #totalNum b').text());
     var totalValOut =parseFloat($('.cardOutTotal #totalVal b').text());
     //买卡人信息
@@ -530,11 +543,9 @@ function saveCardChangeOrder(action_type,url){
             'cardListIn':JSON.stringify(cardListIn),
             'totalNumIn':totalNumIn,
             'totalValIn':totalValIn,
-            'balanceIn':card_balance,
             'cardListOut':JSON.stringify(cardListOut),
             'totalNumOut':totalNumOut,
             'totalValOut':totalValOut,
-            'balanceOut':card_balance,
             // 支付人信息
             'buyerName':buyerName,
             'buyerPhone':buyerPhone,
@@ -587,8 +598,6 @@ function setTotal3(obj){
                 totalVal += parseFloat(val);
             }
         }
-    console.log(cls);
-    console.log(totalVal);
     }
     $('.'+cls+' #totalVal b').text(parseFloat(totalVal).toFixed(2));
     $('.'+cls+' #totalNum b').text(totalNum);
@@ -597,7 +606,6 @@ function setTotal3(obj){
 // 更换卡展示信息
 function showCardIfno3(obj,data){
     var parentTbody = $(obj).parent().parent().parent()[0];
-    console.log(parentTbody);
     var cls = '';
 
     if($(parentTbody).hasClass('cardIn')){
@@ -605,7 +613,6 @@ function showCardIfno3(obj,data){
     }else if($(parentTbody).hasClass('cardOut')){
         cls = 'cardOutTotal';
     }
-    console.log(cls);
 
     if(data.length==0){
          var cardStu ='不存在';
