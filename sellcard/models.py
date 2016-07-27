@@ -236,6 +236,36 @@ class Shops(models.Model):
         db_table = 'shops'
 
 
+class OrderChangeCard(models.Model):
+    id = models.IntegerField(primary_key=True)
+    order_sn = models.CharField(max_length=20)
+    operator_id = models.IntegerField()
+    shop_id = models.IntegerField()
+    action_type = models.CharField(max_length=1)
+    user_name = models.CharField(max_length=32, null=True, blank=True)
+    user_phone = models.CharField(max_length=16, null=True, blank=True)
+    total_in_amont = models.IntegerField(null=True, blank=True)
+    total_in_price = models.DecimalField(max_digits=11, decimal_places=2, null=True, blank=True)
+    total_out_amount = models.IntegerField(null=True, blank=True)
+    total_out_price = models.DecimalField(max_digits=11, decimal_places=2, null=True, blank=True)
+
+    class Meta:
+        managed = False
+        db_table = 'order_change_card'
+
+
+class OrderChangeCardInfo(models.Model):
+    order_sn = models.CharField(max_length=32)
+    card_no = models.CharField(max_length=32)
+    card_attr = models.CharField(max_length=1, null=True, blank=True)
+    card_value = models.DecimalField(max_digits=11, decimal_places=2, null=True, blank=True)
+    card_balance = models.DecimalField(max_digits=11, decimal_places=2, null=True, blank=True)
+    create_time = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'order_change_card_info'
+
 
 class MyError(Exception):
     def __init__(self, value):

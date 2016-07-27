@@ -38,7 +38,7 @@ function addRow(obj){
 }
 
 //卡校验 cardType-业务类型：1-出卡，2-入卡
-function doAjax(obj,ajaxOpt,showCardIfno,setTotal,cardType){
+function doAjax(obj,ajaxOpt,showCardIfno,fn,cardType){
     $.ajax({
         url:ajaxOpt.url,
         type:ajaxOpt.method,
@@ -47,7 +47,7 @@ function doAjax(obj,ajaxOpt,showCardIfno,setTotal,cardType){
             var res = data[0] ? data[0].fields : [];
             showCardIfno(obj,res);
             var parnetTbody = $(obj).parent().parent().parent()[0];
-            setTotal(parnetTbody,cardType);
+            fn(parnetTbody,cardType);
         }
     })
 }
@@ -494,7 +494,149 @@ $(document).ready(function(){
     var parterVal = $('#parter').val();
     $('#parterId').val(parterVal)
 });
+// 更换卡
+function saveCardChangeOrder(action_type,url){
+    //入卡列表
+    var cardListIn = getCardList($('#ListIn'));
+    var totalNumIn = parseInt($('.cardInTotal #totalNum b').text());// 卡张数合计
+    var totalValIn = parseFloat($('.cardInTotal #totalVal b').text());//卡合计金额
+    //出卡列表
+    var cardListOut = getCardList($('#ListOut'));
+    var totalNumOut =parseInt($('.cardOutTotal #totalNum b').text());
+    var totalValOut =parseFloat($('.cardOutTotal #totalVal b').text());
+    //买卡人信息
+    var buyerName = $('#buyerName').val();
+    var buyerPhone = $('#buyerPhone').val();
+    var buyerCompany = $('#buyerCompany').val();
+    if(totalValIn==0){
+        alert('还未添加入卡信息，请核对后再尝试提交！');
+        return false;
+    }
+    if(totalValOut==0){
+        alert('还未添加出卡信息，请核对后再尝试提交！');
+        return false;
+    }
+    if(totalValIn!=totalValOut){
+        alert('入卡出卡合计面值不匹配，请核对后再尝试提交！');
+        return false;
+    }
+    $.ajax({
+        url:url,
+        type:'post',
+        dataType:'json',
+        data:{
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            'actionType':action_type,
+            'cardListIn':JSON.stringify(cardListIn),
+            'totalNumIn':totalNumIn,
+            'totalValIn':totalValIn,
+            'balanceIn':card_balance,
+            'cardListOut':JSON.stringify(cardListOut),
+            'totalNumOut':totalNumOut,
+            'totalValOut':totalValOut,
+            'balanceOut':card_balance,
+            // 支付人信息
+            'buyerName':buyerName,
+            'buyerPhone':buyerPhone,
+            'buyerCompany':buyerCompany
 
+        },
+        success:function(data){
+            if(data.msg==1){
+                alert('订单提交成功');
+                window.location.reload();
+                $('input[type=text]').not('.payName').val('');
+                $('input[type=checkbox]').prop('checked',false);
+            }else if(data.msg==0){
+                alert('订单提交失败');
+            }
+        },
+        error:function(XMLHttpRequest, textStatus, errorThrown){
+            alert('订单提交失败,失败原因：'+errorThrown);
+        }
+    })
+}
 
+// 更换卡计算合计
+function setTotal3(obj){
+    var parentTbody = obj;
+    var cls = '';
+    if($(parentTbody).hasClass('cardIn')){
+        cls = 'cardInTotal';
+    }else if($(parentTbody).hasClass('cardOut')){
+        cls = 'cardOutTotal';
+    }
+
+    //计算合计
+    var trs = $(parentTbody).find('tr');
+    var totalNum = 0;
+    var totalVal = 0.00;
+
+    for(var i=0;i<trs.length;i++){
+        var status = $(trs[i]).find('td').eq(3).find('input').val();
+        var val = $(trs[i]).find('td').eq(2).find('input').val();
+        var type = $(trs[i]).find('td').eq(1).find('input').val();
+        if(cls=='cardOutTotal'){
+            if(status=='未激活'&& parseFloat(val)==parseFloat(type)){
+                totalNum++;
+                totalVal += parseFloat(val);
+            }
+        }else if(cls=='cardInTotal'){
+            if(status=='已激活' && parseFloat(val)==parseFloat(type)){
+                totalNum++;
+                totalVal += parseFloat(val);
+            }
+        }
+    console.log(cls);
+    console.log(totalVal);
+    }
+    $('.'+cls+' #totalVal b').text(parseFloat(totalVal).toFixed(2));
+    $('.'+cls+' #totalNum b').text(totalNum);
+}
+
+// 更换卡展示信息
+function showCardIfno3(obj,data){
+    var parentTbody = $(obj).parent().parent().parent()[0];
+    console.log(parentTbody);
+    var cls = '';
+
+    if($(parentTbody).hasClass('cardIn')){
+        cls = 'cardInTotal';
+    }else if($(parentTbody).hasClass('cardOut')){
+        cls = 'cardOutTotal';
+    }
+    console.log(cls);
+
+    if(data.length==0){
+         var cardStu ='不存在';
+    }
+    var cardVal = data.card_value;
+    var cardBlance = data.card_blance;
+
+    if(data.card_status==1){
+        var cardStu ='未激活';
+    }else if(data.card_status==2){
+        var cardStu ='已激活';
+    }else if(data.card_status==3){
+        var cardStu ='已冻结';
+    }else if(data.card_status==4){
+        var cardStu ='已作废';
+    }
+
+    if(cls == 'cardInTotal'){
+        if(data.card_status!=2 || cardVal!=cardBlance){
+            $(obj).parent().parent().find('td').eq(3).find('input').eq(0).addClass('red')
+        }
+    }
+    if(cls == 'cardOutTotal') {
+        if(data.card_status!=1 || cardVal!=cardBlance){
+            $(obj).parent().parent().find('td').eq(3).find('input').eq(0).addClass('red')
+        }
+    }
+
+    $(obj).parent().parent().find('td').eq(1).find('input').eq(0).val(cardVal);
+    $(obj).parent().parent().find('td').eq(2).find('input').eq(0).val(cardBlance);
+    $(obj).parent().parent().find('td').eq(3).find('input').eq(0).val(cardStu);
+}
 
 

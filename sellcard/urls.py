@@ -12,7 +12,8 @@ urlpatterns = [
     url(r'^sellcard/bestowed/$', 'sellcard.fornt.bestowed.view.index',name='bestowed'),
     url(r'^sellcard/bestowed/save', 'sellcard.fornt.bestowed.view.saveOrder',name='bestowedSave'),
     #换卡
-    url(r'^sellcard/cardchange/$', 'sellcard.fornt.cardChange.view.saveOrder', name='cardchange'),
+    url(r'^sellcard/cardchange/$', 'sellcard.fornt.cardChange.view.index', name='cardchange'),
+    url(r'^sellcard/cardchange/save', 'sellcard.fornt.cardChange.view.save', name='cardchange_save'),
     ###卡管理
     #入库管理
     url(r'^sellcard/cardmanage/cardinstore', 'sellcard.fornt.cardManage.view.cardInStore',name='cardInStore'),
