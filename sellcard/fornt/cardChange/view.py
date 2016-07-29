@@ -67,14 +67,17 @@ def save(request):
                 orderInfo.add_time = created_time
                 orderInfo.save()
 
-            cardListTotal = cardListIn+cardListOut
-            cardIdList = []
-            for card in cardListTotal:
-                cardIdList.append(card['cardId'])
+            cardIdInList = []
+            for card in cardListIn:
+                cardIdInList.append(card['cardId'])
+            cardIdOutList = []
+            for card in cardListOut:
+                cardIdOutList.append(card['cardId'])
 
-            mtu.updateCard(cardIdList,'2')
-            CardInventory.objects.filter(card_no__in=cardIdList).update(card_status='2',card_action='0')
-
+            mtu.updateCard(cardIdOutList,'1')
+            mtu.updateCard(cardIdInList,'2')
+            CardInventory.objects.filter(card_no__in=cardIdInList).update(card_status='1',card_action='1')
+            CardInventory.objects.filter(card_no__in=cardIdOutList).update(card_status='2',card_action='0')
             order = OrderChangeCard()
             order.order_sn = order_sn
             order.operator_id = operator

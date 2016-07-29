@@ -3,14 +3,14 @@ __author__ = 'admin'
 import pymssql,random,hashlib
 from PIL import Image, ImageDraw, ImageFont
 from sellcard.common import Constants
-from sellcard.models import CardInventory
+from sellcard.models import CardInventory,Orders,ExchangeCode
 from django.conf import settings
 from django.core import serializers
 from django.http import HttpResponse
-from sellcard.models import Orders
 import datetime,json
 import pymysql,_mssql
 import decimal
+from django.views.decorators.csrf import csrf_exempt
 
 def getMssqlConn(as_dict=True):
     conn = pymssql.connect(host=Constants.KGGROUP_DB_SERVER,
@@ -122,12 +122,19 @@ def cardCheck_Mssql(request):
         item.setdefault("card_status", "-1")
 
     return HttpResponse(json.dumps(item),content_type="application/json")
-
+# 充值卡卡校验
 def cardCheck(request):
     cardId = request.GET.get('cardId','')
     findCardById = CardInventory.objects.all().filter(card_no=cardId)
     findCardById = serializers.serialize('json',findCardById)
     return HttpResponse(findCardById,content_type="application/json")
+
+#兑换码校验
+@csrf_exempt
+def changeCodeCheck(request):
+     hNO = request.POST.get('hNO','')
+     hPassword = request.POST.get('hPassword','')
+     res = ExchangeCode.objects.filter(code=hNO,camilo=hPassword).values('cost')
 
 def updateCard(list,mode):
     cards = "'"
@@ -138,7 +145,6 @@ def updateCard(list,mode):
     sql = "UPDATE guest SET Mode ='"+mode+"' WHERE CardNO in ("+cards+")"
     conn = getMssqlConn()
     conn.autocommit(False)
-    print(sql)
     cur = conn.cursor()
     cur.execute(sql)
     conn.commit()

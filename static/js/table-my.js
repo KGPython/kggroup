@@ -13,23 +13,37 @@ $(document).ready(function(){
     })
 });
 
-function addRow(obj){
+function addRow(obj,target){
     var tbody = $(obj).parent().parent().parent()[0];
     var columsL =$(tbody).find('tr').eq(0).find('td').length;
 
     var row = $("<tr></tr>");
     for(var i=0;i<columsL;i++){
         var td = $("<td></td>");
-        if(i==0){
-            var input = $("<input type='text' class='form-control cardId'>");
-            $(td).append(input);
-        }else if(i==columsL-1){
-            var button = $('<button type="button" class="btn btn-danger btn-xs btn-del">删除</button>');
-            $(td).append(button);
+        if(target=='changeCode'){
+            if(i==0 || i==1){
+                var input = $("<input type='text' class='form-control'>");
+                $(td).append(input);
+            }else if(i==columsL-1){
+                var button = $('<button type="button" class="btn btn-danger btn-xs btn-del">删除</button>');
+                $(td).append(button);
+            }else if(i==2){
+                var input = $("<input type='text' class='form-control hCost' readonly='readonly'>");
+                $(td).append(input);
+            }
         }else{
-            var input = $("<input type='text' class='form-control' readonly='readonly'>");
-            $(td).append(input);
+            if(i==0){
+                var input = $("<input type='text' class='form-control cardId'>");
+                $(td).append(input);
+            }else if(i==columsL-1){
+                var button = $('<button type="button" class="btn btn-danger btn-xs btn-del">删除</button>');
+                $(td).append(button);
+            }else{
+                var input = $("<input type='text' class='form-control' readonly='readonly'>");
+                $(td).append(input);
+            }
         }
+
         $(row).append(td);
         $(row).find('td').eq(0).find('input').eq(0).focus();
     }
@@ -200,16 +214,16 @@ function setTotal(obj,cardtype){
 }
 //获取卡号
 function getCardIds(obj){
-        var list = [];
-        var trs = $(obj).find('tr');
-        for(var j=0;j<trs.length;j++){
-            var cardId = $(trs[j]).find('td').eq(0).find('input').val();
-            if(cardId){
-                list.push(cardId)
-            }
+    var list = [];
+    var trs = $(obj).find('tr');
+    for(var j=0;j<trs.length;j++){
+        var cardId = $(trs[j]).find('td').eq(0).find('input').val();
+        if(cardId){
+            list.push(cardId)
         }
-        return list;
     }
+    return list;
+}
 
 /*
 * 获取出卡信息列表
@@ -243,6 +257,46 @@ function getCardList(obj,flag){
     }
     return list;
 }
+//黄金手校验窗口
+$('.payList #hjs').click(function(){
+    var flag = $(this).is(':checked');
+    if(flag){
+        $('#hjsBox').show()
+    }
+});
+$('.modal-footer #close').click(function(){
+    $('#hjsBox').hide()
+});
+$(document).on('click','#hjsBox .hCost',function(){
+    var _this = $(this);
+    var parentTr = _this.parent().parent();
+    var hNo = parentTr.find('td').eq(0).find('input').val();
+    var hPassword = parentTr.find('td').eq(1).find('input').val();
+    if(!hNo||!hPassword){
+        alert('卡号和卡密不能为空！');
+        return false;
+    }
+    addRow(_this,'changeCode');
+    $.ajax({
+        url:'',
+        method:'post',
+        dataType:'json',
+        data:{
+            'hNo':hNo,
+            'hPassword':hPassword
+        },
+        success:function(data){
+
+        }
+    })
+});
+
+//支付方式--三方平台
+$(document).on('change','.payList #parter',function(){
+    var val = $(this).val();
+    var parentTr = $(this).parent().parent();
+    $(parentTr).find('td').eq(0).find('input').val(val);
+});
 //获取支付列表
 function getPayList(obj){
     var list = [];
@@ -497,12 +551,7 @@ Array.prototype.remove = function(val) {
     this.splice(index, 1);
     }
 };
-//支付方式--三方平台
-$(document).on('change','.payList #parter',function(){
-    var val = $(this).val();
-    var parentTr = $(this).parent().parent();
-    $(parentTr).find('td').eq(0).find('input').val(val);
-});
+
 $(document).ready(function(){
     var parterVal = $('#parter').val();
     $('#parterId').val(parterVal)

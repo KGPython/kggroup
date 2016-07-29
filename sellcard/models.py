@@ -93,6 +93,20 @@ class DjangoSession(models.Model):
         db_table = 'django_session'
 
 
+class ExchangeCode(models.Model):
+    cost = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
+    code = models.CharField(max_length=45, blank=True, null=True)
+    camilo = models.CharField(max_length=45, blank=True, null=True)
+    plat = models.CharField(max_length=1, blank=True, null=True)
+    add_time = models.DateTimeField(blank=True, null=True)
+    exchange_time = models.DateTimeField(blank=True, null=True)
+    shop_id = models.CharField(max_length=5, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'exchange_code'
+
+
 class NavList(models.Model):
     nav_id = models.CharField(max_length=32)
     nav_name = models.CharField(max_length=45)
