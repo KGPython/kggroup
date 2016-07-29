@@ -267,6 +267,19 @@ $('.payList #hjs').click(function(){
 $('.modal-footer #close').click(function(){
     $('#hjsBox').hide()
 });
+$('.modal-footer #submit').click(function(){
+    var trs = $('#hjsBox tbody').find('tr');
+    totalVal=0.00;
+    for(var i=0;i<trs.length;i++){
+        var val = $(trs[i]).find('td').eq(2).find('input').val();
+        if(val){
+            totalVal += parseFloat(val);
+        }
+    }
+    $('.payList #hjsVal').val( parseFloat(totalVal));
+    $('.payList #hjsVal').focus();
+    $('#hjsBox').hide();
+});
 $(document).on('click','#hjsBox .hCost',function(){
     var _this = $(this);
     var parentTr = _this.parent().parent();
@@ -278,15 +291,15 @@ $(document).on('click','#hjsBox .hCost',function(){
     }
     addRow(_this,'changeCode');
     $.ajax({
-        url:'',
+        url:'/kg/sellcard/changcodecheck/',
         method:'post',
         dataType:'json',
         data:{
-            'hNo':hNo,
-            'hPassword':hPassword
+            'code':hNo,
+            'camilo':hPassword
         },
         success:function(data){
-
+            parentTr.find('td').eq(2).find('input').val(data.cost);
         }
     })
 });

@@ -106,7 +106,7 @@
                                 <tr>
                                     <td><input id="hjs" value="7" type="checkbox"></td>
                                     <td><input type='text' class='form-control payName' value="黄金手" disabled></td>
-                                    <td><input type='text' class='form-control payVal'></td>
+                                    <td><input type='text' class='form-control payVal' id="hjsVal" readonly></td>
                                     <td><input type='text' class='form-control'></td>
                                 </tr>
                             </tbody>
@@ -116,19 +116,18 @@
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <button type="button" class="close">×</button>
                                         <h4 class="modal-title" id="myModalLabel">
                                            兑换码验证
                                         </h4>
                                     </div>
                                     <div class="modal-body widget-content">
                                         <table class="table table-striped table-form-my">
+                                            <thead>
+                                                <tr>
+                                                    <th>卡号</th><th>卡密</th><th>金额</th><th>操作</th>
+                                                </tr>
+                                            </thead>
                                             <tbody>
-                                                <thead>
-                                                    <tr>
-                                                        <th>卡号</th><th>卡密</th><th>金额</th><th>操作</th>
-                                                    </tr>
-                                                </thead>
                                                 <tr>
                                                     <td><input type="text" class='form-control'></td>
                                                     <td><input type="text" class='form-control'></td>

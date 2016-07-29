@@ -132,9 +132,13 @@ def cardCheck(request):
 #兑换码校验
 @csrf_exempt
 def changeCodeCheck(request):
-     hNO = request.POST.get('hNO','')
-     hPassword = request.POST.get('hPassword','')
-     res = ExchangeCode.objects.filter(code=hNO,camilo=hPassword).values('cost')
+     code = request.POST.get('code','')
+     camilo = request.POST.get('camilo','')
+     res = ExchangeCode.objects.filter(code__contains=code,camilo__contains=camilo).values('cost')
+     data={}
+     data['cost']=str(res[0]['cost'])
+     return HttpResponse(json.dumps(data),content_type="application/json")
+
 
 def updateCard(list,mode):
     cards = "'"

@@ -36,7 +36,7 @@ urlpatterns = [
     url(r'^sellcard/admin/index/', 'sellcard.admin.views.index',name="admin_index"),
     url(r'^sellcard/index/$', 'sellcard.views.index',name="front_index"),
 
-    url(r'^sellcard/cardcheck/', 'sellcard.common.Method.cardCheck',name='cardcheck'),
+
 
 
     url(r'^sellcard/cardfill/index/','sellcard.fornt.cardFill.view.index',name='cardfill_index'),
@@ -46,5 +46,9 @@ urlpatterns = [
     url(r'^sellcard/cardfill/update/','sellcard.fornt.cardFill.view.update',name='cardfill_update'),
     url(r'^sellcard/cardfill/info/','sellcard.fornt.cardFill.view.info',name='cardfill_info'),
 
+    #卡校验
+    url(r'^sellcard/cardcheck/', 'sellcard.common.Method.cardCheck',name='cardcheck'),
     url(r'^sellcard/cardcheck2/', 'sellcard.common.Method.cardCheck_Mssql', name='cardcheck_mssql'),
+    #兑换码校验
+    url(r'^sellcard/changcodecheck/', 'sellcard.common.Method.changeCodeCheck',name='changeCodeCheck'),
 ]
