@@ -124,7 +124,9 @@ def cardCheck_Mssql(request):
     return HttpResponse(json.dumps(item),content_type="application/json")
 # 充值卡卡校验
 def cardCheck(request):
-    cardId = request.GET.get('cardId','')
+    cardStr= request.GET.get('cardId','')
+    cardIdList=cardStr.split('=')
+    cardId=cardIdList[0]
     findCardById = CardInventory.objects.all().filter(card_no=cardId)
     findCardById = serializers.serialize('json',findCardById)
     return HttpResponse(findCardById,content_type="application/json")

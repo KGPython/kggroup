@@ -72,6 +72,7 @@ function showCardIfno(obj,data){
     }
     var cardVal = data.card_value;
     var cardBlance = data.card_blance;
+    var cardNo = data.card_no;
 
     if(data.card_status==1){
         var cardStu ='未激活';
@@ -86,6 +87,7 @@ function showCardIfno(obj,data){
     if(data.card_status!=1 || cardVal!=cardBlance){
         $(obj).parent().parent().find('td').eq(3).find('input').eq(0).addClass('red')
     }
+    $(obj).parent().parent().find('td').eq(0).find('input').eq(0).val(cardNo);
     $(obj).parent().parent().find('td').eq(1).find('input').eq(0).val(cardVal);
     $(obj).parent().parent().find('td').eq(2).find('input').eq(0).val(cardBlance);
     $(obj).parent().parent().find('td').eq(3).find('input').eq(0).val(cardStu);
@@ -110,6 +112,7 @@ function showCardIfno2(obj,data){
 
     var cardVal = data.card_value;
     var cardBlance = data.card_blance;
+    var cardNo = data.card_no;
 
     if(data.card_status=='1'){
         var cardStu ='已激活';
@@ -131,6 +134,7 @@ function showCardIfno2(obj,data){
         var cardStu ='不存在';
     }
 
+    $(obj).parent().parent().find('td').eq(0).find('input').eq(0).val(cardNo);
     $(obj).parent().parent().find('td').eq(1).find('input').eq(0).val(cardVal);
     $(obj).parent().parent().find('td').eq(2).find('input').eq(0).val(cardBlance);
     $(obj).parent().parent().find('td').eq(3).find('input').eq(0).val(cardStu);
@@ -681,6 +685,7 @@ function showCardIfno3(obj,data){
     }
     var cardVal = data.card_value;
     var cardBlance = data.card_blance;
+    var cardNo = data.card_no;
 
     if(data.card_status==1){
         var cardStu ='未激活';
@@ -703,6 +708,7 @@ function showCardIfno3(obj,data){
         }
     }
 
+    $(obj).parent().parent().find('td').eq(0).find('input').eq(0).val(cardNo);
     $(obj).parent().parent().find('td').eq(1).find('input').eq(0).val(cardVal);
     $(obj).parent().parent().find('td').eq(2).find('input').eq(0).val(cardBlance);
     $(obj).parent().parent().find('td').eq(3).find('input').eq(0).val(cardStu);

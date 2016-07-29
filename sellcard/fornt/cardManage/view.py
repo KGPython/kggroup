@@ -13,7 +13,7 @@ from sellcard import views as base
 def cardInStore(request):
     if request.method=='POST':
         res={}
-        orderSn = request.POST.get('orderSn','K001201206060001')
+        orderSn = request.POST.get('orderSn','')
         list = CardInventory.objects.values('order_sn').filter(order_sn=orderSn)
         if(len(list)>0):
             res['msg']='1'
@@ -26,8 +26,8 @@ def cardInStore(request):
             conn.close()
             try:
                 for card in cardList:
-                    model = CardInventory().objects.filter(card_no=card['CardNO'])\
-                            .update(card_blance =card['detail'],card_status='1',card_action='1',charge_time=datetime.datetime.now())
+                    model = CardInventory.objects.filter(card_no=card['CardNO'])\
+                            .update(card_blance =card['detail'],charge_time=datetime.datetime.now())
                 res['msg']='2'
             except Exception as e:
                 print(e)
