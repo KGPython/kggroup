@@ -26,7 +26,7 @@ def index(request):
         cardTotalNum = 0
         for card in cardList:
             if card['card_status'] == '1' and card['card_value']==card['card_blance']:
-                cardTotalVal += card['card_value']
+                cardTotalVal += float(card['card_value'])
                 cardTotalNum += 1
         rate=0
         discountVal=0
