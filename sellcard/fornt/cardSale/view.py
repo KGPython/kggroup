@@ -91,7 +91,7 @@ def saveOrder(request):
             order.user_id = operator
             order.action_type = actionType
             order.add_time = datetime.datetime.now()
-            order.discount_rate = discountRate/100
+            order.discount_rate = float(discountRate)/100
 
             order.order_sn = order_sn
             order.order_status = 1
