@@ -84,6 +84,8 @@ function showCardIfno(obj,data){
         var cardStu ='已作废';
     }
 
+
+
     if(data.card_status!=1 || cardVal!=cardBlance){
         $(obj).parent().parent().find('td').eq(3).find('input').eq(0).addClass('red')
     }
