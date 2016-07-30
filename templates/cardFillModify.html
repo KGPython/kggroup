@@ -124,7 +124,9 @@
 {% include "common/foot.html" %}
 <script>
     $(document).on("change",".cardId",function(){
-        var cardId = $(this).val();
+        var cardIdStr = $(this).val();
+        var cardId = cardIdStr.split("=")[0];
+        $(this).val(cardId);
         //检查是否有重复卡号
         var cardOutList = $('#cardOutList');
         var arr1 = getCardIds(cardOutList);

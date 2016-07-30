@@ -33,9 +33,7 @@
                 {% if item.sub %}
                      <ul>
                         {% for itm in item.sub %}
-                            <li>
-                                <li><a href="{{ itm.url }}">{{ itm.nav_name }}</a></li>
-                            </li>
+                            <li><a href="{{ itm.url }}">{{ itm.nav_name }}</a></li>
                         {% endfor %}
                     </ul>
                 {% else %}

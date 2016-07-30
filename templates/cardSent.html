@@ -26,10 +26,11 @@
             <table class="table table-striped table-hover table-form-my">
                     <thead>
                         <tr>
-                            <th class="hidden-phone">面值</th>
-                            <th class="hidden-480">起始卡号</th>
-                            <th class="hidden-480">结束卡号</th>
-                            <th class="hidden-480">小计</th>
+                            <th>面值</th>
+                            <th>起始卡号</th>
+                            <th>结束卡号</th>
+                            <th>小计</th>
+                            <th>操作</th>
                         </tr>
                     </thead>
                     <tbody class="cardSent">
@@ -45,6 +46,7 @@
                             <td><input type='text' class='form-control start'></td>
                             <td><input type='text' class='form-control end'></td>
                             <td><input type='text' class='form-control subTotal'></td>
+                            <td><button type="button" class="btn btn-danger btn-xs btn-del">删除</button></td>
                         </tr>
                     </tbody>
                 </table>
@@ -73,8 +75,17 @@
     $(document).on('change','.cardSent .end',function(){
         //计算小计
         var parentTr = $(this).parent().parent();
-        var start = parentTr.find('.start').val();
-        var end = parentTr.find('.end').val();
+        var startStr = parentTr.find('.start').val();
+        var start = startStr.split('=')[0];
+        parentTr.find('.start').val(start);
+
+        var endStr = parentTr.find('.end').val();
+        var end = endStr.split('=')[0];
+        parentTr.find('.end').val(end);
+        if(parseInt(end)<parseInt(start)){
+            alert('起始卡号不能大于截至卡号');
+            return false;
+        }
         parentTr.find('.subTotal').val(parseInt(end)-parseInt(start)+1);
         //创建新的一行
         var tbody = $(".cardSent");
@@ -95,6 +106,8 @@
                 var obj = $('<input type="text" class="form-control end">');
             }else if(i==3){
                 var obj = $('<input type="text" class="form-control subTotal">');
+            }else{
+                var obj = $('<button type="button" class="btn btn-danger btn-xs btn-del">删除</button>');
             }
             $(td).append(obj);
             $(row).append(td);

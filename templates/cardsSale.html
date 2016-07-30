@@ -34,11 +34,11 @@
                             <div class="row formline">
                                 <label for="" class="col-xs-1 formline-label">号段开始：</label>
                                 <div class="col-xs-3">
-                                    <input type="text" class="form-control" name="cardStart" required value="{{ cardStart }}">
+                                    <input type="text" class="form-control" name="cardStart" id="cardStart" required value="{{ cardStart }}">
                                 </div>
                                 <label for="" class="col-xs-1 formline-label">号段结束：</label>
                                 <div class="col-xs-3">
-                                    <input type="text" class="form-control" name="cardEnd" required value="{{ cardEnd }}">
+                                    <input type="text" class="form-control" name="cardEnd" id="cardEnd" required value="{{ cardEnd }}">
                                 </div>
                                 <div class="col-xs-2 pull-right">
                                     <button type="button" class="btn btn-info enter-btn">查询</button>
@@ -103,6 +103,8 @@
                                         <td><button type="button" class="btn btn-danger btn-xs btn-del">删除</button></td>
                                     </tr>
                                     {% endif %}
+                                {% empty %}
+                                    <tr><td colspan="5" class="red text-center">暂无数据</td></tr>
                                 {% endfor %}
                             </tbody>
                         </table>
@@ -290,10 +292,29 @@
 {% include "common/foot.html" %}
 <script>
     $('#cardsForm .enter-btn').click(function(){
+        var startStr = $('#cardsForm #cardStart').val();
+        var start = startStr.split('=')[0];
+        $('#cardsForm #cardStart').val(start);
+
+        var endStr = $('#cardsForm #cardEnd').val();
+        var end = endStr.split('=')[0];
+        $('#cardsForm #cardEnd').val(end);
+
+        if(parseInt(start)>parseInt(end)){
+            alert('起始卡号不能大于截至卡号');
+            return false;
+        }
+        if(!start || !end){
+            alert('起始卡号和截至卡号不能为空');
+            return false;
+        }
         $('#cardsForm').submit();
     });
     $(document).on("change",".cardId",function(){
-        var cardId = $(this).val();
+        var cardIdStr = $(this).val();
+        var cardId = cardIdStr.split("=")[0];
+        $(this).val(cardId);
+
         var cardList = $('#cardList');
         var arr1 = getCardIds(cardList);
         var YcardList =$('#YcardList');

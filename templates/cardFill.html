@@ -92,7 +92,9 @@
 {% include "common/foot.html" %}
 <script>
     $(document).on("change",".cardId",function(){
-        var cardId = $(this).val();
+        var cardIdStr = $(this).val();
+        var cardId = cardIdStr.split("=")[0];
+        $(this).val(cardId);
         //检查是否有重复卡号
         var cardInList = $('#cardInList');
         var arr1 = getCardIds(cardInList);
@@ -112,7 +114,7 @@
     $(document).on('click','#btn-enter',function(){
         var url = "{% url 'cardfill_save' %}";
         saveCardFillOrder(url);
-    })
+    });
     $(document).on('click','.table tr .btn-del',function(){
         var parnetTbody = $(this).parent().parent().parent()[0];
         $(this).parents('tr').remove();

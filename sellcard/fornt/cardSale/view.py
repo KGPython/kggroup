@@ -18,7 +18,6 @@ def index(request):
 def saveOrder(request):
     operator = request.session.get('s_uid','')
     shopcode = request.session.get('s_shopcode','')
-    roleid= request.session.get("s_roleid",'')
 
     res = {}
     actionType = request.POST.get('actionType','')

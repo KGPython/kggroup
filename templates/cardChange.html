@@ -132,7 +132,9 @@
 <script>
     // 卡校验
     $(document).on("change", ".cardId", function () {
-        var cardId = $(this).val();
+        var cardIdStr = $(this).val();
+        var cardId = cardIdStr.split("=")[0];
+        $(this).val(cardId);
         //检查是否有重复卡号
         var cardInList = $('#ListIn');
         var arr1 = getCardIds(cardInList);
