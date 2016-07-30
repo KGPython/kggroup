@@ -13,12 +13,12 @@ from sellcard import views as base
 def cardInStore(request):
     if request.method=='POST':
         res={}
-        orderSn = request.POST.get('orderSn','')
-        list = CardInventory.objects.values('order_sn').filter(order_sn=orderSn)
+        sheetid = request.POST.get('orderSn','')
+        list = CardInventory.objects.values('order_sn').filter(sheetid=sheetid)
         if(len(list)>0):
             res['msg']='1'
         else:
-            sql="SELECT CardNO,detail FROM guest WHERE SheetID ='"+orderSn+"'"
+            sql="SELECT CardNO,detail FROM guest WHERE SheetID ='"+sheetid+"'"
             conn = m.getMssqlConn()
             cur = conn.cursor()
             cur.execute(sql)
@@ -27,7 +27,7 @@ def cardInStore(request):
             try:
                 for card in cardList:
                     model = CardInventory.objects.filter(card_no=card['CardNO'])\
-                            .update(card_blance =card['detail'],charge_time=datetime.datetime.now())
+                            .update(card_blance =card['detail'],charge_time=datetime.datetime.now(),sheetid=sheetid)
                 res['msg']='2'
             except Exception as e:
                 print(e)

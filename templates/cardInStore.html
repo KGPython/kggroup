@@ -4,7 +4,7 @@
     <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>单卡销售</title>
+    <title>卡入库</title>
 </head>
 <body>
 {% include 'common/head.html' %}
@@ -49,7 +49,7 @@
 <script>
     var msg = "{{ res.msg | safe}}";
     if(msg=='1'){
-        alert('此单号已经存在');
+        alert('此单号({{ sheetid }})已经存在');
         $('input').val('')
     }else if(msg=='2'){
         alert('数据提交成功')

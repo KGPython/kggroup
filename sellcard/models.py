@@ -37,6 +37,7 @@ class CardInventory(models.Model):
     card_blance = models.DecimalField(max_digits=12, decimal_places=2)
     charge_time = models.DateTimeField(blank=True, null=True)
     order_sn = models.CharField(max_length=32, blank=True, null=True)
+    sheetid = models.CharField(max_length=32, blank=True, null=True)
 
     class Meta:
         managed = False
