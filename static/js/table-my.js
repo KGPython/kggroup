@@ -1,17 +1,19 @@
-$(document).ready(function(){
-    $(document).on('click','.table tr .btn-del',function(){
-        var parnetTbody = $(this).parent().parent().parent()[0];
-        $(this).parents('tr').remove();
-        cardType='1';
-        setTotal(parnetTbody,cardType);
-    });
-
-    $(document).on('click','.formline .btn-add',function(){
-        var formBox = $(this).parent().parent().parent()[0];
-        var formLine = $(this).parent().parent().clone();
-        $(formBox).append(formLine);
-    })
+//删除tr
+$(document).on('click','.table tr .btn-del',function(){
+    var parnetTbody = $(this).parent().parent().parent()[0];
+    $(this).parents('tr').remove();
+    cardType='1';
+    setTotal(parnetTbody,cardType);
 });
+
+$(document).on('click','.formline .btn-add',function(){
+    var formBox = $(this).parent().parent().parent();
+    var formLine = $(this).parent().parent().clone();
+    formBox.append(formLine);
+    formLine.find('input').val('');
+
+});
+
 
 function addRow(obj,target){
     var tbody = $(obj).parent().parent().parent()[0];
@@ -146,7 +148,11 @@ $('.Total #discount input').blur(function(){
     $('.Total #discountVal b').text(discount);
 
 });
-//计算合计
+/*
+* 计算卡列表合计信息
+* obj：卡列表的tbody
+* cardtype：出卡为1，入卡为2
+* */
 function setTotal(obj,cardtype){
     var parentTbody = obj;
     var cls = '';
@@ -181,6 +187,11 @@ function setTotal(obj,cardtype){
             }
         }
     }
+    if($('#Ycash')){
+        var Ycash=$('#Ycash').val();
+        Ycash = Ycash=='' ?0:parseFloat(Ycash);
+        totalVal +=Ycash;
+    }
     $('.'+cls+' #totalVal b').text(parseFloat(totalVal).toFixed(2));
     $('.'+cls+' #totalNum b').text(totalNum);
 
@@ -191,7 +202,7 @@ function setTotal(obj,cardtype){
             for(var j=0;j<rates.length;j++){
                 if(rates[j].val_min<=parseFloat(totalVal) && rates[j].val_max>=parseFloat(totalVal)){
                     rate=rates[j].discount_rate;
-                    discountVal = parseFloat(totalVal)*rate;
+                    discountVal = Math.round(parseFloat(totalVal)*rate);
                 }
                 $(rateInput).val(rate*100);
                 $('.Total #discountVal b').text(discountVal);
@@ -215,6 +226,22 @@ function setTotal(obj,cardtype){
         $('.cardOutTotal #balance b').text(Ybalance);
     }
 }
+//优惠返现
+$('#Ycash').blur(function(){
+    var Ycash = parseFloat($(this).val());
+    Ycash = Ycash=='' ?0:parseFloat(Ycash);
+    var trs = $('#YcardList').find('tr');
+    var totalVal = Ycash;
+    for(var i=0;i<trs.length;i++){
+        var status = $(trs[i]).find('td').eq(3).find('input').val();
+        var val = $(trs[i]).find('td').eq(2).find('input').val();
+        var type = $(trs[i]).find('td').eq(1).find('input').val();
+        if(status=='未激活'&& parseFloat(val)==parseFloat(type)){
+            totalVal += parseFloat(val);
+        }
+    }
+    $('.discountTotal #totalVal b').text(totalVal)
+});
 //获取卡号
 function getCardIds(obj){
     var list = [];
@@ -260,7 +287,7 @@ function getCardList(obj,flag){
     }
     return list;
 }
-//黄金手校验窗口
+//黄金手--开关
 $('.payList #hjs').click(function(){
     var flag = $(this).is(':checked');
     if(flag){
@@ -270,6 +297,7 @@ $('.payList #hjs').click(function(){
 $('.modal-footer #close').click(function(){
     $('#hjsBox').hide()
 });
+//黄金手--合计
 $('.modal-footer #submit').click(function(){
     var trs = $('#hjsBox tbody').find('tr');
     totalVal=0.00;
@@ -283,6 +311,7 @@ $('.modal-footer #submit').click(function(){
     $('.payList #hjsVal').focus();
     $('#hjsBox').hide();
 });
+//黄金手--校验
 $(document).on('click','#hjsBox .hCost',function(){
     var _this = $(this);
     var parentTr = _this.parent().parent();
@@ -302,13 +331,23 @@ $(document).on('click','#hjsBox .hCost',function(){
             'camilo':hPassword
         },
         success:function(data){
-            parentTr.find('td').eq(2).find('input').val(data.cost);
+            if(data.length>0){
+                parentTr.find('td').eq(2).find('input').val(data.cost);
+            }else{
+                parentTr.find('td').eq(2).find('input').val('0');
+            }
         }
     })
 });
 
 //支付方式--三方平台
 $(document).on('change','.payList #parter',function(){
+    var val = $(this).val();
+    var parentTr = $(this).parent().parent();
+    $(parentTr).find('td').eq(0).find('input').val(val);
+});
+//支付方式--银行打款
+$(document).on('change','.payList #blank',function(){
     var val = $(this).val();
     var parentTr = $(this).parent().parent();
     $(parentTr).find('td').eq(0).find('input').val(val);
@@ -331,6 +370,7 @@ function getPayList(obj){
     }
     return list;
 }
+//支付合计
 $(document).on('blur','.payList tr',function(){
     palyList = $('.payList').find('tr');
     var totalStr = '';
@@ -339,14 +379,13 @@ $(document).on('blur','.payList tr',function(){
         var checkBox = $(palyList[i]).find('td').eq(0).find('input')[0];
         var flag = $(checkBox).is(':checked');
         var payName = '';
-        var payVal = '';
-        if(flag){
+        var payVal= $(palyList[i]).find('td').eq(2).find('input').val();
+        if(flag && payVal){
             if($(palyList[i]).find('td').eq(1).find('select')[0]){
                 payName = $(palyList[i]).find('td').eq(1).find('select option:selected').text();
             }else{
                 payName = $(palyList[i]).find('td').eq(1).find('input').val();
             }
-            payVal= $(palyList[i]).find('td').eq(2).find('input').val();
             totalStr += payName +' : '+payVal+'元 ';
             remarks = $(palyList[i]).find('td').eq(3).find('input').val();
             if(remarks){
@@ -374,6 +413,7 @@ function saveCardSaleOrder(action_type,url){
     //赠卡列表
     var YcardList = getCardList($('#YcardList'),'1');
     var YtotalNum =parseInt($('.discountTotal #totalNum b').text());
+    var Ycash = parseFloat($('#Ycash').val());//优惠返现
     var YtotalVal =parseFloat($('.discountTotal #totalVal b').text());
     var Ybalance =parseFloat($('.discountTotal #balance b').text());//优惠补差
     //支付列表
@@ -387,15 +427,11 @@ function saveCardSaleOrder(action_type,url){
         return false;
     }
     if(payTotal!=totalVal){
-        alert('交款合计与售卡合计面值匹配，请核对后再尝试提交！');
+        alert('交款合计金额与售卡合计金额不匹配，请核对后再尝试提交！');
         return false;
     }
     if(discountVal>0 && YtotalVal==0){
         alert('请完善优惠列表后再尝试提交！');
-        return false;
-    }
-    if(!buyerName || !buyerName){
-        alert('请完善买卡人员信息后再尝试提交！');
         return false;
     }
     $.ajax({
@@ -411,6 +447,7 @@ function saveCardSaleOrder(action_type,url){
             'discount':discount,
             'YcardStr':JSON.stringify(YcardList),
             'YtotalNum':YtotalNum,
+            'Ycash':Ycash,
             'YtotalVal':YtotalVal,
             'Ybalance':Ybalance,//
             'payStr':JSON.stringify(payList),
@@ -479,10 +516,7 @@ function saveCardFillOrder(url){
         alert('还未添加入卡信息，请核对后再尝试提交！');
         return false;
     }
-    if(!user_name || !user_phone){
-        alert('请完善补卡人员信息后再尝试提交！');
-        return false;
-    }
+
     $.ajax({
         url:url,
         type:'post',

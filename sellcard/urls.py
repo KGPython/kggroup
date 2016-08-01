@@ -6,7 +6,8 @@ urlpatterns = [
     #单卡和批量售卡的订单保存
     url(r'^sellcard/cardsale/saveorder','sellcard.fornt.cardSale.view.saveOrder',name='saveorder'),
     #批量售卡
-    url(r'^sellcard/cardssale/','sellcard.fornt.cardsSale.view.index',name='cardssale'),
+    url(r'^sellcard/cardssale/$','sellcard.fornt.cardsSale.view.index',name='cardssale'),
+    url(r'^sellcard/cardssale/query','sellcard.fornt.cardsSale.view.query',name='cardsSaleQuery'),
     #大宗赠卡
     url(r'^sellcard/bestowed/$', 'sellcard.fornt.bestowed.view.index',name='bestowed'),
     url(r'^sellcard/bestowed/save', 'sellcard.fornt.bestowed.view.saveOrder',name='bestowedSave'),

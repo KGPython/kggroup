@@ -71,6 +71,7 @@ def save(request):
             order.user_phone=user_phone
             order.state=1
             order.shop_id=shop_id
+            # order.operator_id=operator_id
             order.created_id=operator_id
             order.created_time=datetime.datetime.today()
             order.save()

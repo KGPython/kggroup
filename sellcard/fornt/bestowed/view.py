@@ -58,7 +58,6 @@ def saveOrder(request):
             order.action_type = '5'
             order.add_time = datetime.datetime.now()
             order.order_sn = order_sn
-            order.order_status = 1
             order.remarks = remarks
             order.save()
             cardIdList = []

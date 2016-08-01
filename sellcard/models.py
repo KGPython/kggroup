@@ -37,6 +37,7 @@ class CardInventory(models.Model):
     card_blance = models.DecimalField(max_digits=12, decimal_places=2)
     charge_time = models.DateTimeField(blank=True, null=True)
     order_sn = models.CharField(max_length=32, blank=True, null=True)
+    sheetid = models.CharField(max_length=32, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -222,7 +223,7 @@ class Orders(models.Model):
     buyer_tel = models.CharField(max_length=11, blank=True, null=True)
     buyer_company = models.CharField(max_length=60, blank=True, null=True)
     add_time = models.DateTimeField()
-    order_status = models.IntegerField(blank=True, null=True)
+    y_cash = models.DecimalField(max_digits=11, decimal_places=0, blank=True, null=True)
     diff_price = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
     remarks = models.TextField(blank=True, null=True)
     discount_rate = models.DecimalField(max_digits=6, decimal_places=2)

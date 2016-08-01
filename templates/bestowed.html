@@ -53,7 +53,6 @@
                         <div class="Total row formline">
                             <p class="text col-xs-3" id="totalNum">卡合计数量：<b>0</b>张</p>
                             <p class="text col-xs-3" id="totalVal">卡合计金额：<b>0.00</b>元</p>
-                            <p class="text col-xs-3" id="balance">应补差额：<b>0.00</b>元</p>
                         </div>
                     </div>
                 </div>
@@ -73,15 +72,15 @@
                     <div class="widget-content nopadding">
                         <div id="buyerInfo" class="collapse in widget-content">
                             <div class="row formline">
-                                <label for="" class="col-xs-1 formline-label"><span class="red">*</span>单位名称：</label>
+                                <label for="" class="col-xs-1 formline-label">单位名称：</label>
                                 <div class="col-xs-5">
                                     <input class="form-control" placeholder="" type="text" id="buyerCompany" required>
                                 </div>
-                                <label for="" class="col-xs-1 formline-label"><span class="red">*</span>联系电话：</label>
+                                <label for="" class="col-xs-1 formline-label">联系电话：</label>
                                 <div class="col-xs-2">
                                     <input class="form-control" placeholder="" type="text" id="buyerPhone" required>
                                 </div>
-                                <label for="" class="col-xs-1 formline-label"><span class="red">*</span>负责人姓名：</label>
+                                <label for="" class="col-xs-1 formline-label">负责人姓名：</label>
                                 <div class="col-xs-2">
                                     <input class="form-control" placeholder="" type="text" id="buyerName" required>
                                 </div>
@@ -137,10 +136,10 @@
         var buyerName = $('#buyerName').val();
         var buyerPhone = $('#buyerPhone').val();
         var buyerCompany = $('#buyerCompany').val();
-        if(!buyerName || !buyerName || !buyerCompany){
+        {% comment %}if(!buyerName || !buyerName || !buyerCompany){
             alert('请完善赠送对象信息后再尝试提交！');
             return false;
-        }
+        }{% endcomment %}
         $.ajax({
             url:"{% url 'bestowedSave' %}",
             method:'post',

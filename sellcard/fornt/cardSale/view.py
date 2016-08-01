@@ -27,6 +27,7 @@ def saveOrder(request):
     #赠卡列表
     YcardStr = request.POST.get('YcardStr','')
     YcardList = json.loads(YcardStr)
+    Ycash = request.POST.get('Ycash','')
     #支付方式
     payStr = request.POST.get('payStr','')
     payList = json.loads(payStr)
@@ -91,10 +92,10 @@ def saveOrder(request):
             order.user_id = operator
             order.action_type = actionType
             order.add_time = datetime.datetime.now()
-            order.discount_rate = discountRate/100
+            order.discount_rate = float(discountRate)/100
 
             order.order_sn = order_sn
-            order.order_status = 1
+            order.y_cash = Ycash
             order.save()
 
 
