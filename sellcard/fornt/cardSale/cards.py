@@ -15,7 +15,7 @@ def index(request):
     roleid= request.session.get("s_roleid",'')
     rates = request.session.get('s_rates')
 
-    return render(request,'cardsSale.html',locals())
+    return render(request, 'cardsSale.html',locals())
 
 @csrf_exempt
 def query(request):
@@ -26,7 +26,15 @@ def query(request):
         list = CardInventory.objects.filter(card_no__gte=obj['start'],card_no__lte=obj['end'])\
             .values('card_no','card_value','card_status','card_blance').order_by('card_no')
         listTotal.extend(list)
+
+    cardNoList = []
+    listTotalNew = []
     for item in listTotal:
-        item['card_value']=float(item['card_value'])
-        item['card_blance']=float(item['card_blance'])
-    return HttpResponse(json.dumps(listTotal))
+        if(item['card_no'] in cardNoList):
+            pass
+        else:
+            cardNoList.append(item['card_no'])
+            item['card_value']=float(item['card_value'])
+            item['card_blance']=float(item['card_blance'])
+            listTotalNew.append(item)
+    return HttpResponse(json.dumps(listTotalNew))

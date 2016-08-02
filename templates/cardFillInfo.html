@@ -34,15 +34,15 @@
                                 <div class="row formline">
                                     <label for="" class="col-xs-1 formline-label">补卡原因：</label>
                                     <div class="col-xs-2">
-                                        <input type='text' class='form-control' readonly="readonly" value="{% ifequal order.action_type 0 %}卡损坏{% else %}卡挂失{% endifequal %}">
+                                        <input type='text' class='form-control' disabled="disabled" value="{% ifequal order.action_type 0 %}卡损坏{% else %}卡挂失{% endifequal %}">
                                     </div>
                                     <label for="" class="col-xs-1 formline-label">补卡人姓名：</label>
                                     <div class="col-xs-2">
-                                        <input type='text' class='form-control' readonly="readonly" value="{{ order.user_name }}">
+                                        <input type='text' class='form-control' disabled="disabled" value="{{ order.user_name }}">
                                     </div>
                                     <label for="" class="col-xs-1 formline-label">联系电话：</label>
                                     <div class="col-xs-1">
-                                         <input type='text' class='form-control' readonly="readonly" value="{{ order.user_phone }}">
+                                         <input type='text' class='form-control' disabled="disabled" value="{{ order.user_phone }}">
                                     </div>
                                 </div>
                             </div>
@@ -64,9 +64,9 @@
                                 <tbody class="cardIn" id="cardInList">
                                  {% for row in cardInList %}
                                     <tr>
-                                        <td><input class="form-control" type="text" readonly="readonly" value="{{ row.card_no }}"></td>
-                                        <td><input type='text' class='form-control' readonly="readonly" value="{{ row.card_value }}"></td>
-                                        <td><input type='text' class='form-control' readonly="readonly" value="{{ row.card_balance }}"></td>
+                                        <td><input class="form-control" type="text" disabled="disabled" value="{{ row.card_no }}"></td>
+                                        <td><input type='text' class='form-control' disabled="disabled" value="{{ row.card_value }}"></td>
+                                        <td><input type='text' class='form-control' disabled="disabled" value="{{ row.card_balance }}"></td>
                                     </tr>
                                 {% endfor %}
                                 </tbody>
@@ -94,9 +94,9 @@
                                     <tbody  class="cardOut"id="cardOutList">
                                      {% for row in cardOutList %}
                                         <tr>
-                                            <td><input class="form-control cardId" type="text" readonly="readonly" value="{{ row.card_no }}"></td>
-                                            <td><input type='text' class='form-control' readonly="readonly" value="{{ row.card_value }}"></td>
-                                            <td><input type='text' class='form-control' readonly="readonly" value="{{ row.card_balance }}"></td>
+                                            <td><input class="form-control cardId" type="text" disabled="disabled" value="{{ row.card_no }}"></td>
+                                            <td><input type='text' class='form-control' disabled="disabled" value="{{ row.card_value }}"></td>
+                                            <td><input type='text' class='form-control' disabled="disabled" value="{{ row.card_balance }}"></td>
                                         </tr>
                                     {% endfor %}
                                     </tbody>

@@ -21,9 +21,6 @@ def index(request):
 def sentOrderSave(request):
     orderSn = mth.setOrderSn(CardReceive)
 
-    operator = request.session.get('s_uid','')
-    shopId = request.session.get('s_shopid','')
-
     cardStr = request.POST.get('list','')
     cards = json.loads(cardStr)
     shop = request.POST.get('shop','')

@@ -1,3 +1,10 @@
+$(document).ready(function(){
+    var parterVal = $('#parter').val();
+    $('#parterId').val(parterVal);
+    var blankVal = $('#blank').val();
+    $('#blankId').val(blankVal)
+});
+
 //删除tr
 $(document).on('click','.table tr .btn-del',function(){
     var parnetTbody = $(this).parent().parent().parent()[0];
@@ -30,7 +37,7 @@ function addRow(obj,target){
                 var button = $('<button type="button" class="btn btn-danger btn-xs btn-del">删除</button>');
                 $(td).append(button);
             }else if(i==2){
-                var input = $("<input type='text' class='form-control hCost' readonly='readonly'>");
+                var input = $("<input type='text' class='form-control hCost' disabled='disabled'>");
                 $(td).append(input);
             }
         }else{
@@ -41,7 +48,7 @@ function addRow(obj,target){
                 var button = $('<button type="button" class="btn btn-danger btn-xs btn-del">删除</button>');
                 $(td).append(button);
             }else{
-                var input = $("<input type='text' class='form-control' readonly='readonly'>");
+                var input = $("<input type='text' class='form-control' disabled='disabled'>");
                 $(td).append(input);
             }
         }
@@ -86,10 +93,10 @@ function showCardIfno(obj,data){
         var cardStu ='已作废';
     }
 
-
-
     if(data.card_status!=1 || cardVal!=cardBlance){
         $(obj).parent().parent().find('td').eq(3).find('input').eq(0).addClass('red')
+    }else{
+        $(obj).parent().parent().find('td').eq(3).find('input').eq(0).removeClass('red')
     }
 
     $(obj).parent().parent().find('td').eq(1).find('input').eq(0).val(cardVal);
@@ -113,7 +120,6 @@ function doAjax2(obj,ajaxOpt,showCardIfno,setTotal,cardType){
 }
 //补卡卡校验信息展示
 function showCardIfno2(obj,data){
-
     var cardVal = data.card_value;
     var cardBlance = data.card_blance;
 
@@ -300,14 +306,19 @@ $('.modal-footer #close').click(function(){
 //黄金手--合计
 $('.modal-footer #submit').click(function(){
     var trs = $('#hjsBox tbody').find('tr');
-    totalVal=0.00;
+    var totalVal=0.00;
+    var codesStr = '';
     for(var i=0;i<trs.length;i++){
         var val = $(trs[i]).find('td').eq(2).find('input').val();
-        if(val){
+        if(parseFloat(val)){
             totalVal += parseFloat(val);
+            var code = $(trs[i]).find('td').eq(0).find('input').val();
+            codesStr +=code+',';
         }
     }
-    $('.payList #hjsVal').val( parseFloat(totalVal));
+    $('.payList #hjsStr').val(codesStr);
+    $('.payList #remark-hjs').val(codesStr);
+    $('.payList #hjsVal').val(parseFloat(totalVal));
     $('.payList #hjsVal').focus();
     $('#hjsBox').hide();
 });
@@ -331,7 +342,7 @@ $(document).on('click','#hjsBox .hCost',function(){
             'camilo':hPassword
         },
         success:function(data){
-            if(data.length>0){
+            if(data.cost){
                 parentTr.find('td').eq(2).find('input').val(data.cost);
             }else{
                 parentTr.find('td').eq(2).find('input').val('0');
@@ -418,6 +429,7 @@ function saveCardSaleOrder(action_type,url){
     var Ybalance =parseFloat($('.discountTotal #balance b').text());//优惠补差
     //支付列表
     var payList = getPayList($('.payList'));
+    var hjsStr = $('.payList #remark-hjs').val();
     //买卡人信息
     var buyerName = $('#buyerName').val();
     var buyerPhone = $('#buyerPhone').val();
@@ -451,6 +463,7 @@ function saveCardSaleOrder(action_type,url){
             'YtotalVal':YtotalVal,
             'Ybalance':Ybalance,//
             'payStr':JSON.stringify(payList),
+            'hjsStr':hjsStr,
             'buyerName':buyerName,
             'buyerPhone':buyerPhone,
             'buyerCompany':buyerCompany
@@ -602,10 +615,6 @@ Array.prototype.remove = function(val) {
     }
 };
 
-$(document).ready(function(){
-    var parterVal = $('#parter').val();
-    $('#parterId').val(parterVal)
-});
 // 更换卡
 function saveCardChangeOrder(action_type,url){
     //入卡列表
@@ -732,11 +741,15 @@ function showCardIfno3(obj,data){
     if(cls == 'cardInTotal'){
         if(data.card_status!=2 || cardVal!=cardBlance){
             $(obj).parent().parent().find('td').eq(3).find('input').eq(0).addClass('red')
+        }else{
+            $(obj).parent().parent().find('td').eq(3).find('input').eq(0).removeClass('red')
         }
     }
     if(cls == 'cardOutTotal') {
         if(data.card_status!=1 || cardVal!=cardBlance){
             $(obj).parent().parent().find('td').eq(3).find('input').eq(0).addClass('red')
+        }else{
+            $(obj).parent().parent().find('td').eq(3).find('input').eq(0).removeClass('red')
         }
     }
 

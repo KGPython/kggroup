@@ -43,9 +43,9 @@
                             <tbody id="cardList">
                                 <tr>
                                     <td><input class="form-control cardId" type="text" name="cardId"></td>
-                                    <td><input type='text' class='form-control' readonly="readonly"></td>
-                                    <td><input type='text' class='form-control' readonly="readonly"></td>
-                                    <td><input type='text' class='form-control' readonly="readonly"></td>
+                                    <td><input type='text' class='form-control' disabled="disabled"></td>
+                                    <td><input type='text' class='form-control' disabled="disabled"></td>
+                                    <td><input type='text' class='form-control' disabled="disabled"></td>
                                     <td><button type="button" class="btn btn-danger btn-xs btn-del">删除</button></td>
                                 </tr>
                             </tbody>
@@ -113,8 +113,11 @@
                                 <tr>
                                     <td><input id="hjs" value="9" type="checkbox"></td>
                                     <td><input type='text' class='form-control payName' value="黄金手" disabled></td>
-                                    <td><input type='text' class='form-control payVal' id="hjsVal" value="0" readonly></td>
-                                    <td><input type='text' class='form-control'></td>
+                                    <td>
+                                        <input type='text' class='form-control payVal' id="hjsVal" value="0" disabled>
+                                        <input type='hidden' id="hjsStr" value="">
+                                    </td>
+                                    <td><input type='text' class='form-control' id="remark-hjs" disabled></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -138,7 +141,7 @@
                                                 <tr>
                                                     <td><input type="text" class='form-control'></td>
                                                     <td><input type="text" class='form-control'></td>
-                                                    <td><input type="text" class='form-control hCost' readonly='readonly'></td>
+                                                    <td><input type="text" class='form-control hCost' disabled='disabled'></td>
                                                     <td><button type="button" class="btn btn-danger btn-xs btn-del">删除</button></td>
                                                 </tr>
                                             </tbody>
@@ -190,9 +193,9 @@
                             <tbody class="discount" id="YcardList">
                                 <tr>
                                     <td><input class="form-control cardId" type="text"></td>
-                                    <td><input type='text' class='form-control' readonly="readonly"></td>
-                                    <td><input type='text' class='form-control' readonly="readonly"></td>
-                                    <td><input type='text' class='form-control' readonly="readonly"></td>
+                                    <td><input type='text' class='form-control' disabled="disabled"></td>
+                                    <td><input type='text' class='form-control' disabled="disabled"></td>
+                                    <td><input type='text' class='form-control' disabled="disabled"></td>
                                     <td><button type="button" class="btn btn-danger btn-xs btn-del">删除</button></td>
                                 </tr>
                             </tbody>

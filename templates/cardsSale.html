@@ -89,7 +89,7 @@
                         </table>
                     </div>
                 </div>
-                <div class="widget-box">
+                <div class="widget-box payment">
                     <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
                         <h5>支付管理</h5>
                     </div>
@@ -117,13 +117,20 @@
                                     <td><input type='text' class='form-control'></td>
                                 </tr>
                                 <tr>
-                                    <td><input id="" value="3" type="checkbox"></td>
-                                    <td><input type='text' class='form-control payName' value="银行打款" disabled></td>
+                                    <td><input id="blankId" value="" type="checkbox"></td>
+                                    <td>
+                                        <select name="" id="blank" class="form-control">
+                                            <option value="">请选择银行打款方式</option>
+                                            <option value="3">汇款</option>
+                                            <option value="4">欠款</option>
+                                            <option value="5">POS消费</option>
+                                        </select>
+                                    </td>
                                     <td><input type='text' class='form-control payVal'></td>
                                     <td><input type='text' class='form-control'></td>
                                 </tr>
                                 <tr>
-                                    <td><input id="" value="4" type="checkbox"></td>
+                                    <td><input id="" value="6" type="checkbox"></td>
                                     <td><input type='text' class='form-control payName' value="移动积分" disabled></td>
                                     <td><input type='text' class='form-control payVal'></td>
                                     <td><input type='text' class='form-control'></td>
@@ -133,18 +140,21 @@
                                     <td>
                                         <select name="" id="parter" class="form-control">
                                             <option value="">请选择</option>
-                                            <option value="5">美团</option>
-                                            <option value="6">糯米</option>
+                                            <option value="7">美团</option>
+                                            <option value="8">糯米</option>
                                         </select>
                                     </td>
                                     <td><input type='text' class='form-control payVal'></td>
                                     <td><input type='text' class='form-control'></td>
                                 </tr>
                                 <tr>
-                                    <td><input id="hjs" value="7" type="checkbox"></td>
+                                    <td><input id="hjs" value="9" type="checkbox"></td>
                                     <td><input type='text' class='form-control payName' value="黄金手" disabled></td>
-                                    <td><input type='text' class='form-control payVal' id="hjsVal" value="" readonly></td>
-                                    <td><input type='text' class='form-control'></td>
+                                    <td>
+                                        <input type='text' class='form-control payVal' id="hjsVal" value="0" disabled>
+                                        <input type='hidden' id="hjsStr" value="">
+                                    </td>
+                                    <td><input type='text' class='form-control' id="remark-hjs" disabled></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -168,7 +178,7 @@
                                                 <tr>
                                                     <td><input type="text" class='form-control'></td>
                                                     <td><input type="text" class='form-control'></td>
-                                                    <td><input type="text" class='form-control hCost' readonly='readonly'></td>
+                                                    <td><input type="text" class='form-control hCost' disabled='disabled'></td>
                                                     <td><button type="button" class="btn btn-danger btn-xs btn-del">删除</button></td>
                                                 </tr>
                                             </tbody>
@@ -220,9 +230,9 @@
                             <tbody class="discount" id="YcardList">
                                 <tr>
                                     <td><input class="form-control cardId" type="text"></td>
-                                    <td><input type='text' class='form-control' readonly="readonly"></td>
-                                    <td><input type='text' class='form-control' readonly="readonly"></td>
-                                    <td><input type='text' class='form-control' readonly="readonly"></td>
+                                    <td><input type='text' class='form-control' disabled="disabled"></td>
+                                    <td><input type='text' class='form-control' disabled="disabled"></td>
+                                    <td><input type='text' class='form-control' disabled="disabled"></td>
                                     <td><button type="button" class="btn btn-danger btn-xs btn-del">删除</button></td>
                                 </tr>
                             </tbody>
@@ -296,6 +306,7 @@
                 cards.push(item);
             }
         }
+
         $.ajax({
             url:'{% url 'cardsSaleQuery' %}',
             method:'post',

@@ -3,7 +3,7 @@ __author__ = 'admin'
 import pymssql,random,hashlib
 from PIL import Image, ImageDraw, ImageFont
 from sellcard.common import Constants
-from sellcard.models import CardInventory,Orders,ExchangeCode
+from sellcard.models import CardInventory,Orders,ExchangeCode,OrderPaymentInfo
 from django.conf import settings
 from django.core import serializers
 from django.http import HttpResponse
@@ -133,12 +133,13 @@ def cardCheck(request):
 def changeCodeCheck(request):
      code = request.POST.get('code','')
      camilo = request.POST.get('camilo','')
-     res = ExchangeCode.objects.filter(code__contains=code,camilo__contains=camilo).values('cost')
+     res = ExchangeCode.objects.filter(code__contains=code,camilo__contains=camilo,shop_code=None).values('cost','shop_code')
      data={}
-     data['cost']=str(res[0]['cost'])
+     if res:
+         data['cost']=str(res[0]['cost'])
      return HttpResponse(json.dumps(data),content_type="application/json")
 
-
+#跟新ERP内部卡状态
 def updateCard(list,mode):
     cards = "'"
     for obj in list:
@@ -155,6 +156,25 @@ def updateCard(list,mode):
     conn.close()
     return True
 
+#更新兑换码状态
+def upChangeCode(list,shopcode):
+    ExchangeCode.objects.filter(code__in=list).update(shop_code=shopcode,exchange_time=datetime.datetime.now())
+    return True
+
+#更新欠款状态
+@csrf_exempt
+def upNoPayStatus(request):
+    orderSn = request.POST.get('orderSn')
+    res={}
+    try:
+        OrderPaymentInfo.objects.filter(order_id=orderSn,pay_id=4).update(is_pay='1',chang_time=datetime.datetime.now())
+        res['msg']='0'
+    except Exception as e:
+        print(e)
+        res['msg']='1'
+    return HttpResponse(json.dumps(res))
+
+#生成订单号
 def setOrderSn(mode=None):
     start = datetime.date.today().strftime('%Y-%m-%d 00:00:00')
     end = datetime.date.today().strftime('%Y-%m-%d 23:59:59')

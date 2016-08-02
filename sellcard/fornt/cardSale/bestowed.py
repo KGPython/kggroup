@@ -11,7 +11,7 @@ from sellcard.common import Method as mtu
 from django.http import HttpResponse
 
 def index(reauest):
-    return render(reauest,'bestowed.html',locals())
+    return render(reauest, 'bestowed.html',locals())
 
 @csrf_exempt
 @transaction.atomic

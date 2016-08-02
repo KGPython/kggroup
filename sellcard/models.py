@@ -38,6 +38,7 @@ class CardInventory(models.Model):
     charge_time = models.DateTimeField(blank=True, null=True)
     order_sn = models.CharField(max_length=32, blank=True, null=True)
     sheetid = models.CharField(max_length=32, blank=True, null=True)
+    is_pay = models.CharField(max_length=1, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -101,7 +102,7 @@ class ExchangeCode(models.Model):
     plat = models.CharField(max_length=1, blank=True, null=True)
     add_time = models.DateTimeField(blank=True, null=True)
     exchange_time = models.DateTimeField(blank=True, null=True)
-    shop_id = models.CharField(max_length=5, blank=True, null=True)
+    shop_code = models.CharField(max_length=16, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -170,6 +171,8 @@ class OrderPaymentInfo(models.Model):
     pay_id = models.IntegerField()
     pay_value = models.DecimalField(max_digits=11, decimal_places=2)
     remarks = models.TextField(blank=True, null=True)
+    is_pay = models.CharField(max_length=1, blank=True, null=True)
+    chang_time = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -188,7 +191,7 @@ class OrderUpCard(models.Model):
     user_phone = models.CharField(max_length=16, blank=True, null=True)
     state = models.SmallIntegerField(blank=True, null=True)
     shop_id = models.IntegerField()
-    operator_id = models.IntegerField()
+    operator_id = models.IntegerField(blank=True, null=True)
     created_id = models.IntegerField(blank=True, null=True)
     created_time = models.DateTimeField(blank=True, null=True)
     modified_time = models.DateTimeField(blank=True, null=True)
@@ -225,7 +228,6 @@ class Orders(models.Model):
     add_time = models.DateTimeField()
     y_cash = models.DecimalField(max_digits=11, decimal_places=0, blank=True, null=True)
     diff_price = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
-    remarks = models.TextField(blank=True, null=True)
     discount_rate = models.DecimalField(max_digits=6, decimal_places=2)
 
     class Meta:

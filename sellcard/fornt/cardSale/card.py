@@ -1,6 +1,6 @@
 #-*- coding:utf-8 -*-
 from django.shortcuts import render
-from sellcard.models import Orders,OrderInfo,OrderPaymentInfo,CardInventory
+from sellcard.models import Orders,OrderInfo,OrderPaymentInfo,CardInventory,ExchangeCode
 from django.http import HttpResponse
 import json
 from django.views.decorators.csrf import csrf_exempt
@@ -31,6 +31,13 @@ def saveOrder(request):
     #支付方式
     payStr = request.POST.get('payStr','')
     payList = json.loads(payStr)
+    hjsStr = request.POST.get('hjsStr','')
+    #黄金手卡号列表
+    hjsList=[]
+    if len(hjsStr)>0:
+        hjsStr = hjsStr[0:len(hjsStr)-1]
+        hjsList = hjsStr.split(',')
+
     #合计信息
     totalNum = request.POST.get('totalNum',0)
     totalVal = request.POST.get('totalVal',0.00)
@@ -68,6 +75,13 @@ def saveOrder(request):
                 orderPay = OrderPaymentInfo()
                 orderPay.order_id = order_sn
                 orderPay.pay_id = pay['payId']
+                if pay['payId']=='4':
+                    orderPay.is_pay='0'
+                else:
+                    orderPay.is_pay='1'
+                if pay['payId']=='9':
+                    mtu.upChangeCode(hjsList,shopcode)
+
                 orderPay.pay_value = pay['payVal']
                 orderPay.remarks = pay['payRmarks']
                 orderPay.save()
@@ -93,7 +107,6 @@ def saveOrder(request):
             order.action_type = actionType
             order.add_time = datetime.datetime.now()
             order.discount_rate = float(discountRate)/100
-
             order.order_sn = order_sn
             order.y_cash = Ycash
             order.save()
