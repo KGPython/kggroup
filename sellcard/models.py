@@ -172,7 +172,7 @@ class OrderPaymentInfo(models.Model):
     pay_value = models.DecimalField(max_digits=11, decimal_places=2)
     remarks = models.TextField(blank=True, null=True)
     is_pay = models.CharField(max_length=1, blank=True, null=True)
-    chang_time = models.DateTimeField(blank=True, null=True)
+    change_time = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         managed = False

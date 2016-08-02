@@ -28,22 +28,30 @@
                     <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
                         <h5>欠款单查询</h5>
                     </div>
-                    <div class="widget-content nopadding">
-                        <div id="buyerInfo" class="collapse in widget-content">
+                    <div class="widget-content collapse in ">
+                        <form id="buyerInfo" class="query-list" method="post" action="{% url 'nopay' %}">
                             <div class="row formline">
                                 <label for="" class="col-xs-1 formline-label">欠款方姓名：</label>
                                 <div class="col-xs-2">
-                                    <input type='text' class='form-control' value="">
+                                    <input type='text' class='form-control' name="buerName" value="">
                                 </div>
                                 <label for="" class="col-xs-1 formline-label">欠款方电话：</label>
                                 <div class="col-xs-2">
-                                    <input type='text' class='form-control' value="">
+                                    <input type='text' class='form-control' name="buerTel" value="">
+                                </div>
+                                <label for="" class="col-xs-1 formline-label">到帐状态：</label>
+                                <div class="col-xs-2">
+                                    <select name="state" id="state" class="form-control">
+                                        <option value="" selected="selected">全部</option>
+                                        <option value="1">已到帐</option>
+                                        <option value="0">未到帐</option>
+                                    </select>
                                 </div>
                                 <div class="col-xs-1">
-                                    <button type="reset" class="btn btn-success btn-add pull-right">查询</button>
+                                    <button type="submit" class="btn btn-success pull-right">查询</button>
                                 </div>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
                 <div class="widget-box">
@@ -61,6 +69,7 @@
                                 <th>欠款方姓名</th>
                                 <th>欠款方电话</th>
                                 <th>欠款到账日期</th>
+                                <th>到帐状态</th>
                                 <th>状态更改</th>
                             </tr>
                             </thead>
@@ -73,8 +82,13 @@
                                     <td><input class="form-control" disabled="disabled" value="{{ row.pay_value }}"></td>
                                     <td><input class='form-control' disabled="disabled" value="{{ row.buyer_name }}"></td>
                                     <td><input class='form-control' disabled="disabled" value="{{ row.buyer_tel }}"></td>
-                                    <td><input class='form-control date' value=""></td>
-                                    <td><button type="button" class="btn btn-danger btn-xs btn-enter">标记到账</button></td>
+                                    <td><input class='form-control date' value="{% if row.change_time %}{{ row.change_time | date:'Y-m-d' }}{% endif %}"></td>
+                                    <td><input class='form-control' disabled="disabled" value="{% if row.is_pay == '0'%}未到帐{% else %}已到账{% endif %}"></td>
+                                    <td>
+                                        {% if row.is_pay == '0'%}
+                                            <button type="button" class="btn btn-danger btn-xs btn-enter">标记到账</button>
+                                        {% endif %}
+                                    </td>
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -90,15 +104,21 @@
 <script>
 
     $(document).on('click','#nopayList .btn-enter',function(){
+        var parentTr = $(this).parent().parent();
+        var orderSn = parentTr.find('.orderSn').val();
+        var date = parentTr.find('.date').val();
+        if(!date){
+            alert('到帐日期不能为空');
+            return false;
+        }
         var r=confirm('确认更改付款状态？');
         if(r){
-            var parentTr = $(this).parent().parent();
-            var orderSn = parentTr.find('.orderSn').val();
+
             $.ajax({
                 url:"{% url 'upNoPayStatus' %}",
                 method:'post',
                 dataType:'json',
-                data:{'orderSn':orderSn},
+                data:{'orderSn':orderSn,'date':date},
                 success:function(data){
                     if(data.msg=='0'){
                         alert('状态更改成功');

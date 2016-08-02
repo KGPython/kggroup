@@ -165,9 +165,11 @@ def upChangeCode(list,shopcode):
 @csrf_exempt
 def upNoPayStatus(request):
     orderSn = request.POST.get('orderSn')
+    dateStr = request.POST.get('date')
+    date = datetime.datetime.strptime(dateStr, "%Y-%m-%d").date()
     res={}
     try:
-        OrderPaymentInfo.objects.filter(order_id=orderSn,pay_id=4).update(is_pay='1',chang_time=datetime.datetime.now())
+        OrderPaymentInfo.objects.filter(order_id=orderSn,pay_id=4).update(is_pay='1',change_time=date)
         res['msg']='0'
     except Exception as e:
         print(e)

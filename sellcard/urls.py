@@ -14,7 +14,7 @@ urlpatterns = [
     url(r'^sellcard/bestowed/save', 'sellcard.fornt.cardSale.bestowed.saveOrder',name='bestowedSave'),
 
     #欠款管理
-    url(r'^sellcard/nopay/$', 'sellcard.fornt.cardSale.nopay.index',name='bestowedSave'),
+    url(r'^sellcard/nopay/$', 'sellcard.fornt.cardSale.nopay.index',name='nopay'),
 
     #换卡
     url(r'^sellcard/cardchange/$', 'sellcard.fornt.cardChange.view.index', name='cardchange'),
