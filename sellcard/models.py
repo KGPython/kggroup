@@ -16,7 +16,7 @@ class AdminUser(models.Model):
     user_name = models.CharField(max_length=45)
     password = models.CharField(max_length=32)
     salt = models.CharField(max_length=10, blank=True, null=True)
-    last_login = models.DateTimeField()
+    last_login = models.DateTimeField(auto_now_add=True)
     last_ip = models.CharField(max_length=15)
     role_id = models.CharField(max_length=11)
     shop_code = models.CharField(max_length=11)
@@ -32,10 +32,10 @@ class CardInventory(models.Model):
     card_value = models.DecimalField(max_digits=12, decimal_places=2)
     card_status = models.CharField(max_length=1)
     card_action = models.CharField(max_length=1)
-    card_addtime = models.DateTimeField()
+    card_addtime = models.DateTimeField(auto_now_add=True)
     shop_code = models.CharField(max_length=16, blank=True, null=True)
     card_blance = models.DecimalField(max_digits=12, decimal_places=2)
-    charge_time = models.DateTimeField(blank=True, null=True)
+    charge_time = models.DateTimeField(blank=True, null=True,auto_now_add=True)
     order_sn = models.CharField(max_length=32, blank=True, null=True)
     sheetid = models.CharField(max_length=32, blank=True, null=True)
     is_pay = models.CharField(max_length=1, blank=True, null=True)
@@ -49,7 +49,7 @@ class CardReceive(models.Model):
     shop_code = models.CharField(max_length=16)
     rec_sn = models.CharField(max_length=45)
     rec_name = models.CharField(max_length=60)
-    add_time = models.DateTimeField()
+    add_time = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         managed = False
@@ -78,7 +78,7 @@ class DiscountRate(models.Model):
 class DjangoMigrations(models.Model):
     app = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
-    applied = models.DateTimeField()
+    applied = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         managed = False
@@ -88,7 +88,7 @@ class DjangoMigrations(models.Model):
 class DjangoSession(models.Model):
     session_key = models.CharField(primary_key=True, max_length=40)
     session_data = models.TextField()
-    expire_date = models.DateTimeField()
+    expire_date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         managed = False
@@ -100,8 +100,8 @@ class ExchangeCode(models.Model):
     code = models.CharField(max_length=45, blank=True, null=True)
     camilo = models.CharField(max_length=45, blank=True, null=True)
     plat = models.CharField(max_length=1, blank=True, null=True)
-    add_time = models.DateTimeField(blank=True, null=True)
-    exchange_time = models.DateTimeField(blank=True, null=True)
+    add_time = models.DateTimeField(blank=True, null=True,auto_now_add=True)
+    exchange_time = models.DateTimeField(blank=True, null=True,auto_now_add=True)
     shop_code = models.CharField(max_length=16, blank=True, null=True)
 
     class Meta:
@@ -134,7 +134,7 @@ class OrderChangeCard(models.Model):
     total_in_price = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
     total_out_amount = models.IntegerField(blank=True, null=True)
     total_out_price = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
-    add_time = models.DateTimeField()
+    add_time = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         managed = False
@@ -147,7 +147,7 @@ class OrderChangeCardInfo(models.Model):
     card_attr = models.CharField(max_length=1, blank=True, null=True)
     card_value = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
     card_balance = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
-    add_time = models.DateTimeField()
+    add_time = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         managed = False
@@ -172,7 +172,7 @@ class OrderPaymentInfo(models.Model):
     pay_value = models.DecimalField(max_digits=11, decimal_places=2)
     remarks = models.TextField(blank=True, null=True)
     is_pay = models.CharField(max_length=1, blank=True, null=True)
-    change_time = models.DateTimeField(blank=True, null=True)
+    change_time = models.DateTimeField(blank=True, null=True,auto_now_add=True)
 
     class Meta:
         managed = False
@@ -193,8 +193,8 @@ class OrderUpCard(models.Model):
     shop_id = models.IntegerField()
     operator_id = models.IntegerField(blank=True, null=True)
     created_id = models.IntegerField(blank=True, null=True)
-    created_time = models.DateTimeField(blank=True, null=True)
-    modified_time = models.DateTimeField(blank=True, null=True)
+    created_time = models.DateTimeField(blank=True, null=True,auto_now_add=True)
+    modified_time = models.DateTimeField(blank=True, null=True,auto_now_add=True)
 
     class Meta:
         managed = False
@@ -207,7 +207,7 @@ class OrderUpCardInfo(models.Model):
     card_attr = models.CharField(max_length=1)
     card_value = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
     card_balance = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
-    created_time = models.DateTimeField(blank=True, null=True)
+    created_time = models.DateTimeField(blank=True, null=True,auto_now_add=True)
 
     class Meta:
         managed = False
@@ -225,7 +225,7 @@ class Orders(models.Model):
     buyer_name = models.CharField(max_length=45, blank=True, null=True)
     buyer_tel = models.CharField(max_length=11, blank=True, null=True)
     buyer_company = models.CharField(max_length=60, blank=True, null=True)
-    add_time = models.DateTimeField()
+    add_time = models.DateTimeField(auto_now_add=True)
     y_cash = models.DecimalField(max_digits=11, decimal_places=0, blank=True, null=True)
     diff_price = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
     discount_rate = models.DecimalField(max_digits=6, decimal_places=2)
