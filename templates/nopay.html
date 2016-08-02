@@ -29,7 +29,7 @@
                         <h5>欠款单查询</h5>
                     </div>
                     <div class="widget-content collapse in ">
-                        <form id="buyerInfo" class="query-list" method="post" action="{% url 'nopay' %}">
+                        <form id="form" class="query-list" method="post" action="{% url 'nopay' %}">
                             <div class="row formline">
                                 <label for="" class="col-xs-1 formline-label">欠款方姓名：</label>
                                 <div class="col-xs-2">
@@ -122,8 +122,7 @@
                 success:function(data){
                     if(data.msg=='0'){
                         alert('状态更改成功');
-                        window.location.reload();
-                        $('#nopayList .date').val('')
+                        $('#form').submit();
                     }
                     if(data.msg=='1'){
                         alert('状态更改失败')

@@ -11,9 +11,9 @@ def index(request):
     shopcode = request.session.get('s_shopcode','')
     sql=''
     if request.method == 'POST':
-        buyerName = request.POST.get('buyerName','')
-        buyerTel = request.POST.get('buyerTel','')
-        isPay = request.POST.get('state','')
+        buyerName = mth.getReqVal(request,"buyerName","")
+        buyerTel = mth.getReqVal(request,"buyerTel","")
+        isPay = mth.getReqVal(request,"state","")
 
         queryWhere1= " and b.buyer_name='"+buyerName+"'" if buyerName  else ''
         queryWhere2= " and b.buyer_tel='"+buyerTel+"'" if buyerTel  else ''
