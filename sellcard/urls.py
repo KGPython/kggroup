@@ -15,6 +15,7 @@ urlpatterns = [
 
     #欠款管理
     url(r'^sellcard/nopay/$', 'sellcard.fornt.cardSale.nopay.index',name='nopay'),
+    url(r'^sellcard/nopay/detail', 'sellcard.fornt.cardSale.nopay.detail',name='nopayDetail'),
 
     #换卡
     url(r'^sellcard/cardchange/$', 'sellcard.fornt.cardChange.view.index', name='cardchange'),

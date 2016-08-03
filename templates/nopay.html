@@ -8,6 +8,9 @@
 </head>
 <body>
 {% include 'common/head.html' %}
+<style>
+    table a{text-decoration: underline}
+</style>
 <!--containt-part-->
 <div id="content">
     <div id="content-header">
@@ -76,7 +79,7 @@
                             <tbody class="cardIn" id="nopayList">
                              {% for row in list %}
                                 <tr>
-                                    <td><input class="form-control orderSn" disabled="disabled" value="{{ row.order_sn }}"></td>
+                                    <td><a class="form-control orderSn green" href="{% url 'nopayDetail' %}?ordersn={{ row.order_sn }}">{{ row.order_sn }}</a></td>
                                     <td><input class='form-control' disabled="disabled" value="{{ row.add_time | date:"Y-m-d"}}"></td>
                                     <td><input class="form-control" disabled="disabled" value="{{ row.paid_amount }}"></td>
                                     <td><input class="form-control" disabled="disabled" value="{{ row.pay_value }}"></td>

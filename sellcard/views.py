@@ -1,6 +1,6 @@
 #-*- coding:utf-8 -*-
 from django.shortcuts import render
-from sellcard.models import Shops,CardType
+from sellcard.models import Shops,CardType,Payment
 from django.db.models import Q
 
 
@@ -21,6 +21,14 @@ def findCardType(cardTypeCode=None):
 
     cardList = CardType.objects.values("card_type_name").filter(q)
     return cardList
+# 查询门店信息
+def findPays(payId=None):
+    q = Q()
+    if payId:
+        q.add(Q(pay_id=payId), Q.AND)
+
+    PayList = Payment.objects.values("id", "payment_name").filter(q).order_by('id')
+    return PayList
 
 def index(request):
 
