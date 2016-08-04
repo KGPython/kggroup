@@ -38,6 +38,14 @@ urlpatterns = [
     url(r'^sellcard/cardSent/$', 'sellcard.fornt.cardSent.view.index',name='cardSent'),
     url(r'^sellcard/cardSent/save', 'sellcard.fornt.cardSent.view.sentOrderSave',name='sentOrderSave'),
 
+    #盘点管理
+    #财务盘点--卡类型
+    url(r'^sellcard/check/finance/$', 'sellcard.fornt.checkManage.finance.index',name="financeCheck"),
+    url(r'^sellcard/check/finance/cardtype/$', 'sellcard.fornt.checkManage.finance.cardType',name="financeCardType"),
+    url(r'^sellcard/check/finance/cardinfo/$', 'sellcard.fornt.checkManage.finance.cardInfo',name="financeCardInfo"),
+    #销售统计
+    url(r'^sellcard/check/sale/$', 'sellcard.fornt.checkManage.sale.index',name="saleCheck"),
+
     #登陆模块
     url(r'^sellcard/loginpage/', 'sellcard.login.index',name="login_index"),
     url(r'^sellcard/login/', 'sellcard.login.login',name="login"),

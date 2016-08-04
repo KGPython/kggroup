@@ -22,4 +22,17 @@ def transPayCode(key):
             payname = pay['payment_name']
     return payname
 
+@register.filter
+def transCardStu(key):
+    status = ''
+    if key=='1':
+        status = '未激活'
+    elif key=='2':
+        status = '已激活'
+    elif key=='3':
+        status = '已冻结'
+    elif key=='4':
+        status = '已作废'
+    return status
+
 
