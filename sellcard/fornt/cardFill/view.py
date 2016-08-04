@@ -116,6 +116,7 @@ def setOrderSn():
 
 def gotcard(request):
     order_sn = mtu.getReqVal(request,"order_sn","")
+
     if order_sn:
         try:
             order = OrderUpCard.objects.values("order_sn","total_amount","total_price","action_type","user_name",
@@ -128,7 +129,7 @@ def gotcard(request):
 @csrf_exempt
 def update(request):
     operator_id = request.session.get('s_uid', '')
-
+    depart = request.session.get('s_depart','')
     res = {}
     # 出卡列表
     cardOutStr = request.POST.get('cardOutStr', '')
@@ -143,7 +144,8 @@ def update(request):
     try:
         with transaction.atomic():
             #更新订单信息
-            OrderUpCard.objects.filter(order_sn=order_sn).update(fill_amount=cardOutTotalNum,fill_price=cardOutTotalVal,diff_price=paymoney,state=0,operator_id=operator_id,modified_time=datetime.datetime.today())
+            OrderUpCard.objects.filter(order_sn=order_sn)\
+                .update(fill_amount=cardOutTotalNum,fill_price=cardOutTotalVal,diff_price=paymoney,state=0,operator_id=operator_id,depart=depart,modified_time=datetime.datetime.today())
             # 订单明细：入卡,待补的卡即待作废的卡
             cardIdOutList = []
             for card in cardOutList:

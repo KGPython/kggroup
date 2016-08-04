@@ -18,6 +18,7 @@ def index(reauest):
 def saveOrder(request):
     operator = request.session.get('s_uid','')
     shopcode = request.session.get('s_shopcode','')
+    depart = request.session.get('s_depart','')
 
     res = {}
     #售卡列表
@@ -54,6 +55,7 @@ def saveOrder(request):
             order.disc_amount = float(totalVal)
             order.diff_price = 0
             order.shop_code = shopcode
+            order.depart = depart
             order.user_id = operator
             order.action_type = '5'
             order.add_time = datetime.datetime.now()

@@ -50,6 +50,7 @@ def login(request):
                 request.session["s_roleid"] = user.role_id
                 request.session["s_shopid"] = user.shop_id
                 request.session["s_shopcode"] = user.shop_code
+                request.session["s_depart"] = user.depart
                 request.session["s_uid"] = user.id
                 request.session["s_rates"] = rateList
                 if user.role_id in ["2","3","5"]:

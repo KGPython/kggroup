@@ -18,6 +18,8 @@ def index(request):
 def saveOrder(request):
     operator = request.session.get('s_uid','')
     shopcode = request.session.get('s_shopcode','')
+    depart = request.session.get('s_depart','')
+
 
     res = {}
     actionType = request.POST.get('actionType','')
@@ -103,6 +105,7 @@ def saveOrder(request):
             order.disc_amount = float(YtotalVal)+float(Ycash)#优惠合计=赠卡合计+优惠返现
             order.diff_price = Ybalance
             order.shop_code = shopcode
+            order.depart = depart
             order.user_id = operator
             order.action_type = actionType
             order.add_time = datetime.datetime.now()

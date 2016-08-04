@@ -43,10 +43,13 @@ urlpatterns = [
     url(r'^sellcard/check/finance/$', 'sellcard.fornt.checkManage.finance.index',name="financeCheck"),
     url(r'^sellcard/check/finance/cardtype/$', 'sellcard.fornt.checkManage.finance.cardType',name="financeCardType"),
     url(r'^sellcard/check/finance/cardinfo/$', 'sellcard.fornt.checkManage.finance.cardInfo',name="financeCardInfo"),
-    #销售统计
+    #销售汇总
     url(r'^sellcard/check/sale/$', 'sellcard.fornt.checkManage.sale.index',name="saleCheck"),
-    #支付分类统计
+    #支付汇总
     url(r'^sellcard/check/pay/$', 'sellcard.fornt.checkManage.pay.index',name="payCheck"),
+    #销售明细查询
+    url(r'^sellcard/check/salequery/$', 'sellcard.fornt.checkManage.saleQuery.index',name="saleQuery"),
+
 
     #登陆模块
     url(r'^sellcard/loginpage/', 'sellcard.login.index',name="login_index"),

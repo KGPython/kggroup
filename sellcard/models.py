@@ -15,12 +15,14 @@ from django.db import models
 class AdminUser(models.Model):
     user_name = models.CharField(max_length=45)
     password = models.CharField(max_length=32)
+    name = models.CharField(max_length=15, blank=True, null=True)
+    shop_id = models.IntegerField()
+    shop_code = models.CharField(max_length=11)
+    depart = models.CharField(max_length=45, blank=True, null=True)
     salt = models.CharField(max_length=10, blank=True, null=True)
     last_login = models.DateTimeField()
     last_ip = models.CharField(max_length=15)
     role_id = models.CharField(max_length=11)
-    shop_code = models.CharField(max_length=11)
-    shop_id = models.IntegerField()
 
     class Meta:
         managed = False
@@ -61,6 +63,15 @@ class CardType(models.Model):
     class Meta:
         managed = False
         db_table = 'card_type'
+
+
+class Departs(models.Model):
+    depart_id = models.CharField(max_length=10)
+    depart_name = models.CharField(max_length=45)
+
+    class Meta:
+        managed = False
+        db_table = 'departs'
 
 
 class DiscountRate(models.Model):
@@ -125,6 +136,7 @@ class NavList(models.Model):
 class OrderChangeCard(models.Model):
     order_sn = models.CharField(max_length=20)
     operator_id = models.SmallIntegerField()
+    depart = models.CharField(max_length=10, blank=True, null=True)
     shop_id = models.IntegerField()
     action_type = models.CharField(max_length=1, blank=True, null=True)
     user_name = models.CharField(max_length=32, blank=True, null=True)
@@ -191,6 +203,7 @@ class OrderUpCard(models.Model):
     state = models.SmallIntegerField(blank=True, null=True)
     shop_id = models.IntegerField()
     operator_id = models.IntegerField(blank=True, null=True)
+    depart = models.CharField(max_length=10, blank=True, null=True)
     created_id = models.IntegerField(blank=True, null=True)
     created_time = models.DateTimeField(blank=True, null=True)
     modified_time = models.DateTimeField(blank=True, null=True)
@@ -216,7 +229,8 @@ class OrderUpCardInfo(models.Model):
 class Orders(models.Model):
     order_sn = models.CharField(unique=True, max_length=20)
     user_id = models.SmallIntegerField()
-    shop_code = models.CharField(max_length=16)
+    depart = models.CharField(max_length=10, blank=True, null=True)
+    shop_code = models.CharField(max_length=16, blank=True, null=True)
     action_type = models.CharField(max_length=1)
     total_amount = models.DecimalField(max_digits=11, decimal_places=2)
     paid_amount = models.DecimalField(max_digits=11, decimal_places=2)

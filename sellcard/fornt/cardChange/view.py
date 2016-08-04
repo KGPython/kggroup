@@ -19,6 +19,7 @@ def index(request):
 def save(request):
     operator = request.session.get('s_uid','')
     shopId = request.session.get('s_shopid','')
+    depart = request.session.get('s_depart','')
 
     res = {}
     actionType = request.POST.get('actionType','')
@@ -81,6 +82,7 @@ def save(request):
             order = OrderChangeCard()
             order.order_sn = order_sn
             order.operator_id = operator
+            order.depart = depart
             order.shop_id = shopId
             order.user_name = buyerName
             order.user_phone = buyerPhone
