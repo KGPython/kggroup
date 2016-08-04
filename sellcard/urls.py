@@ -45,6 +45,8 @@ urlpatterns = [
     url(r'^sellcard/check/finance/cardinfo/$', 'sellcard.fornt.checkManage.finance.cardInfo',name="financeCardInfo"),
     #销售统计
     url(r'^sellcard/check/sale/$', 'sellcard.fornt.checkManage.sale.index',name="saleCheck"),
+    #支付分类统计
+    url(r'^sellcard/check/pay/$', 'sellcard.fornt.checkManage.pay.index',name="payCheck"),
 
     #登陆模块
     url(r'^sellcard/loginpage/', 'sellcard.login.index',name="login_index"),

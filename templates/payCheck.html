@@ -5,7 +5,7 @@
     <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>销售汇总</title>
+    <title>支付汇总</title>
     <link rel="stylesheet" href="{{ static }}/css/bootstrap-datetimepicker.min.css">
 </head>
 <body>
@@ -20,18 +20,18 @@
             <a data-original-title="Go to Home" href="#" title="" class="tip-bottom">
                 <span class="glyphicon glyphicon-home" aria-hidden="true"> </span> 首页
             </a>
-            <a href="#" class="current">销售汇总</a>
+            <a href="#" class="current">支付汇总</a>
         </div>
     </div>
     <div class="widget-box">
         <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
-            <h5>销售汇总</h5>
+            <h5>支付汇总</h5>
         </div>
         <div class="widget-content nopadding">
             <div class="container-fluid">
                 <div class="widget-box">
                     <div class="widget-content collapse in ">
-                        <form id="form" class="query-list" method="post" action="{% url 'saleCheck' %}">
+                        <form id="form" class="query-list" method="post" action="{% url 'payCheck' %}">
                             <div class="row formline">
                                 <label for="" class="col-xs-1 formline-label">开始时间：</label>
                                 <div class="col-xs-3">
@@ -62,25 +62,27 @@
                         <table class="table table-striped table-hover table-form-my">
                             <thead>
                                 <tr>
-                                    <th>门店名称</th>
-                                    <th>销售金额（单位：元）</th>
-                                    <th>优惠金额（单位：元）</th>
-                                    <th>销售占比</th>
+                                    <th>支付方式</th>
+                                    <th>支付合计（单位：元）</th>
+                                    <th>支付占比（单位：元）</th>
                                 </tr>
                             </thead>
                             <tbody class="cardIn" id="nopayList">
-                                {% for row in saleList %}
+                                {% for row in payList %}
                                     <tr>
-                                        <td>{{ row.shop_code | transShopCode }}</td>
-                                        <td>{{ row.sale }}</td>
-                                        <td>{{ row.disc }}</td>
-                                        <td>{{ row.sale | divide:saleTotal }}</td>
+                                        <td>{{ row.pay_id | transPayCode}}</td>
+                                        <td>
+                                            {{ row.pay_value }}
+                                            {% if row.pay_id == 4 %}
+                                                <span style="margin-left: 30px;">(未到帐款：<b>{{ nopayDict.pay_value }}</b>)</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ row.pay_value | divide:payTotal }}</td>
                                     </tr>
                                 {% endfor %}
                             <tr>
                                 <td>合计</td>
-                                <td>{{ saleTotal }}</td>
-                                <td>{{ discTotal }}</td>
+                                <td>{{ payTotal }}</td>
                                 <td></td>
                             </tr>
                             </tbody>
