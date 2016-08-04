@@ -14,10 +14,11 @@ def index(request):
     if request.method == 'POST':
         start = request.POST.get('start','')
         end = request.POST.get('end','')
+        endTime = datetime.datetime.strptime(end,'%Y-%m-%d').date() + datetime.timedelta(1)
 
         cardList = CardInventory.objects\
                 .values('shop_code')\
-                .filter(charge_time__gte=start,charge_time__lte=end,card_status='1',card_action='1')\
+                .filter(charge_time__gte=start,charge_time__lte=endTime,card_status='1',card_action='1')\
                 .annotate(num=Count('card_no'),balance=Sum('card_blance'))\
                 .order_by('shop_code')
 
@@ -32,8 +33,9 @@ def cardType(request):
     shopCode = request.GET.get('shopcode','')
     start = request.GET.get('start','')
     end = request.GET.get('end','')
+    endTime = datetime.datetime.strptime(end,'%Y-%m-%d').date() + datetime.timedelta(1)
     cardList = CardInventory.objects.values('card_value')\
-            .filter(shop_code=shopCode,charge_time__gte=start,charge_time__lte=end,card_status='1',card_action='1')\
+            .filter(shop_code=shopCode,charge_time__gte=start,charge_time__lte=endTime,card_status='1',card_action='1')\
             .annotate(num=Count('card_no'),balance=Sum('card_blance'))\
             .order_by('card_value')
     totalBalance = 0.00
@@ -49,11 +51,12 @@ def cardInfo(request):
     shopCode = mth.getReqVal(request,'shopcode','')
     start = mth.getReqVal(request,'start','')
     end = mth.getReqVal(request,'end','')
+    endTime = datetime.datetime.strptime(end,'%Y-%m-%d').date() + datetime.timedelta(1)
     cardType = mth.getReqVal(request,'cardtype','')
     page = mth.getReqVal(request,'page',1)
 
     cardList = CardInventory.objects.values('card_no','card_value','card_blance','card_status','charge_time','sheetid')\
-            .filter(card_value=cardType,shop_code=shopCode,charge_time__gte=start,charge_time__lte=end,card_status='1',card_action='1')\
+            .filter(card_value=cardType,shop_code=shopCode,charge_time__gte=start,charge_time__lte=endTime,card_status='1',card_action='1')\
             .order_by('card_no')
 
     totalBalance = 0.00

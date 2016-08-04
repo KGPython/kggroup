@@ -99,8 +99,8 @@ def saveOrder(request):
             order.buyer_tel = buyerPhone
             order.buyer_company = buyerCompany
             order.total_amount = float(totalVal)+float(YtotalVal)
-            order.paid_amount = totalVal
-            order.disc_amount = YtotalVal
+            order.paid_amount = float(totalVal)+float(Ybalance)#实付款合计=售卡合计+优惠补差
+            order.disc_amount = float(YtotalVal)+float(Ycash)#优惠合计=赠卡合计+优惠返现
             order.diff_price = Ybalance
             order.shop_code = shopcode
             order.user_id = operator

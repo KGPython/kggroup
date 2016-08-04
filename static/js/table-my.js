@@ -193,7 +193,11 @@ function setTotal(obj,cardtype){
             }
         }
     }
-    if($('#Ycash')){
+
+    //处理优惠返现
+    var Ycash=$('.'+cls).find('#Ycash').length;
+    console.log($('.'+cls));
+    if(Ycash>0){
         var Ycash=$('#Ycash').val();
         Ycash = Ycash=='' ?0:parseFloat(Ycash);
         totalVal +=Ycash;
