@@ -137,7 +137,7 @@ class OrderChangeCard(models.Model):
     order_sn = models.CharField(max_length=20)
     operator_id = models.SmallIntegerField()
     depart = models.CharField(max_length=10, blank=True, null=True)
-    shop_id = models.IntegerField()
+    shop_code = models.CharField(max_length=16)
     action_type = models.CharField(max_length=1, blank=True, null=True)
     user_name = models.CharField(max_length=32, blank=True, null=True)
     user_phone = models.CharField(max_length=16, blank=True, null=True)
@@ -201,11 +201,11 @@ class OrderUpCard(models.Model):
     user_name = models.CharField(max_length=32, blank=True, null=True)
     user_phone = models.CharField(max_length=16, blank=True, null=True)
     state = models.SmallIntegerField(blank=True, null=True)
-    shop_id = models.IntegerField()
+    shop_code = models.CharField(max_length=16)
     operator_id = models.IntegerField(blank=True, null=True)
     depart = models.CharField(max_length=10, blank=True, null=True)
     created_id = models.IntegerField(blank=True, null=True)
-    created_time = models.DateTimeField(blank=True, null=True)
+    add_time = models.DateTimeField(blank=True, null=True)
     modified_time = models.DateTimeField(blank=True, null=True)
 
     class Meta:
@@ -228,7 +228,7 @@ class OrderUpCardInfo(models.Model):
 
 class Orders(models.Model):
     order_sn = models.CharField(unique=True, max_length=20)
-    user_id = models.SmallIntegerField()
+    operator_id = models.SmallIntegerField()
     depart = models.CharField(max_length=10, blank=True, null=True)
     shop_code = models.CharField(max_length=16, blank=True, null=True)
     action_type = models.CharField(max_length=1)

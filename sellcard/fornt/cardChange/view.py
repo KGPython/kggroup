@@ -18,7 +18,7 @@ def index(request):
 
 def save(request):
     operator = request.session.get('s_uid','')
-    shopId = request.session.get('s_shopid','')
+    shopCode = request.session.get('s_shopcode','')
     depart = request.session.get('s_depart','')
 
     res = {}
@@ -83,7 +83,7 @@ def save(request):
             order.order_sn = order_sn
             order.operator_id = operator
             order.depart = depart
-            order.shop_id = shopId
+            order.shop_code = shopCode
             order.user_name = buyerName
             order.user_phone = buyerPhone
             order.total_in_amont = totalNumIn

@@ -1,6 +1,6 @@
 #-*- coding:utf-8 -*-
 from django.shortcuts import render
-from sellcard.models import Shops,CardType,Payment
+from sellcard.models import Shops,CardType,Payment,Departs
 from django.db.models import Q
 
 
@@ -10,8 +10,17 @@ def findShop(shopcode=None):
     if shopcode:
         q.add(Q(shopcode=shopcode), Q.AND)
 
-    shopList = Shops.objects.values("shop_name", "shop_code").filter(q).order_by('shop_code')
+    shopList = Shops.objects.values("id","shop_name", "shop_code").filter(q).order_by('shop_code')
     return shopList
+# 查询门店信息
+
+def findDepart(depart_id=None):
+    q = Q()
+    if depart_id:
+        q.add(Q(depart_id=depart_id), Q.AND)
+
+    DepartList = Departs.objects.values("depart_id", "depart_name").filter(q).order_by('depart_id')
+    return DepartList
 
 # 查询卡类型
 def findCardType(cardTypeCode=None):
@@ -21,7 +30,7 @@ def findCardType(cardTypeCode=None):
 
     cardList = CardType.objects.values("card_type_name").filter(q)
     return cardList
-# 查询门店信息
+# 查询部门信息
 def findPays(payId=None):
     q = Q()
     if payId:

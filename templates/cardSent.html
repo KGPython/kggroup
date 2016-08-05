@@ -24,32 +24,32 @@
         </div>
         <div class="widget-box">
             <table class="table table-striped table-hover table-form-my">
-                    <thead>
-                        <tr>
-                            <th>面值</th>
-                            <th>起始卡号</th>
-                            <th>结束卡号</th>
-                            <th>小计</th>
-                            <th>操作</th>
-                        </tr>
-                    </thead>
-                    <tbody class="cardSent">
-                        <tr>
-                            <td>
-                                <select name="" id="" class="form-control type">
-                                    {% for type in cardTypes %}
-                                        <option value="{{ type.card_type_name }}">{{ type.card_type_name }}元</option>
-                                    {% endfor %}
-                                    <option value=""></option>
-                                </select>
-                            </td>
-                            <td><input type='text' class='form-control start'></td>
-                            <td><input type='text' class='form-control end'></td>
-                            <td><input type='text' class='form-control subTotal'></td>
-                            <td><button type="button" class="btn btn-danger btn-xs btn-del">删除</button></td>
-                        </tr>
-                    </tbody>
-                </table>
+                <thead>
+                    <tr>
+                        <th>面值</th>
+                        <th>起始卡号</th>
+                        <th>结束卡号</th>
+                        <th>小计</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody class="cardSent">
+                    <tr>
+                        <td>
+                            <select name="" id="" class="form-control type">
+                                {% for type in cardTypes %}
+                                    <option value="{{ type.card_type_name }}">{{ type.card_type_name }}元</option>
+                                {% endfor %}
+                                <option value=""></option>
+                            </select>
+                        </td>
+                        <td><input type='text' class='form-control start'></td>
+                        <td><input type='text' class='form-control end'></td>
+                        <td><input type='text' class='form-control subTotal'></td>
+                        <td><button type="button" class="btn btn-danger btn-xs btn-del">删除</button></td>
+                    </tr>
+                </tbody>
+            </table>
             <div class="row formline" style="margin-top: 15px;">
                     <label for="" class="col-xs-1 formline-label">领取门店：</label>
                     <div class="col-xs-4">

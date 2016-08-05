@@ -2,6 +2,7 @@
 __author__ = 'liubf'
 from django import template
 from sellcard import views as base
+from sellcard.models import AdminUser
 register = template.Library()
 
 #门店编号转名称
@@ -13,6 +14,47 @@ def transShopCode(key):
         if shop['shop_code']==key:
             shopname = shop['shop_name']
     return shopname
+
+#门店编号转名称
+@register.filter
+def transShopId(key):
+    shopList = base.findShop()
+    shopname = ''
+    for shop in shopList:
+        if shop['id']==key:
+            shopname = shop['shop_name']
+    return shopname
+
+#部门编号转名称
+@register.filter
+def transDepartCode(key):
+    departList = base.findDepart()
+    departname = ''
+    for depart in departList:
+        if depart['depart_id']==key:
+            departname = depart['depart_name']
+    return departname
+#交易类型编号转名称
+@register.filter
+def transActionType(key):
+    ActionType = ''
+    if key=='1':
+        ActionType = '单卡售卡'
+    elif key=='2':
+        ActionType = '批量售卡'
+    elif key=='3':
+        ActionType = ''
+    elif key=='4':
+        ActionType = ''
+    elif key=='5':
+        ActionType = '大宗赠卡'
+    return ActionType
+
+#userid转username
+@register.filter
+def transUserId(key):
+    user = AdminUser.objects.values('name').filter(id=key)
+    return user[0]['name']
 
 #支付编号转名称
 @register.filter

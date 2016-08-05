@@ -56,7 +56,7 @@ def saveOrder(request):
             order.diff_price = 0
             order.shop_code = shopcode
             order.depart = depart
-            order.user_id = operator
+            order.operator_id = operator
             order.action_type = '5'
             order.add_time = datetime.datetime.now()
             order.order_sn = order_sn

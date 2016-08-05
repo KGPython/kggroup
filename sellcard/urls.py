@@ -31,8 +31,9 @@ urlpatterns = [
 
     ###卡管理
     #入库管理
-    url(r'^sellcard/cardmanage/cardinstore', 'sellcard.fornt.cardManage.view.cardInStore',name='cardInStore'),
-    url(r'^sellcard/cardmanage/carddetail', 'sellcard.fornt.cardManage.view.cardDetail',name='cardDetail'),
+    url(r'^sellcard/cardmanage/cardinstore/', 'sellcard.fornt.cardManage.view.cardInStore',name='cardInStore'),
+    url(r'^sellcard/cardmanage/cardallocation/', 'sellcard.fornt.cardManage.cardAllocation.index',name='cardAllocation'),
+
 
     ###门店领卡(信息中心发卡)
     url(r'^sellcard/cardSent/$', 'sellcard.fornt.cardSent.view.index',name='cardSent'),

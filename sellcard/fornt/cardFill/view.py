@@ -43,7 +43,7 @@ def query(request):
 @transaction.atomic
 def save(request):
     operator_id = request.session.get('s_uid','')
-    shop_id = request.session.get('s_shopid','')
+    shopCode = request.session.get('s_shopcode','')
 
     res = {}
     #入卡列表
@@ -61,7 +61,6 @@ def save(request):
     try:
         with transaction.atomic():
             order_sn = setOrderSn()
-
             order = OrderUpCard()
             order.order_sn=order_sn
             order.action_type=action_type
@@ -70,10 +69,10 @@ def save(request):
             order.user_name=user_name
             order.user_phone=user_phone
             order.state=1
-            order.shop_id=shop_id
+            order.shop_code=shopCode
             # order.operator_id=operator_id
             order.created_id=operator_id
-            order.created_time=datetime.datetime.today()
+            order.add_time=datetime.datetime.today()
             order.save()
 
             #订单明细：入卡,待补的卡即待作废的卡

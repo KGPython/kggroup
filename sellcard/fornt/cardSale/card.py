@@ -106,7 +106,7 @@ def saveOrder(request):
             order.diff_price = Ybalance
             order.shop_code = shopcode
             order.depart = depart
-            order.user_id = operator
+            order.operator_id = operator
             order.action_type = actionType
             order.add_time = datetime.datetime.now()
             order.discount_rate = float(discountRate)/100

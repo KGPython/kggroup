@@ -65,7 +65,7 @@ def cardInfo(request):
         totalBalance += float(row['card_blance'])
         totalNum +=1
 
-    paginator = Paginator(cardList,3)
+    paginator = Paginator(cardList,20)
     try:
         cardList = paginator.page(page)
     except Exception as e:
