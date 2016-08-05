@@ -3,7 +3,7 @@ __author__ = 'admin'
 import pymssql,random,hashlib
 from PIL import Image, ImageDraw, ImageFont
 from sellcard.common import Constants
-from sellcard.models import CardInventory,Orders,ExchangeCode
+from sellcard.models import CardInventory,Orders,ExchangeCode,OrderPaymentInfo
 from django.conf import settings
 from django.core import serializers
 from django.http import HttpResponse
@@ -156,7 +156,20 @@ def updateCard(list,mode):
     cur.close()
     conn.close()
     return True
-
+#更新欠款状态
+@csrf_exempt
+def upNoPayStatus(request):
+    orderSn = request.POST.get('orderSn')
+    dateStr = request.POST.get('date')
+    date = datetime.datetime.strptime(dateStr, "%Y-%m-%d").date()
+    res={}
+    try:
+        OrderPaymentInfo.objects.filter(order_id=orderSn,pay_id=4).update(is_pay='1',change_time=date)
+        res['msg']='0'
+    except Exception as e:
+        print(e)
+        res['msg']='1'
+    return HttpResponse(json.dumps(res))
 def setOrderSn(mode=None):
     start = datetime.date.today().strftime('%Y-%m-%d 00:00:00')
     end = datetime.date.today().strftime('%Y-%m-%d 23:59:59')
