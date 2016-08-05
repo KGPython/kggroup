@@ -75,14 +75,14 @@ WSGI_APPLICATION = 'kggroup.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
-
+from sellcard.common import Constants
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'kggroup',
-        'USER': 'root',
-        'PASSWORD': '10233201sn',
-        'HOST': '192.168.122.146',
+        'NAME': Constants.SCM_DB_MYSQL_DATABASE,
+        'USER': Constants.SCM_DB_MYSQL_USER,
+        'PASSWORD': Constants.SCM_DB_MYSQL_PASSWORD,
+        'HOST': Constants.SCM_DB_MYSQL_SERVER,
         'PORT': '3306',
         'ATOMIC_REQUESTS':True,
         # 'AUTOCOMMIT':False,
