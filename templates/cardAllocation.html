@@ -68,9 +68,9 @@
                                             <option value=""></option>
                                         </select>
                                     </td>
-                                    <td><input type='text' class='form-control start'></td>
-                                    <td><input type='text' class='form-control end'></td>
-                                    <td><input type='text' class='form-control subTotal'></td>
+                                    <td><input type='text' class='form-control start cardno'></td>
+                                    <td><input type='text' class='form-control end cardno'></td>
+                                    <td><input type='text' class='form-control subTotal' disabled></td>
                                     <td><button type="button" class="btn btn-danger btn-xs btn-del">删除</button></td>
                                 </tr>
                             </tbody>
@@ -88,12 +88,158 @@
     </div>
 </div>
 <!--end-containt-part-->
-<script>
-    var rates = {{ rates | safe }};
-</script>
+
 {% include "common/foot.html" %}
 <script>
 
+    function addRow2(){
+        //创建新的一行
+        var tbody = $(".cardSent");
+        var columsL = tbody.find('tr').eq(0).find('td').length;
+        var row = $("<tr></tr>");
+        for(var i=0;i<columsL;i++){
+            var td = $("<td></td>");
+            if(i==0){
+                var obj = $("<select type='text' class='form-control type'></select>");
+                var list={{ cardTypes | safe}};
+                for(var j=0;j<list.length;j++){
+                    var option = $("<option></option>").val(list[j].card_type_name).text(list[j].card_type_name+'元');
+                    $(obj).append(option)
+                }
+            }else if(i==1){
+                var obj = $('<input type="text" class="form-control start cardno">');
+            }else if(i==2){
+                var obj = $('<input type="text" class="form-control end cardno">');
+            }else if(i==3){
+                var obj = $('<input type="text" class="form-control subTotal" disabled>');
+            }else{
+                var obj = $('<button type="button" class="btn btn-danger btn-xs btn-del">删除</button>');
+            }
+            $(td).append(obj);
+            $(row).append(td);
+        }
+        tbody.append(row)
+    }
+
+    function allocateTotal(){
+        var trs = $(".cardSent").find('tr');
+        var totalVal = 0.00;
+        var totalNum =0;
+        for(var i=0;i<trs.length;i++){
+            var subNum = $(trs[i]).find('.subTotal').val();
+            if(subNum){
+                var cardType = $(trs[i]).find('.type').val();
+                var subVal = parseInt(subNum)*parseFloat(cardType);
+                totalVal += subVal;
+                totalNum += parseInt(subNum);
+            }
+        }
+    }
+
+    function checkRepeat(obj){
+        var key = $(obj).val();
+        console.log(key);
+        var trs = $(".cardSent").find('tr');
+        var list =[];
+        for(var j=0;j<trs.length;j++){
+            var subNum = $(trs[j]).find('.subTotal').val();
+            if(subNum){
+                var start = $(trs[j]).find('.start').val();
+                var end = $(trs[j]).find('.end').val();
+                list.push({'start':start,'end':end});
+            }
+        }
+        console.log(list);
+        for(var i=0;i<list.length;i++){
+            var start = parseInt(list[i].start);
+            var end = parseInt(list[i].end);
+            if(parseInt(key)>=start && parseInt(key)<=end){
+                return true
+            }else{
+                alert('卡号：'+key+',已经存在于上面的卡段中，请检查');
+                return false;
+            }
+        }
+    }
+    $('.cardSent .cardno').change(function(){
+        checkRepeat(this)
+    });
+
+    $('.type').change(function(){
+        allocateTotal();
+    });
+    $(document).on('change','.cardSent .cardno',function(){
+        //计算小计
+        var parentTr = $(this).parent().parent();
+        var startStr = parentTr.find('.start').val();
+        var start = startStr.split('=')[0];
+        parentTr.find('.start').val(start);
+
+        var endStr = parentTr.find('.end').val();
+        var end = endStr.split('=')[0];
+        parentTr.find('.end').val(end);
+        if(parseInt(end)<parseInt(start)){
+            alert('起始卡号不能大于截至卡号');
+            return false;
+        }
+        if(parseInt(end)&&parseInt(start)){
+            parentTr.find('.subTotal').val(parseInt(end)-parseInt(start)+1);
+        }
+
+        addRow2();
+        allocateTotal();
+    });
+    $('#btn-enter').click(function(){
+        //卡列表
+        var list=[];
+        trs = $('.cardSent').find('tr');
+        for(var i=0;i<trs.length;i++){
+            var item ={};
+            var cardType = $(trs[i]).find('td').eq(0).find('select').val();
+            var start = $(trs[i]).find('td').eq(1).find('input').val();
+            var end = $(trs[i]).find('td').eq(2).find('input').val();
+            var subTotal = $(trs[i]).find('td').eq(3).find('input').val();
+            if(subTotal){
+                item['cardType'] = cardType;
+                item['start'] = start;
+                item['end'] = end;
+                item['subTotal'] = subTotal;
+                list.push(item);
+            }
+        }
+        if(list.length<1){
+            alert('请完善领卡列表后，再尝试提交');
+            return false;
+        }
+        //领取人信息
+        var shopIn = $('#shopIn').val();
+        var shopOut = $('#shopOut').val();
+        if(!shopIn || !shopOut){
+            alert('调拨门店不能为空');
+            return false;
+        }
+        $.ajax({
+            url:'{% url 'sentOrderSave' %}',
+            dataType:'json',
+            method:'post',
+            data:{
+                'list':JSON.stringify(list),
+                'shopIn':shopIn,
+                'shopOut':shopOut
+            },
+            success:function(data){
+                if(data.msg=='0'){
+                    alert('数据提交成功');
+                    $('input[type=text]').val('')
+                }else if(data.msg=='1'){
+                    alert('数据提交失败')
+                }else if(data.msg=='2'){
+                    var cardNo =data.cardId;
+                    alert('卡号：'+cardNo+', 在数据库中已经存在，无法重复提交，请核查')
+                }
+            }
+        })
+    })
 </script>
 </body>
 </html>

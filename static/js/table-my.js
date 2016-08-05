@@ -21,7 +21,7 @@ $(document).on('click','.formline .btn-add',function(){
 
 });
 
-
+//根据target的不同，产生不同的tr
 function addRow(obj,target){
     var tbody = $(obj).parent().parent().parent()[0];
     var columsL =$(tbody).find('tr').eq(0).find('td').length;

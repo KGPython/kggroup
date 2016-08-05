@@ -29,6 +29,31 @@ class AdminUser(models.Model):
         db_table = 'admin_user'
 
 
+class Allocation(models.Model):
+    order_sn = models.CharField(max_length=20)
+    shopin_code = models.CharField(max_length=16, blank=True, null=True)
+    shopout_code = models.CharField(max_length=16, blank=True, null=True)
+    total_num = models.SmallIntegerField(blank=True, null=True)
+    total_value = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
+    add_time = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'allocation'
+
+
+class AllocationInfo(models.Model):
+    order_sn = models.CharField(max_length=20)
+    card_type = models.IntegerField(blank=True, null=True)
+    card_nums = models.SmallIntegerField(blank=True, null=True)
+    cardno_start = models.CharField(max_length=20, blank=True, null=True)
+    cardno_end = models.CharField(max_length=20, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'allocation_info'
+
+
 class CardInventory(models.Model):
     card_no = models.CharField(max_length=32)
     card_value = models.DecimalField(max_digits=12, decimal_places=2)
