@@ -104,6 +104,56 @@ function showCardIfno(obj,data){
     $(obj).parent().parent().find('td').eq(3).find('input').eq(0).val(cardStu);
 }
 
+function checkCardStu(obj,cardId,shopCode,url){
+    $.ajax({
+        url:url,
+        type:"get",
+        dataType:'json',
+        async: false,
+        success:function(data){
+            if(data.length==0){
+                alert('卡：'+cardId+'不存在');
+                $(obj).val('').focus();
+                return false;
+            }
+            else{
+                var res = data[0] ? data[0].fields : [];
+
+                if(res.card_status=='2'){
+                    alert('卡：'+cardId+'已激活');
+                    $(obj).val('').focus();
+                     return false;
+                }else if(res.card_status=='3'){
+                    alert('卡：'+cardId+'已冻结');
+                    $(obj).val('').focus();
+                     return false;
+                }
+                else if(res.card_status=='4'){
+                    alert('卡：'+cardId+'已作废');
+                    $(obj).val('').focus();
+                     return false;
+                }
+                if(shopCode!=res.shop_code){
+                    alert('卡号：'+cardId+'不属于调出门店,无权调拨此卡！');
+                    $(obj).val('').focus();
+                    return false;
+                }
+
+                //卡面值赋值
+                var parentTr = $(obj).parent().parent();
+                if($(obj).hasClass('start')){
+                    parentTr.find('.type').val(res.card_value)
+                }
+                if($(obj).hasClass('end')){
+                    parentTr.find('.type2').val(res.card_value)
+                }
+            }
+
+        }
+    })
+}
+
+
 function doAjax2(obj,ajaxOpt,showCardIfno,setTotal,cardType){
     $.ajax({
         url:ajaxOpt.url,
