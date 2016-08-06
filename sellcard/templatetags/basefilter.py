@@ -86,6 +86,11 @@ def divide(v1,v2):
     res = (float(v1) / float(v2))*100
     return str(round(res,2))+'%'
 
+#转百分比
+@register.filter
+def add(v1,v2):
+    return float(v1) + float(v2)
+
 
 
 

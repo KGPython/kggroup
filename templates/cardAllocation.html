@@ -1,3 +1,4 @@
+{% load basefilter %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -26,19 +27,37 @@
                 <div class="row formline" style="margin-top: 20px;">
                     <label for="" class="col-xs-3 formline-label">调出门店：</label>
                     <div class="col-xs-2">
-                        <select name="shopOut" id="shopOut" class="form-control" required="required">
-                            {% for shop in shops %}
-                                <option value="{{ shop.shop_code }}">{{shop.shop_name  }}</option>
-                            {% endfor %}
-                        </select>
+                        {% if roleid == '3' %}
+                            <select name="shopOut" id="shopOut" class="form-control" required="required" disabled>
+                                <option value="{{ shopCode }}">{{ shopCode | transShopCode }}</option>
+                            </select>
+                        {% elif roleid == '1' or roleid == '6' %}
+                            <select name="shopOut" id="shopOut" class="form-control" required="required">
+                                {% for shop in shops %}
+                                    <option value="{{ shop.shop_code }}">{{shop.shop_name  }}</option>
+                                {% endfor %}
+                            </select>
+                        {% endif %}
+
                     </div>
                     <label for="" class="col-xs-2 formline-label">调入门店：</label>
                     <div class="col-xs-2">
-                        <select name="shopIn" id="shopIn" class="form-control" required="required">
-                            {% for shop in shops %}
-                                <option value="{{ shop.shop_code }}">{{shop.shop_name  }}</option>
-                            {% endfor %}
-                        </select>
+                        {% if roleid == '3' %}
+                            <select name="shopIn" id="shopIn" class="form-control" required="required">
+                                {% for shop in shops %}
+                                    {% if shop.shop_code != shopCode %}
+                                        <option value="{{ shop.shop_code }}">{{shop.shop_name  }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        {% elif roleid == '1' or roleid == '6' %}
+                            <select name="shopIn" id="shopIn" class="form-control" required="required">
+                                {% for shop in shops %}
+                                    <option value="{{ shop.shop_code }}">{{shop.shop_name  }}</option>
+                                {% endfor %}
+                            </select>
+                        {% endif %}
+
                     </div>
                 </div>
 
@@ -61,12 +80,8 @@
                             <tbody class="cardSent">
                                 <tr>
                                     <td>
-                                        <select name="" id="" class="form-control type">
-                                            {% for type in cardTypes %}
-                                                <option value="{{ type.card_type_name }}">{{ type.card_type_name }}元</option>
-                                            {% endfor %}
-                                            <option value=""></option>
-                                        </select>
+                                        <input type='text' class='form-control type' disabled>
+                                        <input type='hidden' class='form-control type2'>
                                     </td>
                                     <td><input type='text' class='form-control start cardno'></td>
                                     <td><input type='text' class='form-control end cardno'></td>
@@ -75,6 +90,10 @@
                                 </tr>
                             </tbody>
                         </table>
+                        <div class="allocationTotal row formline">
+                            <p class="text col-xs-3" id="totalNum">合计卡数量：<b>0</b>张</p>
+                            <p class="text col-xs-3" id="totalVal">合计面值金额：<b>0.00</b>元</p>
+                        </div>
                     </div>
                 </div>
 
@@ -100,22 +119,23 @@
         for(var i=0;i<columsL;i++){
             var td = $("<td></td>");
             if(i==0){
-                var obj = $("<select type='text' class='form-control type'></select>");
-                var list={{ cardTypes | safe}};
-                for(var j=0;j<list.length;j++){
-                    var option = $("<option></option>").val(list[j].card_type_name).text(list[j].card_type_name+'元');
-                    $(obj).append(option)
-                }
+                var obj  = $('<input type="text" class="form-control type" disabled>');
+                var obj2 = $('<input type="hidden" class="form-control type2">');
+                $(td).append(obj);
+                $(td).append(obj2);
             }else if(i==1){
                 var obj = $('<input type="text" class="form-control start cardno">');
+                $(td).append(obj);
             }else if(i==2){
                 var obj = $('<input type="text" class="form-control end cardno">');
+                $(td).append(obj);
             }else if(i==3){
                 var obj = $('<input type="text" class="form-control subTotal" disabled>');
+                $(td).append(obj);
             }else{
                 var obj = $('<button type="button" class="btn btn-danger btn-xs btn-del">删除</button>');
+                $(td).append(obj);
             }
-            $(td).append(obj);
             $(row).append(td);
         }
         tbody.append(row)
@@ -134,83 +154,106 @@
                 totalNum += parseInt(subNum);
             }
         }
+        $('#totalNum b').text(totalNum);
+        $('#totalVal b').text(totalVal);
+
     }
 
-    function checkRepeat(obj){
-        var key = $(obj).val();
-        console.log(key);
+    function checkCross(obj){
+        var key = parseInt($(obj).val());
         var trs = $(".cardSent").find('tr');
         var list =[];
         for(var j=0;j<trs.length;j++){
             var subNum = $(trs[j]).find('.subTotal').val();
-            if(subNum){
-                var start = $(trs[j]).find('.start').val();
-                var end = $(trs[j]).find('.end').val();
-                list.push({'start':start,'end':end});
+            var start = $(trs[j]).find('.start').val();
+            var end = $(trs[j]).find('.end').val();
+            if(subNum && start && end){
+                list.push({'start':parseInt(start),'end':parseInt(end)});
             }
         }
-        console.log(list);
+        for(var m=0;m<list.length;m++){
+            var parentTr = $(obj).parent().parent();
+            var start3 = parentTr.find('.start').val();
+            var end3 = parentTr.find('.end').val();
+            var start4 = list[m].start;
+            var end4 = list[m].end;
+
+            if(parseInt(start3)<parseInt(start4) && parseInt(end3)>parseInt(end4)){
+                alert('卡断：'+start3+'-'+end3+',包含卡断：'+start4+'-'+end4+',请重新输入卡断');
+                parentTr.find('.start').val('').focus();
+                parentTr.find('.end').val('');
+                return false;
+            }
+        }
         for(var i=0;i<list.length;i++){
-            var start = parseInt(list[i].start);
-            var end = parseInt(list[i].end);
-            if(parseInt(key)>=start && parseInt(key)<=end){
-                return true
-            }else{
-                alert('卡号：'+key+',已经存在于上面的卡段中，请检查');
+            var start2 = list[i].start;
+            var end2 = list[i].end;
+
+            if((key>start2 && key<end2)){
+                alert('卡号：'+key+',已经存在于卡段'+start2+'-'+end2+'中，请重新输入卡断');
+                $(obj).val('').focus();
                 return false;
             }
         }
     }
-    $('.cardSent .cardno').change(function(){
-        checkRepeat(this)
-    });
+    function checkRepeat(obj){
+        var key = $(obj).val();
+        var cardInputs = $(".cardSent").find('.cardno');
+        var list =[];
+        for(var j=0;j<cardInputs.length;j++){
+            var cardid = $(cardInputs[j]).val();
+            if(cardid){
+                list.push(cardid);
+            }
+        }
+        list.remove(key);
+
+        if(list.indexOf(key)>-1){
+            alert('卡号：'+key+',已经存在于上面的卡段中，请检查');
+            $(obj).val('').focus();
+            return false;
+        }
+    }
 
     $('.type').change(function(){
         allocateTotal();
     });
     $(document).on('change','.cardSent .cardno',function(){
-        //计算小计
-        var parentTr = $(this).parent().parent();
-        var startStr = parentTr.find('.start').val();
-        var start = startStr.split('=')[0];
-        parentTr.find('.start').val(start);
+        var cardId = $(this).val();
+        //重复校验
+        checkRepeat(this);
+        //交叉校验
+        checkCross(this);
+        //状态校验
+        var url = "{% url 'cardcheck' %}?cardId="+cardId;
+        if(cardId){
 
-        var endStr = parentTr.find('.end').val();
-        var end = endStr.split('=')[0];
-        parentTr.find('.end').val(end);
-        if(parseInt(end)<parseInt(start)){
-            alert('起始卡号不能大于截至卡号');
-            return false;
-        }
-        if(parseInt(end)&&parseInt(start)){
-            parentTr.find('.subTotal').val(parseInt(end)-parseInt(start)+1);
+            checkCardStu(this,cardId,'{{ shopCode | safe }}',url);
+
+            //计算小计
+            var parentTr = $(this).parent().parent();
+            var startStr = parentTr.find('.start').val();
+            var start = startStr.split('=')[0];
+            parentTr.find('.start').val(start);
+
+            var endStr = parentTr.find('.end').val();
+            var end = endStr.split('=')[0];
+            parentTr.find('.end').val(end);
+            if(parseInt(end)<parseInt(start)){
+                alert('起始卡号不能大于截至卡号');
+                return false;
+            }
+            if(parseInt(end)&&parseInt(start)){
+                parentTr.find('.subTotal').val(parseInt(end)-parseInt(start)+1);
+                addRow2();
+                allocateTotal();
+            }
         }
 
-        addRow2();
-        allocateTotal();
     });
     $('#btn-enter').click(function(){
         //卡列表
-        var list=[];
-        trs = $('.cardSent').find('tr');
-        for(var i=0;i<trs.length;i++){
-            var item ={};
-            var cardType = $(trs[i]).find('td').eq(0).find('select').val();
-            var start = $(trs[i]).find('td').eq(1).find('input').val();
-            var end = $(trs[i]).find('td').eq(2).find('input').val();
-            var subTotal = $(trs[i]).find('td').eq(3).find('input').val();
-            if(subTotal){
-                item['cardType'] = cardType;
-                item['start'] = start;
-                item['end'] = end;
-                item['subTotal'] = subTotal;
-                list.push(item);
-            }
-        }
-        if(list.length<1){
-            alert('请完善领卡列表后，再尝试提交');
-            return false;
-        }
+
         //领取人信息
         var shopIn = $('#shopIn').val();
         var shopOut = $('#shopOut').val();
@@ -218,24 +261,58 @@
             alert('调拨门店不能为空');
             return false;
         }
+        if(shopIn==shopOut){
+            alert('同门店不能调拨');
+            return false;
+        }
+        var totalNum=$('#totalNum b').text();
+        var totalVal=$('#totalVal b').text();
+        if(parseInt(totalNum)>0){
+            var list=[];
+            trs = $('.cardSent').find('tr');
+            for(var i=0;i<trs.length;i++){
+                var item ={};
+                var cardType = $(trs[i]).find('.type').val();
+                var cardType2 = $(trs[i]).find('.type2').val();
+                var start = $(trs[i]).find('.start').val();
+                var end = $(trs[i]).find('.end').val();
+                var subTotal = $(trs[i]).find('.subTotal').val();
+                if(cardType!=cardType2){
+                    alert('卡段初始号："'+start+'"与截止号："'+end+'"面值不符，请处理后再尝试提交');
+                    return false;
+                }
+
+                if(subTotal){
+                    item['cardType'] = cardType;
+                    item['start'] = start;
+                    item['end'] = end;
+                    item['subTotal'] = subTotal;
+                    list.push(item);
+                }
+            }
+        }else{
+            alert('请完善领卡列表后，再尝试提交');
+                return false;
+        }
+
         $.ajax({
-            url:'{% url 'sentOrderSave' %}',
+            url:'{% url 'allocationSave' %}',
             dataType:'json',
             method:'post',
             data:{
                 'list':JSON.stringify(list),
                 'shopIn':shopIn,
-                'shopOut':shopOut
+                'shopOut':shopOut,
+                'totalNum':totalNum,
+                'totalVal':totalVal
             },
             success:function(data){
                 if(data.msg=='0'){
                     alert('数据提交成功');
+                    window.location.reload();
                     $('input[type=text]').val('')
                 }else if(data.msg=='1'){
                     alert('数据提交失败')
-                }else if(data.msg=='2'){
-                    var cardNo =data.cardId;
-                    alert('卡号：'+cardNo+', 在数据库中已经存在，无法重复提交，请核查')
                 }
             }
         })

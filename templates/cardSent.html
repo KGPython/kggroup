@@ -43,8 +43,8 @@
                                 <option value=""></option>
                             </select>
                         </td>
-                        <td><input type='text' class='form-control start'></td>
-                        <td><input type='text' class='form-control end'></td>
+                        <td><input type='text' class='form-control start cardno'></td>
+                        <td><input type='text' class='form-control end cardno'></td>
                         <td><input type='text' class='form-control subTotal'></td>
                         <td><button type="button" class="btn btn-danger btn-xs btn-del">删除</button></td>
                     </tr>
@@ -72,7 +72,70 @@
 
 {% include "common/foot.html" %}
 <script>
-    $(document).on('change','.cardSent .end',function(){
+    function checkCross(obj){
+        var key = parseInt($(obj).val());
+        var trs = $(".cardSent").find('tr');
+        var list =[];
+        for(var j=0;j<trs.length;j++){
+            var subNum = $(trs[j]).find('.subTotal').val();
+            var start = $(trs[j]).find('.start').val();
+            var end = $(trs[j]).find('.end').val();
+            if(subNum && start && end){
+                list.push({'start':parseInt(start),'end':parseInt(end)});
+            }
+        }
+        for(var m=0;m<list.length;m++){
+            var parentTr = $(obj).parent().parent();
+            var start3 = parentTr.find('.start').val();
+            var end3 = parentTr.find('.end').val();
+            var start4 = list[m].start;
+            var end4 = list[m].end;
+
+            if(parseInt(start3)<parseInt(start4) && parseInt(end3)>parseInt(end4)){
+                alert('卡断：'+start3+'-'+end3+',包含卡断：'+start4+'-'+end4+',请重新输入卡断');
+                parentTr.find('.start').val('').focus();
+                parentTr.find('.end').val('');
+                return false;
+            }
+        }
+        for(var i=0;i<list.length;i++){
+            var start2 = list[i].start;
+            var end2 = list[i].end;
+
+            if((key>start2 && key<end2)){
+                alert('卡号：'+key+',已经存在于卡段'+start2+'-'+end2+'中，请重新输入卡断');
+                $(obj).val('').focus();
+                return false;
+            }
+        }
+    }
+    function checkRepeat(obj){
+        var key = $(obj).val();
+        var cardInputs = $(".cardSent").find('.cardno');
+        var list =[];
+        for(var j=0;j<cardInputs.length;j++){
+            var cardid = $(cardInputs[j]).val();
+            if(cardid){
+                list.push(cardid);
+            }
+        }
+        list.remove(key);
+
+        if(list.indexOf(key)>-1){
+            alert('卡号：'+key+',已经存在于上面的卡段中，请检查');
+            $(obj).val('').focus();
+            return false;
+        }
+    }
+</script>
+<script>
+    $(document).on('change','.cardSent .cardno',function(){
+
+        //重复校验
+        checkRepeat(this);
+        //交叉校验
+        checkCross(this);
+
         //计算小计
         var parentTr = $(this).parent().parent();
         var startStr = parentTr.find('.start').val();
@@ -86,33 +149,36 @@
             alert('起始卡号不能大于截至卡号');
             return false;
         }
-        parentTr.find('.subTotal').val(parseInt(end)-parseInt(start)+1);
-        //创建新的一行
-        var tbody = $(".cardSent");
-        var columsL = tbody.find('tr').eq(0).find('td').length;
-        var row = $("<tr></tr>");
-        for(var i=0;i<columsL;i++){
-            var td = $("<td></td>");
-            if(i==0){
-                var obj = $("<select type='text' class='form-control type'></select>");
-                var list={{ cardTypes | safe}};
-                for(var j=0;j<list.length;j++){
-                    var option = $("<option></option>").val(list[j].card_type_name).text(list[j].card_type_name+'元');
-                    $(obj).append(option)
+        if(parseInt(end)&&parseInt(start)){
+            parentTr.find('.subTotal').val(parseInt(end)-parseInt(start)+1);
+            //创建新的一行
+            var tbody = $(".cardSent");
+            var columsL = tbody.find('tr').eq(0).find('td').length;
+            var row = $("<tr></tr>");
+            for(var i=0;i<columsL;i++){
+                var td = $("<td></td>");
+                if(i==0){
+                    var obj = $("<select type='text' class='form-control type'></select>");
+                    var list={{ cardTypes | safe}};
+                    for(var j=0;j<list.length;j++){
+                        var option = $("<option></option>").val(list[j].card_type_name).text(list[j].card_type_name+'元');
+                        $(obj).append(option)
+                    }
+                }else if(i==1){
+                    var obj = $('<input type="text" class="form-control start cardno">');
+                }else if(i==2){
+                    var obj = $('<input type="text" class="form-control end cardno">');
+                }else if(i==3){
+                    var obj = $('<input type="text" class="form-control subTotal">');
+                }else{
+                    var obj = $('<button type="button" class="btn btn-danger btn-xs btn-del">删除</button>');
                 }
-            }else if(i==1){
-                var obj = $('<input type="text" class="form-control start">');
-            }else if(i==2){
-                var obj = $('<input type="text" class="form-control end">');
-            }else if(i==3){
-                var obj = $('<input type="text" class="form-control subTotal">');
-            }else{
-                var obj = $('<button type="button" class="btn btn-danger btn-xs btn-del">删除</button>');
+                $(td).append(obj);
+                $(row).append(td);
             }
-            $(td).append(obj);
-            $(row).append(td);
+            tbody.append(row)
         }
-        tbody.append(row)
+
     });
 
     $('.btn-enter').click(function(){
