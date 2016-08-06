@@ -51,7 +51,7 @@ def index(request):
                 .filter(**kwargs)\
                 .order_by('shop_code','depart','operator_id')
 
-    paginator = Paginator(resList,5)
+    paginator = Paginator(resList,20)
     try:
         resList = paginator.page(page)
     except Exception as e:

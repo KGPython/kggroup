@@ -64,7 +64,9 @@
                                 <tr>
                                     <th>门店名称</th>
                                     <th>销售金额（单位：元）</th>
+                                    <th>换卡补差（单位：元）</th>
                                     <th>优惠金额（单位：元）</th>
+                                    <th>入款合计（单位：元）</th>
                                     <th>销售占比</th>
                                 </tr>
                             </thead>
@@ -73,14 +75,18 @@
                                     <tr>
                                         <td>{{ row.shop_code | transShopCode }}</td>
                                         <td>{{ row.sale }}</td>
-                                        <td>{{ row.disc }}</td>
-                                        <td>{{ row.sale | divide:saleTotal }}</td>
+                                        <td>{{ row.diff_value |default:0 }}</td>
+                                        <td>{{ row.disc |default:0}}</td>
+                                        <td>{{ row.totalIn }}</td>
+                                        <td>{{ row.totalIn | divide:saleTotal }}</td>
                                     </tr>
                                 {% endfor %}
                             <tr>
                                 <td>合计</td>
                                 <td>{{ saleTotal }}</td>
+                                <td>{{ diffTotal }}</td>
                                 <td>{{ discTotal }}</td>
+                                <td>{{ totalInSum }}</td>
                                 <td></td>
                             </tr>
                             </tbody>
