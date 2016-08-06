@@ -3,7 +3,9 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Sum,Count
 import datetime
+
 from sellcard.models import Orders,OrderUpCard
+from sellcard.common import Method as mth
 @csrf_exempt
 def index(request):
     if request.method == 'POST':
@@ -35,7 +37,13 @@ def index(request):
                 else:
                     saleList[i]['diff_value'] = 0.00
                 saleList[i]['totalIn'] = float(saleList[i]['diff_value'])+float(saleList[i]['sale'])
-            diffTotal += saleList[i]['diff_value']
-            totalInSum += saleList[i]['totalIn']
+                diffTotal += saleList[i]['diff_value']
+                totalInSum += saleList[i]['totalIn']
 
-    return render(request,'saleCheck.html',locals())
+    return render(request,'shopSaleCheck.html',locals())
+
+def info(request):
+    shop = mth.getReqVal(request,'shop','')
+    start = mth.getReqVal(request,'start','')
+    end = mth.getReqVal(request,'end','')
+    pass
