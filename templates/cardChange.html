@@ -149,7 +149,7 @@
         }
 
         //卡校验
-        var ajaxOpt = {'url': '{% url 'cardcheck' %}?cardId=' + cardId, 'method': 'get'};
+        var ajaxOpt = {'url': '{% url 'cardcheck_change' %}?cardId=' + cardId, 'method': 'get'};
         doAjax(this, ajaxOpt, showCardIfno3, setTotal3);
         addRow(this);
     });

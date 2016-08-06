@@ -130,6 +130,19 @@ def cardCheck(request):
     findCardById = serializers.serialize('json',findCardById)
     return HttpResponse(findCardById,content_type="application/json")
 
+
+# 面值更换充值卡校验
+def cardCheck_Change(request):
+    cardId = request.GET.get('cardId', '')
+    conn = getMssqlConn()
+    cursor = conn.cursor
+    sql = "select New_amount, detail, mode from guest where CardNO='{cardId}'".format(cardId=cardId)
+    cursor.execute(sql)
+    data = cursor.fetchone()
+    data = serializers.serialize('json', data)
+    return HttpResponse(data, content_type="application/json")
+
+
 #兑换码校验
 @csrf_exempt
 def changeCodeCheck(request):

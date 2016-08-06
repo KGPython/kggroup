@@ -67,6 +67,7 @@ urlpatterns = [
     #卡校验
     url(r'^sellcard/cardcheck/$', 'sellcard.common.Method.cardCheck',name='cardcheck'),
     url(r'^sellcard/cardcheck2/', 'sellcard.common.Method.cardCheck_Mssql', name='cardcheck_mssql'),
+    url(r'^sellcard/cardcheck3/', 'sellcard.common.Method.cardCheck_Change', name='cardcheck_change'),
     #兑换码校验
     url(r'^sellcard/changcodecheck/', 'sellcard.common.Method.changeCodeCheck',name='changeCodeCheck'),
     #更新欠款状态
