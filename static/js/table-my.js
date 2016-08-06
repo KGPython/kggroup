@@ -148,7 +148,6 @@ function checkCardStu(obj,cardId,shopCode,url){
                     parentTr.find('.type2').val(res.card_value)
                 }
             }
-
         }
     })
 }

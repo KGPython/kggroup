@@ -219,15 +219,13 @@
         allocateTotal();
     });
     $(document).on('change','.cardSent .cardno',function(){
-        var cardList = [];
         var cardId = $(this).val();
-        cardList.push(cardId);
+        //重复校验
         checkRepeat(this);
         //交叉校验
         checkCross(this);
         //状态校验
         var url = "{% url 'cardcheck' %}?cardId="+cardId;
-
         if(cardId){
 
             checkCardStu(this,cardId,'{{ shopCode | safe }}',url);
@@ -255,32 +253,7 @@
     });
     $('#btn-enter').click(function(){
         //卡列表
-        var list=[];
-        trs = $('.cardSent').find('tr');
-        for(var i=0;i<trs.length;i++){
-            var item ={};
-            var cardType = $(trs[i]).find('.type').val();
-            var cardType2 = $(trs[i]).find('.type2').val();
-            var start = $(trs[i]).find('.start').val();
-            var end = $(trs[i]).find('.end').val();
-            var subTotal = $(trs[i]).find('.subTotal').val();
-            if(cardType!=cardType2){
-                alert('卡段初始号："'+start+'"与截止号："'+end+'"面值不符，请处理后再尝试提交');
-                return false;
-            }
 
-            if(subTotal){
-                item['cardType'] = cardType;
-                item['start'] = start;
-                item['end'] = end;
-                item['subTotal'] = subTotal;
-                list.push(item);
-            }
-        }
-        if(list.length<1){
-            alert('请完善领卡列表后，再尝试提交');
-            return false;
-        }
         //领取人信息
         var shopIn = $('#shopIn').val();
         var shopOut = $('#shopOut').val();
@@ -294,6 +267,33 @@
         }
         var totalNum=$('#totalNum b').text();
         var totalVal=$('#totalVal b').text();
+        if(parseInt(totalNum)>0){
+            var list=[];
+            trs = $('.cardSent').find('tr');
+            for(var i=0;i<trs.length;i++){
+                var item ={};
+                var cardType = $(trs[i]).find('.type').val();
+                var cardType2 = $(trs[i]).find('.type2').val();
+                var start = $(trs[i]).find('.start').val();
+                var end = $(trs[i]).find('.end').val();
+                var subTotal = $(trs[i]).find('.subTotal').val();
+                if(cardType!=cardType2){
+                    alert('卡段初始号："'+start+'"与截止号："'+end+'"面值不符，请处理后再尝试提交');
+                    return false;
+                }
+
+                if(subTotal){
+                    item['cardType'] = cardType;
+                    item['start'] = start;
+                    item['end'] = end;
+                    item['subTotal'] = subTotal;
+                    list.push(item);
+                }
+            }
+        }else{
+            alert('请完善领卡列表后，再尝试提交');
+                return false;
+        }
 
         $.ajax({
             url:'{% url 'allocationSave' %}',
