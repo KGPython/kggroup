@@ -778,28 +778,36 @@ function showCardIfno3(obj,data){
     if(data.length==0){
          var cardStu ='不存在';
     }
-    var cardVal = data.card_value;
-    var cardBlance = data.card_blance;
+    var cardVal = data.New_amount;
+    var cardBlance = data.detail;
 
-    if(data.card_status==1){
+    if(data.mode==9){
         var cardStu ='未激活';
-    }else if(data.card_status==2){
-        var cardStu ='已激活';
-    }else if(data.card_status==3){
-        var cardStu ='已冻结';
-    }else if(data.card_status==4){
-        var cardStu ='已作废';
+    }else if(data.mode==2){
+        var cardStu ='未到账卡';
+    }else if(data.mode=='r'){
+        var cardStu ='已回收卡';
+    }else if(data.mode=='m'){
+        var cardStu ='一般挂失卡';
+    }else if(data.mode=='l'){
+        var cardStu = '严重挂失卡';
+    }else if(data.mode=='f'){
+        var cardStr = '已冻结';
+    }else if(data.mode=='q'){
+        var cardStr = '已退卡';
+    }else if(data.mode==1) {
+        var cardStr = '已激活';
     }
 
     if(cls == 'cardInTotal'){
-        if(data.card_status!=2 || cardVal!=cardBlance){
+        if(data.card_mode!=1 || cardVal!=cardBlance){
             $(obj).parent().parent().find('td').eq(3).find('input').eq(0).addClass('red')
         }else{
             $(obj).parent().parent().find('td').eq(3).find('input').eq(0).removeClass('red')
         }
     }
     if(cls == 'cardOutTotal') {
-        if(data.card_status!=1 || cardVal!=cardBlance){
+        if(data.card_status!=9 || cardVal!=cardBlance){
             $(obj).parent().parent().find('td').eq(3).find('input').eq(0).addClass('red')
         }else{
             $(obj).parent().parent().find('td').eq(3).find('input').eq(0).removeClass('red')
