@@ -766,6 +766,7 @@ function setTotal3(obj){
 
 // 更换卡展示信息
 function showCardIfno3(obj,data){
+    console.log(data);
     var parentTbody = $(obj).parent().parent().parent()[0];
     var cls = '';
 
