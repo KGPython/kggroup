@@ -1,4 +1,5 @@
 @media print {
+    body,html{margin: 0;padding: 0}
     nav, aside {
         display: none;
     }
@@ -21,19 +22,24 @@
 
     .Ptitle {
         font-weight: normal;
-        text-align: center
+        text-align: center;
+        margin: 0;
     }
 
     .Pdate {
         float: left;
         width: 30%;
-        text-align: left
+        text-align: left;
+        margin: 0;
+        font-weight: normal;
     }
 
     .PorderSn {
         float: left;
         width: 30%;
-        text-align: right
+        text-align: right;
+        margin: 0;
+        font-weight: normal;
     }
 
     .PtableBox {
@@ -51,6 +57,7 @@
     .Ptotal p {
         font-size: 12px;
         text-indent: 20px;
+        line-height: 12px;
     }
 
     .Pbuyer, .tel {
@@ -89,7 +96,7 @@
 
     table th {
         border-width: 1px;
-        padding: 8px;
+        padding: 4px;
         font-weight: normal;
         border-style: solid;
         border-color: #666666;
@@ -98,7 +105,7 @@
 
     table td {
         border-width: 1px;
-        padding: 8px;
+        padding: 4px;
         border-style: solid;
         border-color: #666666;
         background-color: #ffffff;
