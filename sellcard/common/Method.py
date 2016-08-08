@@ -141,7 +141,6 @@ def cardCheck_Change(request):
     data = cursor.fetchone()
     data['New_amount'] = float(data['New_amount'])
     data['detail'] = float(data['detail'])
-    print(data['datail']);
     return HttpResponse(json.dumps(data), content_type="application/json")
 
 
