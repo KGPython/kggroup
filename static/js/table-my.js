@@ -31,7 +31,7 @@ function addRow(obj,target){
         var td = $("<td></td>");
         if(target=='changeCode'){
             if(i==0 || i==1){
-                var input = $("<input type='text' class='form-control'>");
+                var input = $("<input type='text' class='form-control changeCode'>");
                 $(td).append(input);
             }else if(i==columsL-1){
                 var button = $('<button type="button" class="btn btn-danger btn-xs btn-del">删除</button>');
@@ -376,7 +376,7 @@ $('.modal-footer #submit').click(function(){
     $('#hjsBox').hide();
 });
 //黄金手--校验
-$(document).on('click','#hjsBox .hCost',function(){
+$(document).on('change','#hjsBox .changeCode',function(){
     var _this = $(this);
     var parentTr = _this.parent().parent();
     var hNo = parentTr.find('td').eq(0).find('input').val();
@@ -525,9 +525,7 @@ function saveCardSaleOrder(action_type,url){
         success:function(data){
             if(data.msg==1){
                 alert('订单提交成功');
-                window.location.reload();
-                $('input[type=text]').not('.payName').val('');
-                $('input[type=checkbox]').prop('checked',false);
+                window.location.href=data.urlRedirect
             }else if(data.msg==0){
                 alert('订单提交失败');
             }

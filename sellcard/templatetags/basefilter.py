@@ -83,6 +83,11 @@ def transCardStu(key):
 #转百分比
 @register.filter
 def divide(v1,v2):
+    print(type(v1),type(v2))
+    if v1 == '':
+        v1 = 0.00
+    if v2 == '':
+        v2 = 0.00
     res = (float(v1) / float(v2))*100
     return str(round(res,2))+'%'
 

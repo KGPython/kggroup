@@ -142,6 +142,10 @@ def cardCheck_Change(request):
     data = serializers.serialize('json', data)
     return HttpResponse(data, content_type="application/json")
 
+#更新兑换码状态
+def upChangeCode(list,shopcode):
+    ExchangeCode.objects.filter(code__in=list).update(shop_code=shopcode,exchange_time=datetime.datetime.now())
+    return True
 
 #兑换码校验
 @csrf_exempt
@@ -150,7 +154,9 @@ def changeCodeCheck(request):
      camilo = request.POST.get('camilo','')
      res = ExchangeCode.objects.filter(code__contains=code,camilo__contains=camilo).values('cost')
      data={}
-     data['cost']=str(res[0]['cost'])
+     if len(res)>0:
+         data['cost']=str(res[0]['cost'])
+
      return HttpResponse(json.dumps(data),content_type="application/json")
 
 #跟新ERP内部卡状态

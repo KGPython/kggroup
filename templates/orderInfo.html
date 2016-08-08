@@ -1,0 +1,108 @@
+{% load basefilter %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>订单详情</title>
+</head>
+<body>
+{% include 'common/head.html' %}
+<style media=print>
+    .noprint{display: none}
+</style>
+<style>
+    .widget-content{border-bottom: none}
+    .col-xs-8{border-right:1px dotted #cdcdcd}
+    .widget-content{overflow: hidden}
+    .info p{font-size: 16px; text-indent: 20px;}
+</style>
+<!--containt-part-->
+<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb">
+            <a data-original-title="Go to Home" href="#" title="" class="tip-bottom">
+                <span class="glyphicon glyphicon-home" aria-hidden="true"> </span> 首页
+            </a>
+            <a href="#" class="current">订单详情</a>
+        </div>
+    </div>
+
+    <div class="widget-box">
+        <p>
+            <input class="query-enter" type="button" value="打印" onclick="javascript:printContent()">
+            <input class="query-enter" type="button" value="返回" onclick="closeFun()">
+        </p>
+        <div class="widget-content nopadding">
+            <h2 class="text-center">售卡收据</h2>
+            <h5 class="col-xs-4">{{ today |date:'Y年m月d日' }}</h5>
+            <h5 class="col-xs-4 text-right">收据编号：{{ orderSn }}</h5>
+            <div class="widget-content fixedBox col-xs-8">
+                <table class="table table-hover order-table">
+                    <thead>
+                        <tr><th>卡面值</th><th>张数</th><th>小计（单位：元）</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for info in infoList %}
+                            <tr>
+                                <td class="">{{ info.card_balance }}</td>
+                                <td class="">{{ info.subNum }}</td>
+                                <td>{{ info.subVal }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="widget-content fixedBox col-xs-4 info">
+                <p>合计卡数：{{ totalNum }}</p>
+                <p>合计金额：{{ order.0.paid_amount }}</p>
+                <p>实收金额(大写)：</p>
+            </div>
+        </div>
+        <div class="row formline info">
+            <p class="col-xs-4">收款单位： </p>
+            <p class="col-xs-4">收款人： </p>
+            <p class="col-xs-4">交款人： </p>
+        </div>
+        <div class="row formline tel">
+            <p class="text col-xs-2">德汇店：0314-2026118 </p>
+            <p class="text col-xs-2">商城店：0314-2026118  </p>
+            <p class="text col-xs-2">双摆店：0314-2026118  </p>
+            <p class="text col-xs-2">滦河店：0314-2026118  </p>
+            <p class="text col-xs-2">围场店：0314-2026118  </p>
+            <p class="text col-xs-2">丰润店：0314-2026118  </p>
+        </div>
+        <div class="discountTotal row formline">
+            <p class="text col-xs-2">丰百店：0314-2026118  </p>
+            <p class="text col-xs-2">平泉店：0314-2026118  </p>
+            <p class="text col-xs-2">滦平店：0314-2026118  </p>
+            <p class="text col-xs-2">隆化店： 0314-2026118 </p>
+            <p class="text col-xs-2">双滦广场店：0314-2026118  </p>
+            <p class="text col-xs-2">安定里店： 0314-2026118 </p>
+        </div>
+        <div class="discountTotal row formline">
+            <p class="text col-xs-2">宽城广场店：0314-2026118  </p>
+            <p class="text col-xs-2">宽城购物店： 0314-2026118 </p>
+            <p class="text col-xs-2">宽城购物中心店： 0314-2026118 </p>
+            <p class="text col-xs-2">奥体中心店： 0314-2026118 </p>
+            <p class="text col-xs-2">美神店：0314-2026118  </p>
+            <p class="text col-xs-2">嘉和广场店： 0314-2026118 </p>
+        </div>
+        <div class="discountTotal row formline">
+            <p class="text col-xs-2">名都店：0314-2026118  </p>
+            <p class="text col-xs-2">下板城店： 0314-2026118 </p>
+            <p class="text col-xs-2">天山店： 0314-2026118 </p>
+        </div>
+    </div>
+</div>
+<!--end-containt-part-->
+{% include "common/foot.html" %}
+<script src="{{ static }}/js/jquery.jqprint-0.3.js"></script>
+<script>
+function printContent(){
+    window.print();
+}
+</script>
+</body>
+</html>

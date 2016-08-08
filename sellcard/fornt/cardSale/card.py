@@ -1,13 +1,13 @@
 #-*- coding:utf-8 -*-
 from django.shortcuts import render
-from sellcard.models import Orders,OrderInfo,OrderPaymentInfo,CardInventory,ExchangeCode
+from sellcard.models import Orders,OrderInfo,OrderPaymentInfo,CardInventory
 from django.http import HttpResponse
-import json
-from django.views.decorators.csrf import csrf_exempt
-import datetime
-from sellcard.common import Method as mtu
+import json,datetime
 from django.db import transaction
+from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Sum,Count
 
+from sellcard.common import Method as mtu
 
 def index(request):
     rates = request.session.get('s_rates')
@@ -116,7 +116,21 @@ def saveOrder(request):
 
 
             res["msg"] = 1
+            res["urlRedirect"] = '/kg/sellcard/cardsale/orderInfo/?orderSn='+order_sn
     except Exception as e:
         print(e)
         res["msg"] = 0
     return HttpResponse(json.dumps(res))
+
+
+def info(request):
+    orderSn = request.GET.get('orderSn','')
+    order = Orders.objects.values('operator_id','paid_amount','buyer_name','add_time').filter(order_sn=orderSn)
+    print(order)
+    infoList = OrderInfo.objects.values('card_balance').filter(order_id=orderSn).annotate(subVal=Sum('card_balance'),subNum=Count('card_id'))
+    today = datetime.date.today()
+
+    totalNum = 0
+    for info in infoList:
+        totalNum += int(info['subNum'])
+    return render(request,'orderInfo.html',locals())

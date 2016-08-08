@@ -105,6 +105,8 @@
                                         <th>订单编号</th>
                                         <th>订单额度</th>
                                         <th>优惠额度</th>
+                                        <th>订单日期</th>
+                                        <th>操作</th>
                                     </tr>
                                 </thead>
                                 <tbody class="cardIn" id="nopayList">
@@ -117,6 +119,8 @@
                                             <td>{{ row.order_sn }}</td>
                                             <td>{{ row.paid_amount }}</td>
                                             <td>{{ row.disc_amount }}</td>
+                                            <td>{{ row.add_time }}</td>
+{#                                            <td><a href="{% url '' %}?orderSn={{ row.order_sn }}">查看</a></td>#}
                                         </tr>
                                     {% endfor %}
                                 </tbody>
@@ -131,6 +135,7 @@
                                         <th>补卡人姓名</th>
                                         <th>补卡人电话</th>
                                         <th>领卡日期</th>
+                                        <th>操作</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -144,6 +149,7 @@
                                             <td>{{ row.user_name }}</td>
                                             <td>{{ row.user_phone }}</td>
                                             <td>{{ row.modified_time | date:'Y-m-d'}}</td>
+{#                                            <td><a href="{% url '' %}?orderSn={{ row.order_sn }}">查看</a></td>#}
                                         </tr>
                                     {% endfor %}
                                 </tbody>
@@ -157,6 +163,7 @@
                                         <th>入库总金额</th>
                                         <th>出库总金额</th>
                                         <th>换卡日期</th>
+                                        <th>操作</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -169,6 +176,7 @@
                                             <td>{{ row.total_in_price }}</td>
                                             <td>{{ row.total_out_price }}</td>
                                             <td>{{ row.add_time | date:'Y-m-d' }}</td>
+{#                                            <td><a href="{% url '' %}?orderSn={{ row.order_sn }}">查看</a></td>#}
                                         </tr>
                                     {% endfor %}
                                 </tbody>

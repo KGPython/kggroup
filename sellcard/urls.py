@@ -9,6 +9,9 @@ urlpatterns = [
     url(r'^sellcard/cardssale/$','sellcard.fornt.cardSale.cards.index',name='cardssale'),
     url(r'^sellcard/cardssale/query','sellcard.fornt.cardSale.cards.query',name='cardsSaleQuery'),
 
+    #售卡返回明细
+    url(r'^sellcard/cardsale/orderInfo','sellcard.fornt.cardSale.card.info',name='cardsSaleOrderInfo'),
+
     #大宗赠卡
     url(r'^sellcard/bestowed/$', 'sellcard.fornt.cardSale.bestowed.index',name='bestowed'),
     url(r'^sellcard/bestowed/save', 'sellcard.fornt.cardSale.bestowed.saveOrder',name='bestowedSave'),
@@ -54,6 +57,7 @@ urlpatterns = [
     url(r'^sellcard/check/pay/$', 'sellcard.fornt.checkManage.pay.index',name="payCheck"),
     #销售明细查询
     url(r'^sellcard/check/salequery/$', 'sellcard.fornt.checkManage.saleQuery.index',name="saleQuery"),
+    url(r'^sellcard/check/salequery/info/$', 'sellcard.fornt.checkManage.saleQuery.info',name="saleQueryInfo"),
 
 
     #登陆模块

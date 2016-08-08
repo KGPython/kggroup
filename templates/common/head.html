@@ -9,20 +9,21 @@
 <script src="{{ static }}/js/respond.min.js"></script>
 <![endif]-->
 <!--Header-part-->
-<div id="header">
+<div id="header" class="noprint">
   <h1><a href="#">宽广储值卡销售管理系统</a></h1>
 </div>
 <!--close-Header-part-->
 
 <!--top-Header-menu-->
-<div id="user-nav">
+<div id="user-nav" class="noprint">
     <ul class="nav">
         <li class=""><a title="" href="#"><span class="glyphicon glyphicon-lock" aria-hidden="true"> </span><span class="text">修改密码</span></a></li>
         <li class=""><a title="" href="{% url 'logout' %}"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"> </span><span class="text">退出登录</span></a></li>
     </ul>
 </div>
 <!--sidebar-menu-->
-<div id="sidebar"> <a class="hidden" href="#"><span class="glyphicon glyphicon-list"> </span>系统菜单</a>
+<div id="sidebar" class="noprint">
+    <a class="hidden" href="#"><span class="glyphicon glyphicon-list"> </span>系统菜单</a>
     <ul>
         {% for item in  request.session.s_umenu %}
              <li class="submenu">

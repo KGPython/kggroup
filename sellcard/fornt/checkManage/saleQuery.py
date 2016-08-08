@@ -39,7 +39,7 @@ def index(request):
     kwargs.setdefault('add_time__gte',start)
     kwargs.setdefault('add_time__lte',endTime)
     if actionType=='1':
-        resList = Orders.objects.values('shop_code','depart','operator_id','order_sn','action_type','paid_amount','disc_amount')\
+        resList = Orders.objects.values('shop_code','depart','operator_id','order_sn','action_type','paid_amount','disc_amount','add_time')\
                 .filter(**kwargs)\
                 .order_by('shop_code','depart','operator_id')
     elif actionType=='2':
@@ -57,3 +57,6 @@ def index(request):
     except Exception as e:
         print(e)
     return  render(request,'saleQuery.html',locals())
+
+def info(request):
+    return render(request,'',locals())
