@@ -135,12 +135,13 @@ def cardCheck(request):
 def cardCheck_Change(request):
     cardId = request.GET.get('cardId', '')
     conn = getMssqlConn()
-    cursor = conn.cursor
+    cursor = conn.cursor()
     sql = "select New_amount, detail, mode from guest where CardNO='{cardId}'".format(cardId=cardId)
     cursor.execute(sql)
     data = cursor.fetchone()
-    data = serializers.serialize('json', data)
-    return HttpResponse(data, content_type="application/json")
+    data['New_amount'] = float(data['New_amount'])
+    data['detail'] = float(data['detail'])
+    return HttpResponse(json.dumps(data), content_type="application/json")
 
 #更新兑换码状态
 def upChangeCode(list,shopcode):
