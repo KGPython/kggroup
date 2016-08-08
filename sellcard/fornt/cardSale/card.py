@@ -125,7 +125,7 @@ def saveOrder(request):
 
 def info(request):
     orderSn = request.GET.get('orderSn','')
-    order = Orders.objects.values('operator_id','paid_amount','buyer_name','add_time').filter(order_sn=orderSn)
+    order = Orders.objects.values('operator_id','paid_amount','disc_amount','y_cash','buyer_name','add_time').filter(order_sn=orderSn)
     print(order)
     infoList = OrderInfo.objects.values('card_balance').filter(order_id=orderSn).annotate(subVal=Sum('card_balance'),subNum=Count('card_id'))
     today = datetime.date.today()
