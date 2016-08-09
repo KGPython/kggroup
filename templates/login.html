@@ -92,17 +92,17 @@
                         window.location.href=result.homeurl;
                     }
                 }
-           }
+           };
 
            $('#loginForm').ajaxSubmit(ajax_option);
     }
 
     function setCnt(id,content,color){
-        $("#error_"+id).html(content)
+        $("#error_"+id).html(content);
         if(color!='')
-            $("#error_"+id).css({"color":color,"font-size":"12px"})
+            $("#error_"+id).css({"color":color,"font-size":"12px"});
         else
-            $("#error_"+id).css({"font-size":"12px"})
+            $("#error_"+id).css({"font-size":"12px"});
     }
 
     function changeValidateCode(id) {
