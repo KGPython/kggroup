@@ -66,7 +66,7 @@ function SoftKeyValidator(call,check_url){
             alert(e.name + ": " + e.message);
             return false;
         }
-    }
+    };
 
     this.checkKey = function(func,param,ucode){
         //获得随机数
@@ -381,7 +381,7 @@ function SoftKeyValidator(call,check_url){
             userName:user_name,
             userPwd:user_pwd,
             rnd:rnd,
-            encData:enc_data,
+            encData:enc_data
         };
 
         var data = {

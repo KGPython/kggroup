@@ -245,7 +245,7 @@ function setTotal(obj,cardtype){
 
     //处理优惠返现
     var Ycash=$('.'+cls).find('#Ycash').length;
-    console.log($('.'+cls));
+    //console.log($('.'+cls));
     if(Ycash>0){
         var Ycash=$('#Ycash').val();
         Ycash = Ycash=='' ?0:parseFloat(Ycash);
@@ -643,7 +643,7 @@ function updateCardFillOrder(url,target_url){
             'cardOutTotalNum':cardOutTotalNum,
             'cardOutTotalVal':cardOutTotalVal,
             'order_sn':order_sn,
-            'paymoney':paymoney,
+            'paymoney':paymoney
         },
         success:function(data){
             if(data.msg==1){
@@ -778,7 +778,7 @@ function showCardIfno3(obj,data){
     }
     var cardVal = data.New_amount;
     var cardBlance = data.detail;
-    console.log(data);
+    //console.log(data);
 
     if(data.mode=='9'){
         var cardStu = '未激活';
