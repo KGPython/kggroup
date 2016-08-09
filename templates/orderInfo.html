@@ -10,10 +10,27 @@
 <body>
 {% include 'common/head.html' %}
 <link rel="stylesheet" href="{{ static }}/css/orderinfoPrint.css" media="print">
+<style media="print">
+    .title{
+        height: 100px;
+        background:#fff url('{{ static }}/images/logo.jpg') top left no-repeat;
+        background-size: 100px;
+    }
+</style>
 <style media="screen">
-    .col-xs-7{border-right:1px dotted #cdcdcd;float: left}
-    .widget-content{overflow: hidden;border-bottom: none}
-    .info p{font-size: 16px; text-indent: 20px;}
+    .widget-content{overflow: hidden;width: 100%;background: #fff}
+    .title{
+        height: 100px;
+        background:#fff url('{{ static }}/images/logo.jpg') top left no-repeat;
+        background-size: 100px;
+    }
+    .title-ifno{margin-left: 120px;}
+    .info-order{float: left;width: 15%;}
+    .info-order p{font-size: 10px;line-height: 12px;}
+    .info-tel{float: left;width: 85%}
+    .info-tel p{float: left;margin-left: 10px;font-size: 10px;line-height: 12px;}
+    .info-total p{float: left;width: 25%;padding: 2px;margin: 0}
+    
 </style>
 
 <!--containt-part-->
@@ -34,13 +51,47 @@
             <input class="query-enter" type="button" value="返回" onclick="closeFun()">
         </p>
         <div class="widget-content nopadding">
-            <h2 class="text-center Ptitle">售卡收据</h2>
-            <h5 class="col-xs-3 Pdate">日期：{{ today |date:'Y年m月d日' }}</h5>
-            <h5 class="col-xs-4 text-right PorderSn">收据编号：{{ orderSn }}</h5>
-            <div class="widget-content fixedBox col-xs-7 PtableBox">
+            <div class="title">
+                <div class="title-ifno">
+                    <div class="info-order">
+                        <p>购买日期 :{{ today |date:'Y年m月d日' }}</p>
+                        <p>订单编号 :{{ orderSn }}</p>
+                        <p>收款单位 :{{ order.0.shop_code | transShopCode }} </p>
+                        <p>收款人 : {{ order.0.operator_id | transUserId }}</p>
+                        <p>交款人 : </p>
+                    </div>
+                    <div class="info-tel">
+                        <p>德汇店:0314-2026118</p>
+                        <p>商城店:0314-2026118</p>
+                        <p>双百店:0314-2026118</p>
+                        <p >滦河店:0314-2026118</p>
+                        <p >围场店:0314-2026118</p>
+                        <p >丰润店:0314-2026118</p>
+                        <p >丰百店:0314-2026118</p>
+                        <p >平泉店:0314-2026118</p>
+                        <p >滦平店:0314-2026118</p>
+                        <p >隆化店:0314-2026118</p>
+
+                        <p >安定里店:0314-202611</p>
+                        <p >美神店:0314-2026118</p>
+                        <p >名都店:0314-2026118</p>
+                        <p >天山店:0314-2026118</p>
+                        <p >下板城店:0314-2026118</p>
+                        <p >双滦广场店:0314-2026118</p>
+                        <p >嘉和广场店:0314-2026118</p>
+
+                        <p >宽城广场店:0314-2026118</p>
+                        <p >宽城购物店:0314-2026118</p>
+                        <p >奥体中心店:0314-2026118</p>
+                        <p>宽城购物中心店:0314-2026118</p>
+                    </div>
+                </div>
+
+            </div>
+            <div class="widget-content fixedBox PtableBox">
                 <table class="table table-hover order-table">
                     <thead>
-                        <tr><th>卡面值</th><th>张数</th><th>小计（单位：元）</th></tr>
+                        <tr><th>卡面值</th><th>张数</th><th>小计（单位 :元）</th></tr>
                     </thead>
                     <tbody>
                         {% for info in infoList %}
@@ -52,45 +103,20 @@
                         {% endfor %}
                     </tbody>
                 </table>
+                <div class="info-total">
+                    <p>合计卡数 :{{ totalNum }}张</p>
+                    <p>合计金额 :{{ order.0.paid_amount }}元</p>
+                    <p id="disc">优惠金额 :{{ order.0.disc_amount }}元</p>
+                    <p>实收金额 :{{ order.0.paid_amount | subtract:order.0.y_cash }}元</p>
+                    <p class="remark">金额合计(大写) :</p>
+                    <p class="remark">备注 : </p>
+                </div>
             </div>
-            <div class="widget-content fixedBox col-xs-4 info Ptotal">
-                <p>合计卡数：{{ totalNum }}</p>
-                <p>合计金额：{{ order.0.paid_amount }}</p>
-                <p id="disc">优惠金额：{{ order.0.disc_amount }}</p>
-                <p>实收金额：{{ order.0.paid_amount | subtract:order.0.y_cash }}</p>
-                <p>金额合计(大写)：</p>
-            </div>
+
         </div>
-        <div class="row formline info Pbuyer">
-            <p class="col-xs-4">收款单位： </p>
-            <p class="col-xs-4">收款人： </p>
-            <p class="col-xs-4">交款人： </p>
-        </div>
+
         <div class="row formline tel">
-            <p class="text col-xs-2">德汇店：0314-2026118 </p>
-            <p class="text col-xs-2">商城店：0314-2026118  </p>
-            <p class="text col-xs-2">双百店：0314-2026118  </p>
-            <p class="text col-xs-2">滦河店：0314-2026118  </p>
-            <p class="text col-xs-2">围场店：0314-2026118  </p>
-            <p class="text col-xs-2">丰润店：0314-2026118  </p>
-            <p class="text col-xs-2">丰百店：0314-2026118  </p>
-            <p class="text col-xs-2">平泉店：0314-2026118  </p>
-            <p class="text col-xs-2">滦平店：0314-2026118  </p>
-            <p class="text col-xs-2">隆化店： 0314-2026118 </p>
-            <p class="text col-xs-2">双滦广场店：0314-2026118  </p>
-            <p class="text col-xs-2">安定里店： 0314-2026118 </p>
-            <p class="text col-xs-2">美神店：0314-2026118  </p>
-            <p class="text col-xs-2">名都店：0314-2026118  </p>
-            <p class="text col-xs-2">天山店： 0314-2026118 </p>
-            <p class="text col-xs-2">嘉和广场店： 0314-2026118 </p>
-            <p class="text col-xs-2">下板城店： 0314-2026118 </p>
-            <p class="text col-xs-2">宽城广场店：0314-2026118  </p>
-            <p class="text col-xs-2">宽城购物店： 0314-2026118 </p>
-            <p class="text col-xs-2">奥体中心店： 0314-2026118 </p>
-            <p class="text col-xs-2 large">宽城购物中心店： 0314-2026118 </p>
-        </div>
-        <div class="row formline tel">
-            <p class="text-right">备注： </p>
+
         </div>
     </div>
 </div>
@@ -103,7 +129,7 @@
 {#        $("#printContainer").jqprint({#}
 {#             debug: false, //如果是true则可以显示iframe查看效果（iframe默认高和宽都很小，可以再源码中调大），默认是false#}
 {#             importCSS: true, //true表示引进原来的页面的css，默认是true。（如果是true，先会找$("link[media=print]")，若没有会去找$("link")中的css文件）#}
-{#             printContainer: true, //表示如果原来选择的对象必须被纳入打印（注意：设置为false可能会打破你的CSS规则）。#}
+{#             printContainer: true, //表示如果原来选择的对象必须被纳入打印（注意 :设置为false可能会打破你的CSS规则）。#}
 {#             operaSupport: true//表示如果插件也必须支持歌opera浏览器，在这种情况下，它提供了建立一个临时的打印选项卡。默认是true#}
 {#        });#}
 
