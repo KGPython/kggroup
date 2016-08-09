@@ -29,7 +29,7 @@ def query(request):
         karrs.setdefault("state",state)
 
     order_list = OrderUpCard.objects.values("order_sn","total_amount","total_price","action_type","user_name",
-                               "user_phone","state","created_time",)\
+                               "user_phone","state","add_time",)\
         .filter(**karrs)\
         .order_by("-order_sn")
 
@@ -102,7 +102,7 @@ def save(request):
 def setOrderSn():
     start = datetime.date.today().strftime('%Y-%m-%d 00:00:00')
     end = datetime.date.today().strftime('%Y-%m-%d 23:59:59')
-    count  = OrderUpCard.objects.filter(created_time__gte=start,created_time__lte=end).count()+1
+    count  = OrderUpCard.objects.filter(add_time__gte=start,add_time__lte=end).count()+1
     if count<10:
         sn = datetime.date.today().strftime('%y%m%d')+'000'+str(count)
     elif count>=10 and count<100:
@@ -119,7 +119,7 @@ def gotcard(request):
     if order_sn:
         try:
             order = OrderUpCard.objects.values("order_sn","total_amount","total_price","action_type","user_name",
-                               "user_phone","state","created_time",).get(order_sn=order_sn)
+                               "user_phone","state","add_time",).get(order_sn=order_sn)
             orderInfoList = OrderUpCardInfo.objects.values("card_no","card_value","card_balance",).filter(order_sn=order_sn,card_attr=1)
         except Exception as e:
             print(e)
@@ -177,7 +177,7 @@ def info(request):
     if order_sn:
         try:
             order = OrderUpCard.objects.values("order_sn","total_amount","total_price","action_type","user_name",
-                               "user_phone","state","created_time","fill_price","fill_amount","diff_price").get(order_sn=order_sn)
+                               "user_phone","state","add_time","fill_price","fill_amount","diff_price").get(order_sn=order_sn)
             cardInList = OrderUpCardInfo.objects.values("card_no","card_value","card_balance",).filter(order_sn=order_sn,card_attr=1)
             cardOutList = OrderUpCardInfo.objects.values("card_no", "card_value", "card_balance", ).filter(order_sn=order_sn, card_attr=2)
             diff_amount = order["fill_price"] - order["total_price"]

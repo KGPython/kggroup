@@ -778,10 +778,13 @@ function showCardIfno3(obj,data){
     }
     var cardVal = data.New_amount;
     var cardBlance = data.detail;
+    console.log(data);
 
-    if(data.mode==9){
-        var cardStu ='未激活';
-    }else if(data.mode==2){
+    if(data.mode=='9'){
+        var cardStu = '未激活';
+    }else if(data.mode=='1'){
+        var cardStu = '已激活'
+    }else if(data.mode=='2'){
         var cardStu ='未到账卡';
     }else if(data.mode=='r'){
         var cardStu ='已回收卡';
@@ -793,19 +796,17 @@ function showCardIfno3(obj,data){
         var cardStr = '已冻结';
     }else if(data.mode=='q'){
         var cardStr = '已退卡';
-    }else if(data.mode==1) {
-        var cardStr = '已激活';
     }
 
     if(cls == 'cardInTotal'){
-        if(data.card_mode!=1 || cardVal!=cardBlance){
+        if(data.mode!='1' || cardVal!=cardBlance){
             $(obj).parent().parent().find('td').eq(3).find('input').eq(0).addClass('red')
         }else{
             $(obj).parent().parent().find('td').eq(3).find('input').eq(0).removeClass('red')
         }
     }
     if(cls == 'cardOutTotal') {
-        if(data.card_status!=9 || cardVal!=cardBlance){
+        if(data.mode!='9' || cardVal!=cardBlance){
             $(obj).parent().parent().find('td').eq(3).find('input').eq(0).addClass('red')
         }else{
             $(obj).parent().parent().find('td').eq(3).find('input').eq(0).removeClass('red')
