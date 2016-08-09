@@ -108,7 +108,7 @@
 
     $(document).on('click','#nopayList .btn-enter',function(){
         var parentTr = $(this).parent().parent();
-        var orderSn = parentTr.find('.orderSn').val();
+        var orderSn = parentTr.find('.orderSn').text();
         var date = parentTr.find('.date').val();
         if(!date){
             alert('到帐日期不能为空');
