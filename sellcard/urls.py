@@ -20,7 +20,6 @@ urlpatterns = [
     url(r'^sellcard/nopay/$', 'sellcard.fornt.cardSale.nopay.index',name='nopay'),
 
 
-    url(r'^sellcard/orderdetail', 'sellcard.common.Method.orderDetail',name='orderDetail'),
 
     #换卡
     url(r'^sellcard/cardchange/$', 'sellcard.fornt.cardChange.view.index', name='cardchange'),
@@ -78,6 +77,8 @@ urlpatterns = [
     url(r'^sellcard/changcodecheck/', 'sellcard.common.Method.changeCodeCheck',name='changeCodeCheck'),
     #更新欠款状态
     url(r'^sellcard/nopay/update', 'sellcard.common.Method.upNoPayStatus',name='upNoPayStatus'),
+    #订单明细
+    url(r'^sellcard/orderdetail', 'sellcard.common.Method.orderDetail',name='orderDetail'),
 
 
 ]

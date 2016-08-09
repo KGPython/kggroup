@@ -47,6 +47,7 @@ def login(request):
 
             if upwd == password:
                 request.session["s_uname"] = user.user_name
+                request.session["s_unameChinese"] = user.name
                 request.session["s_roleid"] = user.role_id
                 request.session["s_shopid"] = user.shop_id
                 request.session["s_shopcode"] = user.shop_code

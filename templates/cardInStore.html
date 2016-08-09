@@ -55,7 +55,12 @@
         alert('数据提交成功')
     }else if(msg=='3'){
         alert('数据提交失败')
+    }else if(msg=='4'){
+        alert('此单号不属于此门店，没有权限入库此单充值卡')
+    }else if(msg=='5'){
+        alert('此单号不存在')
     }
+
     $('.enter-btn').click(function(){
         var orderSn = $('#orderSn').val();
         if(!orderSn){

@@ -63,7 +63,7 @@
                         <p>订单编号 :{{ orderSn }}</p>
                         <p>收款单位 :{{ order.0.shop_code | transShopCode }} </p>
                         <p>收款人 : {{ order.0.operator_id | transUserId }}</p>
-                        <p>交款人 : </p>
+                        <p>交款人 : {{ order.0.buyer_name }}</p>
                     </div>
                     <div class="info-tel">
                         <p>德汇店:0314-2026118</p>
