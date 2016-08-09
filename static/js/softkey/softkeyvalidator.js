@@ -25,13 +25,13 @@ function SoftKeyValidator(call,check_url){
             }
         }
         return ( result == '' ? '0' : result );
-    }
+    };
 
     SoftKeyValidator.random = function(){
         var number1 = parseInt(Math.random()*65535)+1;
         var number2 = parseInt(Math.random()*65535)+1;
         rnd = number1.toString()+number2.toString();
-    }
+    };
 
     this.loadSoftKey = function(){
         //如果是IE10及以下浏览器，则跳过不处理
@@ -283,7 +283,7 @@ function SoftKeyValidator(call,check_url){
             alert(e.name + ": " + e.message);
             return false;
         }
-    }
+    };
 
     this.Handle_IE10 = function(rnd,func,param,ucode)
     {
@@ -363,11 +363,11 @@ function SoftKeyValidator(call,check_url){
             alert(e.name + "：" + e.message+"，可能是没有安装相应的控件或插件");
             return false;
         }
-    }
+    };
 
     String.prototype.trim = function() {
         return this.replace(/^\s+|\s+$/g,"");
-    }
+    };
 
     function checkValidity(func,param,ucode){
         var codestr = $.md5(ucode.trim());
