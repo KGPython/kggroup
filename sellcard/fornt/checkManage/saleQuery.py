@@ -58,5 +58,3 @@ def index(request):
         print(e)
     return  render(request,'saleQuery.html',locals())
 
-def info(request):
-    return render(request,'',locals())

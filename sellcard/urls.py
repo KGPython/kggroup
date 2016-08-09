@@ -18,7 +18,9 @@ urlpatterns = [
 
     #欠款管理
     url(r'^sellcard/nopay/$', 'sellcard.fornt.cardSale.nopay.index',name='nopay'),
-    url(r'^sellcard/nopay/detail', 'sellcard.fornt.cardSale.nopay.detail',name='nopayDetail'),
+
+
+    url(r'^sellcard/orderdetail', 'sellcard.common.Method.orderDetail',name='orderDetail'),
 
     #换卡
     url(r'^sellcard/cardchange/$', 'sellcard.fornt.cardChange.view.index', name='cardchange'),
@@ -57,7 +59,7 @@ urlpatterns = [
     url(r'^sellcard/check/pay/$', 'sellcard.fornt.checkManage.pay.index',name="payCheck"),
     #销售明细查询
     url(r'^sellcard/check/salequery/$', 'sellcard.fornt.checkManage.saleQuery.index',name="saleQuery"),
-    url(r'^sellcard/check/salequery/info/$', 'sellcard.fornt.checkManage.saleQuery.info',name="saleQueryInfo"),
+
 
 
     #登陆模块

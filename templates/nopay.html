@@ -79,7 +79,7 @@
                             <tbody class="cardIn" id="nopayList">
                              {% for row in list %}
                                 <tr>
-                                    <td><a class="form-control orderSn green" href="{% url 'nopayDetail' %}?ordersn={{ row.order_sn }}">{{ row.order_sn }}</a></td>
+                                    <td><a class="form-control orderSn green" href="{% url 'orderDetail' %}?orderSn={{ row.order_sn }}">{{ row.order_sn }}</a></td>
                                     <td><input class='form-control' disabled="disabled" value="{{ row.add_time | date:"Y-m-d"}}"></td>
                                     <td><input class="form-control" disabled="disabled" value="{{ row.paid_amount }}"></td>
                                     <td><input class="form-control" disabled="disabled" value="{{ row.pay_value }}"></td>

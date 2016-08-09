@@ -1,9 +1,10 @@
 #-*- coding:utf-8 -*-
 __author__ = 'admin'
+from django.shortcuts import render
 import pymssql,random,hashlib
 from PIL import Image, ImageDraw, ImageFont
 from sellcard.common import Constants
-from sellcard.models import CardInventory,Orders,ExchangeCode,OrderPaymentInfo
+from sellcard.models import CardInventory,Orders,ExchangeCode,OrderPaymentInfo,OrderInfo
 from django.conf import settings
 from django.core import serializers
 from django.http import HttpResponse
@@ -237,5 +238,17 @@ def convertToStr(val,*arg):
             return str(float(val))
         else:
             return "0.00"
+
+
+def orderDetail(request):
+    orderSn = request.GET.get('orderSn','')
+    order = Orders.objects\
+            .values('order_sn','shop_code','paid_amount','disc_amount','buyer_name','buyer_tel','buyer_company','add_time')\
+            .filter(order_sn=orderSn)
+
+    orderInfo = OrderInfo.objects.values('card_id','card_balance').filter(order_id=orderSn)
+    orderPayInfo = OrderPaymentInfo.objects.values('pay_id','pay_value','remarks').filter(order_id=orderSn)
+    cardsNum = OrderInfo.objects.filter(order_id=orderSn).count()
+    return render(request,'orderDetail.html',locals())
 
 
