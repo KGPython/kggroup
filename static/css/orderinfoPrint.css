@@ -18,11 +18,11 @@
 
     .title-ifno{margin-left: 120px;}
     .info-order{float: left;width: 20%;min-width: 145px;}
-    .info-order p,.info-tel p{font-size: 8px;line-height: 12px;}
+    .info-order p,.info-tel p{font-size: 10px;line-height: 12px;}
     .info-tel{float: left;width: 70%}
     .info-tel p{float: left;margin-left: 10px;font-size: 8px;}
     .info-total{margin-top: 5px;}
-    .info-total p{font-size: 8px;line-height: 13px;float: left;width: 25%}
+    .info-total p{font-size: 10px;line-height: 13px;float: left;width: 25%}
     .info-total p.remark{width: 100%;}
     table {
         width: 100%;
