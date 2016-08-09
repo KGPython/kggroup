@@ -13,17 +13,20 @@
 <style media="print">
     .title{
         height: 100px;
-        background:#fff url('{{ static }}/images/logo.jpg') top left no-repeat;
-        background-size: 100px;
+        background:#fff url('{{ static }}/images/logo.jpg') 10px 0px no-repeat;
+        background-size: 80px;
     }
+    .title h5{float: left;width: 100px;margin-top: 80px;text-align: center}
 </style>
 <style media="screen">
+
     .widget-content{overflow: hidden;width: 100%;background: #fff}
     .title{
         height: 100px;
-        background:#fff url('{{ static }}/images/logo.jpg') top left no-repeat;
-        background-size: 100px;
+        background:#fff url('{{ static }}/images/logo.jpg') 10px 0px no-repeat;
+        background-size: 80px;
     }
+    .title h5{float: left;width: 100px;margin-top: 90px;text-align: center}
     .title-ifno{margin-left: 120px;}
     .info-order{float: left;width: 15%;}
     .info-order p{font-size: 10px;line-height: 12px;}
@@ -52,6 +55,7 @@
         </p>
         <div class="widget-content nopadding">
             <div class="title">
+                <h5>售卡收据</h5>
                 <div class="title-ifno">
                     <div class="info-order">
                         <p>购买日期 :{{ today |date:'Y年m月d日' }}</p>
@@ -108,8 +112,8 @@
                     <p>合计金额 :{{ order.0.paid_amount }}元</p>
                     <p id="disc">优惠金额 :{{ order.0.disc_amount }}元</p>
                     <p>实收金额 :{{ order.0.paid_amount | subtract:order.0.y_cash }}元</p>
-                    <p class="remark">金额合计(大写) :</p>
-                    <p class="remark">备注 : </p>
+                    <p class="remark">金额合计(大写) :陆佰元整</p>
+                    <p class="remark">备注 :此收据不得作为经营性业务收支结算凭证使用。 </p>
                 </div>
             </div>
 
