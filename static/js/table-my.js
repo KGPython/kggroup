@@ -2,7 +2,7 @@ $(document).ready(function(){
     var parterVal = $('#parter').val();
     $('#parterId').val(parterVal);
     var blankVal = $('#blank').val();
-    $('#blankId').val(blankVal)
+    $('#blankId').val(blankVal);
 });
 
 //删除tr
@@ -245,7 +245,7 @@ function setTotal(obj,cardtype){
 
     //处理优惠返现
     var Ycash=$('.'+cls).find('#Ycash').length;
-    //console.log($('.'+cls));
+
     if(Ycash>0){
         var Ycash=$('#Ycash').val();
         Ycash = Ycash=='' ?0:parseFloat(Ycash);
@@ -708,8 +708,7 @@ function saveCardChangeOrder(action_type,url){
             // 支付人信息
             'buyerName':buyerName,
             'buyerPhone':buyerPhone,
-            'buyerCompany':buyerCompany
-
+            'buyerCompany':buyerCompany 
         },
         success:function(data){
             if(data.msg==1){
@@ -778,7 +777,7 @@ function showCardIfno3(obj,data){
     }
     var cardVal = data.New_amount;
     var cardBlance = data.detail;
-    //console.log(data);
+
 
     if(data.mode=='9'){
         var cardStu = '未激活';
