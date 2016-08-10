@@ -244,9 +244,9 @@ function setTotal(obj,cardtype){
     }
 
     //处理优惠返现
-    var Ycash=$('.'+cls).find('#Ycash').length;
+    var YcashObj=$('.'+cls).find('#Ycash').length;
 
-    if(Ycash>0){
+    if(YcashObj>0){
         var Ycash=$('#Ycash').val();
         Ycash = Ycash=='' ?0:parseFloat(Ycash);
         totalVal +=Ycash;
@@ -272,7 +272,7 @@ function setTotal(obj,cardtype){
     //赠卡补差
     var YtotalVal = parseFloat($('.discountTotal #totalVal b').text());
     discountVal = parseFloat($('.Total #discountVal b').text());
-    if(YtotalVal && discountVal){
+    if(YtotalVal!=undefined){
         discountVal = isNaN(discountVal) ? 0:discountVal;
         var Ybalance = YtotalVal - discountVal;
         $('.discountTotal #balance b').text(Ybalance);
@@ -281,6 +281,7 @@ function setTotal(obj,cardtype){
     var YtotalVal = parseFloat($('.cardOutTotal #totalVal b').text());
     if(YtotalVal!=undefined){
         var discountVal = parseFloat($('.cardInTotal #totalVal b').text());
+        discountVal = isNaN(discountVal) ? 0:discountVal;
         var Ybalance = YtotalVal - discountVal;
         $('.cardOutTotal #balance b').text(Ybalance);
     }
@@ -288,7 +289,7 @@ function setTotal(obj,cardtype){
 //优惠返现
 $('#Ycash').blur(function(){
     var Ycash = parseFloat($(this).val());
-    Ycash = Ycash=='' ?0:parseFloat(Ycash);
+    Ycash = isNaN(Ycash)?0:parseFloat(Ycash);
     var trs = $('#YcardList').find('tr');
     var totalVal = Ycash;
     for(var i=0;i<trs.length;i++){
@@ -300,6 +301,11 @@ $('#Ycash').blur(function(){
         }
     }
     $('.discountTotal #totalVal b').text(totalVal)
+    var discountVal = parseFloat($('.cardInTotal #totalVal b').text());
+    discountVal = isNaN(discountVal) ? 0:discountVal;
+    var Ybalance = totalVal - discountVal;
+    $('.discountTotal #balance b').text(Ybalance);
+
 });
 //获取卡号
 function getCardIds(obj){

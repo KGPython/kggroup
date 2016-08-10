@@ -10,7 +10,7 @@ https://docs.djangoproject.com/en/1.8/howto/deployment/wsgi/
 import os
 
 from os.path import join, dirname, abspath
-#abspath  使用绝对路径
+
 PROJECT_DIR = dirname(dirname(abspath(__file__)))
 
 import sys
