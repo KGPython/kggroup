@@ -63,7 +63,7 @@ def  verifycode(request,key):
     height = 80
     image = Image.new('RGB', (width, height), (255, 255, 255))
     # 创建Font对象:
-    root = settings.BASE_ROOT+Constants.FONT_ARIAL
+    root = settings.BASE_DIR+Constants.FONT_ARIAL
     font = ImageFont.truetype(root, 80)     #36 - 字体大小，数值大字体大
     # 创建Draw对象:
     draw = ImageDraw.Draw(image)
