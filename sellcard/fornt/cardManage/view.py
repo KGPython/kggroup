@@ -39,7 +39,7 @@ def cardInStore(request):
                     try:
                         for card in cardList:
                             model = CardInventory.objects.filter(card_no=card['CardNO'])\
-                                    .update(card_blance =card['detail'],charge_time=datetime.datetime.now(),sheetid=sheetid)
+                                    .update(card_blance =card['detail'],card_value =card['detail'],charge_time=datetime.datetime.now(),sheetid=sheetid)
                         res['msg']='2'
                     except Exception as e:
                         print(e)

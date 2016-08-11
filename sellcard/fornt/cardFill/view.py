@@ -60,7 +60,7 @@ def save(request):
 
     try:
         with transaction.atomic():
-            order_sn = setOrderSn()
+            order_sn = 'F'+setOrderSn()
             order = OrderUpCard()
             order.order_sn=order_sn
             order.action_type=action_type

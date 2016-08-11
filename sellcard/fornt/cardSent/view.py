@@ -19,7 +19,7 @@ def index(request):
 @csrf_exempt
 @transaction.atomic
 def sentOrderSave(request):
-    orderSn = mth.setOrderSn(CardReceive)
+    orderSn = 'SE'+mth.setOrderSn(CardReceive)
 
     cardStr = request.POST.get('list','')
     cards = json.loads(cardStr)
@@ -36,12 +36,15 @@ def sentOrderSave(request):
             receive.add_time = datetime.datetime.now()
             receive.save()
             for card in cards:
+                if card['cardType']=='无面值':
+                    card['cardType'] = ''
+
                 obj = ReceiveInfo()
                 obj.rec_id = orderSn
                 obj.card_id_start = card['start']
                 obj.card_id_end = card['end']
                 obj.card_nums = card['subTotal']
-                obj.card_value = int(card['cardType'])
+                obj.card_value = card['cardType']
                 obj.save()
                 for i in range(int(card['start']),int(card['end'])+1):
                     diff = len(card['start'])-len(str(int(card['start'])))
@@ -55,7 +58,7 @@ def sentOrderSave(request):
                     if(num>0):
                         raise MyError(prefix+str(i))
                     else:
-                        item.card_value = int(card['cardType'])
+                        item.card_value = card['cardType']
                         item.card_action = '1'
                         item.card_status = '1'
                         item.shop_code = shop

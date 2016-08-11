@@ -15,7 +15,7 @@ def index(request):
     roleid= request.session.get("s_roleid",'')
     rates = request.session.get('s_rates')
 
-    return render(request, 'cardsSale.html',locals())
+    return render(request, 'cardsChange.html',locals())
 
 @csrf_exempt
 def query(request):

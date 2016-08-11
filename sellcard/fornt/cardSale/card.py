@@ -56,7 +56,7 @@ def saveOrder(request):
     order_sn = ''
     try:
         with transaction.atomic():
-            order_sn = mtu.setOrderSn()
+            order_sn = 'S'+mtu.setOrderSn()
             for card in cardList:
                 orderInfo = OrderInfo()
                 orderInfo.order_id = order_sn

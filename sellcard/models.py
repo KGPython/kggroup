@@ -44,7 +44,7 @@ class Allocation(models.Model):
 
 class AllocationInfo(models.Model):
     order_sn = models.CharField(max_length=20)
-    card_type = models.IntegerField(blank=True, null=True)
+    card_type = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
     card_nums = models.SmallIntegerField(blank=True, null=True)
     cardno_start = models.CharField(max_length=20, blank=True, null=True)
     cardno_end = models.CharField(max_length=20, blank=True, null=True)
@@ -56,7 +56,7 @@ class AllocationInfo(models.Model):
 
 class CardInventory(models.Model):
     card_no = models.CharField(max_length=32)
-    card_value = models.DecimalField(max_digits=12, decimal_places=2)
+    card_value = models.CharField(max_length=12)
     card_status = models.CharField(max_length=1)
     card_action = models.CharField(max_length=1)
     card_addtime = models.DateTimeField()
@@ -73,7 +73,7 @@ class CardInventory(models.Model):
 
 class CardReceive(models.Model):
     shop_code = models.CharField(max_length=16)
-    rec_sn = models.CharField(max_length=45)
+    rec_sn = models.CharField(max_length=20)
     rec_name = models.CharField(max_length=60)
     add_time = models.DateTimeField()
 
@@ -178,10 +178,10 @@ class OrderChangeCard(models.Model):
 
 
 class OrderChangeCardInfo(models.Model):
-    order_sn = models.CharField(max_length=32)
+    order_sn = models.CharField(max_length=20)
     card_no = models.CharField(max_length=32)
     card_attr = models.CharField(max_length=1, blank=True, null=True)
-    card_value = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
+    card_value = models.CharField(max_length=12, blank=True, null=True)
     card_balance = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
     add_time = models.DateTimeField()
 
@@ -191,7 +191,7 @@ class OrderChangeCardInfo(models.Model):
 
 
 class OrderInfo(models.Model):
-    order_id = models.IntegerField()
+    order_id = models.CharField(max_length=20)
     card_id = models.IntegerField()
     card_balance = models.DecimalField(max_digits=11, decimal_places=2)
     card_action = models.CharField(max_length=1)
@@ -203,7 +203,7 @@ class OrderInfo(models.Model):
 
 
 class OrderPaymentInfo(models.Model):
-    order_id = models.IntegerField()
+    order_id = models.CharField(max_length=20)
     pay_id = models.IntegerField()
     pay_value = models.DecimalField(max_digits=11, decimal_places=2)
     remarks = models.TextField(blank=True, null=True)
@@ -242,7 +242,7 @@ class OrderUpCardInfo(models.Model):
     order_sn = models.CharField(max_length=20)
     card_no = models.CharField(max_length=32)
     card_attr = models.CharField(max_length=1)
-    card_value = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
+    card_value = models.CharField(max_length=12, blank=True, null=True)
     card_balance = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
     created_time = models.DateTimeField(blank=True, null=True)
 
@@ -282,8 +282,8 @@ class Payment(models.Model):
 
 
 class ReceiveInfo(models.Model):
-    rec_id = models.IntegerField()
-    card_value = models.IntegerField()
+    rec_id = models.CharField(max_length=20)
+    card_value = models.CharField(max_length=12)
     card_nums = models.IntegerField()
     card_id_start = models.CharField(max_length=32)
     card_id_end = models.CharField(max_length=32)

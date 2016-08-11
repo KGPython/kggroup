@@ -47,15 +47,14 @@ def save(request):
         with transaction.atomic():
             order_sn = mtu.setOrderSn(OrderChangeCard)
             created_time=datetime.datetime.today()
-            print(cardListIn,cardListOut)
             # 入卡插入订单详情
             for cardIn in cardListIn:
                 orderInfo = OrderChangeCardInfo()
                 orderInfo.order_sn = order_sn
                 orderInfo.card_no = cardIn['cardId']
                 orderInfo.card_attr = '1'
-                orderInfo.card_value = float(cardIn['cardVal'])
-                orderInfo.card_balance = float(cardIn['cardVal'])
+                orderInfo.card_value = cardIn['cardVal']
+                orderInfo.card_balance = cardIn['cardVal']
                 orderInfo.add_time = created_time
                 orderInfo.save()
             for cardOut in cardListOut:
@@ -63,8 +62,8 @@ def save(request):
                 orderInfo.order_sn = order_sn
                 orderInfo.card_no = cardOut['cardId']
                 orderInfo.card_attr = '0'
-                orderInfo.card_value = float(cardOut['cardVal'])
-                orderInfo.card_balance = float(cardOut['cardVal'])
+                orderInfo.card_value = cardOut['cardVal']
+                orderInfo.card_balance = cardOut['cardVal']
                 orderInfo.add_time = created_time
                 orderInfo.save()
 

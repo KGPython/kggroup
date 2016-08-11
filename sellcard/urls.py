@@ -22,8 +22,9 @@ urlpatterns = [
 
 
     #换卡
-    url(r'^sellcard/cardchange/$', 'sellcard.fornt.cardChange.view.index', name='cardchange'),
-    url(r'^sellcard/cardchange/save', 'sellcard.fornt.cardChange.view.save', name='cardchange_save'),
+    url(r'^sellcard/cardchange/$', 'sellcard.fornt.cardChange.card.index', name='cardchange'),
+    url(r'^sellcard/cardchange/save', 'sellcard.fornt.cardChange.card.save', name='cardchange_save'),
+    url(r'^sellcard/cardschange/$', 'sellcard.fornt.cardChange.cards.index', name='cardchange'),
 
     #补卡
     url(r'^sellcard/cardfill/index/','sellcard.fornt.cardFill.view.index',name='cardfill_index'),

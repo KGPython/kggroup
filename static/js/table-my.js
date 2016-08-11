@@ -763,6 +763,7 @@ function setTotal3(obj){
             }
         }
     }
+
     $('.'+cls+' #totalVal b').text(parseFloat(totalVal).toFixed(2));
     $('.'+cls+' #totalNum b').text(totalNum);
 }
