@@ -10,7 +10,10 @@ from django.db.models import Sum,Count
 from sellcard.common import Method as mtu
 
 def index(request):
+    operator = request.session.get('s_uid','')
+    roleid= request.session.get("s_roleid",'')
     rates = request.session.get('s_rates')
+    shopcode = request.session.get('s_shopcode','')
     return render(request,'cardSale.html',locals())
 
 @csrf_exempt
@@ -45,6 +48,7 @@ def saveOrder(request):
     totalVal = request.POST.get('totalVal',0.00)
 
     discountRate = request.POST.get('discount',0.00)
+    disCode = request.POST.get('disCode','')
     YtotalNum = request.POST.get('YtotalNum',0)
     YtotalVal = request.POST.get('YtotalVal',0.00)
     Ybalance = request.POST.get('Ybalance',0.00)
@@ -94,6 +98,7 @@ def saveOrder(request):
                 cardIdList.append(card['cardId'])
 
             mtu.updateCard(cardIdList,'1')
+            mtu.updateDisCode(disCode,shopcode)
             CardInventory.objects.filter(card_no__in=cardIdList).update(card_status='2',card_action='0')
 
             order = Orders()

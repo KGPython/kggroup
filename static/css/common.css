@@ -14,15 +14,17 @@
 .widget-box p.text{
     color: #666;
     font-size: 15px;
-    padding: 12px;
-    line-height: 12px;
+    padding: 8px;
+    line-height: 22px;
+	margin-bottom: 0;
 }
 .label-my{float: left;text-align: left;line-height: 34px;font-weight: normal;padding-left:15px;font-size: 15px; }
 .enter-box{margin-top: 15px;margin-bottom: 15px;overflow: hidden;padding-right: 20px;line-height: 25px;}
 .enter-box label{margin-right: 15px;color: #a94442;line-height: 25px;}
 .enter-box input{border: 1px solid #ccc;outline: none}
-.Total input{border: 1px solid #ccc;outline: none;background:#fff;width: 50px;}
-
+.Total .row{margin: 0;}
+.Total #discount input{border: 1px solid #eee;outline: none;background:#F9F9F9;width: 80px;}
+.Total #disCode input{border: 1px solid #eee;outline: none;background:#FFF;width: 150px;}
 
 /*
 ***************************************分页按钮****************************************

@@ -164,15 +164,25 @@
                         <h5>合计</h5>
                     </div>
                     <div class="widget-content nopadding Total">
-                        <p class="text col-xs-3" id="totalNum">卡合计数量：<b class="red">0</b>张</p>
-                        <p class="text col-xs-3" id="totalVal">卡合计金额：<b class="red">0.00</b>元</p>
-                        <p class="text col-xs-3" id="discount">折扣额度：<input type="text" value="0.00" disabled="disabled">%</p>
-                        <p class="text col-xs-3" id="discountVal">优惠金额（赠卡）：<b class="red">0.00</b>元</p>
-                        <p class="text col-xs-12" id="payInfo">
-                            <b>支付详细：</b>
-                            <span></span>
-                        </p>
-                        <p class="text" id="payTotal">支付合计：<b class="red">0.00</b>元</p>
+                        <div class="row">
+                            <p class="text col-xs-2" id="totalNum">卡合计数量：<b class="red">0</b>张</p>
+                            <p class="text col-xs-2" id="totalVal">卡合计金额：<b class="red">0.00</b>元</p>
+                            <p class="text col-xs-2" id="discount">
+                                折扣额度：<input type="text" value="0.00" disabled="disabled">%
+                                <button type="button" class="btn btn-warning btn-xs" id="disBtn">修改折扣率</button>
+                            </p>
+                            <p class="text col-xs-2" id="disCode" style="display: none">折扣授权码：<input type="text" value=""></p>
+                            <p class="text col-xs-2" id="discountVal">优惠金额（赠卡）：<b class="red">0.00</b>元</p>
+                        </div>
+                        <div class="row">
+                            <p class="text col-xs-12" id="payInfo">
+                                <b>支付详细：</b>
+                                <span></span>
+                            </p>
+                        </div>
+                        <div class="row">
+                            <p class="text col-xs-12" id="payTotal">支付合计：<b class="red">0.00</b>元</p>
+                        </div>
                     </div>
                 </div>
                 <div class="widget-box">
@@ -279,6 +289,14 @@
         var url = "{% url 'saveorder' %}";
         saveCardSaleOrder(action_type,url);
     })
+</script>
+<script>
+    $('#disCode input').blur(function(){
+        var disCode = $(this).val();
+        if(disCode){
+            checkDiscode("{% url 'disCodeCheck' %}?discode="+disCode+"&shop={{ shopcode |safe }}");
+        }
+    });
 </script>
 </body>
 </html>

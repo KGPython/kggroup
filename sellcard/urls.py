@@ -24,7 +24,8 @@ urlpatterns = [
     #换卡
     url(r'^sellcard/cardchange/$', 'sellcard.fornt.cardChange.card.index', name='cardchange'),
     url(r'^sellcard/cardchange/save', 'sellcard.fornt.cardChange.card.save', name='cardchange_save'),
-    url(r'^sellcard/cardschange/$', 'sellcard.fornt.cardChange.cards.index', name='cardchange'),
+    url(r'^sellcard/cardschange/$', 'sellcard.fornt.cardChange.cards.index', name='cardsChange'),
+    url(r'^sellcard/cardschange/query', 'sellcard.fornt.cardChange.cards.query', name='cardsChangeQuery'),
 
     #补卡
     url(r'^sellcard/cardfill/index/','sellcard.fornt.cardFill.view.index',name='cardfill_index'),
@@ -39,6 +40,7 @@ urlpatterns = [
     url(r'^sellcard/cardmanage/cardinstore/', 'sellcard.fornt.cardManage.view.cardInStore',name='cardInStore'),
     url(r'^sellcard/cardmanage/cardallocation/', 'sellcard.fornt.cardManage.cardAllocation.index',name='cardAllocation'),
     url(r'^sellcard/cardmanage/allocationsave/', 'sellcard.fornt.cardManage.cardAllocation.allocationSave',name='allocationSave'),
+    url(r'^sellcard/cardmanage/cardborrow/$', 'sellcard.fornt.cardManage.cardBorrow.index',name='cardBorrow'),
 
 
 
@@ -76,6 +78,8 @@ urlpatterns = [
     url(r'^sellcard/cardcheck3/', 'sellcard.common.Method.cardCheck_Change', name='cardcheck_change'),
     #兑换码校验
     url(r'^sellcard/changcodecheck/', 'sellcard.common.Method.changeCodeCheck',name='changeCodeCheck'),
+    #折扣修改授权码校验
+    url(r'^sellcard/discodecheck/', 'sellcard.common.Method.disCodeCheck',name='disCodeCheck'),
     #更新欠款状态
     url(r'^sellcard/nopay/update', 'sellcard.common.Method.upNoPayStatus',name='upNoPayStatus'),
     #订单明细

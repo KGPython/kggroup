@@ -262,6 +262,7 @@ function setTotal(obj,cardtype){
                 if(rates[j].val_min<=parseFloat(totalVal) && rates[j].val_max>=parseFloat(totalVal)){
                     rate=rates[j].discount_rate;
                     discountVal = Math.round(parseFloat(totalVal)*rate);
+                    //console.log(parseFloat(totalVal)*rate)
                 }
                 $(rateInput).val(rate*100);
                 $('.Total #discountVal b').text(discountVal);
@@ -286,6 +287,28 @@ function setTotal(obj,cardtype){
         $('.cardOutTotal #balance b').text(Ybalance);
     }
 }
+
+//自定义折扣授权验证
+$('#disBtn').click(function(){
+    $('#disCode').toggle();
+});
+
+
+function checkDiscode(url){
+    $.ajax({
+        url:url,
+        dataType:'json',
+        method:'get',
+        success:function(data){
+            if(data.msg=='0'){
+                $("#discount input").removeAttr('disabled').focus().val('')
+            }else{
+                alert('授权码无效')
+            }
+        }
+    })
+}
+
 //优惠返现
 $('#Ycash').blur(function(){
     var Ycash = parseFloat($(this).val());
@@ -478,7 +501,8 @@ function saveCardSaleOrder(action_type,url){
     var totalNum = parseInt($('.Total #totalNum b').text());
     var totalVal = parseFloat($('.Total #totalVal b').text());//卡合计金额
     var payTotal = parseFloat($('.Total #payTotal b').text());//支付合计
-    var discount = parseFloat($('.Total #discount input').val());
+    var discount = parseFloat($('.Total #discount input').val());//折扣比率
+    var disCode = $('.Total #disCode input').val();
     var discountVal = parseFloat($('.Total #discountVal b').text());
     //赠卡列表
     var YcardList = getCardList($('#YcardList'),'1');
@@ -516,6 +540,7 @@ function saveCardSaleOrder(action_type,url){
             'totalNum':totalNum,
             'totalVal':totalVal,
             'discount':discount,
+            'disCode':disCode,
             'YcardStr':JSON.stringify(YcardList),
             'YtotalNum':YtotalNum,
             'Ycash':Ycash,

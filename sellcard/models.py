@@ -99,6 +99,16 @@ class Departs(models.Model):
         db_table = 'departs'
 
 
+class DisCode(models.Model):
+    dis_code = models.CharField(max_length=20, blank=True, null=True)
+    shopcode = models.CharField(max_length=16, blank=True, null=True)
+    flag = models.CharField(max_length=1)
+
+    class Meta:
+        managed = False
+        db_table = 'dis_code'
+
+
 class DiscountRate(models.Model):
     shopcode = models.CharField(max_length=16)
     val_min = models.DecimalField(max_digits=12, decimal_places=2)
@@ -156,6 +166,33 @@ class NavList(models.Model):
     class Meta:
         managed = False
         db_table = 'nav_list'
+
+
+class OrderBorrow(models.Model):
+    order_sn = models.CharField(max_length=20, blank=True, null=True)
+    order_val = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
+    order_num = models.IntegerField(blank=True, null=True)
+    shopcode = models.CharField(max_length=16, blank=True, null=True)
+    operator = models.SmallIntegerField(blank=True, null=True)
+    borrow_depart = models.CharField(max_length=10, blank=True, null=True)
+    borrow_name = models.CharField(max_length=12, blank=True, null=True)
+    add_time = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'order_borrow'
+
+
+class OrderBorrowInfo(models.Model):
+    order_sn = models.CharField(max_length=20, blank=True, null=True)
+    card_no = models.CharField(max_length=20, blank=True, null=True)
+    card_type = models.CharField(max_length=12, blank=True, null=True)
+    card_balance = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
+    status = models.CharField(max_length=1, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'order_borrow_info'
 
 
 class OrderChangeCard(models.Model):

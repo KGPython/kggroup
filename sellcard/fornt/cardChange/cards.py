@@ -5,7 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 
 from sellcard.models import CardInventory
-from sellcard.common import Method as mtu
+from sellcard.common import Method as mth
 
 
 @csrf_exempt
@@ -22,18 +22,25 @@ def query(request):
     cardsStr = request.POST.get('cards','')
     cards = json.loads(cardsStr)
     listTotal = []
+    conn = mth.getMssqlConn()
+    cur = conn.cursor()
     for obj in cards:
-        list = CardInventory.objects.filter(card_no__gte=obj['start'],card_no__lte=obj['end'])\
-            .values('card_no','card_value','card_status','card_blance').order_by('card_no')
+        sql = "select cardno,new_amount,sheetid,mode,detail,memo " \
+              "from guest where cardno>='{cardStart}' and cardno<='{cardEnd}'"\
+              .format(cardStart=obj['start'],cardEnd=obj['end'])
+        cur.execute(sql)
+        list = cur.fetchall()
         listTotal.extend(list)
+    print(listTotal)
 
     cardNoList = []
     listTotalNew = []
     for item in listTotal:
-        if(item['card_no'] in cardNoList):
+        if(item['cardno'] in cardNoList):
             pass
         else:
-            cardNoList.append(item['card_no'])
-            item['card_blance']=float(item['card_blance'])
+            cardNoList.append(item['cardno'])
+            item['detail']=float(item['detail'])
+            item['new_amount']=float(item['new_amount'])
             listTotalNew.append(item)
     return HttpResponse(json.dumps(listTotalNew))

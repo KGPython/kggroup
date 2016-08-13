@@ -4,7 +4,7 @@ from django.shortcuts import render
 import pymssql,random,hashlib
 from PIL import Image, ImageDraw, ImageFont
 from sellcard.common import Constants
-from sellcard.models import CardInventory,Orders,ExchangeCode,OrderPaymentInfo,OrderInfo
+from sellcard.models import CardInventory,Orders,ExchangeCode,OrderPaymentInfo,OrderInfo,DisCode
 from django.conf import settings
 from django.core import serializers
 from django.http import HttpResponse
@@ -122,8 +122,28 @@ def cardCheck_Mssql(request):
         item.setdefault("card_blance", '0.0')
         item.setdefault("card_status", "-1")
 
-    print(item)
     return HttpResponse(json.dumps(item),content_type="application/json")
+
+#折扣修改授权码校验
+def disCodeCheck(request):
+    disCode = request.GET.get('discode','')
+    shop = request.GET.get('shop','')
+    disCodeList = DisCode.objects.values('flag').filter(dis_code=disCode,shopcode=shop)
+    res={}
+    if disCodeList and disCodeList[0]['flag']=='0':
+        res['msg']='0'
+    else:
+        res['msg']='1'
+    return HttpResponse(json.dumps(res), content_type="application/json")
+def updateDisCode(id,shop):
+    try:
+        DisCode.objects.filter(dis_code=id,shopcode=shop).update(flag='1')
+        return True
+    except Exception as e:
+        print(e)
+        return False
+
+
 # 充值卡卡校验
 def cardCheck(request):
     cardId= request.GET.get('cardId','')
