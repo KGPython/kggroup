@@ -16,10 +16,11 @@
         background:#fff url('{{ static }}/images/logo.jpg') 10px 0px no-repeat;
         background-size: 80px;
     }
+    .info-order{padding-top:20px;margin-right: 10px;}
+    .info-order p{line-height: 16px;}
     .title h5{float: left;width: 100px;margin-top: 80px;text-align: center}
 </style>
 <style media="screen">
-
     .widget-content{overflow: hidden;width: 100%;background: #fff}
     .title{
         height: 100px;
@@ -30,8 +31,6 @@
     .title-ifno{margin-left: 120px;}
     .info-order{float: left;width: 15%;}
     .info-order p{font-size: 10px;line-height: 12px;}
-    .info-tel{float: left;width: 85%}
-    .info-tel p{float: left;margin-left: 10px;font-size: 10px;line-height: 12px;}
     .info-total p{float: left;width: 25%;padding: 2px;margin: 0}
     .btnBox{padding: 10px;overflow: hidden}
     .btnBox .btn-success{margin-left: 15px;}
@@ -51,44 +50,28 @@
     <div class="widget-box" id="printContent">
         <p class="noprint btnBox">
             <input class="btn btn-success pull-right" type="button" value="返回" onclick="closeFun()">
-            <input class="btn btn-success pull-right" type="button" value="打印(不包括优惠)" onclick="javascript:printContent()">
-            <input class="btn btn-success pull-right" type="button" value="打印(包括优惠)" onclick="javascript:printAll()">
+            <input class="btn btn-success pull-right" type="button" value="打印" onclick="javascript:printAll()">
         </p>
         <div class="widget-content nopadding">
             <div class="title">
-                <h5>售卡收据</h5>
+                <h5>借卡凭证</h5>
                 <div class="title-ifno">
                     <div class="info-order">
-                        <p>购买日期 :{{ today |date:'Y年m月d日' }}</p>
-                        <p>订单编号 :{{ orderSn }}</p>
-                        <p>收款单位 :{{ order.0.shop_code | transShopCode }} </p>
-                        <p>收款人 : {{ order.0.operator_id | transUserId }}</p>
-                        <p>交款人 : {{ order.0.buyer_name }}</p>
+                        <p>借卡日期 :{{ today |date:'Y年m月d日' }}</p>
+                        <p>借卡单编号 :{{ orderSn }}</p>
+                        <p>出卡门店 :{{ order.0.shopcode | transShopCode }} </p>
+                        <p>出卡人 : {{ order.0.operator | transUserId }}</p>
+
                     </div>
-                    <div class="info-tel">
-                        <p>德汇店:0314-2026118</p>
-                        <p>商城店:0314-2026118</p>
-                        <p>双百店:0314-2026118</p>
-                        <p >滦河店:0314-2026118</p>
-                        <p >围场店:0314-2026118</p>
-                        <p >丰润店:0314-2026118</p>
-                        <p >丰百店:0314-2026118</p>
-                        <p >平泉店:0314-2026118</p>
-                        <p >滦平店:0314-2026118</p>
-                        <p >隆化店:0314-2026118</p>
-
-                        <p >安定里店:0314-202611</p>
-                        <p >美神店:0314-2026118</p>
-                        <p >名都店:0314-2026118</p>
-                        <p >天山店:0314-2026118</p>
-                        <p >下板城店:0314-2026118</p>
-                        <p >双滦广场店:0314-2026118</p>
-                        <p >嘉和广场店:0314-2026118</p>
-
-                        <p >宽城广场店:0314-2026118</p>
-                        <p >宽城购物店:0314-2026118</p>
-                        <p >奥体中心店:0314-2026118</p>
-                        <p>宽城购物中心店:0314-2026118</p>
+                    <div class="info-order">
+                        <p>借卡单位 : {{ order.0.borrow_depart }}</p>
+                        <p>借卡单位编号 : {{ order.0.borrow_depart_code }}</p>
+                        <p>借卡人 : {{ order.0.borrow_name }}</p>
+                        <p>借卡人电话 : {{ order.0.borrow_phone }}</p>
+                    </div>
+                    <div class="info-order">
+                        <p style="margin-top: 30px;">备注 : </p>
+                        <p>借卡人签字 : </p>
                     </div>
                 </div>
 
@@ -100,7 +83,7 @@
                     </thead>
                     <tbody>
                         {% for info in infoList %}
-                            <tr {% if info.card_attr == '2' %}class="discRow"{% endif %}>
+                            <tr>
                                 <td class="">{{ info.card_balance }}</td>
                                 <td class="">{{ info.subNum }}</td>
                                 <td>{{ info.subVal }}</td>
@@ -108,19 +91,10 @@
                         {% endfor %}
                     </tbody>
                 </table>
-                <div class="info-total allTotal">
-                    <p>合计卡数 :{{ totalNum }}张</p>
-                    <p>合计金额 :{{ order.0.paid_amount }}元</p>
-                    <p>优惠金额 :{{ order.0.disc_amount }}元</p>
-                    <p>实收金额 :{{ order.0.paid_amount}}元</p>
-                </div>
-                <div class="info-total discTotal" style="display: none">
-                    <p>合计卡数 :{{ totalNum }}张</p>
-                    <p>合计金额 :{{ order.0.paid_amount | subtract:order.0.diff_price}}元</p>
-                    <p>实收金额 :{{ order.0.paid_amount | subtract:order.0.diff_price }}元</p>
-                </div>
                 <div class="info-total">
-                    <p class="remark">金额合计(大写) :</p>
+                    <p>合计卡数 :{{ order.0.order_num }}张</p>
+                    <p>合计金额 :{{ order.0.order_val }}元</p>
+                    <p class="remark">金额合计(大写) :陆佰元整</p>
                     <p class="remark">备注 :此收据不得作为经营性业务收支结算凭证使用。 </p>
                 </div>
             </div>
@@ -135,16 +109,7 @@
 {% include "common/foot.html" %}
 <script src=""></script>
 <script>
-    function printContent(){
-        $('.allTotal').hide();
-        $('.discRow').addClass('noprint');
-        $('.discTotal').show().removeClass('noprint');
-        window.print();
-    }
     function printAll(){
-        $('.allTotal').show();
-        $('.discRow').removeClass('noprint');
-        $('.discTotal').hide().removeClass('noprint');
         window.print();
 
     }

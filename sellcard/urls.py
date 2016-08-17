@@ -38,9 +38,23 @@ urlpatterns = [
     ###卡管理
     #入库管理
     url(r'^sellcard/cardmanage/cardinstore/', 'sellcard.fornt.cardManage.view.cardInStore',name='cardInStore'),
+    #卡调拨
     url(r'^sellcard/cardmanage/cardallocation/', 'sellcard.fornt.cardManage.cardAllocation.index',name='cardAllocation'),
     url(r'^sellcard/cardmanage/allocationsave/', 'sellcard.fornt.cardManage.cardAllocation.allocationSave',name='allocationSave'),
-    url(r'^sellcard/cardmanage/cardborrow/$', 'sellcard.fornt.cardManage.cardBorrow.index',name='cardBorrow'),
+
+    ###借卡管理
+    #借卡
+    url(r'^sellcard/borrow/sale/index/', 'sellcard.fornt.cardBorrow.sale.index',name='borrowSale'),
+    url(r'^sellcard/borrow/sale/save/', 'sellcard.fornt.cardBorrow.sale.save',name='borrowSaleSave'),
+    url(r'^sellcard/borrow/sale/info/', 'sellcard.fornt.cardBorrow.sale.info',name='borrowSaleInfo'),
+
+    #退卡
+    url(r'^sellcard/borrow/back/index/', 'sellcard.fornt.cardBorrow.back.index',name='borrowBack'),
+    url(r'^sellcard/borrow/back/query/', 'sellcard.fornt.cardBorrow.back.query',name='borrowBackQuery'),
+    url(r'^sellcard/borrow/back/save/', 'sellcard.fornt.cardBorrow.back.save',name='borrowBackSave'),
+    #结算
+    url(r'^sellcard/borrow/pay/index/', 'sellcard.fornt.cardBorrow.pay.index',name='borrowPay'),
+    url(r'^sellcard/borrow/pay/save/', 'sellcard.fornt.cardBorrow.pay.save',name='borrowPaySave'),
 
 
 

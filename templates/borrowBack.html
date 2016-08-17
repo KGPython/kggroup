@@ -4,7 +4,7 @@
     <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>借卡</title>
+    <title>借卡管理--退卡</title>
 </head>
 <body>
 {% include 'common/head.html' %}
@@ -15,19 +15,38 @@
             <a data-original-title="Go to Home" href="#" title="" class="tip-bottom">
                 <span class="glyphicon glyphicon-home" aria-hidden="true"> </span> 首页
             </a>
-            <a href="#" class="">卡管理</a>
-            <a href="#" class="current">借卡</a>
+            <a href="#" class="">借卡管理</a>
+            <a href="#" class="current">退卡</a>
         </div>
     </div>
     <div class="widget-box">
         <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
-            <h5>借卡管理</h5>
+            <h5>借卡管理--退卡</h5>
         </div>
         <div class="widget-content nopadding">
             <div class="container-fluid">
                 <div class="widget-box">
-                    <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-search"> </span></span>
-                        <h5 data-toggle="collapse" data-target="#demo">批量查询</h5>
+                    <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+                        <h5>顾客信息</h5>
+                    </div>
+                    <div class="widget-content nopadding">
+                        <div id="buyerInfo" class="collapse in widget-content">
+                            <div class="row formline">
+                                <label for="" class="col-xs-1 formline-label">单位名称：</label>
+                                <div class="col-xs-2">
+                                    <input class="form-control" placeholder="" type="text" id="borrowDepart">
+                                </div>
+                                <label for="" class="col-xs-1 formline-label">单位编号：</label>
+                                <div class="col-xs-2">
+                                    <input class="form-control" placeholder="" type="text" id="borrowDepartCode">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="widget-box">
+                    <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+                        <h5>退卡号段</h5>
                     </div>
                     <div id="demo" class="collapse in widget-content">
                         <div id="cardsForm">
@@ -47,7 +66,7 @@
                         </div>
                         <div class="row formline">
                             <div class="col-xs-12">
-                                <button type="button" class="btn btn-info enter-btn pull-right">查询</button>
+                                <button type="button" class="btn btn-info query-btn pull-right">查询</button>
                             </div>
                         </div>
                     </div>
@@ -85,28 +104,13 @@
                                     <th>操作</th>
                                 </tr>
                             </thead>
-                            <tbody id="cardList"></tbody>
+                            <tbody  class="cardIn" id="ListIn"></tbody>
                         </table>
-                    </div>
-                </div>
 
-                <div class="widget-box">
-                    <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
-                        <h5>借卡部门信息</h5>
                     </div>
-                    <div class="widget-content nopadding">
-                        <div id="buyerInfo" class="collapse in widget-content">
-                            <div class="row formline">
-                                <label for="" class="col-xs-1 formline-label">部门名称：</label>
-                                <div class="col-xs-2">
-                                    <input class="form-control" placeholder="" type="text" id="buyerName">
-                                </div>
-                                <label for="" class="col-xs-1 formline-label">借卡人：</label>
-                                <div class="col-xs-2">
-                                    <input class="form-control" placeholder="" type="text" id="buyerPhone">
-                                </div>
-                            </div>
-                        </div>
+                    <div class="widget-content nopadding cardInTotal" style="overflow: hidden">
+                        <p class="text col-xs-3" id="totalNum">卡合计数量：<b class="red">0</b>张</p>
+                        <p class="text col-xs-3" id="totalVal">卡合计金额：<b class="red">0.00</b>元</p>
                     </div>
                 </div>
                 <div class="enter-box">
@@ -117,10 +121,17 @@
     </div>
 </div>
 <!--end-containt-part-->
-
+<script>
+    var rates = {{ rates | safe }};
+</script>
 {% include "common/foot.html" %}
 <script>
-    $('.enter-btn').click(function(){
+    $('.query-btn').click(function(){
+        var borrowDepartCode = $('#borrowDepartCode').val();
+        if(!borrowDepartCode){
+            alert('借卡单位编号不能为空');
+            return false;
+        }
         var rows = $('#cardsForm').find('.row');
         var cards = [];
         for(var i=0;i<rows.length;i++){
@@ -141,11 +152,12 @@
         }
 
         $.ajax({
-            url:'{% url 'cardsSaleQuery' %}',
+            url:'{% url 'borrowBackQuery' %}',
             method:'post',
             dataType:'json',
             data:{
-                cards:JSON.stringify(cards)
+                cards:JSON.stringify(cards),
+                borrowDepartCode:borrowDepartCode
             },
             success:function(data){
                 if(data.length==0){
@@ -154,31 +166,31 @@
                 $('#anomaly').find('tbody').empty();
                 $('#correct').find('tbody').empty();
                 for(var i=0;i<data.length;i++){
-                    if(data[i].card_status=='1' && data[i].card_value==data[i].card_blance){
+                    if(data[i].mode=='1' && data[i].detail==data[i].new_amount && data[i].is_borrow == '1' ){
                         var cols = $('#correct').find('th').length;
                         var tr=$('<tr></tr>');
                         for(var j=0;j<cols;j++){
                             var td = $('<td></td>');
                             if(j==0){
                                 var obj = $('<input class="form-control" disabled></input>');
-                                obj.val(data[i].card_no)
+                                obj.val(data[i].cardno)
                             }else if(j==1){
                                 var obj = $('<input class="form-control" disabled></input>');
-                                obj.val(data[i].card_value)
+                                obj.val(data[i].new_amount)
                             }else if(j==2){
                                 var obj = $('<input class="form-control" disabled></input>');
-                                obj.val(data[i].card_blance)
+                                obj.val(data[i].detail)
                             }else if(j==3){
                                 var obj = $('<input class="form-control" disabled></input>');
-                                obj.val("未激活")
+                                obj.val('已激活');
                             }else if(j==4){
                                 var obj = $('<button type="button" class="btn btn-danger btn-xs btn-del">删除</button>');
                             }
                             td.append(obj);
                             tr.append(td);
                         }
-                        $('#correct').find('tbody').append(tr);
-                        setTotal($('#correct').find('tbody'),'1');
+                        $('#correct').find('tbody').append(tr)
+                        setTotal3($('#correct').find('tbody'),'1');
                     }
                     else{
                         var cols = $('#anomaly').find('th').length;
@@ -187,21 +199,36 @@
                             var td = $('<td></td>');
                             if(j==0){
                                 var obj = $('<input class="form-control" disabled></input>');
-                                obj.val(data[i].card_no)
+                                obj.val(data[i].cardno)
                             }else if(j==1){
                                 var obj = $('<input class="form-control" disabled></input>');
-                                obj.val(data[i].card_value)
+                                obj.val(data[i].new_amount)
                             }else if(j==2){
                                 var obj = $('<input class="form-control" disabled></input>');
-                                obj.val(data[i].card_blance)
+                                obj.val(data[i].detail)
                             }else if(j==3){
-                                var obj = $('<input class="form-control red" disabled></input>');
-                                if(data[i].card_status=='2'){
-                                    obj.val('已激活');
-                                }else if(data[i].card_status=='3'){
+                                var obj = $('<input class="form-control red" disabled ></input>');
+                                if(data[i].mode==' '){
+                                    obj.val('未激活');
+                                }else if(data[i].mode=='2'){
+                                    obj.val('未到账款');
+                                }else if(data[i].mode=='r'){
+                                    obj.val('已回收');
+                                }else if(data[i].mode=='m'){
+                                    obj.val('一般挂失');
+                                }else if(data[i].mode=='l'){
+                                    obj.val('严重挂失');
+                                }else if(data[i].mode=='f'){
                                     obj.val('已冻结');
-                                }else if(data[i].card_status=='4'){
-                                    obj.val('已作废')
+                                }else if(data[i].mode=='e'){
+                                    obj.val('已换卡');
+                                }else if(data[i].mode=='q'){
+                                    obj.val('退卡');
+                                }else if(data[i].mode=='-1'){
+                                    obj.val('不存在');
+                                }
+                                if(data[i].is_borrow=='0'&&data[i].mode=='1'){
+                                    obj.val('已激活，非借卡');
                                 }
                             }else if(j==4){
                                 var obj = $('<button type="button" class="btn btn-danger btn-xs btn-del">删除</button>');
@@ -209,7 +236,8 @@
                             td.append(obj);
                             tr.append(td);
                         }
-                        $('#anomaly').find('tbody').append(tr)
+                        $('#anomaly').find('tbody').append(tr);
+
                     }
                 }
             },
@@ -218,42 +246,44 @@
             }
         })
     });
-    $(document).on("change",".cardId",function(){
-        var cardIdStr = $(this).val();
-        var cardId = cardIdStr.split("=")[0];
-        $(this).val(cardId);
 
-        var cardList = $('#cardList');
-        var arr1 = getCardIds(cardList);
-        var YcardList =$('#YcardList');
-        var arr2 = getCardIds(YcardList);
-        arr1 = arr1.concat(arr2);
-        arr1.remove(cardId);
-        //检查是否有重复卡号
-        if(arr1.indexOf(cardId)>-1){
-            alert('卡号：'+cardId+'已经存在于售卡或赠卡列表中,请更换');
-            $(this).val('');
-            return false;
-        }
-        //卡校验
-        var ajaxOpt = {'url':'{% url 'cardcheck' %}?cardId='+cardId,'method':'get'};
-        var cardtype = '1';
-        doAjax(this,ajaxOpt,showCardIfno,setTotal,cardtype);
-        addRow(this);
-    });
+
+
     $(document).on('click','#btn-enter',function(){
-        var action_type = '2';//批量售卡
-        var url = "{% url 'saveorder' %}";
-        saveCardSaleOrder(action_type,url);
+        var url = "{% url 'borrowBackSave' %}";
+        cardBack(url);
     })
 </script>
 <script>
-    $('#disCode input').blur(function(){
-        var disCode = $(this).val();
-        if(disCode){
-            checkDiscode("{% url 'disCodeCheck' %}?discode="+disCode+"&shop={{ shopcode |safe }}");
+    function cardBack(url){
+        //售卡列表
+        var cardList = getCardList($('#ListIn'),'2');
+        if(cardList.length==0){
+            alert('还未添加售卡信息，请核对后再尝试提交！');
+            return false;
         }
-    });
+
+        $.ajax({
+            url:url,
+            type:'post',
+            dataType:'json',
+            data:{
+                'cardStr':JSON.stringify(cardList)
+            },
+            success:function(data){
+                if(data.msg==0){
+                    alert('订单提交成功');
+                    window.location.reload();
+                    $('input[type=text]').val('');
+                }else if(data.msg==1){
+                    alert('订单提交失败');
+                }
+            },
+            error:function(XMLHttpRequest, textStatus, errorThrown){
+                alert('订单提交失败,失败原因：'+errorThrown);
+            }
+        })
+    }
 </script>
 </body>
 </html>

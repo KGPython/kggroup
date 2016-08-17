@@ -175,8 +175,11 @@ class OrderBorrow(models.Model):
     shopcode = models.CharField(max_length=16, blank=True, null=True)
     operator = models.SmallIntegerField(blank=True, null=True)
     borrow_depart = models.CharField(max_length=10, blank=True, null=True)
+    borrow_depart_code = models.CharField(max_length=12, blank=True, null=True)
     borrow_name = models.CharField(max_length=12, blank=True, null=True)
+    borrow_phone = models.CharField(max_length=12, blank=True, null=True)
     add_time = models.DateTimeField(blank=True, null=True)
+    is_paid = models.CharField(max_length=1, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -188,7 +191,8 @@ class OrderBorrowInfo(models.Model):
     card_no = models.CharField(max_length=20, blank=True, null=True)
     card_type = models.CharField(max_length=12, blank=True, null=True)
     card_balance = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
-    status = models.CharField(max_length=1, blank=True, null=True)
+    is_back = models.CharField(max_length=1, blank=True, null=True)
+    back_time = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         managed = False

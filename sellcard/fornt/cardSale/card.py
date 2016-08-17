@@ -49,8 +49,9 @@ def saveOrder(request):
 
     discountRate = request.POST.get('discount',0.00)
     disCode = request.POST.get('disCode','')
+    discountVal = request.POST.get('discountVal','')
     YtotalNum = request.POST.get('YtotalNum',0)
-    YtotalVal = request.POST.get('YtotalVal',0.00)
+
     Ybalance = request.POST.get('Ybalance',0.00)
 
     #买卡人信息
@@ -98,16 +99,16 @@ def saveOrder(request):
                 cardIdList.append(card['cardId'])
 
             mtu.updateCard(cardIdList,'1')
-            mtu.updateDisCode(disCode,shopcode)
+            mtu.updateDisCode(disCode,shopcode,order_sn)
             CardInventory.objects.filter(card_no__in=cardIdList).update(card_status='2',card_action='0')
 
             order = Orders()
             order.buyer_name = buyerName
             order.buyer_tel = buyerPhone
             order.buyer_company = buyerCompany
-            order.total_amount = float(totalVal)+float(YtotalVal)
+            order.total_amount = float(totalVal)+float(discountVal)
             order.paid_amount = float(totalVal)+float(Ybalance)#实付款合计=售卡合计+优惠补差
-            order.disc_amount = float(YtotalVal)+float(Ycash)#优惠合计=赠卡合计+优惠返现
+            order.disc_amount = float(discountVal)#优惠合计
             order.diff_price = Ybalance
             order.shop_code = shopcode
             order.depart = depart
@@ -130,10 +131,12 @@ def saveOrder(request):
 
 def info(request):
     orderSn = request.GET.get('orderSn','')
-    order = Orders.objects.values('shop_code','operator_id','paid_amount','disc_amount','y_cash','buyer_name','add_time').filter(order_sn=orderSn)
-    print(order)
-    infoList = OrderInfo.objects.values('card_balance').filter(order_id=orderSn).annotate(subVal=Sum('card_balance'),subNum=Count('card_id'))
     today = datetime.date.today()
+
+    order = Orders.objects\
+            .values('shop_code','operator_id','paid_amount','disc_amount','diff_price','y_cash','buyer_name','add_time')\
+            .filter(order_sn=orderSn)
+    infoList = OrderInfo.objects.values('card_balance','card_attr').filter(order_id=orderSn).annotate(subVal=Sum('card_balance'),subNum=Count('card_id'))
 
     totalNum = 0
     for info in infoList:

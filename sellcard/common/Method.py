@@ -135,9 +135,9 @@ def disCodeCheck(request):
     else:
         res['msg']='1'
     return HttpResponse(json.dumps(res), content_type="application/json")
-def updateDisCode(id,shop):
+def updateDisCode(id,shop,orderSn):
     try:
-        DisCode.objects.filter(dis_code=id,shopcode=shop).update(flag='1')
+        DisCode.objects.filter(dis_code=id,shopcode=shop).update(flag='1',change_time=datetime.datetime.now(),order_sn=orderSn)
         return True
     except Exception as e:
         print(e)
@@ -174,10 +174,11 @@ def upChangeCode(list,shopcode):
 def changeCodeCheck(request):
      code = request.POST.get('code','')
      camilo = request.POST.get('camilo','')
-     res = ExchangeCode.objects.filter(code__contains=code,camilo__contains=camilo).values('cost')
+     res = ExchangeCode.objects.filter(code=code,camilo__contains=camilo).values('cost','shop_code')
      data={}
      if len(res)>0:
          data['cost']=str(res[0]['cost'])
+         data['shop_code']=res[0]['shop_code']
 
      return HttpResponse(json.dumps(data),content_type="application/json")
 

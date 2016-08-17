@@ -31,7 +31,6 @@ def query(request):
         cur.execute(sql)
         list = cur.fetchall()
         listTotal.extend(list)
-    print(listTotal)
 
     cardNoList = []
     listTotalNew = []

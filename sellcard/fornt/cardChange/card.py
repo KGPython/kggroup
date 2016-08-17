@@ -22,7 +22,6 @@ def save(request):
     depart = request.session.get('s_depart','')
 
     res = {}
-    actionType = request.POST.get('actionType','')
 
     #入卡列表
     cardListIn = request.POST.get('cardListIn','')

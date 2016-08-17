@@ -154,9 +154,8 @@
     });
 
     $(document).on('click', '#btn-enter', function () {
-        var action_type = '3';// 换卡
         var url = "{% url 'cardchange_save' %}";
-        saveCardChangeOrder(action_type, url);
+        saveCardChangeOrder(url);
     });
 </script>
 </body>

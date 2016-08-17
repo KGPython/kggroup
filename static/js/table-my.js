@@ -93,7 +93,7 @@ function showCardIfno(obj,data){
         var cardStu ='已作废';
     }
 
-    if(data.card_status!=1 || cardVal!=cardBlance){
+    if(data.card_status!=1 || parseFloat(cardVal)!=parseFloat(cardBlance)){
         $(obj).parent().parent().find('td').eq(3).find('input').eq(0).addClass('red')
     }else{
         $(obj).parent().parent().find('td').eq(3).find('input').eq(0).removeClass('red')
@@ -196,13 +196,7 @@ function showCardIfno2(obj,data){
     $(obj).parent().parent().find('td').eq(3).find('input').eq(0).val(cardStu);
 }
 
-$('.Total #discount input').blur(function(){
-    var rate = $(this).val()/100;
-    var totalVal = parseFloat($('.Total #totalVal b').text());
-    var discount = rate*totalVal;
-    $('.Total #discountVal b').text(discount);
 
-});
 /*
 * 计算卡列表合计信息
 * obj：卡列表的tbody
@@ -211,6 +205,7 @@ $('.Total #discount input').blur(function(){
 function setTotal(obj,cardtype){
     var parentTbody = obj;
     var cls = '';
+    //判断合计展示的位置（售卡合计/优惠合计/出卡合计/入卡合计）
     if($(parentTbody).hasClass('discount')){
         cls = 'discountTotal';
     }else if($(parentTbody).hasClass('cardIn')){
@@ -221,11 +216,10 @@ function setTotal(obj,cardtype){
         cls = 'Total';
     }
 
-    //计算合计
+    //根据出库/入库，计算卡合计金额
     var trs = $(parentTbody).find('tr');
-    var totalNum = 0;
-    var totalVal = 0.00;
-
+    var totalNum = 0;//卡合计数量
+    var totalVal = 0.00;//卡合计金额
     for(var i=0;i<trs.length;i++){
         var status = $(trs[i]).find('td').eq(3).find('input').val();
         var val = $(trs[i]).find('td').eq(2).find('input').val();
@@ -243,18 +237,19 @@ function setTotal(obj,cardtype){
         }
     }
 
-    //处理优惠返现
+    //如何合计区域存在处理优惠返现，则：优惠金额合计=优惠卡金额合计+优惠返现，
     var YcashObj=$('.'+cls).find('#Ycash').length;
-
     if(YcashObj>0){
         var Ycash=$('#Ycash').val();
         Ycash = Ycash=='' ?0:parseFloat(Ycash);
         totalVal +=Ycash;
     }
+    //展示卡合计金额
     $('.'+cls+' #totalVal b').text(parseFloat(totalVal).toFixed(2));
     $('.'+cls+' #totalNum b').text(totalNum);
 
-    var rateInput  = $('.Total #discount input')[0];
+    //如果合计区域内有返点需求，计算销售返点
+    var rateInput  = $('.'+cls+' #discount input')[0];
     var rate= 0,discountVal=0;
     if(rateInput){
         if(typeof(rates)!='undefined'){
@@ -262,7 +257,7 @@ function setTotal(obj,cardtype){
                 if(rates[j].val_min<=parseFloat(totalVal) && rates[j].val_max>=parseFloat(totalVal)){
                     rate=rates[j].discount_rate;
                     discountVal = Math.round(parseFloat(totalVal)*rate);
-                    //console.log(parseFloat(totalVal)*rate)
+                    $('.paysBox').show();
                 }
                 $(rateInput).val(rate*100);
                 $('.Total #discountVal b').text(discountVal);
@@ -270,7 +265,7 @@ function setTotal(obj,cardtype){
         }
     }
 
-    //赠卡补差
+    //计算优惠赠卡补差
     var YtotalVal = parseFloat($('.discountTotal #totalVal b').text());
     discountVal = parseFloat($('.Total #discountVal b').text());
     if(YtotalVal!=undefined){
@@ -278,6 +273,7 @@ function setTotal(obj,cardtype){
         var Ybalance = YtotalVal - discountVal;
         $('.discountTotal #balance b').text(Ybalance);
     }
+
    //补卡补差
     var YtotalVal = parseFloat($('.cardOutTotal #totalVal b').text());
     if(YtotalVal!=undefined){
@@ -285,6 +281,19 @@ function setTotal(obj,cardtype){
         discountVal = isNaN(discountVal) ? 0:discountVal;
         var Ybalance = YtotalVal - discountVal;
         $('.cardOutTotal #balance b').text(Ybalance);
+    }
+
+    //展示最终应缴合计金额=售卡合计+优惠补差
+    var totalPaidObj = $('.Total #totalPaid b')[0];
+    if(totalPaidObj){//如果是汇总合计区域，展示最终缴费合计数额
+        //优惠补差
+        var Ybalance = parseFloat($('.discountTotal #balance b').text());
+        //售卡合计金额
+        var totalCardVal = parseFloat($('.Total #totalVal b').text());
+        totalCardVal = isNaN(totalCardVal) ? 0:totalCardVal;
+        var totalPaid = totalCardVal + Ybalance;
+        $(totalPaidObj).text(totalPaid);
+        $('.Total #totalYBalance b').text(Ybalance)
     }
 }
 
@@ -308,11 +317,19 @@ function checkDiscode(url){
         }
     })
 }
-
+//自定义返点，生成优惠金额
+$('.Total #discount input').blur(function(){
+    var rate = $(this).val()/100;
+    var totalVal = parseFloat($('.Total #totalVal b').text());
+    var discount = rate*totalVal;
+    $('.Total #discountVal b').text(discount);
+    $('.paysBox').show();
+});
 //优惠返现
-$('#Ycash').blur(function(){
+$('#Ycash').change(function(){
     var Ycash = parseFloat($(this).val());
     Ycash = isNaN(Ycash)?0:parseFloat(Ycash);
+    //计算优惠卡合计
     var trs = $('#YcardList').find('tr');
     var totalVal = Ycash;
     for(var i=0;i<trs.length;i++){
@@ -323,11 +340,20 @@ $('#Ycash').blur(function(){
             totalVal += parseFloat(val);
         }
     }
-    $('.discountTotal #totalVal b').text(totalVal)
-    var discountVal = parseFloat($('.cardInTotal #totalVal b').text());
+    $('.discountTotal #totalVal b').text(totalVal);
+
+    var discountVal = parseFloat($('.Total #discountVal b').text());
     discountVal = isNaN(discountVal) ? 0:discountVal;
+    //计算优惠补差金额
     var Ybalance = totalVal - discountVal;
     $('.discountTotal #balance b').text(Ybalance);
+    $('.Total #totalYBalance b').text(Ybalance)
+    //计算缴费合计金额
+    var totalCardVal = parseFloat($('.Total #totalVal b').text());
+    totalCardVal = isNaN(totalCardVal) ? 0:totalCardVal;
+    var totalPaid = totalCardVal + Ybalance;
+    $('.Total #totalPaid b').text(totalPaid);
+
 
 });
 //获取卡号
@@ -410,27 +436,37 @@ $(document).on('change','#hjsBox .changeCode',function(){
     var parentTr = _this.parent().parent();
     var hNo = parentTr.find('td').eq(0).find('input').val();
     var hPassword = parentTr.find('td').eq(1).find('input').val();
-    if(!hNo||!hPassword){
+
+    if(hNo&&hPassword){
+         $.ajax({
+            url:'/kg/sellcard/changcodecheck/',
+            method:'post',
+            dataType:'json',
+            async:false,
+            data:{
+                'code':hNo,
+                'camilo':hPassword
+            },
+            success:function(data){
+                if(data.cost){
+                    if(data.shop_code){
+                        parentTr.find('td').eq(2).find('input').val('已使用');
+                    }else{
+                        parentTr.find('td').eq(2).find('input').val(data.cost);
+                    }
+                }else{
+                    parentTr.find('td').eq(2).find('input').val('0');
+                }
+                addRow(_this,'changeCode');
+            }
+        })
+    }else if(!hNo&&!hPassword){
         alert('卡号和卡密不能为空！');
         return false;
+    }else{
+        return false;
     }
-    addRow(_this,'changeCode');
-    $.ajax({
-        url:'/kg/sellcard/changcodecheck/',
-        method:'post',
-        dataType:'json',
-        data:{
-            'code':hNo,
-            'camilo':hPassword
-        },
-        success:function(data){
-            if(data.cost){
-                parentTr.find('td').eq(2).find('input').val(data.cost);
-            }else{
-                parentTr.find('td').eq(2).find('input').val('0');
-            }
-        }
-    })
+
 });
 
 //支付方式--三方平台
@@ -463,7 +499,7 @@ function getPayList(obj){
     }
     return list;
 }
-//支付合计
+//计算混合支付的合计金额
 $(document).on('blur','.payList tr',function(){
     palyList = $('.payList').find('tr');
     var totalStr = '';
@@ -495,20 +531,20 @@ $(document).on('blur','.payList tr',function(){
     }
 });
 
-function saveCardSaleOrder(action_type,url){
+function saveCardSaleOrder(action_type,url,cardList){
     //售卡列表
-    var cardList = getCardList($('#cardList'),'1');
+    var cardList = cardList;
     var totalNum = parseInt($('.Total #totalNum b').text());
     var totalVal = parseFloat($('.Total #totalVal b').text());//卡合计金额
     var payTotal = parseFloat($('.Total #payTotal b').text());//支付合计
     var discount = parseFloat($('.Total #discount input').val());//折扣比率
     var disCode = $('.Total #disCode input').val();
-    var discountVal = parseFloat($('.Total #discountVal b').text());
+    var discountVal = parseFloat($('.Total #discountVal b').text());//优惠金额（总合计内）
     //赠卡列表
     var YcardList = getCardList($('#YcardList'),'1');
     var YtotalNum =parseInt($('.discountTotal #totalNum b').text());
     var Ycash = parseFloat($('#Ycash').val());//优惠返现
-    var YtotalVal =parseFloat($('.discountTotal #totalVal b').text());
+    var YtotalVal =parseFloat($('.discountTotal #totalVal b').text());//优惠列表合计=卡合计+返现合计
     var Ybalance =parseFloat($('.discountTotal #balance b').text());//优惠补差
     //支付列表
     var payList = getPayList($('.payList'));
@@ -521,33 +557,44 @@ function saveCardSaleOrder(action_type,url){
         alert('还未添加售卡信息，请核对后再尝试提交！');
         return false;
     }
-    if(payTotal!=totalVal){
+    if(payTotal!=totalVal+Ybalance){
         alert('交款合计金额与售卡合计金额不匹配，请核对后再尝试提交！');
         return false;
     }
-    if(discountVal>0 && YtotalVal==0){
-        alert('请完善优惠列表后再尝试提交！');
-        return false;
+
+    if(discountVal>0){
+        /*//优惠区域合计=卡+返现
+        if(YtotalVal==0){
+            alert('请完善优惠列表后再尝试提交！');
+            return false;
+        }*/
+        //优惠补差
+        if(Ybalance<0){
+            alert('优惠补差不能为负数！');
+            return false;
+        }
     }
+
     $.ajax({
         url:url,
         type:'post',
         dataType:'json',
         data:{
             csrfmiddlewaretoken: '{{ csrf_token }}',
-            'actionType':action_type,
-            'cardStr':JSON.stringify(cardList),
-            'totalNum':totalNum,
-            'totalVal':totalVal,
-            'discount':discount,
-            'disCode':disCode,
-            'YcardStr':JSON.stringify(YcardList),
-            'YtotalNum':YtotalNum,
-            'Ycash':Ycash,
-            'YtotalVal':YtotalVal,
-            'Ybalance':Ybalance,//
-            'payStr':JSON.stringify(payList),
-            'hjsStr':hjsStr,
+            'actionType':action_type,//操作类型
+            'cardStr':JSON.stringify(cardList),//售卡列表
+            'totalNum':totalNum,//售卡总数
+            'totalVal':totalVal,//售卡总价
+            'discount':discount,//返点百分比
+            'disCode':disCode,//返点自定义授权
+            'discountVal':discountVal,//优惠返点金额
+            'YcardStr':JSON.stringify(YcardList),//优惠卡列表
+            'YtotalNum':YtotalNum,//优惠卡总数
+            'Ycash':Ycash,//优惠返现
+            'YtotalVal':YtotalVal,//优惠区域合计
+            'Ybalance':Ybalance,//优惠补差
+            'payStr':JSON.stringify(payList),//支付列表
+            'hjsStr':hjsStr,//黄金手列表
             'buyerName':buyerName,
             'buyerPhone':buyerPhone,
             'buyerCompany':buyerCompany
@@ -556,6 +603,8 @@ function saveCardSaleOrder(action_type,url){
         success:function(data){
             if(data.msg==1){
                 alert('订单提交成功');
+                $('input[type=text]').not('.payName').val('');
+                $('input[type=checkbox]').prop('checked',false);
                 window.location.href=data.urlRedirect
             }else if(data.msg==0){
                 alert('订单提交失败');
@@ -566,6 +615,8 @@ function saveCardSaleOrder(action_type,url){
         }
     })
 }
+
+
 
 //获取补卡信息列表
 function getCardFillList(obj,type){
@@ -698,7 +749,7 @@ Array.prototype.remove = function(val) {
 };
 
 // 更换卡
-function saveCardChangeOrder(action_type,url){
+function saveCardChangeOrder(url){
     //入卡列表
     var cardListIn = getCardList($('#ListIn'),'2');
     var totalNumIn = parseInt($('.cardInTotal #totalNum b').text());// 卡张数合计
@@ -729,7 +780,6 @@ function saveCardChangeOrder(action_type,url){
         dataType:'json',
         data:{
             csrfmiddlewaretoken: '{{ csrf_token }}',
-            'actionType':action_type,
             'cardListIn':JSON.stringify(cardListIn),
             'totalNumIn':totalNumIn,
             'totalValIn':totalValIn,
