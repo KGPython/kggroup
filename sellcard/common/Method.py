@@ -172,15 +172,15 @@ def upChangeCode(list,shopcode):
 #兑换码校验
 @csrf_exempt
 def changeCodeCheck(request):
-     code = request.POST.get('code','')
-     camilo = request.POST.get('camilo','')
-     res = ExchangeCode.objects.filter(code=code,camilo__contains=camilo).values('cost','shop_code')
-     data={}
-     if len(res)>0:
-         data['cost']=str(res[0]['cost'])
-         data['shop_code']=res[0]['shop_code']
+    code = request.POST.get('code','')
+    camilo = request.POST.get('camilo','')
+    res = ExchangeCode.objects.filter(code=code,camilo=camilo).values('cost','shop_code')
+    data={}
+    if len(res)>0:
+     data['cost']=str(res[0]['cost'])
+     data['shop_code']=res[0]['shop_code']
 
-     return HttpResponse(json.dumps(data),content_type="application/json")
+    return HttpResponse(json.dumps(data),content_type="application/json")
 
 #跟新ERP内部卡状态
 def updateCard(list,mode):
