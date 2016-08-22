@@ -148,4 +148,19 @@ def logout(request):
 
     return render(request,"login.html")
 
+@csrf_exempt
+def updatePwd(request):
+    data = {}
+    if request.method == 'POST':
+
+        userId =request.session["s_uid"]
+        try:
+            newPwd = mtu.getReqVal(request,"newPwd","")
+            pwd = mtu.md5(newPwd)
+            AdminUser.objects.filter(id=userId).update(password=pwd)
+            data["result"] = "0"
+        except Exception as e:
+            print(e)
+
+    return render(request,'restPassword.html',locals())
 

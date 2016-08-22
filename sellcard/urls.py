@@ -76,6 +76,13 @@ urlpatterns = [
     #销售明细查询
     url(r'^sellcard/check/salequery/$', 'sellcard.fornt.checkManage.saleQuery.index',name="saleQuery"),
 
+    ###返点折扣授权码
+    #生成
+    url(r'^sellcard/discode/create/$', 'sellcard.fornt.disCode.create.index',name="disCodeCreate"),
+    #分配
+    url(r'^sellcard/discode/assign/$', 'sellcard.fornt.disCode.assign.index',name="disCodeAssign"),
+
+
 
 
     #登陆模块
@@ -85,6 +92,9 @@ urlpatterns = [
     url(r'^sellcard/vcode/', 'sellcard.login.vcode',name="vcode"),
     url(r'^sellcard/admin/index/', 'sellcard.admin.views.index',name="admin_index"),
     url(r'^sellcard/index/$', 'sellcard.views.index',name="front_index"),
+
+    url(r'^sellcard/updatepwd/$', 'sellcard.login.updatePwd',name="updatePwd"),
+
 
     #卡校验
     url(r'^sellcard/cardcheck/$', 'sellcard.common.Method.cardCheck',name='cardcheck'),

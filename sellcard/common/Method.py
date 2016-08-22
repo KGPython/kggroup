@@ -128,7 +128,7 @@ def cardCheck_Mssql(request):
 def disCodeCheck(request):
     disCode = request.GET.get('discode','')
     shop = request.GET.get('shop','')
-    disCodeList = DisCode.objects.values('flag').filter(dis_code=disCode,shopcode=shop)
+    disCodeList = DisCode.objects.values('flag').filter(dis_code=disCode)
     res={}
     if disCodeList and disCodeList[0]['flag']=='0':
         res['msg']='0'

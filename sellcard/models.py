@@ -100,9 +100,11 @@ class Departs(models.Model):
 
 
 class DisCode(models.Model):
-    dis_code = models.CharField(max_length=20, blank=True, null=True)
+    dis_code = models.CharField(max_length=10, blank=True, null=True)
     shopcode = models.CharField(max_length=16, blank=True, null=True)
     flag = models.CharField(max_length=1)
+    change_time = models.DateTimeField(blank=True, null=True)
+    order_sn = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -179,7 +181,7 @@ class OrderBorrow(models.Model):
     borrow_name = models.CharField(max_length=12, blank=True, null=True)
     borrow_phone = models.CharField(max_length=12, blank=True, null=True)
     add_time = models.DateTimeField(blank=True, null=True)
-    is_paid = models.CharField(max_length=1, blank=True, null=True)
+    is_paid = models.CharField(max_length=1)
 
     class Meta:
         managed = False
