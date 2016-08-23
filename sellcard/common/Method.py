@@ -198,7 +198,7 @@ def updateCard(list,mode):
     cur.close()
     conn.close()
     return True
-#更新欠款状态
+#更新赊销状态
 @csrf_exempt
 def upNoPayStatus(request):
     orderSn = request.POST.get('orderSn')

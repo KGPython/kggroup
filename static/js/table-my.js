@@ -531,9 +531,13 @@ $(document).on('blur','.payList tr',function(){
     }
 });
 
-function saveCardSaleOrder(action_type,url,cardList){
+function saveCardSaleOrder(action_type,url,cardList,orderSns){
     //售卡列表
     var cardList = cardList;
+    var orderSnList = '';
+    if(orderSns){
+        orderSnList = orderSns;
+    }
     var totalNum = parseInt($('.Total #totalNum b').text());
     var totalVal = parseFloat($('.Total #totalVal b').text());//卡合计金额
     var payTotal = parseFloat($('.Total #payTotal b').text());//支付合计
@@ -583,6 +587,7 @@ function saveCardSaleOrder(action_type,url,cardList){
             csrfmiddlewaretoken: '{{ csrf_token }}',
             'actionType':action_type,//操作类型
             'cardStr':JSON.stringify(cardList),//售卡列表
+            'orderSnList':orderSnList,
             'totalNum':totalNum,//售卡总数
             'totalVal':totalVal,//售卡总价
             'discount':discount,//返点百分比

@@ -68,7 +68,7 @@
                                     <th>优惠金额（单位：元）</th>
                                     <th>入款合计（单位：元）</th>
                                     <th>销售占比</th>
-                                    <th>操作</th>
+{#                                    <th>操作</th>#}
                                 </tr>
                             </thead>
                             <tbody class="cardIn" id="nopayList">
@@ -80,7 +80,7 @@
                                         <td>{{ row.disc |default:0}}</td>
                                         <td>{{ row.totalIn }}</td>
                                         <td>{{ row.totalIn | divide:saleTotal }}</td>
-                                        <td><a href="{% url 'shopSaleInfoCheck' %}?shop={{ row.shop_code }}&start={{ start }}&end={{ end }}">查看详情</a></td>
+{#                                        <td><a href="{% url 'shopSaleInfoCheck' %}?shop={{ row.shop_code }}&start={{ start }}&end={{ end }}">查看详情</a></td>#}
                                     </tr>
                                 {% endfor %}
                             <tr>

@@ -74,7 +74,10 @@
                                         <td>
                                             {{ row.pay_value }}
                                             {% if row.pay_id == 4 %}
-                                                <span style="margin-left: 30px;">(未到帐款：<b>{{ nopayDict.pay_value }}</b>)</span>
+                                                <span style="margin-left: 30px;">
+                                                    (未到帐款：
+                                                    <b>{{ nopayDict.pay_value | default:0.00 | floatformat:2 }}</b>)
+                                                </span>
                                             {% endif %}
                                         </td>
                                         <td>{{ row.pay_value | divide:payTotal }}</td>

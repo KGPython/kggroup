@@ -16,8 +16,8 @@ class AdminUser(models.Model):
     user_name = models.CharField(max_length=45)
     password = models.CharField(max_length=32)
     name = models.CharField(max_length=15, blank=True, null=True)
-    shop_id = models.IntegerField()
-    shop_code = models.CharField(max_length=11)
+    shop_id = models.IntegerField(blank=True, null=True)
+    shop_code = models.CharField(max_length=11, blank=True, null=True)
     depart = models.CharField(max_length=45, blank=True, null=True)
     salt = models.CharField(max_length=10, blank=True, null=True)
     last_login = models.DateTimeField()
@@ -182,6 +182,7 @@ class OrderBorrow(models.Model):
     borrow_phone = models.CharField(max_length=12, blank=True, null=True)
     add_time = models.DateTimeField(blank=True, null=True)
     is_paid = models.CharField(max_length=1)
+    paid_time = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         managed = False

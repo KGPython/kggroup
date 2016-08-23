@@ -3,8 +3,9 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import json,datetime
+from django.db import transaction
 
-from sellcard.models import OrderBorrow,OrderBorrowInfo,CardInventory
+from sellcard.models import OrderBorrow,CardInventory,Orders,OrderInfo,OrderPaymentInfo
 from sellcard.common import Method as mth
 
 @csrf_exempt
@@ -24,17 +25,17 @@ def index(request):
         nextDay = datetime.datetime.strptime(end,'%Y-%m-%d')+datetime.timedelta(1)
 
         kwargs = {}
-        kwargs.setdefault('operator',operator)
         whereStr =''
+        kwargs.setdefault('operator',operator)
+        kwargs.setdefault('is_paid','0')
+        whereStr +=' and is_paid="0"'
+
         if departName:
             whereStr +=' and borrow_depart="'+departName+'"'
             kwargs.setdefault('borrow_depart',departName)
         if departCode:
             whereStr +=' and borrow_depart_code="'+departCode+'"'
             kwargs.setdefault('borrow_depart_code',departCode)
-        if state:
-            whereStr +=' and stutas="'+state+'"'
-            kwargs.setdefault('is_paid',state)
         if start:
             whereStr +=' and add_time>="'+str(start)+'"'
             kwargs.setdefault('add_time__gte',start)
@@ -49,9 +50,10 @@ def index(request):
                 .filter(**kwargs).order_by('order_sn')
 
         totaSale = 0
+        listOrderSn = []
         for row in listSale:
             totaSale += row['order_val']
-
+            listOrderSn.append(row['order_sn'])
         #查询退卡明细
         conn = mth.getMysqlConn()
         cur = conn.cursor()
@@ -68,17 +70,139 @@ def index(request):
         totalPay = totaSale-totalBack
 
         #查询未退卡明细
-        sqlCardNoBack = 'select b.card_no as cardId,b.card_balance as cardVal from order_borrow as a,order_borrow_info as b ' \
+        sqlCardNoBack = 'select a.order_sn,b.card_no as cardId,b.card_balance as cardVal from order_borrow as a,order_borrow_info as b ' \
                   ' where a.order_sn=b.order_sn and b.is_back is null '+whereStr+''
         cur.execute(sqlCardNoBack)
+
         listNoBack = cur.fetchall()
-        for item in listNoBack:
-            item['cardVal'] = str(item['cardVal'])
+        if len(listNoBack)>0:
+            for item in listNoBack:
+                item['cardVal'] = str(item['cardVal'])
+        else:
+            listNoBack=[]
 
         cur.close()
         conn.close()
     return render(request,'borrowPay.html',locals())
 
-
+@csrf_exempt
+@transaction.atomic
 def save(request):
-    pass
+    operator = request.session.get('s_uid','')
+    shopcode = request.session.get('s_shopcode','')
+    depart = request.session.get('s_depart','')
+
+
+    res = {}
+    actionType = request.POST.get('actionType','')
+    #售卡列表
+    cardStr = request.POST.get('cardStr','')
+    cardList = json.loads(cardStr)
+
+    #借卡单号列表
+    orderSnList = request.POST.getlist('orderSnList[]','')
+
+
+    #赠卡列表
+    YcardStr = request.POST.get('YcardStr','')
+    YcardList = json.loads(YcardStr)
+    Ycash = request.POST.get('Ycash','')
+    #支付方式
+    payStr = request.POST.get('payStr','')
+    payList = json.loads(payStr)
+    hjsStr = request.POST.get('hjsStr','')
+    #黄金手卡号列表
+    hjsList=[]
+    if len(hjsStr)>0:
+        hjsStr = hjsStr[0:len(hjsStr)-1]
+        hjsList = hjsStr.split(',')
+
+    #合计信息
+    totalNum = request.POST.get('totalNum',0)
+    totalVal = request.POST.get('totalVal',0.00)
+
+    discountRate = request.POST.get('discount',0.00)
+    disCode = request.POST.get('disCode','')
+    discountVal = request.POST.get('discountVal','')
+    YtotalNum = request.POST.get('YtotalNum',0)
+
+    Ybalance = request.POST.get('Ybalance',0.00)
+
+    #买卡人信息
+    buyerName = request.POST.get('buyerName','')
+    buyerPhone = request.POST.get('buyerPhone','')
+    buyerCompany = request.POST.get('buyerCompany','')
+    order_sn = ''
+    try:
+        with transaction.atomic():
+            order_sn = 'S'+mth.setOrderSn()
+            for card in cardList:
+                orderInfo = OrderInfo()
+                orderInfo.order_id = order_sn
+                orderInfo.card_id = card['cardId']
+                orderInfo.card_balance = float(card['cardVal'])
+                orderInfo.card_action = '0'
+                orderInfo.card_attr = '1'
+                orderInfo.save()
+            for Ycard in YcardList:
+                YorderInfo = OrderInfo()
+                YorderInfo.order_id = order_sn
+                YorderInfo.card_id = Ycard['cardId']
+                YorderInfo.card_balance = float(Ycard['cardVal'])
+                YorderInfo.card_action = '0'
+                YorderInfo.card_attr = '2'
+                YorderInfo.save()
+            for pay in payList:
+                orderPay = OrderPaymentInfo()
+                orderPay.order_id = order_sn
+                orderPay.pay_id = pay['payId']
+                if pay['payId']=='4':
+                    orderPay.is_pay='0'
+                else:
+                    orderPay.is_pay='1'
+                if pay['payId']=='9':
+                    mth.upChangeCode(hjsList,shopcode)
+
+                orderPay.pay_value = pay['payVal']
+                orderPay.remarks = pay['payRmarks']
+                orderPay.save()
+
+            cardListTotal = cardList+YcardList
+            cardIdList = []
+            for card in cardListTotal:
+                cardIdList.append(card['cardId'])
+
+            #更新ERP内部卡状态
+            mth.updateCard(cardIdList,'1')
+            #更新折扣授权码校验码状态
+            mth.updateDisCode(disCode,shopcode,order_sn)
+            #kggroup内部卡状态
+            CardInventory.objects.filter(card_no__in=cardIdList).update(card_status='2',card_action='0')
+            #更新借卡单的结算状态
+            OrderBorrow.objects.filter(order_sn__in=orderSnList).update(is_paid='1',paid_time=datetime.datetime.now())
+
+            order = Orders()
+            order.buyer_name = buyerName
+            order.buyer_tel = buyerPhone
+            order.buyer_company = buyerCompany
+            order.total_amount = float(totalVal)+float(discountVal)
+            order.paid_amount = float(totalVal)+float(Ybalance)#实付款合计=售卡合计+优惠补差
+            order.disc_amount = float(discountVal)#优惠合计
+            order.diff_price = Ybalance
+            order.shop_code = shopcode
+            order.depart = depart
+            order.operator_id = operator
+            order.action_type = actionType
+            order.add_time = datetime.datetime.now()
+            order.discount_rate = float(discountRate)/100
+            order.order_sn = order_sn
+            order.y_cash = Ycash
+            order.save()
+
+
+            res["msg"] = 1
+            res["urlRedirect"] = '/kg/sellcard/cardsale/orderInfo/?orderSn='+order_sn
+    except Exception as e:
+        print(e)
+        res["msg"] = 0
+    return HttpResponse(json.dumps(res))

@@ -35,23 +35,13 @@
                         <form id="form" class="query-list" method="post" action="{% url 'borrowPay' %}">
                             <div class="row formline">
                                 <label for="" class="col-xs-1 formline-label">单位名称：</label>
-                                <div class="col-xs-2">
+                                <div class="col-xs-1">
                                     <input type='text' class='form-control' name="departName" value="{{ departName }}">
                                 </div>
                                 <label for="" class="col-xs-1 formline-label">单位编号：</label>
-                                <div class="col-xs-2">
+                                <div class="col-xs-1">
                                     <input type='text' class='form-control' name="departCode" value="{{ departCode }}">
                                 </div>
-                                <label for="" class="col-xs-1 formline-label">结算状态：</label>
-                                <div class="col-xs-2">
-                                    <select name="state" id="state" class="form-control">
-                                        <option value="" selected="selected">全部</option>
-                                        <option value="1">已结算</option>
-                                        <option value="0">未结算</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="row formline">
                                 <label for="" class="col-xs-1 formline-label">开始时间：</label>
                                 <div class="col-xs-2">
                                     <div data-link-format="yyyy-mm-dd" data-link-field="dtp_input2" data-date-format="yyyy-mm-dd" data-date="" class="input-group date form_date">
@@ -68,7 +58,7 @@
                                         <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
                                     </div>
                                 </div>
-                                <div class="col-xs-5">
+                                <div class="col-xs-2">
                                     <button type="button" class="btn btn-success pull-right" id="query">查询</button>
                                 </div>
                             </div>
@@ -105,9 +95,13 @@
                                     <td><input class='form-control' disabled="disabled" value="{{ row.borrow_name }}"></td>
                                     <td><input class='form-control red' disabled="disabled" value="{% if row.is_paid == '0'%}未结算{% else %}已结算{% endif %}"></td>
                                 </tr>
+                             {% empty %}
+                                 <tr>
+                                    <td colspan="8" align="center" class="red">暂无数据</td>
+                                 </tr>
                             {% endfor %}
                             <tr>
-                                <td colspan="2" style="text-align: center;font-weight: bold;">退卡合计（单位：元）</td>
+                                <td colspan="2" style="text-align: center;font-weight: bold;">借卡合计（单位：元）</td>
                                 <td colspan="6">{{ totaSale }}</td>
                             </tr>
                             </tbody>
@@ -116,7 +110,7 @@
                 </div>
                 <div class="widget-box">
                     <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
-                        <h5>还卡列表</h5>
+                        <h5>退卡列表</h5>
                     </div>
                     <div class="widget-content nopadding">
                         <table class="table table-striped table-hover table-form-my">
@@ -132,7 +126,7 @@
                             </tr>
                             </thead>
                             <tbody class="cardIn" id="nopayList">
-                             {% for row in listBack %}
+                            {% for row in listBack %}
                                 <tr>
                                     <td><a class="form-control orderSn green" href="{% url 'orderDetail' %}?orderSn={{ row.order_sn }}">{{ row.order_sn }}</a></td>
                                     <td><input class='form-control' disabled="disabled" value="{{ row.back_val}}"></td>
@@ -142,9 +136,13 @@
                                     <td><input class='form-control' disabled="disabled" value="{{ row.borrow_depart_code }}"></td>
                                     <td><input class='form-control' disabled="disabled" value="{{ row.operator | transUserId }}"></td>
                                 </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="7" align="center" class="red">暂无数据</td>
+                                </tr>
                             {% endfor %}
                             <tr>
-                                <td colspan="2" style="text-align: center;font-weight: bold;">借卡合计（单位：元）</td>
+                                <td colspan="2" style="text-align: center;font-weight: bold;">退卡合计（单位：元）</td>
                                 <td colspan="6">{{ totalBack }}</td>
                             </tr>
                             </tbody>
@@ -224,7 +222,7 @@
                                         <select name="" id="blank" class="form-control">
                                             <option value="">请选择银行打款方式</option>
                                             <option value="3">汇款</option>
-                                            <option value="4">欠款</option>
+                                            <option value="4">赊销</option>
                                             <option value="5">POS消费</option>
                                         </select>
                                     </td>
@@ -353,13 +351,15 @@
     var rates = {{ rates | safe }};
     var totalVal = {{ totalPay | safe }};
     var rateInput  = $('.Total #discount input');
+    var rate = 0.00;
+    var discountVal = 0.00;
     for(var j=0;j<rates.length;j++){
         if(rates[j].val_min<=parseFloat(totalVal) && rates[j].val_max>=parseFloat(totalVal)){
-            var rate=rates[j].discount_rate;
-            var discountVal = Math.round(parseFloat(totalVal)*rate);
+            rate=rates[j].discount_rate;
+            discountVal = Math.round(parseFloat(totalVal)*rate);
             $('.paysBox').show();
         }
-        rateInput.val(rate*100);
+        rateInput.val(parseFloat(rate)*100);
         $('.Total #discountVal b').text(discountVal);
     }
 
@@ -415,9 +415,10 @@
 
     $(document).on('click','#btn-enter',function(){
         var action_type = '3';//借卡结算
-        var url = "{% url 'saveorder' %}";
+        var url = "{% url 'borrowPaySave' %}";
         var cardList = {{ listNoBack | safe }};
-        saveCardSaleOrder(action_type,url,cardList);
+        var orderSnList = {{ listOrderSn | safe }}
+        saveCardSaleOrder(action_type,url,cardList,orderSnList);
     })
 </script>
 </body>

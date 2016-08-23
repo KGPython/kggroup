@@ -16,7 +16,7 @@ urlpatterns = [
     url(r'^sellcard/bestowed/$', 'sellcard.fornt.cardSale.bestowed.index',name='bestowed'),
     url(r'^sellcard/bestowed/save', 'sellcard.fornt.cardSale.bestowed.saveOrder',name='bestowedSave'),
 
-    #欠款管理
+    #赊销管理
     url(r'^sellcard/nopay/$', 'sellcard.fornt.cardSale.nopay.index',name='nopay'),
 
 
@@ -104,7 +104,7 @@ urlpatterns = [
     url(r'^sellcard/changcodecheck/', 'sellcard.common.Method.changeCodeCheck',name='changeCodeCheck'),
     #折扣修改授权码校验
     url(r'^sellcard/discodecheck/', 'sellcard.common.Method.disCodeCheck',name='disCodeCheck'),
-    #更新欠款状态
+    #更新赊销状态
     url(r'^sellcard/nopay/update', 'sellcard.common.Method.upNoPayStatus',name='upNoPayStatus'),
     #订单明细
     url(r'^sellcard/orderdetail', 'sellcard.common.Method.orderDetail',name='orderDetail'),
