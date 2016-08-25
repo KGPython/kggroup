@@ -74,7 +74,7 @@ def save(request):
                 cardIdOutList.append(card['cardId'])
 
             mtu.updateCard(cardIdOutList,'1')
-            mtu.updateCard(cardIdInList,'')
+            mtu.updateCard(cardIdInList,'9')
             CardInventory.objects.filter(card_no__in=cardIdInList).update(card_status='1',card_action='1')
             CardInventory.objects.filter(card_no__in=cardIdOutList).update(card_status='2',card_action='0')
             order = OrderChangeCard()

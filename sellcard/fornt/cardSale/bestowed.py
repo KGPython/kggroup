@@ -28,7 +28,7 @@ def saveOrder(request):
     #合计信息
     totalNum = request.POST.get('totalNum',0)
     totalVal = request.POST.get('totalVal',0.00)
-    remarks = request.POST.get('remarks',0.00)
+    remark = request.POST.get('remarks','')
     #买卡人信息
     buyerName = request.POST.get('buyerName','')
     buyerPhone = request.POST.get('buyerPhone','')
@@ -60,7 +60,7 @@ def saveOrder(request):
             order.action_type = '5'
             order.add_time = datetime.datetime.now()
             order.order_sn = order_sn
-            order.remarks = remarks
+            order.remark = remark
             order.save()
             cardIdList = []
             for card in cardList:

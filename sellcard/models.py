@@ -55,7 +55,7 @@ class AllocationInfo(models.Model):
 
 
 class CardInventory(models.Model):
-    card_no = models.CharField(max_length=32)
+    card_no = models.CharField(unique=True, max_length=32)
     card_value = models.CharField(max_length=12)
     card_status = models.CharField(max_length=1)
     card_action = models.CharField(max_length=1)
@@ -311,6 +311,7 @@ class Orders(models.Model):
     y_cash = models.DecimalField(max_digits=11, decimal_places=0, blank=True, null=True)
     diff_price = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
     discount_rate = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    remark = models.TextField(blank=True, null=True)
 
     class Meta:
         managed = False

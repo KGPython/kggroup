@@ -87,13 +87,13 @@
                              {% for row in listSale %}
                                 <tr>
                                     <td><a class="form-control orderSn green" href="{% url 'orderDetail' %}?orderSn={{ row.order_sn }}">{{ row.order_sn }}</a></td>
-                                    <td><input class='form-control' disabled="disabled" value="{{ row.order_val}}"></td>
-                                    <td><input class="form-control" disabled="disabled" value="{{ row.order_num }}"></td>
-                                    <td><input class="form-control" disabled="disabled" value="{{ row.add_time }}"></td>
-                                    <td><input class='form-control' disabled="disabled" value="{{ row.borrow_depart }}"></td>
-                                    <td><input class='form-control' disabled="disabled" value="{{ row.borrow_depart_code }}"></td>
-                                    <td><input class='form-control' disabled="disabled" value="{{ row.borrow_name }}"></td>
-                                    <td><input class='form-control red' disabled="disabled" value="{% if row.is_paid == '0'%}未结算{% else %}已结算{% endif %}"></td>
+                                    <td><input type="text" class='form-control' disabled="disabled" value="{{ row.order_val}}"></td>
+                                    <td><input type="text" class="form-control" disabled="disabled" value="{{ row.order_num }}"></td>
+                                    <td><input type="text" class="form-control" disabled="disabled" value="{{ row.add_time }}"></td>
+                                    <td><input type="text" class='form-control' disabled="disabled" value="{{ row.borrow_depart }}"></td>
+                                    <td><input type="text" class='form-control' disabled="disabled" value="{{ row.borrow_depart_code }}"></td>
+                                    <td><input type="text" class='form-control' disabled="disabled" value="{{ row.borrow_name }}"></td>
+                                    <td><input type="text" class='form-control red' disabled="disabled" value="{% if row.is_paid == '0'%}未结算{% else %}已结算{% endif %}"></td>
                                 </tr>
                              {% empty %}
                                  <tr>
@@ -129,12 +129,12 @@
                             {% for row in listBack %}
                                 <tr>
                                     <td><a class="form-control orderSn green" href="{% url 'orderDetail' %}?orderSn={{ row.order_sn }}">{{ row.order_sn }}</a></td>
-                                    <td><input class='form-control' disabled="disabled" value="{{ row.back_val}}"></td>
-                                    <td><input class="form-control" disabled="disabled" value="{{ row.back_num }}"></td>
-                                    <td><input class="form-control" disabled="disabled" value="{{ row.back_time }}"></td>
-                                    <td><input class='form-control' disabled="disabled" value="{{ row.borrow_depart }}"></td>
-                                    <td><input class='form-control' disabled="disabled" value="{{ row.borrow_depart_code }}"></td>
-                                    <td><input class='form-control' disabled="disabled" value="{{ row.operator | transUserId }}"></td>
+                                    <td><input type="text" class='form-control' disabled="disabled" value="{{ row.back_val}}"></td>
+                                    <td><input type="text" class="form-control" disabled="disabled" value="{{ row.back_num }}"></td>
+                                    <td><input type="text" class="form-control" disabled="disabled" value="{{ row.back_time }}"></td>
+                                    <td><input type="text" class='form-control' disabled="disabled" value="{{ row.borrow_depart }}"></td>
+                                    <td><input type="text" class='form-control' disabled="disabled" value="{{ row.borrow_depart_code }}"></td>
+                                    <td><input type="text" class='form-control' disabled="disabled" value="{{ row.operator | transUserId }}"></td>
                                 </tr>
                             {% empty %}
                                 <tr>

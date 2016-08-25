@@ -171,8 +171,9 @@ function doAjax2(obj,ajaxOpt,showCardIfno,setTotal,cardType){
 function showCardIfno2(obj,data){
     var cardVal = data.card_value;
     var cardBlance = data.card_blance;
-
-    if(data.card_status=='1'){
+    if(data.card_status=='9'){
+        var cardStu ='未激活';
+    }else if(data.card_status=='1'){
         var cardStu ='已激活';
     }else if(data.card_status=='2'){
         var cardStu ='未到账款';
@@ -190,6 +191,11 @@ function showCardIfno2(obj,data){
         var cardStu ='退卡';
     }else if(data.card_status=='-1'){
         var cardStu ='不存在';
+    }
+    if(data.card_status!=1){
+        $(obj).parent().parent().find('td').eq(3).find('input').eq(0).addClass('red')
+    }else{
+        $(obj).parent().parent().find('td').eq(3).find('input').eq(0).removeClass('red')
     }
     $(obj).parent().parent().find('td').eq(1).find('input').eq(0).val(cardVal);
     $(obj).parent().parent().find('td').eq(2).find('input').eq(0).val(cardBlance);
@@ -427,7 +433,7 @@ $('.modal-footer #submit').click(function(){
     $('.payList #hjsStr').val(codesStr);
     $('.payList #remark-hjs').val(codesStr);
     $('.payList #hjsVal').val(parseFloat(totalVal));
-    $('.payList #hjsVal').focus();
+    $('#buyerName').focus();
     $('#hjsBox').hide();
 });
 //黄金手--校验
@@ -800,8 +806,7 @@ function saveCardChangeOrder(url){
             if(data.msg==1){
                 alert('订单提交成功');
                 window.location.reload();
-                $('input[type=text]').not('.payName').val('');
-                $('input[type=checkbox]').prop('checked',false);
+                $('input[type=text]').val('');
             }else if(data.msg==0){
                 alert('订单提交失败');
             }
@@ -879,9 +884,9 @@ function showCardIfno3(obj,data){
     }else if(data.mode=='l'){
         var cardStu = '严重挂失卡';
     }else if(data.mode=='f'){
-        var cardStr = '已冻结';
+        var cardStu = '已冻结';
     }else if(data.mode=='q'){
-        var cardStr = '已退卡';
+        var cardStu = '已退卡';
     }
 
     if(cls == 'cardInTotal'){

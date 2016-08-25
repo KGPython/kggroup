@@ -14,7 +14,7 @@ def index(request):
         endTime = datetime.datetime.strptime(end,'%Y-%m-%d').date() + datetime.timedelta(1)
         saleList = Orders.objects\
                 .values('shop_code')\
-                .filter(add_time__gte=start,add_time__lte=endTime,action_type__in='1,2,5')\
+                .filter(add_time__gte=start,add_time__lte=endTime,action_type__in='1,2,3,5')\
                 .annotate(sale=Sum('paid_amount'),disc=Sum('disc_amount'))\
                 .order_by('shop_code')
 
@@ -31,6 +31,7 @@ def index(request):
         for i in range(0,len(saleList)):
             saleTotal += float(saleList[i]['sale'])
             discTotal +=float(saleList[i]['disc'])
+            saleList[i]['totalIn'] = float(saleList[i]['sale'])
             for j in range(0,len(fillList)):
                 if saleList[i]['shop_code'] == fillList[j]['shop_code']:
                     saleList[i]['diff_value'] = float(fillList[j]['diff_value'])
@@ -38,7 +39,7 @@ def index(request):
                     saleList[i]['diff_value'] = 0.00
                 saleList[i]['totalIn'] = float(saleList[i]['diff_value'])+float(saleList[i]['sale'])
                 diffTotal += saleList[i]['diff_value']
-                totalInSum += saleList[i]['totalIn']
+            totalInSum += saleList[i]['totalIn']
 
     return render(request,'shopSaleCheck.html',locals())
 

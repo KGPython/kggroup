@@ -43,11 +43,11 @@ def transActionType(key):
     elif key=='2':
         ActionType = '批量售卡'
     elif key=='3':
-        ActionType = ''
+        ActionType = '借卡'
     elif key=='4':
         ActionType = ''
     elif key=='5':
-        ActionType = '大宗赠卡'
+        ActionType = '实物团购返点'
     return ActionType
 
 #userid转username

@@ -75,29 +75,40 @@
             </div>
         </div>
         <div class="col-xs-6">
-            <div class="widget-box">
-                <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
-                    <h5>支付列表</h5>
-                </div>
-                <div class="widget-content nopadding">
-                    <div class="widget-content fixedBox">
-                        <table class="table table-hover order-table">
-                            <thead>
-                                <tr><th>支付方式</th><th>支付金额</th><th>备注</th></tr>
-                            </thead>
-                            <tbody>
-                                {% for pay in orderPayInfo %}
-                                    <tr>
-                                        <td>{{ pay.pay_id | transPayCode }}</td>
-                                        <td>{{ pay.pay_value }}</td>
-                                        <td>{{ pay.remarks }}</td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+            {% if order.0.action_type != '5' %}
+                <div class="widget-box">
+                    <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+                        <h5>支付列表</h5>
+                    </div>
+                    <div class="widget-content nopadding">
+                        <div class="widget-content fixedBox">
+                            <table class="table table-hover order-table">
+                                <thead>
+                                    <tr><th>支付方式</th><th>支付金额</th><th>备注</th></tr>
+                                </thead>
+                                <tbody>
+                                    {% for pay in orderPayInfo %}
+                                        <tr>
+                                            <td>{{ pay.pay_id | transPayCode }}</td>
+                                            <td>{{ pay.pay_value }}</td>
+                                            <td>{{ pay.remarks }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
-            </div>
+            {% else %}
+                <div class="widget-box">
+                    <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+                        <h5>备注信息</h5>
+                    </div>
+                    <div class="widget-content nopadding">
+                        <textarea name="" id="" cols="150" rows="15">{{ order.0.remark }}</textarea>
+                    </div>
+                </div>
+            {% endif %}
         </div>
     </div>
 </div>

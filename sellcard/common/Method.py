@@ -264,9 +264,9 @@ def convertToStr(val,*arg):
 def orderDetail(request):
     orderSn = request.GET.get('orderSn','')
     order = Orders.objects\
-            .values('order_sn','shop_code','paid_amount','disc_amount','buyer_name','buyer_tel','buyer_company','add_time')\
+            .values('order_sn','shop_code','paid_amount','disc_amount','action_type','buyer_name','buyer_tel','buyer_company','add_time','remark')\
             .filter(order_sn=orderSn)
-
+    print(order)
     orderInfo = OrderInfo.objects.values('card_id','card_balance').filter(order_id=orderSn)
     orderPayInfo = OrderPaymentInfo.objects.values('pay_id','pay_value','remarks').filter(order_id=orderSn)
     cardsNum = OrderInfo.objects.filter(order_id=orderSn).count()

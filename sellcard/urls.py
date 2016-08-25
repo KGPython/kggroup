@@ -10,7 +10,7 @@ urlpatterns = [
     url(r'^sellcard/cardssale/query','sellcard.fornt.cardSale.cards.query',name='cardsSaleQuery'),
 
     #售卡返回明细
-    url(r'^sellcard/cardsale/orderInfo','sellcard.fornt.cardSale.card.info',name='cardsSaleOrderInfo'),
+    url(r'^sellcard/cardsale/orderInfo/','sellcard.fornt.cardSale.card.info',name='cardsSaleOrderInfo'),
 
     #大宗赠卡
     url(r'^sellcard/bestowed/$', 'sellcard.fornt.cardSale.bestowed.index',name='bestowed'),

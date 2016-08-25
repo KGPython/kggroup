@@ -70,7 +70,8 @@ def index(request):
         totalPay = totaSale-totalBack
 
         #查询未退卡明细
-        sqlCardNoBack = 'select a.order_sn,b.card_no as cardId,b.card_balance as cardVal from order_borrow as a,order_borrow_info as b ' \
+        sqlCardNoBack = 'select a.order' \
+                        '_sn,b.card_no as cardId,b.card_balance as cardVal from order_borrow as a,order_borrow_info as b ' \
                   ' where a.order_sn=b.order_sn and b.is_back is null '+whereStr+''
         cur.execute(sqlCardNoBack)
 

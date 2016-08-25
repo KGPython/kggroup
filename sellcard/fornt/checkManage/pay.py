@@ -25,7 +25,6 @@ def index(request):
 
         cur.execute(nopay)
         nopayDict = cur.fetchone()
-        print(nopayDict)
 
         payTotal = 0.00
         for row in payList:

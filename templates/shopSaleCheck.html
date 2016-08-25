@@ -79,7 +79,7 @@
                                         <td>{{ row.diff_value |default:0 }}</td>
                                         <td>{{ row.disc |default:0}}</td>
                                         <td>{{ row.totalIn }}</td>
-                                        <td>{{ row.totalIn | divide:saleTotal }}</td>
+                                        <td>{{ row.totalIn | divide:totalInSum }}</td>
 {#                                        <td><a href="{% url 'shopSaleInfoCheck' %}?shop={{ row.shop_code }}&start={{ start }}&end={{ end }}">查看详情</a></td>#}
                                     </tr>
                                 {% endfor %}
