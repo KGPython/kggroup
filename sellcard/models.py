@@ -12,6 +12,21 @@ from __future__ import unicode_literals
 from django.db import models
 
 
+class ActionLog(models.Model):
+    id = models.BigIntegerField(primary_key=True)
+    action = models.CharField(max_length=45, blank=True, null=True)
+    url = models.CharField(max_length=100, blank=True, null=True)
+    u_name = models.CharField(max_length=45)
+    cards_in = models.TextField(blank=True, null=True)
+    cards_out = models.TextField(blank=True, null=True)
+    err_msg = models.TextField(blank=True, null=True)
+    add_time = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'action_log'
+
+
 class AdminUser(models.Model):
     user_name = models.CharField(max_length=45)
     password = models.CharField(max_length=32)

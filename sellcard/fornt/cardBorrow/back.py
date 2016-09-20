@@ -4,9 +4,8 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import json,datetime
 
-from sellcard.models import OrderBorrow,OrderBorrowInfo,CardInventory
+from sellcard.models import ActionLog,OrderBorrowInfo,CardInventory
 from sellcard.common import Method as mth
-
 
 @csrf_exempt
 def index(request):
@@ -81,7 +80,10 @@ def save(request):
         CardInventory.objects.filter(card_no__in=cardnoList).update(card_status='1',card_action='1')
         OrderBorrowInfo.objects.filter(card_no__in=cardnoList).update(is_back='1',back_time=now)
         res['msg'] = 0
+        ActionLog.objects.create(action='借卡-还卡',u_name=request.session.get('s_uname'),cards_in=cardsStr,add_time=datetime.datetime.now())
+
     except Exception as e:
         res['msg'] = 1
         print(e)
+        ActionLog.objects.create(action='借卡-还卡',u_name=request.session.get('s_uname'),cards_in=cardsStr,add_time=datetime.datetime.now(),err_msg=e)
     return HttpResponse(json.dumps(res))

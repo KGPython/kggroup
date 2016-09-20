@@ -6,9 +6,8 @@ from django.db import transaction
 from django.db.models import Sum,Count
 import json,datetime
 
-from sellcard import views as base
 from sellcard.common import Method as mth
-from sellcard.models import OrderBorrow,OrderBorrowInfo,CardInventory
+from sellcard.models import OrderBorrow,OrderBorrowInfo,CardInventory,ActionLog
 
 @csrf_exempt
 def index(request):
@@ -69,9 +68,11 @@ def save(request):
             order.save()
             res["msg"] = 1
             res["redirectUrl"] = '/kg/sellcard/borrow/sale/info/?orderSn='+order_sn
+            ActionLog.objects.create(action='借卡-售卡',u_name=request.session.get('s_uname'),cards_out=cardStr,add_time=datetime.datetime.now())
     except Exception as e:
         print(e)
         res["msg"] = 0
+        ActionLog.objects.create(action='借卡-售卡',u_name=request.session.get('s_uname'),cards_out=cardStr,add_time=datetime.datetime.now(),err_msg=e)
     return HttpResponse(json.dumps(res))
 
 

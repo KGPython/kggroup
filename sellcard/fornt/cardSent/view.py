@@ -7,7 +7,7 @@ from django.db import transaction
 import datetime,json
 
 from sellcard.common import Method as mth
-from sellcard.models import CardReceive,ReceiveInfo,CardInventory
+from sellcard.models import CardReceive,ReceiveInfo,CardInventory,ActionLog
 from sellcard.common.model import MyError
 
 @csrf_exempt
@@ -46,6 +46,7 @@ def sentOrderSave(request):
                 obj.card_nums = card['subTotal']
                 obj.card_value = card['cardType']
                 obj.save()
+                #CardInventory写入卡信息
                 for i in range(int(card['start']),int(card['end'])+1):
                     diff = len(card['start'])-len(str(int(card['start'])))
                     prefix = ''
@@ -66,12 +67,17 @@ def sentOrderSave(request):
                         item.card_addtime=datetime.datetime.now()
                         item.save()
         res['msg']='0'
+        ActionLog.objects.create(action='信息部发卡',u_name=request.session.get('s_uname'),cards_out=cardStr,add_time=datetime.datetime.now())
+
     except MyError as e1:
         print('My exception occurred, value:', e1.value)
         res['msg']='2'
         res['cardId']=e1.value
+        ActionLog.objects.create(action='信息部发卡',u_name=request.session.get('s_uname'),cards_out=cardStr,add_time=datetime.datetime.now(),err_msg=e1.value)
+
     except Exception as e:
         print(e)
         res['msg']='1'
+        ActionLog.objects.create(action='信息部发卡',u_name=request.session.get('s_uname'),cards_out=cardStr,add_time=datetime.datetime.now(),err_msg=e)
 
     return HttpResponse(json.dumps(res))

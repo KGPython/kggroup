@@ -1,6 +1,6 @@
 #-*- coding:utf-8 -*-
 from django.shortcuts import render
-from sellcard.models import Orders,OrderInfo,OrderPaymentInfo,CardInventory
+from sellcard.models import Orders,OrderInfo,OrderPaymentInfo,CardInventory,ActionLog
 from django.http import HttpResponse
 import json,datetime
 from django.db import transaction
@@ -15,6 +15,7 @@ def index(request):
     rates = request.session.get('s_rates')
     shopcode = request.session.get('s_shopcode','')
     return render(request,'cardSale.html',locals())
+
 
 @csrf_exempt
 @transaction.atomic
@@ -120,12 +121,15 @@ def saveOrder(request):
             order.y_cash = Ycash
             order.save()
 
-
             res["msg"] = 1
             res["urlRedirect"] = '/kg/sellcard/cardsale/orderInfo/?orderSn='+order_sn
+            path = request.path
+            ActionLog.objects.create(url=path,u_name=request.session.get('s_uname'),cards_out=cardStr+','+YcardStr,add_time=datetime.datetime.now())
     except Exception as e:
         print(e)
         res["msg"] = 0
+        ActionLog.objects.create(url=path,u_name=request.session.get('s_uname'),cards_out=cardStr+','+YcardStr,add_time=datetime.datetime.now(),err_msg=e)
+
     return HttpResponse(json.dumps(res))
 
 

@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.db import transaction
 import json
-from sellcard.models import Orders,OrderInfo,CardInventory
+from sellcard.models import Orders,OrderInfo,CardInventory,ActionLog
 import datetime
 from sellcard.common import Method as mtu
 from django.http import HttpResponse
@@ -68,7 +68,12 @@ def saveOrder(request):
             mtu.updateCard(cardIdList,'1')
             CardInventory.objects.filter(card_no__in=cardIdList).update(card_status=2,card_action='0')
             res["msg"] = 1
+
+            ActionLog.objects.create(action='实物团购返点',u_name=request.session.get('s_uname'),cards_out=cardStr,add_time=datetime.datetime.now())
+
     except Exception as e:
         print(e)
         res["msg"] = 0
+        ActionLog.objects.create(action='实物团购返点',u_name=request.session.get('s_uname'),cards_out=cardStr,add_time=datetime.datetime.now(),err_msg=e)
+
     return HttpResponse(json.dumps(res))

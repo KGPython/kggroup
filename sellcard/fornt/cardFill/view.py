@@ -1,6 +1,6 @@
 #-*- coding:utf-8 -*-
 from django.shortcuts import render
-from sellcard.models import OrderUpCard,OrderUpCardInfo,CardInventory
+from sellcard.models import OrderUpCard,OrderUpCardInfo,CardInventory,ActionLog
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
@@ -91,11 +91,12 @@ def save(request):
 
             #冻结旧卡
             CardInventory.objects.filter(card_no__in=cardIdInList).update(card_status=4)
-
+            ActionLog.objects.create(action='补卡-补卡',u_name=request.session.get('s_uname'),cards_in=cardInStr,add_time=datetime.datetime.now())
             res["msg"] = 1
     except Exception as e:
         print(e)
         res["msg"] = 0
+        ActionLog.objects.create(action='补卡-补卡',u_name=request.session.get('s_uname'),cards_in=cardInStr,add_time=datetime.datetime.now(),err_msg=e)
 
     return HttpResponse(json.dumps(res))
 
@@ -165,9 +166,12 @@ def update(request):
             #mtu.updateCard(cardIdOutList,"1")
 
             res["msg"] = 1
+            ActionLog.objects.create(action='补卡-领卡',u_name=request.session.get('s_uname'),cards_out=cardOutStr,add_time=datetime.datetime.now())
+
     except Exception as e:
         print(e)
         res["msg"] = 0
+        ActionLog.objects.create(action='补卡-领卡',u_name=request.session.get('s_uname'),cards_out=cardOutStr,add_time=datetime.datetime.now(),err_msg=e)
 
     return HttpResponse(json.dumps(res))
 

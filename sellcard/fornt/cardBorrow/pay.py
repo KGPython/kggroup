@@ -5,7 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 import json,datetime
 from django.db import transaction
 
-from sellcard.models import OrderBorrow,CardInventory,Orders,OrderInfo,OrderPaymentInfo
+from sellcard.models import OrderBorrow,CardInventory,Orders,OrderInfo,OrderPaymentInfo,ActionLog
 from sellcard.common import Method as mth
 
 @csrf_exempt
@@ -177,7 +177,7 @@ def save(request):
             mth.updateCard(cardIdList,'1')
             #更新折扣授权码校验码状态
             mth.updateDisCode(disCode,shopcode,order_sn)
-            #kggroup内部卡状态
+            #更新kggroup内部卡状态
             CardInventory.objects.filter(card_no__in=cardIdList).update(card_status='2',card_action='0')
             #更新借卡单的结算状态
             OrderBorrow.objects.filter(order_sn__in=orderSnList).update(is_paid='1',paid_time=datetime.datetime.now())
@@ -203,7 +203,9 @@ def save(request):
 
             res["msg"] = 1
             res["urlRedirect"] = '/kg/sellcard/cardsale/orderInfo/?orderSn='+order_sn
+            ActionLog.objects.create(action='借卡-结算',u_name=request.session.get('s_uname'),cards_out=cardStr+','+YcardStr,add_time=datetime.datetime.now())
     except Exception as e:
         print(e)
         res["msg"] = 0
+        ActionLog.objects.create(action='借卡-结算',u_name=request.session.get('s_uname'),cards_out=cardStr+','+YcardStr,add_time=datetime.datetime.now(),err_msg=e)
     return HttpResponse(json.dumps(res))

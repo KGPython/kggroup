@@ -1,7 +1,7 @@
 #-*- coding:utf-8 -*-
 __author__ = 'admin'
 from django.shortcuts import render
-from sellcard.models import CardInventory, OrderChangeCard, OrderChangeCardInfo
+from sellcard.models import CardInventory, OrderChangeCard, OrderChangeCardInfo,ActionLog
 from django.http import HttpResponse
 import json
 from django.views.decorators.csrf import csrf_exempt
@@ -24,15 +24,15 @@ def save(request):
     res = {}
 
     #入卡列表
-    cardListIn = request.POST.get('cardListIn','')
-    cardListIn = json.loads(cardListIn)
+    cardListInStr = request.POST.get('cardListIn','')
+    cardListIn = json.loads(cardListInStr)
     #入卡合计
     totalNumIn = request.POST.get('totalNumIn',0)
     totalValIn = request.POST.get('totalValIn',0.00)
 
     #出卡列表
-    cardListOut = request.POST.get('cardListOut','')
-    cardListOut = json.loads(cardListOut)
+    cardListOutStr = request.POST.get('cardListOut','')
+    cardListOut = json.loads(cardListOutStr)
     #出卡合计
     totalNumOut = request.POST.get('totalNumOut',0)
     totalValOut = request.POST.get('totalValOut',0.00)
@@ -91,9 +91,11 @@ def save(request):
             order.add_time = created_time
             order.save()
 
-
             res["msg"] = 1
+            ActionLog.objects.create(action='换卡-单卡',u_name=request.session.get('s_uname'),cards_in=cardListInStr,cards_out=cardListOutStr,add_time=datetime.datetime.now())
     except Exception as e:
         print(e)
         res["msg"] = 0
+        ActionLog.objects.create(action='换卡-单卡',u_name=request.session.get('s_uname'),cards_in=cardListInStr,cards_out=cardListOutStr,add_time=datetime.datetime.now(),err_msg=e)
+
     return HttpResponse(json.dumps(res))
