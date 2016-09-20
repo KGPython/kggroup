@@ -68,7 +68,7 @@ def saveOrder(request):
             mtu.updateCard(cardIdList,'1')
             CardInventory.objects.filter(card_no__in=cardIdList).update(card_status=2,card_action='0')
             res["msg"] = 1
-
+            res["urlRedirect"] = '/kg/sellcard/cardsale/orderInfo/?orderSn='+order_sn
             ActionLog.objects.create(action='实物团购返点',u_name=request.session.get('s_uname'),cards_out=cardStr,add_time=datetime.datetime.now())
 
     except Exception as e:

@@ -155,6 +155,7 @@
                     alert('订单提交成功');
                     window.location.reload();
                     $('input[type=text]').val('');
+                    window.location.href=data.urlRedirect
                 }else if(data.msg==0){
                     alert('订单提交失败');
                 }

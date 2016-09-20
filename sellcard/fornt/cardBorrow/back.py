@@ -18,6 +18,8 @@ def index(request):
 
 @csrf_exempt
 def query(request):
+    shopcode = request.session.get('s_shopcode','')
+
     cardsStr = request.POST.get('cards','')
     borrowDepartCode = request.POST.get('borrowDepartCode','')
     cards = json.loads(cardsStr)
@@ -47,7 +49,7 @@ def query(request):
     #判断是否属于借卡
     for cardNo in cardNoList:
         sql2 = "select b.card_no from order_borrow as a,order_borrow_info as b " \
-               "where a.order_sn=b.order_sn and a.is_paid='0' and a.borrow_depart_code='"+borrowDepartCode+"' and b.card_no='"+cardNo+"'"
+               "where a.shopcode='"+shopcode+"' and a.order_sn=b.order_sn and a.is_paid='0' and a.borrow_depart_code='"+borrowDepartCode+"' and b.card_no='"+cardNo+"'"
         connSql = mth.getMysqlConn()
         curSql = connSql.cursor()
         curSql.execute(sql2)

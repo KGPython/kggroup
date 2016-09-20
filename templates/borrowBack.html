@@ -132,6 +132,7 @@
             alert('借卡单位编号不能为空');
             return false;
         }
+        //拼接查询号段
         var rows = $('#cardsForm').find('.row');
         var cards = [];
         for(var i=0;i<rows.length;i++){
@@ -167,6 +168,7 @@
                 $('#correct').find('tbody').empty();
                 for(var i=0;i<data.length;i++){
                     if(data[i].mode=='1' && data[i].detail==data[i].new_amount && data[i].is_borrow == '1' ){
+                        //正常数据
                         var cols = $('#correct').find('th').length;
                         var tr=$('<tr></tr>');
                         for(var j=0;j<cols;j++){
@@ -189,8 +191,8 @@
                             td.append(obj);
                             tr.append(td);
                         }
-                        $('#correct').find('tbody').append(tr)
-                        setTotal3($('#correct').find('tbody'),'1');
+                        $('#correct').find('tbody').append(tr);
+
                     }
                     else{
                         var cols = $('#anomaly').find('th').length;
@@ -237,8 +239,8 @@
                             tr.append(td);
                         }
                         $('#anomaly').find('tbody').append(tr);
-
                     }
+                    setTotal3($('#correct').find('tbody'),'1');
                 }
             },
             error:function(){

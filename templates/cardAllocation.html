@@ -27,7 +27,7 @@
                 <div class="row formline" style="margin-top: 20px;">
                     <label for="" class="col-xs-3 formline-label">调出门店：</label>
                     <div class="col-xs-2">
-                        {% if roleid == '3' %}
+                        {% if roleid == '2' %}
                             <select name="shopOut" id="shopOut" class="form-control" required="required" disabled>
                                 <option value="{{ shopCode }}">{{ shopCode | transShopCode }}</option>
                             </select>
@@ -42,7 +42,7 @@
                     </div>
                     <label for="" class="col-xs-2 formline-label">调入门店：</label>
                     <div class="col-xs-2">
-                        {% if roleid == '3' %}
+                        {% if roleid == '2' %}
                             <select name="shopIn" id="shopIn" class="form-control" required="required">
                                 {% for shop in shops %}
                                     {% if shop.shop_code != shopCode %}

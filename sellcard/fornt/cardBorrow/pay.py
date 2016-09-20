@@ -10,12 +10,14 @@ from sellcard.common import Method as mth
 
 @csrf_exempt
 def index(request):
+    shopcode = request.session.get('s_shopcode','')
     operator = request.session.get('s_uid','')
     rates = request.session.get('s_rates')
     today = str(datetime.date.today())
     start = today
     end = today
     if request.method == 'POST':
+        shopcode = request.session.get('s_shopcode','')
         departName = request.POST.get('departName','')
         departCode = request.POST.get('departCode','')
         state = request.POST.get('state','')
@@ -43,6 +45,8 @@ def index(request):
             whereStr +=' and add_time<="'+str(nextDay)+'"'
             kwargs.setdefault('add_time__lte',nextDay)
 
+        kwargs.setdefault('shopcode',shopcode)
+
         #查询借卡明细
         listSale = OrderBorrow\
                 .objects\
@@ -59,7 +63,8 @@ def index(request):
         cur = conn.cursor()
         sqlBack = 'select a.order_sn,a.operator,a.borrow_depart,a.borrow_depart_code,SUM(b.card_balance) as back_val,COUNT(b.card_no) as back_num,b.back_time' \
                   ' from order_borrow as a,order_borrow_info as b ' \
-                  ' where a.order_sn=b.order_sn and b.is_back="1"'+whereStr+' group by(a.order_sn)'
+                  ' where a.shopcode = "'+shopcode+'" and a.order_sn=b.order_sn and b.is_back="1"'+whereStr+' group by(a.order_sn)'
+        # print(sqlBack)
         cur.execute(sqlBack)
         listBack = cur.fetchall()
 

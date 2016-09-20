@@ -130,7 +130,7 @@ def disCodeCheck(request):
     shop = request.GET.get('shop','')
     disCodeList = DisCode.objects.values('flag').filter(dis_code=disCode)
     res={}
-    if disCodeList and disCodeList[0]['flag']=='0':
+    if disCodeList and disCodeList[0]['flag']=='':
         res['msg']='0'
     else:
         res['msg']='1'
