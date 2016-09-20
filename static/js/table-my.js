@@ -9,7 +9,7 @@ $(document).ready(function(){
 $(document).on('click','.table tr .btn-del',function(){
     var parnetTbody = $(this).parent().parent().parent()[0];
     $(this).parents('tr').remove();
-    cardType='1';
+    var cardType='1';
     setTotal(parnetTbody,cardType);
 });
 
@@ -216,8 +216,10 @@ function setTotal(obj,cardtype){
         cls = 'discountTotal';
     }else if($(parentTbody).hasClass('cardIn')){
         cls = 'cardInTotal';
+        cardtype = '2';
     }else if($(parentTbody).hasClass('cardOut')){
         cls = 'cardOutTotal';
+        cardtype = '1';
     }else{
         cls = 'Total';
     }
@@ -433,6 +435,7 @@ $('.modal-footer #submit').click(function(){
     $('.payList #hjsStr').val(codesStr);
     $('.payList #remark-hjs').val(codesStr);
     $('.payList #hjsVal').val(parseFloat(totalVal));
+    $('#hjs').focus();
     $('#buyerName').focus();
     $('#hjsBox').hide();
 });

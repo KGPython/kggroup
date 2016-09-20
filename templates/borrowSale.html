@@ -259,7 +259,7 @@ function saveBorrowOrder(url){
         alert('还未添加售卡信息，请核对后再尝试提交！');
         return false;
     }
-    if(!borrowDepart || !borrowName){
+    if(!borrowDepart || !borrowName || !borrowDepartCode || !borrowPhone){
         alert('借卡人信息不能为空！');
         return false;
     }
