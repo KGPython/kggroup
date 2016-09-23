@@ -10,11 +10,16 @@ from sellcard.models import Orders,AdminUser,OrderUpCard,OrderChangeCard
 
 @csrf_exempt
 def index(request):
+    #GET:数据展示
+    role_id = request.session.get('s_roleid')
+    shopcode = request.session.get('s_shopcode')
     shops = base.findShop()
     departs = base.findDepart()
-
     today = str(datetime.date.today())
-    shop = mth.getReqVal(request,'shop','')
+    if role_id=='2':
+        shop = mth.getReqVal(request,'shop',shopcode)
+    if role_id =='1' or role_id=='6':
+        shop = mth.getReqVal(request,'shop','')
     depart = mth.getReqVal(request,'depart','')
     name = mth.getReqVal(request,'operator','').strip()
     operator =''

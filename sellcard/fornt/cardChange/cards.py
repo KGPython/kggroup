@@ -25,9 +25,14 @@ def query(request):
     conn = mth.getMssqlConn()
     cur = conn.cursor()
     for obj in cards:
-        sql = "select cardno,new_amount,sheetid,mode,detail,memo " \
-              "from guest where cardno>='{cardStart}' and cardno<='{cardEnd}'"\
-              .format(cardStart=obj['start'],cardEnd=obj['end'])
+        if obj['end']:
+            sql = "select cardno,new_amount,sheetid,mode,detail,memo " \
+                  "from guest where cardno>='{cardStart}' and cardno<='{cardEnd}'"\
+                  .format(cardStart=obj['start'],cardEnd=obj['end'])
+        else:
+            sql = "select cardno,new_amount,sheetid,mode,detail,memo " \
+                  "from guest where cardno='{cardStart}'"\
+                  .format(cardStart=obj['start'],cardEnd=obj['end'])
         cur.execute(sql)
         list = cur.fetchall()
         listTotal.extend(list)

@@ -11,14 +11,24 @@ from sellcard.common import Method as mth
 
 @csrf_exempt
 def index(request):
+    role_id = request.session.get('s_roleid')
+    shop_code = request.session.get('s_shopcode')
+
     if request.method == 'POST':
         start = request.POST.get('start','')
         end = request.POST.get('end','')
         endTime = datetime.datetime.strptime(end,'%Y-%m-%d').date() + datetime.timedelta(1)
+        kwargs = {}
+        kwargs.setdefault('charge_time__gte',start)
+        kwargs.setdefault('charge_time__lte',endTime)
+        kwargs.setdefault('card_status','1')
+        kwargs.setdefault('card_action','1')
 
+        if role_id=='2':
+            kwargs.setdefault('shop_code',shop_code)
         cardList = CardInventory.objects\
                 .values('shop_code')\
-                .filter(charge_time__gte=start,charge_time__lte=endTime,card_status='1',card_action='1')\
+                .filter(**kwargs)\
                 .annotate(num=Count('card_no'),balance=Sum('card_blance'))\
                 .order_by('shop_code')
 
@@ -37,7 +47,7 @@ def cardType(request):
     cardList = CardInventory.objects.values('card_value')\
             .filter(shop_code=shopCode,charge_time__gte=start,charge_time__lte=endTime,card_status='1',card_action='1')\
             .annotate(num=Count('card_no'),balance=Sum('card_blance'))\
-            .order_by('card_value')
+            .order_by('card_blance')
     totalBalance = 0.00
     totalNum = 0
     for row in cardList:

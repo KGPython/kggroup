@@ -15,6 +15,8 @@ def transShopCode(key):
             shopname = shop['shop_name']
     return shopname
 
+
+
 #门店编号转名称
 @register.filter
 def transShopId(key):

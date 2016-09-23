@@ -8,7 +8,7 @@ from django.db.models import Q
 def findShop(shopcode=None):
     q = Q()
     if shopcode:
-        q.add(Q(shopcode=shopcode), Q.AND)
+        q.add(Q(shop_code=shopcode), Q.AND)
 
     shopList = Shops.objects.values("id","shop_name", "shop_code").filter(q).order_by('shop_code')
     return shopList

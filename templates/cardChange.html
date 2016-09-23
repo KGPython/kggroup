@@ -23,100 +23,143 @@
         </div>
         <div class="widget-content nopadding">
             <div class="container-fluid">
-                <form action="">
-                    <div class="widget-box">
-                        <div class="widget-title"><span class="icon"> <span
-                                class="glyphicon glyphicon-th"> </span></span>
-                            <h5>入卡查询</h5>
-                        </div>
-                        <div class="widget-content nopadding">
-                            <table class="table table-striped table-hover table-form-my">
-                                <thead>
-                                <tr>
-                                    <th>卡号</th>
-                                    <th>面值</th>
-                                    <th>余额</th>
-                                    <th>状态</th>
-                                    <th>操作</th>
-                                </tr>
-                                </thead>
-                                <tbody class="cardIn" id="ListIn">
-                                <tr>
-                                    <td><input class="form-control cardId" type="text"></td>
-                                    <td><input type='text' class='form-control' disabled="disabled"></td>
-                                    <td><input type='text' class='form-control' disabled="disabled"></td>
-                                    <td><input type='text' class='form-control' disabled="disabled"></td>
-                                    <td>
-                                        <button type="button" class="btn btn-danger btn-xs btn-del">删除</button>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                            <div class="cardInTotal discount">
-                                <p class="text" id="totalNum">卡合计数量：<b>0</b>张</p>
-                                <p class="text" id="totalVal">卡合计金额：<b>0.00</b>元</p>
-                            </div>
-                        </div>
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"> <span
+                            class="glyphicon glyphicon-th"> </span></span>
+                        <h5>入卡查询</h5>
                     </div>
-                    <div class="widget-box">
-                        <div class="widget-title"><span class="icon"> <span
-                                class="glyphicon glyphicon-th"> </span></span>
-                            <h5>出卡查询</h5>
-                        </div>
-                        <div class="widget-content nopadding">
-                            <table class="table table-striped table-hover table-form-my">
-                                <thead>
-                                <tr>
-                                    <th>卡号</th>
-                                    <th>面值</th>
-                                    <th>余额</th>
-                                    <th>状态</th>
-                                    <th>操作</th>
-                                </tr>
-                                </thead>
-                                <tbody class="cardOut" id="ListOut">
-                                <tr>
-                                    <td><input class="form-control cardId" type="text"></td>
-                                    <td><input type='text' class='form-control' disabled="disabled"></td>
-                                    <td><input type='text' class='form-control' disabled="disabled"></td>
-                                    <td><input type='text' class='form-control' disabled="disabled"></td>
-                                    <td>
-                                        <button type="button" class="btn btn-danger btn-xs btn-del">删除</button>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                            <div class="cardOutTotal">
-                                <p class="text" id="totalNum">卡合计数量：<b>0</b>张</p>
-                                <p class="text" id="totalVal">卡合计金额：<b>0.00</b>元</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="widget-box">
-                        <div class="widget-title"><span class="icon"> <span
-                                class="glyphicon glyphicon-th"> </span></span>
-                            <h5>用户信息</h5>
-                        </div>
-                        <div class="widget-content nopadding">
-                            <div id="demo" class="collapse in widget-content">
-                                <div class="row formline">
-                                    <label for="" class="col-xs-1 formline-label">客户/单位名称：</label>
-                                    <div class="col-xs-5">
-                                        <input class="form-control" placeholder="" type="text">
-                                    </div>
-                                    <label for="" class="col-xs-1 formline-label">联系电话：</label>
-                                    <div class="col-xs-5">
-                                        <input class="form-control" placeholder="" type="text">
-                                    </div>
+                    <div id="demo" class="collapse in widget-content">
+                        <div id="cardsForm">
+                            <div class="row formline">
+                                <label for="" class="col-xs-1 formline-label">号段开始：</label>
+                                <div class="col-xs-3">
+                                    <input type="text" class="form-control" name="cardStart" id="cardStart" required value="{{ cardStart }}">
                                 </div>
-
+                                <label for="" class="col-xs-1 formline-label">号段结束：</label>
+                                <div class="col-xs-3">
+                                    <input type="text" class="form-control" name="cardEnd" id="cardEnd" required value="{{ cardEnd }}">
+                                </div>
+                                <div class="col-xs-1">
+                                    <button type="reset" class="btn btn-warning btn-add pull-right">添加</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row formline">
+                            <div class="col-xs-12">
+                                <button type="button" class="btn btn-info query-btn pull-right">查询</button>
                             </div>
                         </div>
                     </div>
-                    <div class="enter-box">
-                        <button class="btn btn-success pull-right" type="button" id="btn-enter">提交订单</button>
+                    <div class="widget-content nopadding">
+                        <table class="table table-striped table-hover table-form-my">
+                            <thead>
+                            <tr>
+                                <th>卡号</th>
+                                <th>面值</th>
+                                <th>余额</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody class="cardIn" id="ListIn">
+                            <tr>
+                                <td><input class="form-control cardId" type="text"></td>
+                                <td><input type='text' class='form-control' disabled="disabled"></td>
+                                <td><input type='text' class='form-control' disabled="disabled"></td>
+                                <td><input type='text' class='form-control' disabled="disabled"></td>
+                                <td>
+                                    <button type="button" class="btn btn-danger btn-xs btn-del">删除</button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div class="cardInTotal discount">
+                            <p class="text" id="totalNum">卡合计数量：<b>0</b>张</p>
+                            <p class="text" id="totalVal">卡合计金额：<b>0.00</b>元</p>
+                        </div>
                     </div>
-                </form>
+                </div>
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"> <span
+                            class="glyphicon glyphicon-th"> </span></span>
+                        <h5>出卡查询</h5>
+                    </div>
+                    <div id="demo" class="collapse in widget-content">
+                        <div id="cardsForm">
+                            <div class="row formline">
+                                <label for="" class="col-xs-1 formline-label">号段开始：</label>
+                                <div class="col-xs-3">
+                                    <input type="text" class="form-control" name="cardStart" id="cardStart" required value="{{ cardStart }}">
+                                </div>
+                                <label for="" class="col-xs-1 formline-label">号段结束：</label>
+                                <div class="col-xs-3">
+                                    <input type="text" class="form-control" name="cardEnd" id="cardEnd" required value="{{ cardEnd }}">
+                                </div>
+                                <div class="col-xs-1">
+                                    <button type="reset" class="btn btn-warning btn-add pull-right">添加</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row formline">
+                            <div class="col-xs-12">
+                                <button type="button" class="btn btn-info query-btn pull-right">查询</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="widget-content nopadding">
+                        <table class="table table-striped table-hover table-form-my">
+                            <thead>
+                            <tr>
+                                <th>卡号</th>
+                                <th>面值</th>
+                                <th>余额</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody class="cardOut" id="ListOut">
+                            <tr>
+                                <td><input class="form-control cardId" type="text"></td>
+                                <td><input type='text' class='form-control' disabled="disabled"></td>
+                                <td><input type='text' class='form-control' disabled="disabled"></td>
+                                <td><input type='text' class='form-control' disabled="disabled"></td>
+                                <td>
+                                    <button type="button" class="btn btn-danger btn-xs btn-del">删除</button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div class="cardOutTotal">
+                            <p class="text" id="totalNum">卡合计数量：<b>0</b>张</p>
+                            <p class="text" id="totalVal">卡合计金额：<b>0.00</b>元</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="widget-box">
+                    <div class="widget-title"><span class="icon"> <span
+                            class="glyphicon glyphicon-th"> </span></span>
+                        <h5>用户信息</h5>
+                    </div>
+                    <div class="widget-content nopadding">
+                        <div id="demo" class="collapse in widget-content">
+                            <div class="row formline">
+                                <label for="" class="col-xs-1 formline-label">客户/单位名称：</label>
+                                <div class="col-xs-5">
+                                    <input class="form-control" placeholder="" type="text">
+                                </div>
+                                <label for="" class="col-xs-1 formline-label">联系电话：</label>
+                                <div class="col-xs-5">
+                                    <input class="form-control" placeholder="" type="text">
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="enter-box">
+                    <button class="btn btn-success pull-right" type="button" id="btn-enter">提交订单</button>
+                </div>
+
             </div>
 
         </div>

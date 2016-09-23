@@ -31,12 +31,18 @@
                     <div class="row formline">
                         <label for="" class="col-xs-1 formline-label">售卡门店：</label>
                         <div class="col-xs-2">
-                            <select name="shop" id="shop" class="form-control" required="required">
-                                <option value="">全部</option>
-                                {% for shop in shops %}
-                                    <option value="{{ shop.shop_code }}">{{ shop.shop_name }}</option>
-                                {% endfor %}
-                            </select>
+                            {% if role_id == '2' %}
+                                <input name="shop" id="shop" type="hidden" value="{{ shopcode }}">
+                                <input value="{{ shopcode | transShopCode}}" class="form-control" disabled>
+                            {% else %}
+                                <select name="shop" id="shop" class="form-control" required="required">
+                                    <option value="">全部</option>
+                                    {% for shop in shops %}
+                                        <option value="{{ shop.shop_code }}">{{ shop.shop_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            {% endif %}
+
                         </div>
                         <label for="" class="col-xs-1 formline-label">售卡部门：</label>
                         <div class="col-xs-2">
