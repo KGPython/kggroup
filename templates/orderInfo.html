@@ -111,15 +111,18 @@
                     <p>合计卡数 :{{ totalNum }}张</p>
                     <p>合计金额 :{{ order.0.paid_amount }}元</p>
                     <p>优惠金额 :{{ order.0.disc_amount }}元</p>
-                    <p>实收金额 :{{ order.0.paid_amount}}元</p>
+                    <p>实收金额 :<b class="font-16">{{ order.0.paid_amount}}</b>元</p>
                 </div>
                 <div class="info-total discTotal" style="display: none">
                     <p>合计卡数 :{{ totalNum }}张</p>
                     <p>合计金额 :{{ order.0.paid_amount | subtract:order.0.diff_price}}元</p>
-                    <p class="font-12">实收金额 :{{ order.0.paid_amount | subtract:order.0.diff_price }}元</p>
+                    <p>实收金额 :<b class="font-16">{{ order.0.paid_amount | subtract:order.0.diff_price }}</b>元</p>
                 </div>
                 <div class="info-total">
-                    <p class="remark">金额合计(大写) :</p>
+                    <p class="remark">
+                        金额合计(大写):
+                        <b class="font-16">{{ order.0.paid_amount | subtract:order.0.diff_price | rmbUpper  }}</b>
+                    </p>
                     <p class="remark">备注 :此收据不得作为经营性业务收支结算凭证使用。 </p>
                 </div>
             </div>
