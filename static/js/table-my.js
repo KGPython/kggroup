@@ -746,7 +746,11 @@ function updateCardFillOrder(url,target_url){
                 alert('操作成功');
                 window.location.href=target_url;
             }else if(data.msg==0){
-                alert('操作失败');
+                if(data.msg_err){
+                    alert(data.msg_err);
+                }else{
+                    alert('操作失败');
+                }
             }
         },
         error:function(XMLHttpRequest, textStatus, errorThrown){

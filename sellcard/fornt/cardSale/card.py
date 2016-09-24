@@ -8,6 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Sum,Count
 
 from sellcard.common import Method as mtu
+from sellcard.common.model import MyError
 
 def index(request):
     operator = request.session.get('s_uid','')
@@ -94,15 +95,6 @@ def saveOrder(request):
                 orderPay.remarks = pay['payRmarks']
                 orderPay.save()
 
-            cardListTotal = cardList+YcardList
-            cardIdList = []
-            for card in cardListTotal:
-                cardIdList.append(card['cardId'])
-
-            mtu.updateCard(cardIdList,'1')
-            mtu.updateDisCode(disCode,shopcode,order_sn)
-            CardInventory.objects.filter(card_no__in=cardIdList).update(card_status='2',card_action='0')
-
             order = Orders()
             order.buyer_name = buyerName
             order.buyer_tel = buyerPhone
@@ -121,14 +113,35 @@ def saveOrder(request):
             order.y_cash = Ycash
             order.save()
 
+            #更新
+            cardListTotal = cardList+YcardList
+            cardIdList = []
+            for card in cardListTotal:
+                cardIdList.append(card['cardId'])
+            cardsNum = len(cardIdList)
+
+            resCard = CardInventory.objects.filter(card_no__in=cardIdList).update(card_status='2',card_action='0')
+            if resCard != cardsNum:
+                raise MyError('系统数据库卡状态更新失败')
+
+            if disCode:
+                resCode = mtu.updateDisCode(disCode,shopcode,order_sn)
+                if resCode == 0:
+                    raise MyError('折扣授权码状态更新失败')
+
+            resErp = mtu.updateCard(cardIdList,'1')
+            if resErp != cardsNum:
+                mtu.updateCard(cardIdList,'9')
+                raise MyError('ERP数据库卡状态更新失败')
+
             res["msg"] = 1
             res["urlRedirect"] = '/kg/sellcard/cardsale/orderInfo/?orderSn='+order_sn
             path = request.path
             ActionLog.objects.create(url=path,u_name=request.session.get('s_uname'),cards_out=cardStr+','+YcardStr,add_time=datetime.datetime.now())
     except Exception as e:
-        print(e)
+        res["msg_err"] = e.value
         res["msg"] = 0
-        ActionLog.objects.create(url=path,u_name=request.session.get('s_uname'),cards_out=cardStr+','+YcardStr,add_time=datetime.datetime.now(),err_msg=e)
+        ActionLog.objects.create(url=path,u_name=request.session.get('s_uname'),cards_out=cardStr+','+YcardStr,add_time=datetime.datetime.now(),err_msg=e.value)
 
     return HttpResponse(json.dumps(res))
 

@@ -6,7 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
 from sellcard.common import Method as mtu
 from django.db import transaction
-
+from sellcard.common.model import MyError
 import datetime,json
 
 __EACH_PAGE_SHOW_NUMBER=10
@@ -161,16 +161,21 @@ def update(request):
                 cardIdOutList.append(card['cardId'])
 
             # 激活新卡
-            CardInventory.objects.filter(card_no__in=cardIdOutList).update(card_status=2)
+            cardOutNum = len(cardIdOutList)
+            resCardOut = CardInventory.objects.filter(card_no__in=cardIdOutList).update(card_status=2)
+            if resCardOut != cardOutNum:
+                raise MyError('系统数据库卡状态更新失败')
             #回写卡库
-            #mtu.updateCard(cardIdOutList,"1")
-
+            resErp = mtu.updateCard(cardIdOutList,"1")
+            if resErp != cardOutNum:
+                mtu.updateCard(cardIdOutList,"9")
+                raise MyError('ERP数据库卡状态更新失败！')
             res["msg"] = 1
             ActionLog.objects.create(action='补卡-领卡',u_name=request.session.get('s_uname'),cards_out=cardOutStr,add_time=datetime.datetime.now())
 
     except Exception as e:
-        print(e)
         res["msg"] = 0
+        res["msg_err"] = e.value
         ActionLog.objects.create(action='补卡-领卡',u_name=request.session.get('s_uname'),cards_out=cardOutStr,add_time=datetime.datetime.now(),err_msg=e)
 
     return HttpResponse(json.dumps(res))

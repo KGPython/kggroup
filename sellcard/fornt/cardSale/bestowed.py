@@ -9,7 +9,7 @@ from sellcard.models import Orders,OrderInfo,CardInventory,ActionLog
 import datetime
 from sellcard.common import Method as mtu
 from django.http import HttpResponse
-
+from sellcard.common.model import MyError
 def index(reauest):
     return render(reauest, 'bestowed.html',locals())
 
@@ -62,17 +62,28 @@ def saveOrder(request):
             order.order_sn = order_sn
             order.remark = remark
             order.save()
+
+            #更新
             cardIdList = []
             for card in cardList:
                 cardIdList.append(card['cardId'])
-            mtu.updateCard(cardIdList,'1')
-            CardInventory.objects.filter(card_no__in=cardIdList).update(card_status=2,card_action='0')
+            cardNum = len(cardIdList)
+
+            resCard = CardInventory.objects.filter(card_no__in=cardIdList).update(card_status=2,card_action='0')
+            if resCard!= cardNum:
+                raise MyError('系统数据库卡状态更新失败')
+
+            resErp = mtu.updateCard(cardIdList,'1')
+            if resErp!= cardNum:
+                mtu.updateCard(cardIdList,'9')
+                raise MyError('ERP数据库卡状态更新失败')
+
             res["msg"] = 1
             res["urlRedirect"] = '/kg/sellcard/cardsale/orderInfo/?orderSn='+order_sn
             ActionLog.objects.create(action='实物团购返点',u_name=request.session.get('s_uname'),cards_out=cardStr,add_time=datetime.datetime.now())
 
     except Exception as e:
-        print(e)
+        res["msg_err"] = e.value
         res["msg"] = 0
         ActionLog.objects.create(action='实物团购返点',u_name=request.session.get('s_uname'),cards_out=cardStr,add_time=datetime.datetime.now(),err_msg=e)
 
