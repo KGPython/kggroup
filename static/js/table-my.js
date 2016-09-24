@@ -811,7 +811,11 @@ function saveCardChangeOrder(url){
                 window.location.reload();
                 $('input[type=text]').val('');
             }else if(data.msg==0){
-                alert('订单提交失败');
+                if(data.msg_err){
+                    alert(data.msg_err);
+                }else{
+                    alert('订单提交失败');
+                }
             }
         },
         error:function(XMLHttpRequest, textStatus, errorThrown){

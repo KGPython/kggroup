@@ -7,6 +7,7 @@ import json
 from django.views.decorators.csrf import csrf_exempt
 import datetime
 from sellcard.common import Method as mtu
+from sellcard.common.model import MyError
 from django.db import transaction
 
 def index(request):
@@ -46,7 +47,7 @@ def save(request):
         with transaction.atomic():
             order_sn = mtu.setOrderSn(OrderChangeCard)
             created_time=datetime.datetime.today()
-            # 入卡插入订单详情
+            # 保存
             for cardIn in cardListIn:
                 orderInfo = OrderChangeCardInfo()
                 orderInfo.order_sn = order_sn
@@ -66,17 +67,6 @@ def save(request):
                 orderInfo.add_time = created_time
                 orderInfo.save()
 
-            cardIdInList = []
-            for card in cardListIn:
-                cardIdInList.append(card['cardId'])
-            cardIdOutList = []
-            for card in cardListOut:
-                cardIdOutList.append(card['cardId'])
-
-            mtu.updateCard(cardIdOutList,'1')
-            mtu.updateCard(cardIdInList,'9')
-            CardInventory.objects.filter(card_no__in=cardIdInList).update(card_status='1',card_action='1')
-            CardInventory.objects.filter(card_no__in=cardIdOutList).update(card_status='2',card_action='0')
             order = OrderChangeCard()
             order.order_sn = order_sn
             order.operator_id = operator
@@ -91,11 +81,33 @@ def save(request):
             order.add_time = created_time
             order.save()
 
+            #更新
+            cardIdInList = []
+            for card in cardListIn:
+                cardIdInList.append(card['cardId'])
+            cardIdOutList = []
+            for card in cardListOut:
+                cardIdOutList.append(card['cardId'])
+            cardsOutNum = len(cardIdOutList)
+            cardsInNum = len(cardIdInList)
+
+            resCardIn = CardInventory.objects.filter(card_no__in=cardIdInList).update(card_status='1',card_action='1')
+            resCardOut = CardInventory.objects.filter(card_no__in=cardIdOutList).update(card_status='2',card_action='0')
+            if resCardIn != cardsInNum or resCardOut != cardsOutNum:
+                raise MyError('系统数据库卡状态更新失败')
+
+            resErpOut = mtu.updateCard(cardIdOutList,'1')
+            resErpIn = mtu.updateCard(cardIdInList,'9')
+            if resErpIn != cardsInNum or resErpOut != cardsOutNum:
+                mtu.updateCard(cardIdOutList,'9')
+                mtu.updateCard(cardIdOutList,'1')
+                raise MyError('ERP数据库卡状态更新失败')
+
             res["msg"] = 1
             ActionLog.objects.create(action='换卡-单卡',u_name=request.session.get('s_uname'),cards_in=cardListInStr,cards_out=cardListOutStr,add_time=datetime.datetime.now())
     except Exception as e:
-        print(e)
         res["msg"] = 0
-        ActionLog.objects.create(action='换卡-单卡',u_name=request.session.get('s_uname'),cards_in=cardListInStr,cards_out=cardListOutStr,add_time=datetime.datetime.now(),err_msg=e)
+        res["msg_err"] = e.value
+        ActionLog.objects.create(action='换卡-单卡',u_name=request.session.get('s_uname'),cards_in=cardListInStr,cards_out=cardListOutStr,add_time=datetime.datetime.now(),err_msg=e.value)
 
     return HttpResponse(json.dumps(res))
