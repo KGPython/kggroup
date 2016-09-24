@@ -32,6 +32,9 @@
             <div class="container-fluid">
                 <div class="widget-box">
                     <div class="widget-content collapse in ">
+                        <input type="hidden" id="buyerName" value="{{ listSale.0.borrow_name }}">
+                        <input type="hidden" id="buyerPhone" value="{{ listSale.0.borrow_phone }}">
+                        <input type="hidden" id="buyerCompany" value="{{ listSale.0.borrow_depart }}">
                         <form id="form" class="query-list" method="post" action="{% url 'borrowPay' %}">
                             <div class="row formline">
                                 <label for="" class="col-xs-1 formline-label">单位名称：</label>
@@ -413,7 +416,6 @@
     })
 </script>
 <script>
-
     $(document).on('click','#btn-enter',function(){
         var action_type = '3';//借卡结算
         var url = "{% url 'borrowPaySave' %}";

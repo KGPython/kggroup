@@ -8,7 +8,7 @@ import json,datetime
 
 from sellcard.common import Method as mth
 from sellcard.models import OrderBorrow,OrderBorrowInfo,CardInventory,ActionLog
-
+from sellcard.common.model import MyError
 @csrf_exempt
 def index(request):
     return render(request, 'borrowSale.html',locals())
@@ -50,8 +50,15 @@ def save(request):
             cardIdList = []
             for card in cardListTotal:
                 cardIdList.append(card['cardId'])
-            mth.updateCard(cardIdList,'1')
-            CardInventory.objects.filter(card_no__in=cardIdList).update(card_status='2',card_action='0')
+            cardNum = len(cardIdList)
+
+            resCard = CardInventory.objects.filter(card_no__in=cardIdList).update(card_status='2',card_action='0')
+            if resCard != cardNum:
+                raise MyError('系统数据库卡状态更新失败！')
+            resErp = mth.updateCard(cardIdList,'1')
+            if resErp != cardNum:
+                mth.updateCard(cardIdList,'9')
+                raise MyError('ERP数据库卡状态更新失败！')
 
             order = OrderBorrow()
             order.borrow_name = borrowName
@@ -72,7 +79,9 @@ def save(request):
     except Exception as e:
         print(e)
         res["msg"] = 0
-        ActionLog.objects.create(action='借卡-售卡',u_name=request.session.get('s_uname'),cards_out=cardStr,add_time=datetime.datetime.now(),err_msg=e)
+        res["msg_err"] = e.value
+        ActionLog.objects.create(action='借卡-售卡',u_name=request.session.get('s_uname'),cards_out=cardStr,add_time=datetime.datetime.now(),err_msg=e.value)
+
     return HttpResponse(json.dumps(res))
 
 

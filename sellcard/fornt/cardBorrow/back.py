@@ -6,7 +6,8 @@ import json,datetime
 
 from sellcard.models import ActionLog,OrderBorrowInfo,CardInventory
 from sellcard.common import Method as mth
-
+from django.db import transaction
+from sellcard.common.model import MyError
 @csrf_exempt
 def index(request):
     operator = request.session.get('s_uid','')
@@ -78,14 +79,23 @@ def save(request):
     now = datetime.datetime.now()
     res = {}
     try:
-        mth.updateCard(cardnoList,'')
-        CardInventory.objects.filter(card_no__in=cardnoList).update(card_status='1',card_action='1')
-        OrderBorrowInfo.objects.filter(card_no__in=cardnoList).update(is_back='1',back_time=now)
-        res['msg'] = 0
-        ActionLog.objects.create(action='借卡-还卡',u_name=request.session.get('s_uname'),cards_in=cardsStr,add_time=datetime.datetime.now())
+        with transaction.atomic():
+            cardsNum = len(cardnoList)
+            resErp = mth.updateCard(cardnoList,'9')
+            if resErp != cardsNum:
+                mth.updateCard(cardnoList,'1')
+                raise MyError('ERP数据库卡状态更新失败')
+            resCard = CardInventory.objects.filter(card_no__in=cardnoList).update(card_status='1',card_action='1')
+            if resCard != cardsNum:
+                raise MyError('系统数据库卡状态更新失败')
+            resBorrow = OrderBorrowInfo.objects.filter(card_no__in=cardnoList).update(is_back='1',back_time=now)
+            if resBorrow != cardsNum:
+                raise MyError('借卡单内卡状态更新失败')
+            res['msg'] = 0
+            ActionLog.objects.create(action='借卡-还卡',u_name=request.session.get('s_uname'),cards_in=cardsStr,add_time=datetime.datetime.now())
 
     except Exception as e:
         res['msg'] = 1
-        print(e)
+        res["msg_err"] = e.value
         ActionLog.objects.create(action='借卡-还卡',u_name=request.session.get('s_uname'),cards_in=cardsStr,add_time=datetime.datetime.now(),err_msg=e)
     return HttpResponse(json.dumps(res))

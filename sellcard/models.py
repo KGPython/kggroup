@@ -186,16 +186,16 @@ class NavList(models.Model):
 
 
 class OrderBorrow(models.Model):
-    order_sn = models.CharField(max_length=20, blank=True, null=True)
-    order_val = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
-    order_num = models.IntegerField(blank=True, null=True)
-    shopcode = models.CharField(max_length=16, blank=True, null=True)
-    operator = models.SmallIntegerField(blank=True, null=True)
-    borrow_depart = models.CharField(max_length=10, blank=True, null=True)
-    borrow_depart_code = models.CharField(max_length=12, blank=True, null=True)
-    borrow_name = models.CharField(max_length=12, blank=True, null=True)
-    borrow_phone = models.CharField(max_length=12, blank=True, null=True)
-    add_time = models.DateTimeField(blank=True, null=True)
+    order_sn = models.CharField(max_length=20)
+    order_val = models.DecimalField(max_digits=11, decimal_places=2)
+    order_num = models.IntegerField()
+    shopcode = models.CharField(max_length=16)
+    operator = models.SmallIntegerField()
+    borrow_depart = models.CharField(max_length=10)
+    borrow_depart_code = models.CharField(max_length=12)
+    borrow_name = models.CharField(max_length=12)
+    borrow_phone = models.CharField(max_length=12)
+    add_time = models.DateTimeField()
     is_paid = models.CharField(max_length=1)
     paid_time = models.DateTimeField(blank=True, null=True)
 

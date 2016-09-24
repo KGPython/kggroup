@@ -7,7 +7,7 @@ from django.db import transaction
 
 from sellcard.models import OrderBorrow,CardInventory,Orders,OrderInfo,OrderPaymentInfo,ActionLog
 from sellcard.common import Method as mth
-
+from sellcard.common.model import MyError
 @csrf_exempt
 def index(request):
     shopcode = request.session.get('s_shopcode','')
@@ -50,7 +50,7 @@ def index(request):
         #查询借卡明细
         listSale = OrderBorrow\
                 .objects\
-                .values('order_sn','order_val','order_num','operator','borrow_depart','borrow_depart_code','borrow_name','add_time','is_paid')\
+                .values('order_sn','order_val','order_num','operator','borrow_depart','borrow_depart_code','borrow_phone','borrow_name','add_time','is_paid')\
                 .filter(**kwargs).order_by('order_sn')
 
         totaSale = 0
@@ -124,13 +124,11 @@ def save(request):
         hjsList = hjsStr.split(',')
 
     #合计信息
-    totalNum = request.POST.get('totalNum',0)
     totalVal = request.POST.get('totalVal',0.00)
 
     discountRate = request.POST.get('discount',0.00)
     disCode = request.POST.get('disCode','')
     discountVal = request.POST.get('discountVal','')
-    YtotalNum = request.POST.get('YtotalNum',0)
 
     Ybalance = request.POST.get('Ybalance',0.00)
 
@@ -172,20 +170,30 @@ def save(request):
                 orderPay.pay_value = pay['payVal']
                 orderPay.remarks = pay['payRmarks']
                 orderPay.save()
-
+            #获取所有出卡列表
             cardListTotal = cardList+YcardList
             cardIdList = []
             for card in cardListTotal:
                 cardIdList.append(card['cardId'])
+            cardsNum = len(cardIdList)
 
             #更新ERP内部卡状态
-            mth.updateCard(cardIdList,'1')
+            resErp = mth.updateCard(cardIdList,'1')
+            if resErp != cardsNum:
+                mth.updateCard(cardIdList,'9')
+                raise MyError('ERP数据库卡状态更新失败')
+
             #更新折扣授权码校验码状态
             mth.updateDisCode(disCode,shopcode,order_sn)
             #更新kggroup内部卡状态
-            CardInventory.objects.filter(card_no__in=cardIdList).update(card_status='2',card_action='0')
+            resCard = CardInventory.objects.filter(card_no__in=cardIdList).update(card_status='2',card_action='0')
+            if resCard != cardsNum:
+                raise MyError('系统数据库卡状态更新失败')
             #更新借卡单的结算状态
-            OrderBorrow.objects.filter(order_sn__in=orderSnList).update(is_paid='1',paid_time=datetime.datetime.now())
+            orderSnNum = len(orderSnList)
+            resBorrow =  OrderBorrow.objects.filter(order_sn__in=orderSnList).update(is_paid='1',paid_time=datetime.datetime.now())
+            if orderSnNum != resBorrow:
+                raise MyError('借卡单状态更新失败')
 
             order = Orders()
             order.buyer_name = buyerName
@@ -210,7 +218,8 @@ def save(request):
             res["urlRedirect"] = '/kg/sellcard/cardsale/orderInfo/?orderSn='+order_sn
             ActionLog.objects.create(action='借卡-结算',u_name=request.session.get('s_uname'),cards_out=cardStr+','+YcardStr,add_time=datetime.datetime.now())
     except Exception as e:
-        print(e)
         res["msg"] = 0
-        ActionLog.objects.create(action='借卡-结算',u_name=request.session.get('s_uname'),cards_out=cardStr+','+YcardStr,add_time=datetime.datetime.now(),err_msg=e)
+        res["msg_err"] = e.value
+        ActionLog.objects.create(action='借卡-结算',u_name=request.session.get('s_uname'),cards_out=cardStr+','+YcardStr,add_time=datetime.datetime.now(),err_msg=e.value)
+
     return HttpResponse(json.dumps(res))

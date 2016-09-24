@@ -109,5 +109,5 @@ urlpatterns = [
     #订单明细
     url(r'^sellcard/orderdetail', 'sellcard.common.Method.orderDetail',name='orderDetail'),
 
-
+    url(r'^test/','sellcard.tests.executeTest')
 ]

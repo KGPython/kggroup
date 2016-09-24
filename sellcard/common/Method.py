@@ -194,10 +194,12 @@ def updateCard(list,mode):
     conn.autocommit(False)
     cur = conn.cursor()
     cur.execute(sql)
+    res = cur.rowcount
     conn.commit()
     cur.close()
     conn.close()
-    return True
+
+    return res
 #更新赊销状态
 @csrf_exempt
 def upNoPayStatus(request):

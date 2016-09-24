@@ -576,11 +576,6 @@ function saveCardSaleOrder(action_type,url,cardList,orderSns){
     }
 
     if(discountVal>0){
-        /*//优惠区域合计=卡+返现
-        if(YtotalVal==0){
-            alert('请完善优惠列表后再尝试提交！');
-            return false;
-        }*/
         //优惠补差
         if(Ybalance<0){
             alert('优惠补差不能为负数！');
@@ -619,9 +614,14 @@ function saveCardSaleOrder(action_type,url,cardList,orderSns){
                 alert('订单提交成功');
                 $('input[type=text]').not('.payName').val('');
                 $('input[type=checkbox]').prop('checked',false);
+                window.location.reload();
                 window.location.href=data.urlRedirect
             }else if(data.msg==0){
-                alert('订单提交失败');
+                if(data.msg_err){
+                    alert(data.msg_err);
+                }else{
+                    alert('订单提交失败');
+                }
             }
         },
         error:function(XMLHttpRequest, textStatus, errorThrown){

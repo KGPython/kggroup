@@ -255,7 +255,8 @@ function saveBorrowOrder(url){
     var borrowName = $('#borrowName').val();
     var borrowDepartCode = $('#borrowDepartCode').val();
     var borrowPhone = $('#borrowPhone').val();
-    if(totalVal==0){
+
+    if(isNaN(totalVal)){
         alert('还未添加售卡信息，请核对后再尝试提交！');
         return false;
     }
@@ -282,7 +283,11 @@ function saveBorrowOrder(url){
                 $('input[type=text]').val('');
                 window.location.href=data.redirectUrl;
             }else if(data.msg==0){
-                alert('订单提交失败');
+                if(data.msg_err){
+                    alert(data.msg_err);
+                }else{
+                    alert('订单提交失败');
+                }
             }
         },
         error:function(XMLHttpRequest, textStatus, errorThrown){
