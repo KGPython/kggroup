@@ -21,6 +21,7 @@ def index(request):
 @csrf_exempt
 @transaction.atomic
 def saveOrder(request):
+    path = request.path
     operator = request.session.get('s_uid','')
     shopcode = request.session.get('s_shopcode','')
     depart = request.session.get('s_depart','')
@@ -136,7 +137,7 @@ def saveOrder(request):
 
             res["msg"] = 1
             res["urlRedirect"] = '/kg/sellcard/cardsale/orderInfo/?orderSn='+order_sn
-            path = request.path
+
             ActionLog.objects.create(url=path,u_name=request.session.get('s_uname'),cards_out=cardStr+','+YcardStr,add_time=datetime.datetime.now())
     except Exception as e:
         res["msg_err"] = e.value
