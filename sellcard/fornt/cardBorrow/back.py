@@ -3,7 +3,6 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import json,datetime
-
 from sellcard.models import ActionLog,OrderBorrowInfo,CardInventory
 from sellcard.common import Method as mth
 from django.db import transaction
