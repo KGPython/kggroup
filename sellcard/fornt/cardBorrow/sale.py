@@ -45,6 +45,20 @@ def save(request):
                 orderInfo.card_balance = card['cardVal']
                 orderInfo.save()
 
+            order = OrderBorrow()
+            order.borrow_name = borrowName
+            order.borrow_depart = borrowDepart
+            order.borrow_depart_code = borrowDepartCode
+            order.borrow_phone= borrowPhone
+            order.shopcode = shopcode
+            order.operator = operator
+            order.order_val = float(totalVal)
+            order.order_num = totalNum
+            order.add_time = datetime.datetime.now()
+            order.is_paid = '0'
+            order.order_sn = order_sn
+            order.save()
+
             #更新卡状态
             cardListTotal = cardList
             cardIdList = []
@@ -59,20 +73,6 @@ def save(request):
             if resErp != cardNum:
                 mth.updateCard(cardIdList,'9')
                 raise MyError('ERP数据库卡状态更新失败！')
-
-            order = OrderBorrow()
-            order.borrow_name = borrowName
-            order.borrow_depart = borrowDepart
-            order.borrow_depart_code = borrowDepartCode
-            order.borrow_phone= borrowPhone
-            order.shopcode = shopcode
-            order.operator = operator
-            order.order_val = float(totalVal)
-            order.order_num = totalNum
-            order.add_time = datetime.datetime.now()
-            order.is_paid = '0'
-            order.order_sn = order_sn
-            order.save()
             res["msg"] = 1
             res["redirectUrl"] = '/kg/sellcard/borrow/sale/info/?orderSn='+order_sn
             ActionLog.objects.create(action='借卡-售卡',u_name=request.session.get('s_uname'),cards_out=cardStr,add_time=datetime.datetime.now())

@@ -170,30 +170,6 @@ def save(request):
                 orderPay.pay_value = pay['payVal']
                 orderPay.remarks = pay['payRmarks']
                 orderPay.save()
-            #获取所有出卡列表
-            cardListTotal = cardList+YcardList
-            cardIdList = []
-            for card in cardListTotal:
-                cardIdList.append(card['cardId'])
-            cardsNum = len(cardIdList)
-
-            #更新ERP内部卡状态
-            resErp = mth.updateCard(cardIdList,'1')
-            if resErp != cardsNum:
-                mth.updateCard(cardIdList,'9')
-                raise MyError('ERP数据库卡状态更新失败')
-
-            #更新折扣授权码校验码状态
-            mth.updateDisCode(disCode,shopcode,order_sn)
-            #更新kggroup内部卡状态
-            resCard = CardInventory.objects.filter(card_no__in=cardIdList).update(card_status='2',card_action='0')
-            if resCard != cardsNum:
-                raise MyError('系统数据库卡状态更新失败')
-            #更新借卡单的结算状态
-            orderSnNum = len(orderSnList)
-            resBorrow =  OrderBorrow.objects.filter(order_sn__in=orderSnList).update(is_paid='1',paid_time=datetime.datetime.now())
-            if orderSnNum != resBorrow:
-                raise MyError('借卡单状态更新失败')
 
             order = Orders()
             order.buyer_name = buyerName
@@ -213,6 +189,32 @@ def save(request):
             order.y_cash = Ycash
             order.save()
 
+            #获取所有出卡列表
+            cardListTotal = cardList+YcardList
+            cardIdList = []
+            for card in cardListTotal:
+                cardIdList.append(card['cardId'])
+            cardsNum = len(cardIdList)
+
+            #更新折扣授权码校验码状态
+            mth.updateDisCode(disCode,shopcode,order_sn)
+
+            #更新kggroup内部卡状态
+            resCard = CardInventory.objects.filter(card_no__in=cardIdList).update(card_status='2',card_action='0')
+            if resCard != cardsNum:
+                raise MyError('系统数据库卡状态更新失败')
+
+            #更新借卡单的结算状态
+            orderSnNum = len(orderSnList)
+            resBorrow =  OrderBorrow.objects.filter(order_sn__in=orderSnList).update(is_paid='1',paid_time=datetime.datetime.now())
+            if orderSnNum != resBorrow:
+                raise MyError('借卡单状态更新失败')
+
+            #更新ERP内部卡状态
+            resErp = mth.updateCard(cardIdList,'1')
+            if resErp != cardsNum:
+                mth.updateCard(cardIdList,'9')
+                raise MyError('ERP数据库卡状态更新失败')
 
             res["msg"] = 1
             res["urlRedirect"] = '/kg/sellcard/cardsale/orderInfo/?orderSn='+order_sn
