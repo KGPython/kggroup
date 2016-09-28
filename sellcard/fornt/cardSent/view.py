@@ -38,7 +38,6 @@ def sentOrderSave(request):
             for card in cards:
                 if card['cardType']=='无面值':
                     card['cardType'] = ''
-
                 obj = ReceiveInfo()
                 obj.rec_id = orderSn
                 obj.card_id_start = card['start']
@@ -81,3 +80,38 @@ def sentOrderSave(request):
         ActionLog.objects.create(action='信息部发卡',u_name=request.session.get('s_uname'),cards_out=cardStr,add_time=datetime.datetime.now(),err_msg=e)
 
     return HttpResponse(json.dumps(res))
+
+@csrf_exempt
+def sentCardCheck(request):
+    shops = base.findShop()
+    if request.method == 'POST':
+        shop = request.POST.get('shop','')
+        if shop:
+            whereShop = 'shop = {shop}'.format(shop=shop)
+        else:
+            whereShop ='1=1'
+        start = request.POST.get('start')
+        end = request.POST.get('end')
+        nextDay = datetime.datetime.strptime(end,'%Y-%m-%d')+datetime.timedelta(1)
+
+        sqlOrder = 'select a.rec_sn,a.shop_code,a.add_time,a.rec_name,SUM(b.card_nums) as card_nums from card_receive as a, receive_info as b ' \
+                   'where a.rec_sn=b.rec_id and add_time >= "{start}" and add_time<="{nextDay}" and {whereShop} group by b.rec_id order by a.shop_code,a.add_time'\
+                   .format(start=start,nextDay=nextDay,whereShop=whereShop)
+        conn = mth.getMysqlConn()
+        cur = conn.cursor()
+        cur.execute(sqlOrder)
+        orders = cur.fetchall()
+
+    return render(request,'sentCardCheck.html',locals())
+
+def sentCardOrder(request):
+    order_sn = request.GET.get('order_sn')
+    recInfoList = ReceiveInfo.objects.values('card_value','card_nums','card_id_start','card_id_end')\
+                    .filter(rec_id=order_sn).order_by('card_value')
+
+    totalNum = 0
+    totalVal = 0.00
+    for recInfo in recInfoList:
+        totalNum += int(recInfo['card_nums'])
+
+    return render(request,'sentCardOrder.html',locals())

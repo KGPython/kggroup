@@ -5,13 +5,11 @@
     <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>库存盘点</title>
+    <title>领卡盘点</title>
 </head>
 <body>
 {% include 'common/head.html' %}
-<style>
-    table a{text-decoration: underline}
-</style>
+
 <!--containt-part-->
 <div id="content">
     <div id="content-header">
@@ -19,12 +17,12 @@
             <a data-original-title="Go to Home" href="#" title="" class="tip-bottom">
                 <span class="glyphicon glyphicon-home" aria-hidden="true"> </span> 首页
             </a>
-            <a href="#" class="current">库存盘点</a>
+            <a href="#" class="current">领卡盘点</a>
         </div>
     </div>
     <div class="widget-box">
         <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
-            <h5>库存盘点</h5>
+            <h5>领卡盘点--详情</h5>
         </div>
         <div class="widget-content nopadding">
             <div class="container-fluid">
@@ -32,24 +30,23 @@
                     <thead>
                         <tr>
                             <th>卡类型</th>
-                            <th>库存金额（单位：元）</th>
-                            <th>库存数量</th>
-                            <th>操作</th>
+                            <th>卡数量</th>
+                            <th>卡段起始号</th>
+                            <th>卡段截至号</th>
 
                         </tr>
                     </thead>
                     <tbody class="cardIn" id="nopayList">
-                         {% for row in cardList %}
+                         {% for row in recInfoList %}
                             <tr>
-                                <td>{{ row.card_value}} 元</td>
-                                <td>{{ row.balance }}</td>
-                                <td>{{ row.num }}</td>
-                                <td><a href="{% url 'financeCardInfo' %}?cardtype={{ row.card_value}}&shopcode={{ shopCode }}">详情</a></td>
+                                <td>{{ row.card_value | default:'无面值'}} 元</td>
+                                <td>{{ row.card_nums }}</td>
+                                <td>{{ row.card_id_start }}</td>
+                                <td>{{ row.card_id_end}}</td>
                             </tr>
                         {% endfor %}
                         <tr>
                             <td>合计</td>
-                            <td>{{ totalBalance }}</td>
                             <td>{{ totalNum }}</td>
                             <td></td>
                         </tr>

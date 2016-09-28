@@ -56,15 +56,15 @@ urlpatterns = [
     url(r'^sellcard/borrow/pay/index/', 'sellcard.fornt.cardBorrow.pay.index',name='borrowPay'),
     url(r'^sellcard/borrow/pay/save/', 'sellcard.fornt.cardBorrow.pay.save',name='borrowPaySave'),
 
-
-
-
     ###门店领卡(信息中心发卡)
     url(r'^sellcard/cardSent/$', 'sellcard.fornt.cardSent.view.index',name='cardSent'),
     url(r'^sellcard/cardSent/save', 'sellcard.fornt.cardSent.view.sentOrderSave',name='sentOrderSave'),
+    #单据盘点
+    url('^sellcard/cardSentCheck/','sellcard.fornt.cardSent.view.sentCardCheck',name='sentCardCheck'),
+    url('^sellcard/cardSentOrder','sellcard.fornt.cardSent.view.sentCardOrder',name='cardSentOrder'),
 
     #盘点管理
-    #财务盘点--卡类型
+    #库存盘点--卡类型
     url(r'^sellcard/check/finance/$', 'sellcard.fornt.checkManage.finance.index',name="financeCheck"),
     url(r'^sellcard/check/finance/cardtype/$', 'sellcard.fornt.checkManage.finance.cardType',name="financeCardType"),
     url(r'^sellcard/check/finance/cardinfo/$', 'sellcard.fornt.checkManage.finance.cardInfo',name="financeCardInfo"),
@@ -109,5 +109,5 @@ urlpatterns = [
     #订单明细
     url(r'^sellcard/orderdetail', 'sellcard.common.Method.orderDetail',name='orderDetail'),
 
-    url(r'^test/','sellcard.tests.executeTest')
+    # url(r'^test/','sellcard.tests.executeTest')
 ]

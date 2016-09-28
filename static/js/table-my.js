@@ -612,9 +612,9 @@ function saveCardSaleOrder(action_type,url,cardList,orderSns){
         success:function(data){
             if(data.msg==1){
                 alert('订单提交成功');
-                $('input[type=text]').not('.payName').val('');
-                $('input[type=checkbox]').prop('checked',false);
-                window.location.reload();
+                //$('input[type=text]').not('.payName').val('');
+                //$('input[type=checkbox]').prop('checked',false);
+                window.location.reload(true);
                 window.location.href=data.urlRedirect
             }else if(data.msg==0){
                 if(data.msg_err){
@@ -693,7 +693,7 @@ function saveCardFillOrder(url){
         success:function(data){
             if(data.msg==1){
                 alert('订单提交成功');
-                window.location.reload();
+                window.location.reload(true);
             }else if(data.msg==0){
                 alert('订单提交失败');
             }
@@ -744,6 +744,7 @@ function updateCardFillOrder(url,target_url){
         success:function(data){
             if(data.msg==1){
                 alert('操作成功');
+                window.location.reload(true);
                 window.location.href=target_url;
             }else if(data.msg==0){
                 if(data.msg_err){
@@ -812,8 +813,8 @@ function saveCardChangeOrder(url){
         success:function(data){
             if(data.msg==1){
                 alert('订单提交成功');
-                window.location.reload();
-                $('input[type=text]').val('');
+                window.location.reload(true);
+                //$('input[type=text]').val('');
             }else if(data.msg==0){
                 if(data.msg_err){
                     alert(data.msg_err);
