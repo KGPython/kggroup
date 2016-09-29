@@ -375,6 +375,7 @@ class Shops(models.Model):
     id = models.IntegerField(primary_key=True)
     shop_name = models.CharField(max_length=60)
     shop_code = models.CharField(max_length=16, blank=True, null=True)
+    tel = models.CharField(max_length=12, blank=True, null=True)
 
     class Meta:
         managed = False

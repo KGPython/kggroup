@@ -8,13 +8,20 @@ register = template.Library()
 #门店编号转名称
 @register.filter
 def transShopCode(key):
-    shopList = base.findShop()
     shopname = ''
-    for shop in shopList:
-        if shop['shop_code']==key:
-            shopname = shop['shop_name']
+    if(key):
+        shop = base.findShop(key)[0]
+        shopname = shop['shop_name']
     return shopname
 
+#门店编号转门店电话
+@register.filter
+def transShopCodeToTel(key):
+    shopTel = ''
+    if key:
+        shop = base.findShop(key)[0]
+        shopTel = shop['tel']
+    return shopTel
 
 
 #门店编号转名称
