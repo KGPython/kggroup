@@ -27,21 +27,19 @@ def transShopCodeToTel(key):
 #门店编号转名称
 @register.filter
 def transShopId(key):
-    shopList = base.findShop()
     shopname = ''
-    for shop in shopList:
-        if shop['id']==key:
-            shopname = shop['shop_name']
+    if key:
+        shop = base.findShop(key)[0]
+        shopname = shop['shop_name']
     return shopname
 
 #部门编号转名称
 @register.filter
 def transDepartCode(key):
-    departList = base.findDepart()
     departname = ''
-    for depart in departList:
-        if depart['depart_id']==key:
-            departname = depart['depart_name']
+    if key:
+        depart = base.findDepart(key)[0]
+        departname = depart['depart_name']
     return departname
 #交易类型编号转名称
 @register.filter
@@ -62,17 +60,19 @@ def transActionType(key):
 #userid转username
 @register.filter
 def transUserId(key):
-    user = AdminUser.objects.values('name').filter(id=key)
-    return user[0]['name']
+    if key:
+        user = AdminUser.objects.values('name').filter(id=key)
+        return user[0]['name']
+    else:
+        return ''
 
 #支付编号转名称
 @register.filter
 def transPayCode(key):
-    payList = base.findPays()
     payname = ''
-    for pay in payList:
-        if pay['id']==key:
-            payname = pay['payment_name']
+    if key:
+        pay =base.findPays(key)
+        payname = pay['payment_name']
     return payname
 
 #卡状态编号转名称
