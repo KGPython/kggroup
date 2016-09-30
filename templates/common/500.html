@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>实物团购返点</title>
+</head>
+<body>
+{% include 'common/head.html' %}
+<div id="content">
+  
+  <div class="container-fluid">
+        <div class="widget-box">
+          <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+            <h5>温馨提示：</h5>
+          </div>
+          <div class="widget-content">
+          	<div class="error_ex">
+              <h1><span class="glyphicon glyphicon-warning-sign"></span></h1>
+              <h3>{{ err.msg }}</h3>
+              <p>请稍后再试，您也可以返回上一步！</p>
+              <a href="javascript:history.go(-1)" class="btn btn-warning btn-sm">返回上一步</a> </div>
+          	</div>
+
+        </div>
+
+      
+  </div>
+</div>

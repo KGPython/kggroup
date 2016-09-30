@@ -148,7 +148,7 @@ def saveOrder(request):
 
 
 def info(request):
-    orderSn = request.GET.get('orderSn','')
+    orderSn = request.GET.get('orderSn','').strip()
     today = datetime.date.today()
 
     order = Orders.objects\
@@ -157,6 +157,11 @@ def info(request):
     infoList = OrderInfo.objects.values('card_balance','card_attr').filter(order_id=orderSn).annotate(subVal=Sum('card_balance'),subNum=Count('card_id'))
 
     totalNum = 0
-    for info in infoList:
-        totalNum += int(info['subNum'])
-    return render(request,'orderInfo.html',locals())
+    if len(infoList):
+        for info in infoList:
+            totalNum += int(info['subNum'])
+            return render(request,'orderInfo.html',locals())
+    else:
+        err={}
+        err['msg']='此订单不存在'
+        return render(request,'common/500.html',locals())
