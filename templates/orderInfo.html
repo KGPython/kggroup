@@ -11,15 +11,9 @@
 {% include 'common/head.html' %}
 <link rel="stylesheet" href="{{ static }}/css/orderinfoPrint.css" media="print">
 <style media="print">
-    .title{
-        height: 100px;
-        background:#fff url('{{ static }}/images/logo.jpg') 10px 0px no-repeat;
-        background-size: 80px;
-    }
-    .title h5{float: left;width: 100px;margin-top: 80px;text-align: center}
+    .title h5{width: 100%; text-align: center; font-weight: normal; margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px dashed black;}
 </style>
 <style media="screen">
-
     .widget-content{overflow: hidden;width: 100%;background: #fff}
     .title{
         height: 100px;
@@ -56,7 +50,7 @@
         </p>
         <div class="widget-content nopadding">
             <div class="title">
-                <h5>售卡收据</h5>
+                <h5>宽广超市售卡收据</h5>
                 <div class="title-ifno">
                     <div class="info-order">
                         <p>购买日期 :{{ today |date:'Y年m月d日' }}</p>
@@ -88,17 +82,17 @@
                     <p>合计卡数 :{{ totalNum }}张</p>
                     <p>合计金额 :{{ order.0.paid_amount }}元</p>
                     <p>优惠金额 :{{ order.0.disc_amount }}元</p>
-                    <p>实收金额 :<b class="font-16">{{ order.0.paid_amount}}</b>元</p>
+                    <p>实收金额 :{{ order.0.paid_amount}}元</p>
                 </div>
                 <div class="info-total discTotal" style="display: none">
                     <p>合计卡数 :{{ totalNum }}张</p>
                     <p>合计金额 :{{ order.0.paid_amount | subtract:order.0.diff_price}}元</p>
-                    <p>实收金额 :<b class="font-16">{{ order.0.paid_amount | subtract:order.0.diff_price }}</b>元</p>
+                    <p>实收金额 :{{ order.0.paid_amount | subtract:order.0.diff_price }}元</p>
                 </div>
                 <div class="info-total">
                     <p class="remark">
                         金额合计(大写):
-                        <b class="font-16">{{ order.0.paid_amount | subtract:order.0.diff_price | rmbUpper  }}</b>
+                        {{ order.0.paid_amount | subtract:order.0.diff_price | rmbUpper  }}
                     </p>
                     <p class="remark">备注 :此收据不得作为经营性业务收支结算凭证使用。 </p>
                 </div>
