@@ -71,7 +71,7 @@ def transUserId(key):
 def transPayCode(key):
     payname = ''
     if key:
-        pay =base.findPays(key)
+        pay =base.findPays(key)[0]
         payname = pay['payment_name']
     return payname
 
