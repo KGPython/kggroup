@@ -5,7 +5,7 @@
     <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>赊销单详情</title>
+    <title>订单详情</title>
 </head>
 <body>
 {% include 'common/head.html' %}
@@ -19,7 +19,7 @@
             <a data-original-title="Go to Home" href="#" title="" class="tip-bottom">
                 <span class="glyphicon glyphicon-home" aria-hidden="true"> </span> 首页
             </a>
-            <a href="#" class="current">赊销单详情</a>
+            <a href="#" class="current">订单详情</a>
         </div>
     </div>
     <div class="widget-box">
@@ -37,7 +37,7 @@
                     </tr>
                     <tr>
                         <td>订单总额</td><td>{{ order.0.paid_amount | default:0.00}} 元</td>
-                        <td>充值卡总数</td><td>{{ cardsNum | default:0}} 张</td>
+                        <td>储值卡总数</td><td>{{ cardsNum | default:0}} 张</td>
                         <td>优惠额度</td><td>{{ order.0.disc_amount | default:0.00 }} 元</td>
                     </tr>
                     <tr>
