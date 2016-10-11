@@ -87,7 +87,7 @@ def sentCardCheck(request):
     if request.method == 'POST':
         shop = request.POST.get('shop','')
         if shop:
-            whereShop = 'shop = {shop}'.format(shop=shop)
+            whereShop = 'shop_code = "{shop}"'.format(shop=shop)
         else:
             whereShop ='1=1'
         start = request.POST.get('start')
