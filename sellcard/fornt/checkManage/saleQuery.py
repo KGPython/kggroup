@@ -17,7 +17,6 @@ def index(request):
     departs = base.findDepart()
     today = str(datetime.date.today())
 
-
     resList=[]
     #判断用户角色
     if role_id=='2':
