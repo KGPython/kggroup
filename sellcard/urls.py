@@ -75,7 +75,7 @@ urlpatterns = [
     url(r'^sellcard/check/pay/$', 'sellcard.fornt.checkManage.pay.index',name="payCheck"),
     #销售明细查询
     url(r'^sellcard/check/salequery/$', 'sellcard.fornt.checkManage.saleQuery.index', name="saleQuery"),
-    url(r'^sellcard/check/salequerysell/$', 'sellcard.fornt.checkManage.saleQuerySell.index', name="saleQuerySell"),
+    url(r'^sellcard/check/salequerySell/$', 'sellcard.fornt.checkManage.saleQuerySell.index', name="saleQuerySell"),
 
 
     ###返点折扣授权码
