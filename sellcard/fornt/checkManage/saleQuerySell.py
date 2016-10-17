@@ -62,6 +62,6 @@ def index(request):
     except Exception as e:
         print(e)
 
+
     #返回显示前台页面
     return render(request, 'saleQuerySell.html', locals())
-
