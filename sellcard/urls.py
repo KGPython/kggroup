@@ -74,14 +74,15 @@ urlpatterns = [
     #支付汇总
     url(r'^sellcard/check/pay/$', 'sellcard.fornt.checkManage.pay.index',name="payCheck"),
     #销售明细查询
-    url(r'^sellcard/check/salequery/$', 'sellcard.fornt.checkManage.saleQuery.index',name="saleQuery"),
+    url(r'^sellcard/check/salequery/$', 'sellcard.fornt.checkManage.saleQuery.index', name="saleQuery"),
+    url(r'^sellcard/check/salequerysell/$', 'sellcard.fornt.checkManage.saleQuerySell.index', name="saleQuerySell"),
+
 
     ###返点折扣授权码
     #生成
     url(r'^sellcard/discode/create/$', 'sellcard.fornt.disCode.create.index',name="disCodeCreate"),
     #分配
     url(r'^sellcard/discode/assign/$', 'sellcard.fornt.disCode.assign.index',name="disCodeAssign"),
-
 
 
 
