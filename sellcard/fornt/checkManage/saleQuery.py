@@ -38,7 +38,6 @@ def index(request):
             return  render(request,'saleQuery.html',locals())
         else:
             operator = user[0]['id']
-
     kwargs = {}
     if shop:
         kwargs.setdefault('shop_code',shop)
