@@ -25,7 +25,6 @@ def index(request):
     today = str(datetime.date.today()) #当前日期 用于显示
     resList=[] #创建集合用于记录查询结果
 
-
     #接收post查询
     actionType = mth.getReqVal(request,'actionType','1') #交易类型：1售卡、2补卡、3换卡
     start = mth.getReqVal(request,'start',today) #开始日期
@@ -63,6 +62,6 @@ def index(request):
     except Exception as e:
         print(e)
 
+
     #返回显示前台页面
     return render(request, 'saleQuerySell.html', locals())
-
