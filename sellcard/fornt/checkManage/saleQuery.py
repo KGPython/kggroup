@@ -8,6 +8,7 @@ from sellcard.common import Method as mth
 from sellcard import views as base
 from sellcard.models import Orders,AdminUser,OrderUpCard,OrderChangeCard
 
+
 @csrf_exempt
 def index(request):
     #GET:数据展示
