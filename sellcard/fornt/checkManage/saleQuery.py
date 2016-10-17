@@ -30,7 +30,6 @@ def index(request):
     endTime = datetime.datetime.strptime(end,'%Y-%m-%d') + datetime.timedelta(1)
     page = mth.getReqVal(request,'page',1)
 
-
     name = mth.getReqVal(request,'operator','').strip()
     operator =''
     if name:
