@@ -6,13 +6,11 @@ __introduce__:
 日结销量查询:为了方便门店团购经理角色查询门店人员每日售卡情况
 """
 
-#引用框架
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
-from django.core.paginator import Paginator
-#引用系统
+
 import datetime
-#引用自身项目
+
 from sellcard.common import Method as mth
 from sellcard.templatetags import basefilter
 
