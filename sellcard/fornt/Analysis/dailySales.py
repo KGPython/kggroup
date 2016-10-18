@@ -35,10 +35,6 @@ def index(request):
 
     sql =  \
     "SELECT "+\
-    "	ord.shop_code, " +\
-    "	ord.depart, " +\
-    "	ord.add_time, " +\
-    "	au.`name`, " +\
     "	oi.card_balance, " +\
     "	CASE oi.card_attr " +\
     "      WHEN 1 THEN " +\
@@ -52,21 +48,16 @@ def index(request):
     "	oi.card_balance * count(1) AS account " +\
     "FROM  " +\
     "	orders ord,  " +\
-    "	order_info oi,  " +\
-    "	admin_user au   " +\
+    "	order_info oi  " +\
     "WHERE   " +\
-    "	ord.operator_id = au.id  " +\
-    "AND ord.shop_code = '"+shopcode+"' " +\
+    "  ord.shop_code = '"+shopcode+"' " +\
     "AND date_format(ord.add_time,'%Y-%m-%d') = '"+today+"' " +\
     "AND ord.order_sn = oi.order_id  " +\
     "AND oi.card_action = 0  " +\
     "GROUP BY  " +\
-    "	ord.depart, " +\
-    "	au.`name`,  " +\
     "	oi.card_balance, " +\
     "	oi.card_attr  " +\
     "ORDER BY " +\
-    "	au.`name`, " +\
     "	oi.card_attr, " +\
     "	oi.card_balance DESC "
 
