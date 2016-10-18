@@ -24,7 +24,7 @@ def index(request):
         shop = shopcode
     if role_id =='1' or role_id=='6':
         shop = mth.getReqVal(request,'shop','')
-        actionType = mth.getReqVal(request,'actionType','1')
+    actionType = mth.getReqVal(request,'actionType','1')
     depart = mth.getReqVal(request,'depart','')
     start = mth.getReqVal(request,'start',today)
     end = mth.getReqVal(request,'end',today)
