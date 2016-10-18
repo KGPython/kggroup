@@ -84,7 +84,11 @@ urlpatterns = [
     #分配
     url(r'^sellcard/discode/assign/$', 'sellcard.fornt.disCode.assign.index',name="disCodeAssign"),
 
-
+    #qixu 2016-10-18 add begin
+    ###报表查询分析
+    # 日结销量查询
+    url(r'^sellcard/analysis/dailySales/$', 'sellcard.fornt.Analysis.dailySales.index', name="dailySales"),
+    #qixu 2016-10-18 add end
 
     #登陆模块
     url(r'^sellcard/loginpage/', 'sellcard.login.index',name="login_index"),
