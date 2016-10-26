@@ -31,31 +31,41 @@
                     <div class="row formline">
                         <label for="" class="col-xs-1 formline-label">售卡门店：</label>
                         <div class="col-xs-2">
-                            {% if role_id == '2' %}
-                                <input name="shop" id="shop" type="hidden" value="{{ shopcode }}">
-                                <input value="{{ shopcode | transShopCode}}" class="form-control" disabled>
-                            {% else %}
+                            {% if role_id == '1' or  role_id == '6'%}
                                 <select name="shop" id="shop" class="form-control" required="required">
                                     <option value="">全部</option>
                                     {% for shop in shops %}
                                         <option value="{{ shop.shop_code }}">{{ shop.shop_name }}</option>
                                     {% endfor %}
                                 </select>
+                            {% else %}
+                                <input name="shop" id="shop" type="hidden" value="{{ shopcode }}">
+                                <input value="{{ shopcode | transShopCode}}" class="form-control" disabled>
                             {% endif %}
-
                         </div>
+
                         <label for="" class="col-xs-1 formline-label">售卡部门：</label>
                         <div class="col-xs-2">
-                            <select name="depart" id="depart" class="form-control" required="required">
-                                <option value="">全部</option>
-                                {% for depart in departs %}
-                                    <option value="{{ depart.depart_id }}">{{ depart.depart_name }}</option>
-                                {% endfor %}
-                            </select>
+                            {% if role_id == '1' or  role_id == '2' or role_id == '6'%}
+                                <select name="depart" id="depart" class="form-control" required="required">
+                                    <option value="">全部</option>
+                                    {% for depart in departs %}
+                                        <option value="{{ depart.depart_id }}">{{ depart.depart_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            {% else %}
+                                <input name="depart" id="depart" type="hidden" value="{{ depart_id }}">
+                                <input value="{{ depart_id | transDepartCode}}" class="form-control" disabled>
+                            {% endif %}
                         </div>
                         <label for="" class="col-xs-1 formline-label">售卡人员：</label>
                         <div class="col-xs-2">
-                            <input type="text" class="form-control" name="operator" id="orderSn" required value="{{ name }}">
+                            {% if role_id == '1' or  role_id == '2' or role_id == '6'%}
+                                <input type="text" class="form-control" name="operator" id="orderSn" required value="{{ name }}">
+                            {% else %}
+                                <input name="operator" id="operator" type="hidden" value="{{ user_id }}">
+                                <input value="{{ user_id | transUserId}}" class="form-control" disabled>
+                            {% endif %}
                         </div>
                     </div>
                     <div class="row formline">

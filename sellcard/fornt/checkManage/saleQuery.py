@@ -14,16 +14,28 @@ def index(request):
     #GET:数据展示
     role_id = request.session.get('s_roleid')
     shopcode = request.session.get('s_shopcode')
+    depart_id = request.session.get('s_depart')
+    user_id = request.session.get('s_uid') #当前用户ID
     shops = base.findShop()
     departs = base.findDepart()
     today = str(datetime.date.today())
 
     resList=[]
     #判断用户角色
-    if role_id=='2':
-        shop = shopcode
+    shop = ''
+    operator = ''
     if role_id =='1' or role_id=='6':
         shop = mth.getReqVal(request,'shop','')
+        name = mth.getReqVal(request, 'operator', '').strip()
+        if name:
+            user = AdminUser.objects.values('id').filter(name=name)
+            if not user:
+                return render(request, 'saleQuery.html', locals())
+            else:
+                operator = user[0]['id']
+    else:
+        shop = shopcode
+        operator = user_id
     actionType = mth.getReqVal(request,'actionType','1')
     depart = mth.getReqVal(request,'depart','')
     start = mth.getReqVal(request,'start',today)
@@ -31,14 +43,7 @@ def index(request):
     endTime = datetime.datetime.strptime(end,'%Y-%m-%d') + datetime.timedelta(1)
     page = mth.getReqVal(request,'page',1)
 
-    name = mth.getReqVal(request,'operator','').strip()
-    operator =''
-    if name:
-        user = AdminUser.objects.values('id').filter(name=name)
-        if not user:
-            return  render(request,'saleQuery.html',locals())
-        else:
-            operator = user[0]['id']
+
     kwargs = {}
     if shop:
         kwargs.setdefault('shop_code',shop)
