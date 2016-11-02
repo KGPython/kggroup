@@ -105,6 +105,11 @@ def divide(v1,v2):
 def add(v1,v2):
     return float(v1) + float(v2)
 
+#乘法
+@register.filter
+def multiply(v1,v2):
+    return float(v1)*float(v2)
+
 #减法：v1 - v2
 @register.filter
 def subtract(v1,v2):

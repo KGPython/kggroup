@@ -63,18 +63,22 @@ urlpatterns = [
     url('^sellcard/cardSentCheck/','sellcard.fornt.cardSent.view.sentCardCheck',name='sentCardCheck'),
     url('^sellcard/cardSentOrder','sellcard.fornt.cardSent.view.sentCardOrder',name='cardSentOrder'),
 
-    #盘点管理
+    ################################################# 盘点管理 start #################################################
     #库存盘点--卡类型
     url(r'^sellcard/check/finance/$', 'sellcard.fornt.checkManage.finance.index',name="financeCheck"),
     url(r'^sellcard/check/finance/cardtype/$', 'sellcard.fornt.checkManage.finance.cardType',name="financeCardType"),
     url(r'^sellcard/check/finance/cardinfo/$', 'sellcard.fornt.checkManage.finance.cardInfo',name="financeCardInfo"),
-    #门店销售汇总
+    #以门店为基准对销售进行汇总
     url(r'^sellcard/check/shopsale/$', 'sellcard.fornt.checkManage.sale.index',name="shopSaleCheck"),
     url(r'^sellcard/check/shopsale/info/', 'sellcard.fornt.checkManage.sale.index',name="shopSaleInfoCheck"),
+    #门店内部销售汇总
+    url(r'^sellcard/summary/cardSale/$','sellcard.fornt.checkManage.summary.cardSale',name='SummaryCardSale'),
     #支付汇总
     url(r'^sellcard/check/pay/$', 'sellcard.fornt.checkManage.pay.index',name="payCheck"),
     #销售明细查询
     url(r'^sellcard/check/salequery/$', 'sellcard.fornt.checkManage.saleQuery.index', name="saleQuery"),
+
+    ################################################# 盘点管理 end ####################################################
 
     ###返点折扣授权码
     #生成
@@ -82,11 +86,6 @@ urlpatterns = [
     #分配
     url(r'^sellcard/discode/assign/$', 'sellcard.fornt.disCode.assign.index',name="disCodeAssign"),
 
-    #qixu 2016-10-18 add begin
-    ###报表查询分析
-    # 日结销量查询
-    url(r'^sellcard/analysis/dailySales/$', 'sellcard.fornt.Analysis.dailySales.index', name="dailySales"),
-    #qixu 2016-10-18 add end
 
     #登陆模块
     url(r'^sellcard/loginpage/', 'sellcard.login.index',name="login_index"),

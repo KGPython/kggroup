@@ -57,6 +57,13 @@ def index(request):
         resList = Orders.objects.values('shop_code','depart','operator_id','order_sn','action_type','paid_amount','disc_amount','add_time')\
                 .filter(**kwargs)\
                 .order_by('shop_code','depart','operator_id')
+        paidTotal = 0.00
+        discTotal = 0.00
+        cardCount = 0
+        for item in resList:
+            paidTotal += float(item['paid_amount'])
+            discTotal += float(item['disc_amount'])
+            cardCount +=1
     elif actionType=='2':
         resList = OrderUpCard.objects.values('shop_code','depart','operator_id','order_sn','diff_price','user_name','user_phone','modified_time')\
                 .filter(**kwargs)\
