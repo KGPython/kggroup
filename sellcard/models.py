@@ -327,10 +327,20 @@ class Orders(models.Model):
     diff_price = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
     discount_rate = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     remark = models.TextField(blank=True, null=True)
+    print_num = models.SmallIntegerField()
 
     class Meta:
         managed = False
         db_table = 'orders'
+
+
+class PrintExplain(models.Model):
+    order_sn = models.CharField(unique=True, max_length=20)
+    remark = models.TextField()
+
+    class Meta:
+        managed = False
+        db_table = 'print_explain'
 
 
 class Payment(models.Model):
