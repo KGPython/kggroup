@@ -48,7 +48,6 @@ def getReqVal(request, key, default=None):
 
 # md5
 def md5(str):
-
     md5 = hashlib.md5()
     if str:
         md5.update(str.encode(encoding='utf-8'))
@@ -287,7 +286,7 @@ def convertToStr(val, *arg):
 
 def orderDetail(request):
     orderSn = request.GET.get('orderSn', '')
-    actionType = request.GET.get('actiontype', '1')
+    actionType = request.GET.get('actionType', '1')
     if actionType == '1':
         order = Orders.objects \
             .values('order_sn', 'shop_code', 'paid_amount', 'disc_amount', 'action_type', 'buyer_name', 'buyer_tel',
@@ -299,10 +298,9 @@ def orderDetail(request):
     elif actionType == '2':
         order = OrderUpCard.objects \
             .values('order_sn', 'shop_code', 'action_type', 'total_amount', 'total_price', 'fill_amount', 'fill_price',
-                    'diff_price',
-                    'state', 'user_name', 'user_phone') \
+                    'diff_price', 'state', 'user_name', 'user_phone') \
             .filter(order_sn=orderSn)
-        orderInfo = OrderUpCardInfo.objects.values('card_no', 'card_value', 'card_balance').filter(order_sn=orderSn)
+        orderInfo = OrderUpCardInfo.objects.values('card_no', 'card_value', 'card_balance', 'card_attr').filter(order_sn=orderSn)
         cardsNum = OrderUpCardInfo.objects.filter(order_sn=orderSn).count()
     elif actionType == '3':
         order = OrderChangeCard.objects \
@@ -325,4 +323,3 @@ def orderDetail(request):
             if num['card_attr'] == '0':
                 cardsOutNum += 1
     return render(request, 'orderDetail.html', locals())
-
