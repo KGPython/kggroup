@@ -92,6 +92,9 @@ def getMenu(purlist):
     menu_list = [item for item in menu_dict.values()]
 
     menu_list = sorted(menu_list, key=lambda menu: menu["sort_id"])
+    for item in menu_list:
+        temp = sorted(item['sub'],key=lambda obj: obj["sort_id"])
+        item['sub'] = temp
     return menu_list
 
 
