@@ -40,8 +40,8 @@ def sentOrderSave(request):
                     card['cardType'] = ''
                 obj = ReceiveInfo()
                 obj.rec_id = orderSn
-                obj.card_id_start = card['start']
-                obj.card_id_end = card['end']
+                obj.card_id_start = card['start'].strip()
+                obj.card_id_end = card['end'].strip()
                 obj.card_nums = card['subTotal']
                 obj.card_value = card['cardType']
                 obj.save()
