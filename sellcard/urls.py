@@ -10,7 +10,9 @@ urlpatterns = [
     url(r'^sellcard/cardssale/query','sellcard.fornt.cardSale.cards.query',name='cardsSaleQuery'),
 
     #售卡返回明细
-    url(r'^sellcard/cardsale/orderInfo/','sellcard.fornt.cardSale.card.info',name='cardsSaleOrderInfo'),
+    url(r'^sellcard/cardsale/orderInfo/$','sellcard.fornt.cardSale.card.info',name='cardsSaleOrderInfo'),
+    url(r'^sellcard/cardsale/orderInfo/print', 'sellcard.fornt.cardSale.card.reprint', name='cardsSaleOrderReprint'),
+    url(r'^sellcard/cardsale/orderInfo/explain', 'sellcard.fornt.cardSale.card.print_explain', name='cardsSaleOrderExplain'),
 
     #大宗赠卡
     url(r'^sellcard/bestowed/$', 'sellcard.fornt.cardSale.bestowed.index',name='bestowed'),
@@ -18,8 +20,6 @@ urlpatterns = [
 
     #赊销管理
     url(r'^sellcard/nopay/$', 'sellcard.fornt.cardSale.nopay.index',name='nopay'),
-
-
 
     #换卡
     url(r'^sellcard/cardchange/$', 'sellcard.fornt.cardChange.card.index', name='cardchange'),
