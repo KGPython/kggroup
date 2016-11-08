@@ -135,7 +135,6 @@ def cardCheck_Mssql(request):
 # 折扣修改授权码校验
 def disCodeCheck(request):
     disCode = request.GET.get('discode', '')
-    shop = request.GET.get('shop', '')
     disCodeList = DisCode.objects.values('flag').filter(dis_code=disCode)
     res = {}
     if disCodeList and disCodeList[0]['flag'] == '':
@@ -146,13 +145,13 @@ def disCodeCheck(request):
 
 
 def updateDisCode(id, shop, orderSn):
+    res = 0
     try:
-        DisCode.objects.filter(dis_code=id, shopcode=shop).update(flag='1', change_time=datetime.datetime.now(),
-                                                                  order_sn=orderSn)
-        return True
+        res = DisCode.objects.filter(dis_code=id).update(flag='1', change_time=datetime.datetime.now(),order_sn=orderSn,shopcode=shop)
     except Exception as e:
         print(e)
-        return False
+    return res
+
 
 
 # 充值卡卡校验
