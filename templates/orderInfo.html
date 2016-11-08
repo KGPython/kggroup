@@ -167,6 +167,7 @@
                 <input class="form-control" type="text" id="remark">
             </div>
             <div class="modal-footer">
+                <p style="display: none;" id="warn">请填写重打印原因</p>
                 <button type="button" class="btn btn-default" id="close" onclick="closeBox()">关闭</button>
                 <button type="button" class="btn btn-primary" id="submit">提交</button>
             </div>
@@ -184,6 +185,10 @@
                 $('#box').show();
                 $('#submit').click(function () {
                     var remark = $('#remark').val();
+                    if (!remark) {
+                        $('#warn').show();
+                        return false;
+                    }
                     $.get("{% url 'cardsSaleOrderExplain' %}", {'orderSn': orderSn, 'remark': remark}, function (ret) {
                         var data = $.parseJSON(ret);
                         success = data.success;
