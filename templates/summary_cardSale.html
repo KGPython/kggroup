@@ -46,8 +46,24 @@
                                 <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
                             </div>
                         </div>
+
+                        {% if role == '1' or role == '6'  %}
+                        <label for="" class="col-xs-1 formline-label">门店：</label>
+                        <div class="col-xs-1">
+
+                            <select name="shop" id="shop" class="form-control">
+                                <option value="">全部</option>
+                                {% for shop in shops %}
+                                    <option value="{{ shop.shop_code }}">{{ shop.shop_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        {% endif %}
+
+
+
                         <label for="" class="col-xs-1 formline-label">售卡人：</label>
-                        <div class="col-xs-2">
+                        <div class="col-xs-1">
                             {% if role == '1' or role == '2' or role == '6'  %}
                             <select name="operator" id="operator" class="form-control">
                                 <option value="">全部</option>
@@ -60,21 +76,23 @@
                                 <input value="{{ user | transUserId }}" class="form-control" disabled>
                         {% endif %}
                         </div>
-                        <div class="col-xs-3">
+                        <div class="col-xs-1">
                             <button type="submit" class="btn btn-info enter-btn pull-right" id="enter">提交</button>
                         </div>
                     </div>
                 </form>
+
                 <div class="widget-box">
                     <div class="widget-content nopadding" style="overflow: hidden">
-                        <h4 class="text-center">{{ shop | transShopCode }}销售汇总（{{ today }}）</h4>
+                        <h4 class="text-center">{{ shop | transShopCode | default:'各门店' }}销售汇总</h4>
                         <h5 class="text-right">
-                            <span>销售合计：{{ dataTotal.saleTotal }}元</span>
-                            <span style="margin-right: 20px;margin-left: 20px;">优惠合计：{{ dataTotal.discTotal }}元</span>
+                            <span>销售合计：{{ dataTotal.saleTotal | default:0 }}元</span>
+                            <span style="margin-right: 20px;margin-left: 20px;">优惠合计：{{ dataTotal.discTotal | default:0 }}元</span>
                         </h5>
                         <table class="table table-striped table-hover table-form-my">
                             <thead>
                                 <tr>
+                                    <th>销售门店</th>
                                     <th>售卡面额</th>
                                     <th>数量（单位：张）</th>
                                     <th>小计（单位：元）</th>
@@ -83,6 +101,7 @@
                             <tbody class="item" id="dataInfo">
                                 {% for row in dataInfo %}
                                     <tr>
+                                        <td>{{ row.shop_code | transShopCode }}</td>
                                         <td>{{ row.card_balance }}</td>
                                         <td>{{ row.num }}</td>
                                         <td>{{ row.num | multiply:row.card_balance }}</td>
@@ -115,8 +134,12 @@
     });
 </script>
 <script>
-    var operator={{ operator | safe }};
+
+    var shop = '{{ shop  | default:'' | safe }}';
+    $("#shop").val(shop);
+    var operator='{{ operator  | default:'' | safe }}';
     $("#operator").val(operator);
+
 </script>
 </body>
 </html>
