@@ -197,7 +197,7 @@ def reprint(request):
 @csrf_exempt
 def print_explain(request):
     res = {}
-    orderSn = request.GET.get('order', '').strip()
+    orderSn = request.GET.get('orderSn', '').strip()
     reMark = request.GET.get('remark', '').strip()
 
     order = PrintExplain.objects.create(order_sn=orderSn, remark=reMark)

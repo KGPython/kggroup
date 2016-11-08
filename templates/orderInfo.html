@@ -184,7 +184,7 @@
                 $('#box').show();
                 $('#submit').click(function () {
                     var remark = $('#remark').val();
-                    $.get("{% url 'cardsSaleOrderExplain' %}", {'order': orderSn, 'remark': remark}, function (ret) {
+                    $.get("{% url 'cardsSaleOrderExplain' %}", {'orderSn': orderSn, 'remark': remark}, function (ret) {
                         var data = $.parseJSON(ret);
                         success = data.success;
                         if (success == 'True') {
