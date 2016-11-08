@@ -33,3 +33,4 @@ def updateCard(list,mode):
         return 0
     else:
         return len(res)
+print('test')
