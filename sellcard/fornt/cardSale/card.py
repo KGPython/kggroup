@@ -164,7 +164,7 @@ def info(request):
     if len(infoList):
         for info in infoList:
             totalNum += int(info['subNum'])
-            return render(request, 'orderInfo.html', locals())
+        return render(request, 'orderInfo.html', locals())
     else:
         err = {}
         err['msg'] = '此订单不存在'
@@ -185,7 +185,10 @@ def reprint(request):
     order = Orders.objects.values('print_num').filter(order_sn=orderSn)
 
     for o in order:
-        num = o['print_num']
+        if o['print_num'] is None:
+            num = 0
+        else:
+            num = o['print_num']
 
     res['num'] = num
     # 记录打印次数
