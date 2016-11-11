@@ -156,10 +156,13 @@ def updateDisCode(id, shop, orderSn):
 
 # 充值卡卡校验
 def cardCheck(request):
-    cardId = request.GET.get('cardId', '')
+    cardId = request.GET.get('cardId','')
+    tempList = cardId.split('=')
+    if len(tempList)>0:
+        cardId = tempList[0]
     findCardById = CardInventory.objects.all().filter(card_no=cardId)
-    findCardById = serializers.serialize('json', findCardById)
-    return HttpResponse(findCardById, content_type="application/json")
+    findCardById = serializers.serialize('json',findCardById)
+    return HttpResponse(findCardById,content_type="application/json")
 
 
 # 换卡,充值卡校验
