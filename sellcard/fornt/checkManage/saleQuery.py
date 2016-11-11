@@ -24,8 +24,9 @@ def index(request):
     #判断用户角色
     shop = ''
     operator = ''
-    if role_id =='1' or role_id=='6':
+    if role_id in ('1','6'):
         shop = mth.getReqVal(request,'shop','')
+        depart = mth.getReqVal(request, 'depart', '')
         name = mth.getReqVal(request, 'operator', '').strip()
         if name:
             user = AdminUser.objects.values('id').filter(name=name)
@@ -33,11 +34,23 @@ def index(request):
                 return render(request, 'saleQuery.html', locals())
             else:
                 operator = user[0]['id']
-    else:
+    if  role_id == '2':
         shop = shopcode
+        depart = mth.getReqVal(request, 'depart', '')
+        name = mth.getReqVal(request, 'operator', '').strip()
+        if name:
+            user = AdminUser.objects.values('id').filter(name=name)
+            if not user:
+                return render(request, 'saleQuery.html', locals())
+            else:
+                operator = user[0]['id']
+
+    if role_id in ('3','5'):
+        shop = shopcode
+        depart = depart_id
         operator = user_id
     actionType = mth.getReqVal(request,'actionType','1')
-    depart = mth.getReqVal(request,'depart','')
+
     start = mth.getReqVal(request,'start',today)
     end = mth.getReqVal(request,'end',today)
     endTime = datetime.datetime.strptime(end,'%Y-%m-%d') + datetime.timedelta(1)
