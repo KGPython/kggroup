@@ -46,7 +46,7 @@
                         <td><input type='text' class='form-control start cardno'></td>
                         <td><input type='text' class='form-control end cardno'></td>
                         <td><input type='text' class='form-control subTotal'></td>
-                        <td><button type="button" class="btn btn-danger btn-xs btn-del">删除</button></td>
+                        <td><button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this);">删除</button></td>
                     </tr>
                 </tbody>
             </table>
@@ -72,6 +72,7 @@
 
 {% include "common/foot.html" %}
 <script>
+    //检查卡段是否有交叉
     function checkCross(obj){
         var key = parseInt($(obj).val());
         var trs = $(".cardSent").find('tr');
@@ -109,6 +110,7 @@
             }
         }
     }
+    //检查卡段是否有重复
     function checkRepeat(obj){
         var key = $(obj).val();
         var cardInputs = $(".cardSent").find('.cardno');
@@ -131,27 +133,30 @@
 <script>
     $(document).on('change','.cardSent .cardno',function(){
 
-        //重复校验
+        //1、重复校验
         checkRepeat(this);
-        //交叉校验
+        //2、交叉校验
         checkCross(this);
 
-        //计算小计
+        //3、计算小计并生成新的一行
+        //3.1 处理号段起始值
         var parentTr = $(this).parent().parent();
         var startStr = parentTr.find('.start').val();
         var start = startStr.split('=')[0];
         parentTr.find('.start').val(start);
-
+        //3.2处理号段截止值
         var endStr = parentTr.find('.end').val();
         var end = endStr.split('=')[0];
         parentTr.find('.end').val(end);
+
         if(parseInt(end)<parseInt(start)){
             alert('起始卡号不能大于截至卡号');
             return false;
         }
         if(parseInt(end)&&parseInt(start)){
+            //3.3、计算卡段内的卡数量
             parentTr.find('.subTotal').val(parseInt(end)-parseInt(start)+1);
-            //创建新的一行
+            //3.4、创建新的一行
             var tbody = $(".cardSent");
             var columsL = tbody.find('tr').eq(0).find('td').length;
             var row = $("<tr></tr>");
@@ -171,7 +176,7 @@
                 }else if(i==3){
                     var obj = $('<input type="text" class="form-control subTotal">');
                 }else{
-                    var obj = $('<button type="button" class="btn btn-danger btn-xs btn-del">删除</button>');
+                    var obj = $('<button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this);">删除</button>');
                 }
                 $(td).append(obj);
                 $(row).append(td);
@@ -181,8 +186,9 @@
 
     });
 
+    //保存订单信息
     $('.btn-enter').click(function(){
-        //卡列表
+        //1、获得卡列表
         var list=[];
         trs = $('.cardSent').find('tr');
         for(var i=0;i<trs.length;i++){
@@ -203,13 +209,14 @@
             alert('请完善领卡列表后，再尝试提交');
             return false;
         }
-        //领取人信息
+        //2、获取领取人信息
         var shop = $('#shop').val();
         var person = $('#person').val();
         if(!shop || !person){
             alert('请完善领卡人员后，再尝试提交');
             return false;
         }
+        //3、提交数据
         $.ajax({
             url:'{% url 'sentOrderSave' %}',
             dataType:'json',

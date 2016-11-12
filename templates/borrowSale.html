@@ -190,13 +190,14 @@
                                 var obj = $('<input class="form-control" disabled></input>');
                                 obj.val("未激活")
                             }else if(j==4){
-                                var obj = $('<button type="button" class="btn btn-danger btn-xs btn-del">删除</button>');
+                                var obj = $('<button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this)">删除</button>');
                             }
                             td.append(obj);
                             tr.append(td);
                         }
                         $('#correct').find('tbody').append(tr);
-                        setTotal($('#correct').find('tbody'),'1');
+{#                        setTotal($('#correct').find('tbody'),'1');#}
+                        setTotal($('#correct').find('tbody'));
                     }
                     else{
                         var cols = $('#anomaly').find('th').length;
@@ -222,7 +223,7 @@
                                     obj.val('已作废')
                                 }
                             }else if(j==4){
-                                var obj = $('<button type="button" class="btn btn-danger btn-xs btn-del">删除</button>');
+                                var obj = $('<button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this)">删除</button>');
                             }
                             td.append(obj);
                             tr.append(td);
@@ -264,36 +265,16 @@ function saveBorrowOrder(url){
         alert('借卡人信息不能为空！');
         return false;
     }
-    $.ajax({
-        url:url,
-        type:'post',
-        dataType:'json',
-        data:{
-            'cardStr':JSON.stringify(cardList),
-            'totalNum':totalNum,
-            'totalVal':totalVal,
-            'borrowDepart':borrowDepart,
-            'borrowName':borrowName,
-            'borrowPhone':borrowPhone,
-            'borrowDepartCode':borrowDepartCode
-        },
-        success:function(data){
-            if(data.msg==1){
-                alert('订单提交成功');
-                $('input[type=text]').val('');
-                window.location.href=data.redirectUrl;
-            }else if(data.msg==0){
-                if(data.msg_err){
-                    alert(data.msg_err);
-                }else{
-                    alert('订单提交失败');
-                }
-            }
-        },
-        error:function(XMLHttpRequest, textStatus, errorThrown){
-            alert('订单提交失败,失败原因：'+errorThrown);
-        }
-    })
+    var data = {
+        'cardStr':JSON.stringify(cardList),
+        'totalNum':totalNum,
+        'totalVal':totalVal,
+        'borrowDepart':borrowDepart,
+        'borrowName':borrowName,
+        'borrowPhone':borrowPhone,
+        'borrowDepartCode':borrowDepartCode
+    };
+    doAjaxSave(url,data);
 }
 </script>
 </body>

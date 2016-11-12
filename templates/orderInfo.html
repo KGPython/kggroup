@@ -137,7 +137,7 @@
                 <div class="info-total allTotal">
                     <p>合计卡数 :{{ totalNum }}张</p>
                     <p>合计金额 :{{ order.0.paid_amount }}元</p>
-                    <p>优惠金额 :{{ order.0.disc_amount }}元</p>
+                    <p>优惠金额 :{{ order.0.disc_amount | add:order.0.y_cash}}元</p>
                     <p>实收金额 :{{ order.0.paid_amount }}元</p>
                 </div>
                 <div class="info-total discTotal" style="display: none">
@@ -195,7 +195,7 @@
                         if (success == 'True') {
                             $('#box').hide();
                             $('.allTotal').hide();
-                            $('.discRow').addClass('noprint');
+                            $('.discRow').hide().addClass('noprint');
                             $('.discTotal').show().removeClass('noprint');
                             window.print();
                         } else {
@@ -207,7 +207,7 @@
                 });
             } else {
                 $('.allTotal').hide();
-                $('.discRow').addClass('noprint');
+                $('.discRow').hide().addClass('noprint');
                 $('.discTotal').show().removeClass('noprint');
                 window.print();
             }
@@ -215,7 +215,7 @@
     }
     function printAll() {
         $('.allTotal').show();
-        $('.discRow').removeClass('noprint');
+        $('.discRow').show().removeClass('noprint');
         $('.discTotal').hide().removeClass('noprint');
         window.print();
 

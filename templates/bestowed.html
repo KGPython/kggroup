@@ -46,7 +46,7 @@
                                     <td><input type='text' class='form-control' disabled="disabled"></td>
                                     <td><input type='text' class='form-control' disabled="disabled"></td>
                                     <td><input type='text' class='form-control' disabled="disabled"></td>
-                                    <td><button type="button" class="btn btn-danger btn-xs btn-del">删除</button></td>
+                                    <td><button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this)">删除</button></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -119,8 +119,9 @@
 
         //卡校验
         var ajaxOpt = {'url':'{% url 'cardcheck' %}?cardId='+cardId,'method':'get'};
-        var cardtype = '1';
-        doAjax(this,ajaxOpt,showCardIfno,setTotal,cardtype);
+{#        var cardtype = '1';#}
+{#        doAjax(this,ajaxOpt,showCardIfno,setTotal,cardtype);#}
+        doAjax(this,ajaxOpt,showCardIfno,setTotal);
         addRow(this);
     });
     $(document).on('click','#btn-enter',function(){

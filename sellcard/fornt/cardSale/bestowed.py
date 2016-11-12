@@ -54,6 +54,7 @@ def saveOrder(request):
             order.paid_amount = 0
             order.disc_amount = float(totalVal)
             order.diff_price = 0
+            order.y_cash =0
             order.shop_code = shopcode
             order.depart = depart
             order.operator_id = operator

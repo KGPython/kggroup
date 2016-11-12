@@ -46,7 +46,7 @@
                                     <td><input type='text' class='form-control' disabled="disabled"></td>
                                     <td><input type='text' class='form-control' disabled="disabled"></td>
                                     <td><input type='text' class='form-control' disabled="disabled"></td>
-                                    <td><button type="button" class="btn btn-danger btn-xs btn-del">删除</button></td>
+                                    <td><button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this)">删除</button></td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -107,7 +107,8 @@
 
         var ajaxOpt = {'url':'{% url 'cardcheck_mssql' %}?cardId='+cardId,'method':'get'};
 
-        doAjax2(this,ajaxOpt,showCardIfno2,setTotal,"2");
+{#        doAjax2(this,ajaxOpt,showCardIfno2,setTotal,"2");#}
+        doAjax2(this,ajaxOpt,showCardIfno2,setTotal);
         addRow(this);
     });
 
@@ -115,12 +116,12 @@
         var url = "{% url 'cardfill_save' %}";
         saveCardFillOrder(url);
     });
-    $(document).on('click','.table tr .btn-del',function(){
+    {% comment %}$(document).on('click','.table tr .btn-del',function(){
         var parnetTbody = $(this).parent().parent().parent()[0];
         $(this).parents('tr').remove();
         cardType='2';
         setTotal(parnetTbody,cardType);
-    });
+    });{% endcomment %}
 </script>
 </body>
 </html>

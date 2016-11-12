@@ -42,7 +42,7 @@ urlpatterns = [
     url(r'^sellcard/cardmanage/cardallocation/', 'sellcard.fornt.cardManage.cardAllocation.index',name='cardAllocation'),
     url(r'^sellcard/cardmanage/allocationsave/', 'sellcard.fornt.cardManage.cardAllocation.allocationSave',name='allocationSave'),
 
-    ###借卡管理
+    ################################################# 借卡管理 start #################################################
     #借卡
     url(r'^sellcard/borrow/sale/index/', 'sellcard.fornt.cardBorrow.sale.index',name='borrowSale'),
     url(r'^sellcard/borrow/sale/save/', 'sellcard.fornt.cardBorrow.sale.save',name='borrowSaleSave'),
@@ -55,6 +55,7 @@ urlpatterns = [
     #结算
     url(r'^sellcard/borrow/pay/index/', 'sellcard.fornt.cardBorrow.pay.index',name='borrowPay'),
     url(r'^sellcard/borrow/pay/save/', 'sellcard.fornt.cardBorrow.pay.save',name='borrowPaySave'),
+    ################################################# 借卡管理 end #################################################
 
     ###门店领卡(信息中心发卡)
     url(r'^sellcard/cardSent/$', 'sellcard.fornt.cardSent.view.index',name='cardSent'),
@@ -85,6 +86,8 @@ urlpatterns = [
     url(r'^sellcard/discode/create/$', 'sellcard.fornt.disCode.create.index',name="disCodeCreate"),
     #分配
     url(r'^sellcard/discode/assign/$', 'sellcard.fornt.disCode.assign.index',name="disCodeAssign"),
+    #折扣修改授权码校验
+    url(r'^sellcard/discodecheck/', 'sellcard.common.Method.disCodeCheck',name='disCodeCheck'),
 
 
     #登陆模块
@@ -104,8 +107,7 @@ urlpatterns = [
     url(r'^sellcard/cardcheck3/', 'sellcard.common.Method.cardCheck_Change', name='cardcheck_change'),
     #兑换码校验
     url(r'^sellcard/changcodecheck/', 'sellcard.common.Method.changeCodeCheck',name='changeCodeCheck'),
-    #折扣修改授权码校验
-    url(r'^sellcard/discodecheck/', 'sellcard.common.Method.disCodeCheck',name='disCodeCheck'),
+
     #更新赊销状态
     url(r'^sellcard/nopay/update', 'sellcard.common.Method.upNoPayStatus',name='upNoPayStatus'),
     #订单明细

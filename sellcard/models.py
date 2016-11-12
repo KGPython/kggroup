@@ -130,7 +130,7 @@ class DiscountRate(models.Model):
     shopcode = models.CharField(max_length=16)
     val_min = models.DecimalField(max_digits=12, decimal_places=2)
     val_max = models.DecimalField(max_digits=12, decimal_places=2)
-    discount_rate = models.DecimalField(max_digits=6, decimal_places=2)
+    discount_rate = models.DecimalField(max_digits=6, decimal_places=4)
 
     class Meta:
         managed = False
@@ -229,6 +229,10 @@ class OrderChangeCard(models.Model):
     total_in_price = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
     total_out_amount = models.IntegerField(blank=True, null=True)
     total_out_price = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
+    disc_rate = models.DecimalField(max_digits=11, decimal_places=4, blank=True, null=True)
+    disc = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
+    disc_pay = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
+    disc_cash = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
     add_time = models.DateTimeField()
 
     class Meta:
@@ -239,14 +243,27 @@ class OrderChangeCard(models.Model):
 class OrderChangeCardInfo(models.Model):
     order_sn = models.CharField(max_length=20)
     card_no = models.CharField(max_length=32)
-    card_attr = models.CharField(max_length=1, blank=True, null=True)
     card_value = models.CharField(max_length=12, blank=True, null=True)
     card_balance = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
-    add_time = models.DateTimeField()
+    card_attr = models.CharField(max_length=1, blank=True, null=True)
+    is_disc = models.CharField(max_length=1, blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'order_change_card_info'
+
+
+class OrderChangeCardPayment(models.Model):
+    order_id = models.CharField(max_length=20)
+    pay_id = models.IntegerField()
+    pay_value = models.DecimalField(max_digits=11, decimal_places=2)
+    remarks = models.TextField(blank=True, null=True)
+    is_pay = models.CharField(max_length=1, blank=True, null=True)
+    change_time = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'order_change_card_payment'
 
 
 class OrderInfo(models.Model):
@@ -325,22 +342,13 @@ class Orders(models.Model):
     add_time = models.DateTimeField()
     y_cash = models.DecimalField(max_digits=11, decimal_places=0, blank=True, null=True)
     diff_price = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
-    discount_rate = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    discount_rate = models.DecimalField(max_digits=6, decimal_places=4, blank=True, null=True)
     remark = models.TextField(blank=True, null=True)
-    print_num = models.SmallIntegerField()
+    print_num = models.SmallIntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'orders'
-
-
-class PrintExplain(models.Model):
-    order_sn = models.CharField(unique=True, max_length=20)
-    remark = models.TextField()
-
-    class Meta:
-        managed = False
-        db_table = 'print_explain'
 
 
 class Payment(models.Model):
@@ -349,6 +357,15 @@ class Payment(models.Model):
     class Meta:
         managed = False
         db_table = 'payment'
+
+
+class PrintExplain(models.Model):
+    order_sn = models.CharField(max_length=20)
+    remark = models.TextField()
+
+    class Meta:
+        managed = False
+        db_table = 'print_explain'
 
 
 class ReceiveInfo(models.Model):
@@ -386,6 +403,7 @@ class Shops(models.Model):
     shop_name = models.CharField(max_length=60)
     shop_code = models.CharField(max_length=16, blank=True, null=True)
     tel = models.CharField(max_length=12, blank=True, null=True)
+    disc_level = models.CharField(max_length=1, blank=True, null=True)
 
     class Meta:
         managed = False

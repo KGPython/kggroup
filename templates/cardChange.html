@@ -23,32 +23,11 @@
         </div>
         <div class="widget-content nopadding">
             <div class="container-fluid">
+
                 <div class="widget-box">
                     <div class="widget-title"><span class="icon"> <span
                             class="glyphicon glyphicon-th"> </span></span>
                         <h5>入卡查询</h5>
-                    </div>
-                    <div id="demo" class="collapse in widget-content">
-                        <div id="cardsForm">
-                            <div class="row formline">
-                                <label for="" class="col-xs-1 formline-label">号段开始：</label>
-                                <div class="col-xs-3">
-                                    <input type="text" class="form-control" name="cardStart" id="cardStart" required value="{{ cardStart }}">
-                                </div>
-                                <label for="" class="col-xs-1 formline-label">号段结束：</label>
-                                <div class="col-xs-3">
-                                    <input type="text" class="form-control" name="cardEnd" id="cardEnd" required value="{{ cardEnd }}">
-                                </div>
-                                <div class="col-xs-1">
-                                    <button type="reset" class="btn btn-warning btn-add pull-right">添加</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row formline">
-                            <div class="col-xs-12">
-                                <button type="button" class="btn btn-info query-btn pull-right">查询</button>
-                            </div>
-                        </div>
                     </div>
                     <div class="widget-content nopadding">
                         <table class="table table-striped table-hover table-form-my">
@@ -68,43 +47,22 @@
                                 <td><input type='text' class='form-control' disabled="disabled"></td>
                                 <td><input type='text' class='form-control' disabled="disabled"></td>
                                 <td>
-                                    <button type="button" class="btn btn-danger btn-xs btn-del">删除</button>
+                                    <button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this);">删除</button>
                                 </td>
                             </tr>
                             </tbody>
                         </table>
                         <div class="cardInTotal discount">
-                            <p class="text" id="totalNum">卡合计数量：<b>0</b>张</p>
-                            <p class="text" id="totalVal">卡合计金额：<b>0.00</b>元</p>
+                            <p class="text col-xs-3" id="totalNum">入卡合计数量：<b>0</b>张</p>
+                            <p class="text col-xs-3" id="totalVal">入卡合计金额：<b>0.00</b>元</p>
                         </div>
                     </div>
                 </div>
+
                 <div class="widget-box">
                     <div class="widget-title"><span class="icon"> <span
                             class="glyphicon glyphicon-th"> </span></span>
                         <h5>出卡查询</h5>
-                    </div>
-                    <div id="demo" class="collapse in widget-content">
-                        <div id="cardsForm">
-                            <div class="row formline">
-                                <label for="" class="col-xs-1 formline-label">号段开始：</label>
-                                <div class="col-xs-3">
-                                    <input type="text" class="form-control" name="cardStart" id="cardStart" required value="{{ cardStart }}">
-                                </div>
-                                <label for="" class="col-xs-1 formline-label">号段结束：</label>
-                                <div class="col-xs-3">
-                                    <input type="text" class="form-control" name="cardEnd" id="cardEnd" required value="{{ cardEnd }}">
-                                </div>
-                                <div class="col-xs-1">
-                                    <button type="reset" class="btn btn-warning btn-add pull-right">添加</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row formline">
-                            <div class="col-xs-12">
-                                <button type="button" class="btn btn-info query-btn pull-right">查询</button>
-                            </div>
-                        </div>
                     </div>
                     <div class="widget-content nopadding">
                         <table class="table table-striped table-hover table-form-my">
@@ -124,14 +82,190 @@
                                 <td><input type='text' class='form-control' disabled="disabled"></td>
                                 <td><input type='text' class='form-control' disabled="disabled"></td>
                                 <td>
-                                    <button type="button" class="btn btn-danger btn-xs btn-del">删除</button>
+                                    <button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this);">删除</button>
                                 </td>
                             </tr>
                             </tbody>
                         </table>
                         <div class="cardOutTotal">
-                            <p class="text" id="totalNum">卡合计数量：<b>0</b>张</p>
-                            <p class="text" id="totalVal">卡合计金额：<b>0.00</b>元</p>
+                            <p class="text col-xs-3" id="totalNum">出卡合计数量：<b>0</b>张</p>
+                            <p class="text col-xs-3" id="totalVal">出卡合计金额：<b>0.00</b>元</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="widget-box paysBox" style="display: none;">
+                    <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+                        <h5>优惠管理</h5>
+                    </div>
+                    <div class="widget-content nopadding">
+                        <table class="table table-striped table-hover table-form-my">
+                            <thead>
+                                <tr>
+                                    <th>卡号</th>
+                                    <th>面值</th>
+                                    <th>余额</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody class="discount" id="YcardList">
+                                <tr>
+                                    <td><input class="form-control cardId" type="text"></td>
+                                    <td><input type='text' class='form-control' disabled="disabled"></td>
+                                    <td><input type='text' class='form-control' disabled="disabled"></td>
+                                    <td><input type='text' class='form-control' disabled="disabled"></td>
+                                    <td><button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this);">删除</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="discountTotal row formline">
+                            <div class="row formline" style="margin-top: 10px">
+                                <label class="label-my" style="text-align: left">优惠返现：</label>
+                                <div class="col-xs-2">
+                                    <input class="form-control" type="text" id="Ycash"  value="0" onblur="discCash('change');">
+                                </div>
+                                <span class="label-my">元</span>
+                            </div>
+                            <p class="text col-xs-3" id="totalNum">优惠数卡合计：<b>0</b>张</p>
+                            <p class="text col-xs-3" id="totalVal">优惠金额合计：<b>0.00</b>元</p>
+    {#                            <p class="text col-xs-3" id="balance">应补差额：<b>0.00</b>元</p>#}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="widget-box payment">
+                    <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+                        <h5>支付管理</h5>
+                    </div>
+                    <div class="widget-content nopadding">
+                        <table class="table table-striped table-hover table-form-my">
+                            <thead>
+                                <tr>
+                                    <th>选择</th>
+                                    <th>支付方式</th>
+                                    <th>支付额度</th>
+                                    <th>备注</th>
+                                </tr>
+                            </thead>
+                            <tbody class="payList">
+                                <tr>
+                                    <td><input id="" value="1" type="checkbox"></td>
+                                    <td><input type='text' class='form-control payName' value="现金" disabled></td>
+                                    <td><input type='text' class='form-control payVal'></td>
+                                    <td><input type='text' class='form-control'></td>
+                                </tr>
+                                <tr>
+                                    <td><input id="" value="2" type="checkbox"></td>
+                                    <td><input type='text' class='form-control payName' value="代金卷" disabled></td>
+                                    <td><input type='text' class='form-control payVal'></td>
+                                    <td><input type='text' class='form-control'></td>
+                                </tr>
+                                <tr>
+                                    <td><input id="blankId" value="" type="checkbox"></td>
+                                    <td>
+                                        <select name="" id="blank" class="form-control">
+                                            <option value="">请选择银行打款方式</option>
+                                            <option value="3">汇款</option>
+                                            <option value="4">赊销</option>
+                                            <option value="5">POS消费</option>
+                                        </select>
+                                    </td>
+                                    <td><input type='text' class='form-control payVal'></td>
+                                    <td><input type='text' class='form-control'></td>
+                                </tr>
+                                <tr>
+                                    <td><input id="" value="6" type="checkbox"></td>
+                                    <td><input type='text' class='form-control payName' value="移动积分" disabled></td>
+                                    <td><input type='text' class='form-control payVal'></td>
+                                    <td><input type='text' class='form-control'></td>
+                                </tr>
+                                <tr>
+                                    <td><input id="parterId" value="" type="checkbox"></td>
+                                    <td>
+                                        <select name="" id="parter" class="form-control">
+                                            <option value="">请选择三方平台名称</option>
+                                            <option value="7">美团</option>
+                                            <option value="8">糯米</option>
+                                        </select>
+                                    </td>
+                                    <td><input type='text' class='form-control payVal'></td>
+                                    <td><input type='text' class='form-control'></td>
+                                </tr>
+                                <tr>
+                                    <td><input id="hjs" value="9" type="checkbox"></td>
+                                    <td><input type='text' class='form-control payName' value="黄金手" disabled></td>
+                                    <td>
+                                        <input type='text' class='form-control payVal' id="hjsVal" value="0" disabled>
+                                        <input type='hidden' id="hjsStr" value="">
+                                    </td>
+                                    <td><input type='text' class='form-control' id="remark-hjs" disabled></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div style="display: none; padding-right: 17px; background: rgba(0,0,0,0.5)" class="modal" id="hjsBox">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title" id="myModalLabel">
+                                           兑换码验证
+                                        </h4>
+                                    </div>
+                                    <div class="modal-body widget-content">
+                                        <table class="table table-striped table-form-my">
+                                            <thead>
+                                                <tr>
+                                                    <th>卡号</th><th>卡密</th><th>金额</th><th>操作</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td><input type="text" class='form-control changeCode'></td>
+                                                    <td><input type="text" class='form-control changeCode'></td>
+                                                    <td><input type="text" class='form-control hCost' disabled='disabled'></td>
+                                                    <td><button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this);">删除</button></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" id="close">关闭
+                                        </button>
+                                        <button type="button" class="btn btn-primary" id="submit">
+                                            提交更改
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="widget-box">
+                    <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+                        <h5>合计</h5>
+                    </div>
+                    <div class="widget-content nopadding changeCardTotal Total">
+                        <div class="row"  style="margin: 0">
+                            <p class="text col-xs-2" id="totalPaid">应付金额：<b class="red">0.00</b>元</p>
+                            <p class="text col-xs-2" id="totalVal">售卡合计：<b class="red">{{ totalPay |default:0.00 }}</b>元</p>
+                            <p class="text col-xs-2" id="totalYBalance">优惠补差：<b class="red">0.00</b>元</p>
+                            <p class="text col-xs-2" id="discount">
+                                折扣额度：<input type="text" value="0.00" disabled="disabled">%
+                                <button type="button" class="btn btn-warning btn-xs" id="disBtn">修改折扣率</button>
+                            </p>
+                            <p class="text col-xs-2" id="disCode" style="display: none">折扣授权码：<input type="text" value=""></p>
+                            <p class="text col-xs-2" id="discountVal">优惠金额（赠卡）：<b class="red">0.00</b>元</p>
+                        </div>
+                        <div class="row" style="margin: 0">
+                            <p class="text col-xs-12" id="payInfo">
+                                <b>支付详细：</b>
+                                <span></span>
+                            </p>
+                        </div>
+                        <div class="row" style="margin: 0">
+                            <p class="text col-xs-12" id="payTotal">支付合计：<b class="red">0.00</b>元</p>
                         </div>
                     </div>
                 </div>
@@ -168,7 +302,8 @@
 </div>
 <!--end-containt-part-->
 <script>
-    var rates = {{ rates | safe }};
+    var rates = {{ request.session.s_rates | safe }};
+    var disc_level = {{ request.session.disc_level }};
 </script>
 {% include "common/foot.html" %}
 <script>
@@ -182,9 +317,12 @@
         var arr1 = getCardIds(cardInList);
         var cardOutList = $('#ListOut');
         var arr2 = getCardIds(cardOutList);
-        arr1 = arr1.concat(arr2);
-        arr1.remove(cardId);
-        if (arr1.indexOf(cardId) > -1) {
+        var YcardList =$('#YcardList');
+        var arr3 = getCardIds(YcardList);
+        var arr = [];
+        arr = arr.concat(arr1,arr2,arr3);
+        arr.remove(cardId);
+        if (arr.indexOf(cardId) > -1) {
             alert('卡号：' + cardId + ',已经存卡列表中,请更换');
             $(this).val('');
             return false;
@@ -192,13 +330,28 @@
 
         //卡校验
         var ajaxOpt = {'url': '{% url 'cardcheck_change' %}?cardId=' + cardId, 'method': 'get'};
-        doAjax2(this, ajaxOpt, showCardIfno3, setTotal3);
+        doAjax2(this, ajaxOpt, showCardIfno3, setTotal);
         addRow(this);
     });
 
     $(document).on('click', '#btn-enter', function () {
+        var orderVal = parseFloat($(".changeCardTotal #totalPaid b").text());
+        var payVal = parseFloat($('.changeCardTotal #payTotal b').text());
+        if(orderVal!=payVal){
+            alert('付款金额与应付金额不符！');
+            return false
+        }
         var url = "{% url 'cardchange_save' %}";
         saveCardChangeOrder(url);
+    });
+</script>
+<script>
+    //折扣授权码验证
+    $('#disCode input').blur(function(){
+        var disCode = $(this).val();
+        if(disCode){
+            checkDiscode("{% url 'disCodeCheck' %}?discode="+disCode+"&shop={{ shopcode |safe }}");
+        }
     });
 </script>
 </body>

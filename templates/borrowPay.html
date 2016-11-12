@@ -90,7 +90,7 @@
                              {% for row in listSale %}
                                 <tr>
 {#                                    <td><a class="form-control orderSn green" href="{% url 'orderDetail' %}?orderSn={{ row.order_sn }}">{{ row.order_sn }}</a></td>#}
-                                    <td><a class="form-control orderSn green" href="#">{{ row.order_sn }}</a></td>
+                                    <td>{{ row.order_sn }}</td>
                                     <td><input type="text" class='form-control' disabled="disabled" value="{{ row.order_val}}"></td>
                                     <td><input type="text" class="form-control" disabled="disabled" value="{{ row.order_num }}"></td>
                                     <td><input type="text" class="form-control" disabled="disabled" value="{{ row.add_time }}"></td>
@@ -132,7 +132,8 @@
                             <tbody class="cardIn" id="nopayList">
                             {% for row in listBack %}
                                 <tr>
-                                    <td><a class="form-control orderSn green" href="{% url 'orderDetail' %}?orderSn={{ row.order_sn }}">{{ row.order_sn }}</a></td>
+{#                                    <td><a class="form-control orderSn green" href="{% url 'orderDetail' %}?orderSn={{ row.order_sn }}">{{ row.order_sn }}</a></td>#}
+                                    <td>{{ row.order_sn }}</td>
                                     <td><input type="text" class='form-control' disabled="disabled" value="{{ row.back_val}}"></td>
                                     <td><input type="text" class="form-control" disabled="disabled" value="{{ row.back_num }}"></td>
                                     <td><input type="text" class="form-control" disabled="disabled" value="{{ row.back_time }}"></td>
@@ -174,7 +175,7 @@
                                     <td><input type='text' class='form-control' disabled="disabled"></td>
                                     <td><input type='text' class='form-control' disabled="disabled"></td>
                                     <td><input type='text' class='form-control' disabled="disabled"></td>
-                                    <td><button type="button" class="btn btn-danger btn-xs btn-del">删除</button></td>
+                                    <td><button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this)">删除</button></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -183,13 +184,13 @@
                             <div class="row formline" style="margin-top: 10px">
                                 <label class="label-my" style="text-align: left">优惠返现：</label>
                                 <div class="col-xs-2">
-                                    <input class="form-control" placeholder="" type="text" id="Ycash">
+                                    <input class="form-control" type="text" id="Ycash" onblur="discCash('sale')" value="0">
                                 </div>
                                 <span class="label-my">元</span>
                             </div>
                             <p class="text col-xs-3" id="totalNum">优惠数卡合计：<b>0</b>张</p>
                             <p class="text col-xs-3" id="totalVal">优惠金额合计：<b>0.00</b>元</p>
-                            <p class="text col-xs-3" id="balance">应补差额：<b>0.00</b>元</p>
+{#                            <p class="text col-xs-3" id="balance">应补差额：<b>0.00</b>元</p>#}
                         </div>
                     </div>
                 </div>
@@ -283,7 +284,7 @@
                                                     <td><input type="text" class='form-control changeCode'></td>
                                                     <td><input type="text" class='form-control changeCode'></td>
                                                     <td><input type="text" class='form-control hCost' disabled='disabled'></td>
-                                                    <td><button type="button" class="btn btn-danger btn-xs btn-del">删除</button></td>
+                                                    <td><button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this)">删除</button></td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -304,7 +305,7 @@
                     <div class="widget-content nopadding Total">
                         <div class="row">
                             <p class="text col-xs-2" id="totalPaid">应付金额：<b class="red">0.00</b>元</p>
-                            <p class="text col-xs-2" id="totalVal">售卡合计：<b class="red">{{ totalPay |default:0.00 }}</b>元</p>
+                            <p class="text col-xs-2" id="totalVal">售卡合计：<b class="red">{{ cardOutTotalVal |default:0.00 }}</b>元</p>
                             <p class="text col-xs-2" id="totalYBalance">优惠补差：<b class="red">0.00</b>元</p>
                             <p class="text col-xs-2" id="discount">
                                 折扣额度：<input type="text" value="0.00" disabled="disabled">%
@@ -351,30 +352,34 @@
 
 </script>
 <script>
-    //计算优惠返点
-    var rates = {{ rates | safe }};
-    var totalVal = {{ totalPay | safe }};
+    var rates = {{ request.session.s_rates | safe }};
+    var disc_level = {{ request.session.disc_level }};
+</script>
+<script>
+    //1、获取卡合计金额
+    var cardOutTotalVal = parseFloat({{ cardOutTotalVal | default:0 | safe }});
     var rateInput  = $('.Total #discount input');
+    //2、计算折扣返点金额
     var rate = 0.00;
     var discountVal = 0.00;
     for(var j=0;j<rates.length;j++){
-        if(rates[j].val_min<=parseFloat(totalVal) && rates[j].val_max>=parseFloat(totalVal)){
+        if(rates[j].val_min<=cardOutTotalVal && rates[j].val_max>=cardOutTotalVal){
             rate=rates[j].discount_rate;
-            discountVal = Math.round(parseFloat(totalVal)*rate);
+            discountVal = Math.round(cardOutTotalVal*rate);
             $('.paysBox').show();
         }
         rateInput.val(parseFloat(rate)*100);
         $('.Total #discountVal b').text(discountVal);
     }
 
-    //计算应缴费合计
-    var totalPaidObj = $('.Total #totalPaid b');
-    var Ybalance = parseFloat($('.discountTotal #balance b').text());//优惠补差
-    var totalCardVal = parseFloat($('.Total #totalVal b').text());//售卡合计金额
-    totalCardVal = isNaN(totalCardVal) ? 0:totalCardVal;
-    var totalPaid = totalCardVal + Ybalance;
-    totalPaidObj.text(totalPaid);
-    $('.Total #totalYBalance b').text(Ybalance)
+    //3、计算优惠补差 getCardListVal(cardList,cardtype,cls)
+    var discCardTotalVal = getCardListVal($(".discount"),1,"discount").totalVal;
+    var discPay = discCardTotalVal-discountVal;
+    $(".Total #totalYBalance b").text(discPay);
+
+    //4、 应缴费合计
+    var orderVal = cardOutTotalVal + discPay;
+    $('.Total #totalPaid b').text(orderVal);
 
 </script>
 <script>
@@ -397,8 +402,9 @@
 
         //卡校验
         var ajaxOpt = {'url':'{% url 'cardcheck' %}?cardId='+cardId,'method':'get'};
-        var cardtype = '1';
-        doAjax(this,ajaxOpt,showCardIfno,setTotal,cardtype);
+{#        var cardtype = '1';#}
+{#        doAjax(this,ajaxOpt,showCardIfno,setTotal,cardtype);#}
+        doAjax(this,ajaxOpt,showCardIfno,setTotal);
         addRow(this);
     });
 </script>
@@ -423,6 +429,15 @@
         var orderSnList = {{ listOrderSn | safe }}
         saveCardSaleOrder(action_type,url,cardList,orderSnList);
     })
+</script>
+<script>
+    //折扣授权码验证
+    $('#disCode input').blur(function(){
+        var disCode = $(this).val();
+        if(disCode){
+            checkDiscode("{% url 'disCodeCheck' %}?discode="+disCode+"&shop={{ shopcode |safe }}");
+        }
+    });
 </script>
 </body>
 </html>

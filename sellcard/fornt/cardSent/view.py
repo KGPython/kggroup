@@ -19,7 +19,7 @@ def index(request):
 @csrf_exempt
 @transaction.atomic
 def sentOrderSave(request):
-    orderSn = 'SE'+mth.setOrderSn(CardReceive)
+    orderSn = 'G'+mth.setOrderSn(CardReceive)
 
     cardStr = request.POST.get('list','')
     cards = json.loads(cardStr)

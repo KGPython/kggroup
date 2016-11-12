@@ -110,7 +110,7 @@
                                     <td><input type='text' class='form-control' disabled="disabled"></td>
                                     <td><input type='text' class='form-control' disabled="disabled"></td>
                                     <td><input type='text' class='form-control' disabled="disabled"></td>
-                                    <td><button type="button" class="btn btn-danger btn-xs btn-del">删除</button></td>
+                                    <td><button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this);">删除</button></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -119,13 +119,13 @@
                             <div class="row formline" style="margin-top: 10px">
                                 <label class="label-my" style="text-align: left">优惠返现：</label>
                                 <div class="col-xs-2">
-                                    <input class="form-control" placeholder="" type="text" id="Ycash">
+                                    <input class="form-control" type="text" id="Ycash" value="0" onblur="discCash('sale');">
                                 </div>
                                 <span class="label-my">元</span>
                             </div>
                             <p class="text col-xs-3" id="totalNum">优惠数卡合计：<b>0</b>张</p>
                             <p class="text col-xs-3" id="totalVal">优惠金额合计：<b>0.00</b>元</p>
-                            <p class="text col-xs-3" id="balance">应补差额：<b>0.00</b>元</p>
+{#                            <p class="text col-xs-3" id="balance">应补差额：<b>0.00</b>元</p>#}
                         </div>
                     </div>
                 </div>
@@ -219,7 +219,7 @@
                                                     <td><input type="text" class='form-control changeCode'></td>
                                                     <td><input type="text" class='form-control changeCode'></td>
                                                     <td><input type="text" class='form-control hCost' disabled='disabled'></td>
-                                                    <td><button type="button" class="btn btn-danger btn-xs btn-del">删除</button></td>
+                                                    <td><button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this);">删除</button></td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -296,20 +296,24 @@
 </div>
 <!--end-containt-part-->
 <script>
-    var rates = {{ rates | safe }};
+    var rates = {{ request.session.s_rates | safe }};
+    var disc_level = {{ request.session.disc_level }};
 </script>
 {% include "common/foot.html" %}
 <script>
     $('.enter-btn').click(function(){
         var rows = $('#cardsForm').find('.row');
         var cards = [];
+        //获得卡段列表
         for(var i=0;i<rows.length;i++){
+            //处理卡段起止卡号
             var startStr = $(rows[i]).find('#cardStart').val();
             var start = startStr.split('=')[0];
             $(rows[i]).find('#cardStart').val(start);
             var endStr = $(rows[i]).find('#cardEnd').val();
             var end = endStr.split('=')[0];
             $(rows[i]).find('#cardEnd').val(end);
+
             if(start && end){
                 if(parseInt(start)>parseInt(end)){
                     alert('起始卡号必须小于截至卡号，\n错误位置：(起始卡号：'+start+',结束卡号：'+end+')');
@@ -331,73 +335,77 @@
                 if(data.length==0){
                     alert('此卡断不存在，请核查!')
                 }
-                $('#anomaly').find('tbody').empty();
-                $('#correct').find('tbody').empty();
-                for(var i=0;i<data.length;i++){
-                    if(data[i].card_status=='1' && data[i].card_value==data[i].card_blance){
-                        var cols = $('#correct').find('th').length;
-                        var tr=$('<tr></tr>');
-                        for(var j=0;j<cols;j++){
-                            var td = $('<td></td>');
-                            if(j==0){
-                                var obj = $('<input class="form-control" disabled></input>');
-                                obj.val(data[i].card_no)
-                            }else if(j==1){
-                                var obj = $('<input class="form-control" disabled></input>');
-                                obj.val(data[i].card_value)
-                            }else if(j==2){
-                                var obj = $('<input class="form-control" disabled></input>');
-                                obj.val(data[i].card_blance)
-                            }else if(j==3){
-                                var obj = $('<input class="form-control" disabled></input>');
-                                obj.val("未激活")
-                            }else if(j==4){
-                                var obj = $('<button type="button" class="btn btn-danger btn-xs btn-del">删除</button>');
-                            }
-                            td.append(obj);
-                            tr.append(td);
-                        }
-                        $('#correct').find('tbody').append(tr);
-                        setTotal($('#correct').find('tbody'),'1');
-                    }
-                    else{
-                        var cols = $('#anomaly').find('th').length;
-                        var tr=$('<tr></tr>');
-                        for(var j=0;j<cols;j++){
-                            var td = $('<td></td>');
-                            if(j==0){
-                                var obj = $('<input class="form-control" disabled></input>');
-                                obj.val(data[i].card_no)
-                            }else if(j==1){
-                                var obj = $('<input class="form-control" disabled></input>');
-                                obj.val(data[i].card_value)
-                            }else if(j==2){
-                                var obj = $('<input class="form-control" disabled></input>');
-                                obj.val(data[i].card_blance)
-                            }else if(j==3){
-                                var obj = $('<input class="form-control red" disabled></input>');
-                                if(data[i].card_status=='2'){
-                                    obj.val('已激活');
-                                }else if(data[i].card_status=='3'){
-                                    obj.val('已冻结');
-                                }else if(data[i].card_status=='4'){
-                                    obj.val('已作废')
-                                }
-                            }else if(j==4){
-                                var obj = $('<button type="button" class="btn btn-danger btn-xs btn-del">删除</button>');
-                            }
-                            td.append(obj);
-                            tr.append(td);
-                        }
-                        $('#anomaly').find('tbody').append(tr)
-                    }
-                }
+                showData(data);
             },
-            error:function(){
-
-            }
+            error:function(){}
         })
     });
+
+    function showData(data) {
+        $('#anomaly').find('tbody').empty();
+        $('#correct').find('tbody').empty();
+        for(var i=0;i<data.length;i++){
+            if(data[i].card_status=='1' && data[i].card_value==data[i].card_blance){
+                var cols = $('#correct').find('th').length;
+                var tr=$('<tr></tr>');
+                for(var j=0;j<cols;j++){
+                    var td = $('<td></td>');
+                    if(j==0){
+                        var obj = $('<input class="form-control" disabled></input>');
+                        obj.val(data[i].card_no)
+                    }else if(j==1){
+                        var obj = $('<input class="form-control" disabled></input>');
+                        obj.val(data[i].card_value)
+                    }else if(j==2){
+                        var obj = $('<input class="form-control" disabled></input>');
+                        obj.val(data[i].card_blance)
+                    }else if(j==3){
+                        var obj = $('<input class="form-control" disabled></input>');
+                        obj.val("未激活")
+                    }else if(j==4){
+                        var obj = $('<button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this);">删除</button>');
+                    }
+                    td.append(obj);
+                    tr.append(td);
+                }
+                $('#correct').find('tbody').append(tr);
+{#                setTotal($('#correct').find('tbody'),'1');#}
+                setTotal($('#correct').find('tbody'));
+            }
+            else{
+                var cols = $('#anomaly').find('th').length;
+                var tr=$('<tr></tr>');
+                for(var j=0;j<cols;j++){
+                    var td = $('<td></td>');
+                    if(j==0){
+                        var obj = $('<input class="form-control" disabled></input>');
+                        obj.val(data[i].card_no)
+                    }else if(j==1){
+                        var obj = $('<input class="form-control" disabled></input>');
+                        obj.val(data[i].card_value)
+                    }else if(j==2){
+                        var obj = $('<input class="form-control" disabled></input>');
+                        obj.val(data[i].card_blance)
+                    }else if(j==3){
+                        var obj = $('<input class="form-control red" disabled></input>');
+                        if(data[i].card_status=='2'){
+                            obj.val('已激活');
+                        }else if(data[i].card_status=='3'){
+                            obj.val('已冻结');
+                        }else if(data[i].card_status=='4'){
+                            obj.val('已作废')
+                        }
+                    }else if(j==4){
+                        var obj = $('<button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this);">删除</button>');
+                    }
+                    td.append(obj);
+                    tr.append(td);
+                }
+                $('#anomaly').find('tbody').append(tr)
+            }
+        }
+    }
+
     $(document).on("change",".cardId",function(){
         var cardIdStr = $(this).val();
         var cardId = cardIdStr.split("=")[0];
@@ -417,8 +425,9 @@
         }
         //卡校验
         var ajaxOpt = {'url':'{% url 'cardcheck' %}?cardId='+cardId,'method':'get'};
-        var cardtype = '1';
-        doAjax(this,ajaxOpt,showCardIfno,setTotal,cardtype);
+        {#var cardtype = '1';#}
+       {# doAjax(this,ajaxOpt,showCardIfno,setTotal,cardtype);#}
+        doAjax(this,ajaxOpt,showCardIfno,setTotal);
         addRow(this);
     });
     $(document).on('click','#btn-enter',function(){

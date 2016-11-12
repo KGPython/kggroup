@@ -5,7 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 import json,datetime
 from django.db import transaction
 
-from sellcard.models import OrderBorrow,CardInventory,Orders,OrderInfo,OrderPaymentInfo,ActionLog
+from sellcard.models import OrderBorrow,CardInventory,Orders,OrderInfo,OrderPaymentInfo,ActionLog,OrderBorrowInfo
 from sellcard.common import Method as mth
 from sellcard.common.model import MyError
 @csrf_exempt
@@ -72,7 +72,8 @@ def index(request):
         for row2 in listBack:
             totalBack += row2['back_val']
         #退卡后应缴费用
-        totalPay = totaSale-totalBack
+        cardOutTotalVal = totaSale-totalBack
+        # cardOutTotalVal = 2800
 
         #查询未退卡明细
         sqlCardNoBack = 'select a.order' \
@@ -112,7 +113,7 @@ def save(request):
     #赠卡列表
     YcardStr = request.POST.get('YcardStr','')
     YcardList = json.loads(YcardStr)
-    Ycash = request.POST.get('Ycash','')
+    Ycash = request.POST.get('Ycash',0.00)
     #支付方式
     payStr = request.POST.get('payStr','')
     payList = json.loads(payStr)
@@ -148,6 +149,9 @@ def save(request):
                 orderInfo.card_action = '0'
                 orderInfo.card_attr = '1'
                 orderInfo.save()
+
+
+
             for Ycard in YcardList:
                 YorderInfo = OrderInfo()
                 YorderInfo.order_id = order_sn
@@ -196,13 +200,15 @@ def save(request):
                 cardIdList.append(card['cardId'])
             cardsNum = len(cardIdList)
 
-            #更新折扣授权码校验码状态
-            mth.updateDisCode(disCode,shopcode,order_sn)
-
-            #更新kggroup内部卡状态
+            # 更新kggroup内部卡状态
             resCard = CardInventory.objects.filter(card_no__in=cardIdList).update(card_status='2',card_action='0')
             if resCard != cardsNum:
                 raise MyError('系统数据库卡状态更新失败')
+            #更新折扣授权码校验码状态
+            if disCode:
+                resCode = mth.updateDisCode(disCode,shopcode,order_sn)
+                if resCode == 0:
+                    raise MyError('折扣授权码状态更新失败')
 
             #更新借卡单的结算状态
             orderSnNum = len(orderSnList)
@@ -210,10 +216,14 @@ def save(request):
             if orderSnNum != resBorrow:
                 raise MyError('借卡单状态更新失败')
 
-            #更新ERP内部卡状态
-            resErp = mth.updateCard(cardIdList,'1')
+            resBorrow2 = OrderBorrowInfo.objects.filter(card_no__in=cardIdList, is_back=None).update(is_back='0')
+            if resBorrow2 != cardsNum-len(YcardList):
+                raise MyError('借卡单详情内部数据更新失败')
+
+            # 更新ERP内部卡状态
+            resErp = mth.updateCard(cardIdList, '1')
             if resErp != cardsNum:
-                mth.updateCard(cardIdList,'9')
+                mth.updateCard(cardIdList, '9')
                 raise MyError('ERP数据库卡状态更新失败')
 
             res["msg"] = 1

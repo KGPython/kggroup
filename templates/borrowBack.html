@@ -186,7 +186,7 @@
                                 var obj = $('<input class="form-control" disabled></input>');
                                 obj.val('已激活');
                             }else if(j==4){
-                                var obj = $('<button type="button" class="btn btn-danger btn-xs btn-del">删除</button>');
+                                var obj = $('<button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this)">删除</button>');
                             }
                             td.append(obj);
                             tr.append(td);
@@ -233,14 +233,15 @@
                                     obj.val('已激活，非借卡');
                                 }
                             }else if(j==4){
-                                var obj = $('<button type="button" class="btn btn-danger btn-xs btn-del">删除</button>');
+                                var obj = $('<button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this)">删除</button>');
                             }
                             td.append(obj);
                             tr.append(td);
                         }
                         $('#anomaly').find('tbody').append(tr);
                     }
-                    setTotal3($('#correct').find('tbody'),'1');
+{#                    setTotal($('#correct').find('tbody'),'1');#}
+                    setTotal($('#correct').find('tbody'));
                 }
             },
             error:function(){
@@ -264,31 +265,8 @@
             alert('还未添加售卡信息，请核对后再尝试提交！');
             return false;
         }
-
-        $.ajax({
-            url:url,
-            type:'post',
-            dataType:'json',
-            data:{
-                'cardStr':JSON.stringify(cardList)
-            },
-            success:function(data){
-                if(data.msg==0){
-                    alert('订单提交成功');
-                    window.location.reload();
-                    $('input[type=text]').val('');
-                }else if(data.msg==1){
-                    if(data.msg_err){
-                        alert(data.msg_err);
-                    }else{
-                        alert('订单提交失败');
-                    }
-                }
-            },
-            error:function(XMLHttpRequest, textStatus, errorThrown){
-                alert('订单提交失败,失败原因：'+errorThrown);
-            }
-        })
+        var data = { 'cardStr':JSON.stringify(cardList)};
+        doAjaxSave(url,data);
     }
 </script>
 </body>

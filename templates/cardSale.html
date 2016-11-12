@@ -46,7 +46,7 @@
                                     <td><input type='text' class='form-control' disabled="disabled"></td>
                                     <td><input type='text' class='form-control' disabled="disabled"></td>
                                     <td><input type='text' class='form-control' disabled="disabled"></td>
-                                    <td><button type="button" class="btn btn-danger btn-xs btn-del">删除</button></td>
+                                    <td><button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this);">删除</button></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -73,7 +73,7 @@
                                     <td><input type='text' class='form-control' disabled="disabled"></td>
                                     <td><input type='text' class='form-control' disabled="disabled"></td>
                                     <td><input type='text' class='form-control' disabled="disabled"></td>
-                                    <td><button type="button" class="btn btn-danger btn-xs btn-del">删除</button></td>
+                                    <td><button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this);">删除</button></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -82,13 +82,13 @@
                             <div class="row formline" style="margin-top: 10px">
                                 <label class="label-my" style="text-align: left">优惠返现：</label>
                                 <div class="col-xs-2">
-                                    <input class="form-control" placeholder="" type="text" id="Ycash">
+                                    <input class="form-control" type="text" id="Ycash" value="0" onblur="discCash('sale');">
                                 </div>
                                 <span class="label-my">元</span>
                             </div>
                             <p class="text col-xs-3" id="totalNum">优惠数卡合计：<b>0</b>张</p>
                             <p class="text col-xs-3" id="totalVal">优惠金额合计：<b>0.00</b>元</p>
-                            <p class="text col-xs-3" id="balance">应补差额：<b>0.00</b>元</p>
+{#                            <p class="text col-xs-3" id="balance">应补差额：<b>0.00</b>元</p>#}
                         </div>
                     </div>
                 </div>
@@ -182,7 +182,7 @@
                                                     <td><input type="text" class='form-control changeCode'></td>
                                                     <td><input type="text" class='form-control changeCode'></td>
                                                     <td><input type="text" class='form-control hCost' disabled='disabled'></td>
-                                                    <td><button type="button" class="btn btn-danger btn-xs btn-del">删除</button></td>
+                                                    <td><button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this);">删除</button></td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -259,7 +259,8 @@
 </div>
 <!--end-containt-part-->
 <script>
-    var rates = {{ rates | safe }};
+    var rates = {{ request.session.s_rates | safe }};
+    var disc_level = {{ request.session.disc_level }};
 </script>
 {% include "common/foot.html" %}
 <script>
@@ -282,19 +283,22 @@
 
         //卡校验
         var ajaxOpt = {'url':'{% url 'cardcheck' %}?cardId='+cardId,'method':'get'};
-        var cardtype = '1';
-        doAjax(this,ajaxOpt,showCardIfno,setTotal,cardtype);
+{#        var cardtype = '1';#}
+{#        doAjax(this,ajaxOpt,showCardIfno,setTotal,cardtype);#}
+        doAjax(this,ajaxOpt,showCardIfno,setTotal);
         addRow(this);
     });
+
+    //保存订单
     $(document).on('click','#btn-enter',function(){
         var action_type = '1';//单卡售卡
         var url = "{% url 'saveorder' %}";
         var cardList = getCardList($('#cardList'),'1');
-
         saveCardSaleOrder(action_type,url,cardList);
     })
 </script>
 <script>
+    //折扣授权码验证
     $('#disCode input').blur(function(){
         var disCode = $(this).val();
         if(disCode){

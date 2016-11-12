@@ -81,25 +81,24 @@ def save(request):
     try:
         with transaction.atomic():
             cardsNum = len(cardnoList)
-
             resCard = CardInventory.objects.filter(card_no__in=cardnoList).update(card_status='1',card_action='1')
             if resCard != cardsNum:
                 raise MyError('系统数据库卡状态更新失败')
 
-            resBorrow = OrderBorrowInfo.objects.filter(card_no__in=cardnoList).update(is_back='1',back_time=now)
+            resBorrow = OrderBorrowInfo.objects.filter(card_no__in=cardnoList,is_back=None).update(is_back='1',back_time=now)
             if resBorrow != cardsNum:
-                raise MyError('借卡单内卡状态更新失败')
+                raise MyError('退还卡状态更新失败')
 
-            resErp = mth.updateCard(cardnoList,'9')
+            resErp = mth.updateCard(cardnoList, '9')
             if resErp != cardsNum:
-                mth.updateCard(cardnoList,'1')
+                mth.updateCard(cardnoList, '1')
                 raise MyError('ERP数据库卡状态更新失败')
 
-            res['msg'] = 0
+            res['msg'] = 1
             ActionLog.objects.create(action='借卡-还卡',u_name=request.session.get('s_uname'),cards_in=cardsStr,add_time=datetime.datetime.now())
 
     except Exception as e:
-        res['msg'] = 1
+        res['msg'] = 0
         res["msg_err"] = e.value
         ActionLog.objects.create(action='借卡-还卡',u_name=request.session.get('s_uname'),cards_in=cardsStr,add_time=datetime.datetime.now(),err_msg=e)
     return HttpResponse(json.dumps(res))

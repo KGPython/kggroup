@@ -1,12 +1,12 @@
 #-*- coding:utf-8 -*-
 __author__ = 'admin'
 from django.shortcuts import render
-from sellcard.models import CardInventory, OrderChangeCard, OrderChangeCardInfo,ActionLog
+from sellcard.models import CardInventory, OrderChangeCard, OrderChangeCardInfo,ActionLog, OrderChangeCardPayment
 from django.http import HttpResponse
 import json
 from django.views.decorators.csrf import csrf_exempt
 import datetime
-from sellcard.common import Method as mtu
+from sellcard.common import Method as mth
 from sellcard.common.model import MyError
 from django.db import transaction
 
@@ -38,6 +38,31 @@ def save(request):
     totalNumOut = request.POST.get('totalNumOut',0)
     totalValOut = request.POST.get('totalValOut',0.00)
 
+    #优惠卡列表
+    discListStr = request.POST.get('discList','')
+    discList = json.loads(discListStr)
+    #优惠返现
+    discCash = request.POST.get('discCash',0.00)
+
+    #优惠返点金额
+    disc = request.POST.get('disc',0.00)
+    # 优惠返点比率
+    disRate = request.POST.get('disRate',0.00)
+    #优惠补差
+    discPay = request.POST.get('discPay',0.00)
+    #折扣授权码
+    discCode = request.POST.get('discCode','')
+
+    # 支付方式
+    payStr = request.POST.get('payStr', '')
+    payList = json.loads(payStr)
+    hjsStr = request.POST.get('hjsStr', '')
+    # 黄金手卡号列表
+    hjsList = []
+    if len(hjsStr) > 0:
+        hjsStr = hjsStr[0:len(hjsStr) - 1]
+        hjsList = hjsStr.split(',')
+
     #买卡人信息
     buyerName = request.POST.get('buyerName','')
     buyerPhone = request.POST.get('buyerPhone','')
@@ -45,7 +70,7 @@ def save(request):
     order_sn = ''
     try:
         with transaction.atomic():
-            order_sn = mtu.setOrderSn(OrderChangeCard)
+            order_sn = 'C'+mth.setOrderSn(OrderChangeCard)
             created_time=datetime.datetime.today()
             # 保存
             for cardIn in cardListIn:
@@ -64,8 +89,31 @@ def save(request):
                 orderInfo.card_attr = '0'
                 orderInfo.card_value = cardOut['cardVal']
                 orderInfo.card_balance = cardOut['cardVal']
-                orderInfo.add_time = created_time
                 orderInfo.save()
+            for Ycard in discList:
+                YorderInfo = OrderChangeCardInfo()
+                YorderInfo.order_sn = order_sn
+                YorderInfo.card_no = Ycard['cardId']
+                YorderInfo.card_value = Ycard['cardVal']
+                YorderInfo.card_balance = Ycard['cardVal']
+                YorderInfo.card_attr = '0'
+                YorderInfo.is_disc = '1'
+                YorderInfo.save()
+
+            for pay in payList:
+                orderPay = OrderChangeCardPayment()
+                orderPay.order_id = order_sn
+                orderPay.pay_id = pay['payId']
+                if pay['payId'] == '4':
+                    orderPay.is_pay = '0'
+                else:
+                    orderPay.is_pay = '1'
+                if pay['payId'] == '9':
+                    mth.upChangeCode(hjsList, shopCode)
+
+                orderPay.pay_value = pay['payVal']
+                orderPay.remarks = pay['payRmarks']
+                orderPay.save()
 
             order = OrderChangeCard()
             order.order_sn = order_sn
@@ -74,10 +122,14 @@ def save(request):
             order.shop_code = shopCode
             order.user_name = buyerName
             order.user_phone = buyerPhone
-            order.total_in_amont = totalNumIn
+            order.total_in_amount = totalNumIn
             order.total_in_price = totalValIn
             order.total_out_amount = totalNumOut
             order.total_out_price = totalValOut
+            order.disc_rate =disRate
+            order.disc = disc
+            order.disc_cash = discCash
+            order.disc_pay = discPay
             order.add_time = created_time
             order.save()
 
@@ -86,7 +138,8 @@ def save(request):
             for card in cardListIn:
                 cardIdInList.append(card['cardId'])
             cardIdOutList = []
-            for card in cardListOut:
+            temp = cardListOut+discList
+            for card in temp:
                 cardIdOutList.append(card['cardId'])
             cardsOutNum = len(cardIdOutList)
             cardsInNum = len(cardIdInList)
@@ -96,14 +149,20 @@ def save(request):
             if resCardIn != cardsInNum or resCardOut != cardsOutNum:
                 raise MyError('系统数据库卡状态更新失败')
 
-            resErpOut = mtu.updateCard(cardIdOutList,'1')
-            resErpIn = mtu.updateCard(cardIdInList,'9')
+            resErpOut = mth.updateCard(cardIdOutList,'1')
+            resErpIn = mth.updateCard(cardIdInList,'9')
             if resErpIn != cardsInNum or resErpOut != cardsOutNum:
-                mtu.updateCard(cardIdOutList,'9')
-                mtu.updateCard(cardIdOutList,'1')
+                mth.updateCard(cardIdOutList,'9')
+                mth.updateCard(cardIdOutList,'1')
                 raise MyError('ERP数据库卡状态更新失败')
 
+            if discCode:
+                resCode = mth.updateDisCode(discCode,shopCode,order_sn)
+                if resCode == 0:
+                    raise MyError('折扣授权码状态更新失败')
+
             res["msg"] = 1
+            # res["urlRedirect"] = '/kg/sellcard/cardsale/orderInfo/?orderSn=' + order_sn
             ActionLog.objects.create(action='换卡-单卡',u_name=request.session.get('s_uname'),cards_in=cardListInStr,cards_out=cardListOutStr,add_time=datetime.datetime.now())
     except Exception as e:
         res["msg"] = 0

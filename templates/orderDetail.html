@@ -143,32 +143,32 @@
                 <div class="widget-content">
                     <table class="table table-hover order-table">
                         <tbody>
-                        <tr>
-                            <td class="col-xs-1">订单 I D：</td>
-                            <td class="col-xs-3">{{ order.0.order_sn }}</td>
-                            <td class="col-xs-1">售卖门店：</td>
-                            <td class="col-xs-3">{{ order.0.shop_code | transShopCode }}</td>
-                            <td class="col-xs-1">下单时间：</td>
-                            <td class="col-xs-3">{{ order.0.add_time | date:'Y年m月d日' }}</td>
-                        </tr>
-                        <tr>
-                            <td>补卡数量</td>
-                            <td>{{ cardsInNum | default:0 }} 张</td>
-                            <td>丢失卡金额</td>
-                            <td>{{ order.0.total_in_price | default:0.00 }} 元</td>
-                        </tr>
-                        <tr>
-                            <td>补卡数量</td>
-                            <td>{{ cardsOutNum | default:0 }} 张</td>
-                            <td>补卡金额</td>
-                            <td>{{ order.0.total_out_price | default:0.00 }} 元</td>
-                        </tr>
-                        <tr>
-                            <td>买卡人姓名</td>
-                            <td>{{ order.0.user_name | default:'无' }}</td>
-                            <td>买卡人电话</td>
-                            <td>{{ order.0.user_phone | default:'无' }}</td>
-                        </tr>
+                            <tr>
+                                <td class="col-xs-1">订单 I D：</td>
+                                <td class="col-xs-3">{{ order.0.order_sn }}</td>
+                                <td class="col-xs-1">售卖门店：</td>
+                                <td class="col-xs-3">{{ order.0.shop_code | transShopCode }}</td>
+                                <td class="col-xs-1">下单时间：</td>
+                                <td class="col-xs-3">{{ order.0.add_time | date:'Y年m月d日' }}</td>
+                            </tr>
+                            <tr>
+                                <td>补卡数量</td>
+                                <td>{{ cardsInNum | default:0 }} 张</td>
+                                <td>丢失卡金额</td>
+                                <td>{{ order.0.total_in_price | default:0.00 }} 元</td>
+                            </tr>
+                            <tr>
+                                <td>补卡数量</td>
+                                <td>{{ cardsOutNum | default:0 }} 张</td>
+                                <td>补卡金额</td>
+                                <td>{{ order.0.total_out_price | default:0.00 }} 元</td>
+                            </tr>
+                            <tr>
+                                <td>买卡人姓名</td>
+                                <td>{{ order.0.user_name | default:'无' }}</td>
+                                <td>买卡人电话</td>
+                                <td>{{ order.0.user_phone | default:'无' }}</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -213,7 +213,6 @@
                     </div>
                 </div>
             {% endif %}
-        </div>
         </div>
     {% elif actionType == '3' %}
         <div class="widget-box">

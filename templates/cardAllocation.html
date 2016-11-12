@@ -86,7 +86,7 @@
                                     <td><input type='text' class='form-control start cardno'></td>
                                     <td><input type='text' class='form-control end cardno'></td>
                                     <td><input type='text' class='form-control subTotal' disabled></td>
-                                    <td><button type="button" class="btn btn-danger btn-xs btn-del">删除</button></td>
+                                    <td><button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this)">删除</button></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -133,7 +133,7 @@
                 var obj = $('<input type="text" class="form-control subTotal" disabled>');
                 $(td).append(obj);
             }else{
-                var obj = $('<button type="button" class="btn btn-danger btn-xs btn-del">删除</button>');
+                var obj = $('<button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this)">删除</button>');
                 $(td).append(obj);
             }
             $(row).append(td);
