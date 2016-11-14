@@ -923,8 +923,8 @@ function doAjaxSave(url,data){
             $("#btn-enter").removeAttr('disabled');
             if(data.msg==1){
                 alert('订单提交成功');
-                $('input[type=text]').not('.payName').val('');
-                $('input[type=checkbox]').prop('checked',false);
+                // $('input[type=text]').not('.payName').val('');
+                // $('input[type=checkbox]').prop('checked',false);
                 window.location.reload(true);
                 if(data.urlRedirect){
                     window.location.href=data.urlRedirect;
