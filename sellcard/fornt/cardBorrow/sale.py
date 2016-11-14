@@ -74,7 +74,7 @@ def save(request):
                 mth.updateCard(cardIdList,'9')
                 raise MyError('ERP数据库卡状态更新失败！')
             res["msg"] = 1
-            res["redirectUrl"] = '/kg/sellcard/borrow/sale/info/?orderSn='+order_sn
+            res["urlRedirect"] = '/kg/sellcard/borrow/sale/info/?orderSn='+order_sn
             ActionLog.objects.create(action='借卡-售卡',u_name=request.session.get('s_uname'),cards_out=cardStr,add_time=datetime.datetime.now())
     except Exception as e:
         print(e)
