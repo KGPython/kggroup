@@ -93,7 +93,7 @@
             var end4 = list[m].end;
 
             if(parseInt(start3)<parseInt(start4) && parseInt(end3)>parseInt(end4)){
-                alert('卡断：'+start3+'-'+end3+',包含卡断：'+start4+'-'+end4+',请重新输入卡断');
+                alert('卡段：'+start3+'-'+end3+',包含卡段：'+start4+'-'+end4+',请重新输入卡段');
                 parentTr.find('.start').val('').focus();
                 parentTr.find('.end').val('');
                 return false;
@@ -104,7 +104,7 @@
             var end2 = list[i].end;
 
             if((key>start2 && key<end2)){
-                alert('卡号：'+key+',已经存在于卡段'+start2+'-'+end2+'中，请重新输入卡断');
+                alert('卡号：'+key+',已经存在于卡段'+start2+'-'+end2+'中，请重新输入卡段');
                 $(obj).val('').focus();
                 return false;
             }
