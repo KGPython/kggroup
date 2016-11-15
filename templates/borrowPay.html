@@ -356,21 +356,11 @@
     var disc_level = {{ request.session.disc_level }};
 </script>
 <script>
-    //1、获取卡合计金额
+    //1、获取借卡合计金额
     var cardOutTotalVal = parseFloat({{ cardOutTotalVal | default:0 | safe }});
     var rateInput  = $('.Total #discount input');
     //2、计算折扣返点金额
-    var rate = 0.00;
-    var discountVal = 0.00;
-    for(var j=0;j<rates.length;j++){
-        if(rates[j].val_min<=cardOutTotalVal && rates[j].val_max>=cardOutTotalVal){
-            rate=rates[j].discount_rate;
-            discountVal = Math.round(cardOutTotalVal*rate);
-            $('.paysBox').show();
-        }
-        rateInput.val(parseFloat(rate)*100);
-        $('.Total #discountVal b').text(discountVal);
-    }
+    var discountVal = createDiscount(cardOutTotalVal,rateInput);
 
     //3、计算优惠补差 getCardListVal(cardList,cardtype,cls)
     var discCardTotalVal = getCardListVal($(".discount"),1,"discount").totalVal;

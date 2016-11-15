@@ -118,6 +118,8 @@ function showCardIfno3(obj,data){
         cls = 'cardInTotal';
     }else if($(parentTbody).hasClass('cardOut')){
         cls = 'cardOutTotal';
+    }else if($(parentTbody).hasClass('discount')){
+        cls = 'discountTotal';
     }
 
     if(data.length==0){
@@ -152,7 +154,7 @@ function showCardIfno3(obj,data){
             $(obj).parent().parent().find('td').eq(3).find('input').eq(0).removeClass('red')
         }
     }
-    if(cls == 'cardOutTotal') {
+    if(cls == 'cardOutTotal' || cls== 'discountTotal') {
         if(data.mode!='9' || cardVal!=cardBlance){
             $(obj).parent().parent().find('td').eq(3).find('input').eq(0).addClass('red')
         }else{
@@ -329,11 +331,11 @@ function getCardListVal(cardList,cardtype,cls){
 /*
 * 计算优惠金额
 * */
-function createDiscount(cls,cardsValTotal,rateInput) {
+function createDiscount(cardsValTotal,rateInput) {
     var discCode = $(".Total #disCode input").val();
     //如果折扣授权码discCode存在，则认为是自定义折扣，取输入框内部的数值为折扣返点率
     //如果折扣授权码discCode不存在，则认为是固定返点，由系统生成折扣返点率
-    var  rate= 0,discountVal = 0;
+    var  rate= 0;
     if(discCode){
         rate = (parseFloat($(".Total #discount input").val()).toFixed(2))/100;
     }else {
@@ -343,11 +345,12 @@ function createDiscount(cls,cardsValTotal,rateInput) {
                     rate=rates[j].discount_rate;
                 }
             }
+
             $(rateInput).val(rate*100);
         }
     }
-    discountVal = Math.round(parseFloat(cardsValTotal)*rate);
-    $('.'+cls+' #discountVal b').text(discountVal);
+    var discountVal = (parseFloat(cardsValTotal)*rate/10).toString().split(".")[0]+'0';
+    $('.Total #discountVal b').text(discountVal);
     if(discountVal>0){
         $('.paysBox').show();
     }else {
@@ -393,16 +396,15 @@ function setTotal(obj){
         var cardsInTotalVal = data.totalVal;
 
         //3、如果是换卡模块，则计算换卡补差
-        var changeCardPayObj = $(".changeCardTotal");
-        if(changeCardPayObj.length>0){
-            cls = 'changeCardTotal';
+        var Paybox = $(".Total");
+        if(Paybox.length>0){
             //3.1、计算补差金额
             var cardChangeOutTotalVal = $(".cardOutTotal #totalVal b").text();
             var cardsPayVal = parseFloat(cardChangeOutTotalVal)-parseFloat(cardsInTotalVal);
             $('.Total #totalVal b').text(cardsPayVal);
             //3.2、计算优惠返点
             var rateInput  = $('.changeCardTotal #discount input')[0];
-            var discountVal = createDiscount(cls,cardsPayVal,rateInput);
+            var discountVal = createDiscount(cardsPayVal,rateInput);
             //3.3、计算订单总额
             var discBoxVal = parseFloat($('.discountTotal #totalVal b').text());
             var discPay = discBoxVal - discountVal;
@@ -430,16 +432,15 @@ function setTotal(obj){
             }
         }
         //3、如果是换卡模块，则计算换卡补差
-        var changeCardPayObj = $(".changeCardTotal");
-        if(changeCardPayObj.length>0){
-            cls = 'changeCardTotal';
+        var Paybox = $(".Total");
+        if(Paybox.length>0){
             //3.1、计算补差金额
             var cardChangeInTotalVal = $(".cardInTotal #totalVal b").text();
             var cardsPayVal = parseFloat(cardsTotalVal)-parseFloat(cardChangeInTotalVal);
             $('.Total #totalVal b').text(cardsPayVal);
             //3.2、计算优惠返点
             var rateInput  = $('.changeCardTotal #discount input')[0];
-            var discountVal = createDiscount(cls,cardsPayVal,rateInput);
+            var discountVal = createDiscount(cardsPayVal,rateInput);
 
             //3.3、计算订单总额
             var discBoxVal = parseFloat($('.discountTotal #totalVal b').text());
@@ -458,7 +459,7 @@ function setTotal(obj){
         var rateInput  = $('.'+cls+' #discount input')[0];
         var discountVal=0;
         if(rateInput){
-            discountVal = createDiscount(cls,cardsTotalVal,rateInput);
+            discountVal = createDiscount(cardsTotalVal,rateInput);
         }
         //4、优惠补差
         var discountCardTotalVal = parseFloat($(".discountTotal #totalVal b").text());
@@ -1097,7 +1098,7 @@ function changeDiscountVal(cardSaleTotalVal,posVal) {
         var rateInput  = $('.Total #discount input')[0];
         var discountVal=0;
         if(rateInput){
-            discountVal = createDiscount('Total',cardSaleTotalVal,rateInput);
+            discountVal = createDiscount(cardSaleTotalVal,rateInput);
         }
         //计算补差
         var discountCardTotalVal = parseFloat($(".discountTotal #totalVal b").text());
