@@ -159,7 +159,8 @@ def cardCheck(request):
     cardId = request.GET.get('cardId','')
     tempList = cardId.split('=')
     if len(tempList)>0:
-        cardId = tempList[0]
+        cardId = (tempList[0])
+    cardId =cardId.strip()
     findCardById = CardInventory.objects.all().filter(card_no=cardId)
     findCardById = serializers.serialize('json',findCardById)
     return HttpResponse(findCardById,content_type="application/json")
@@ -168,6 +169,7 @@ def cardCheck(request):
 # 换卡,充值卡校验
 def cardCheck_Change(request):
     cardId = request.GET.get('cardId', '')
+    cardId = cardId.strip()
     conn = getMssqlConn()
     cursor = conn.cursor()
     sql = "select New_amount, detail, mode from guest where CardNO='{cardId}'".format(cardId=cardId)
@@ -187,8 +189,8 @@ def upChangeCode(list, shopcode):
 # 兑换码校验
 @csrf_exempt
 def changeCodeCheck(request):
-    code = request.POST.get('code', '')
-    camilo = request.POST.get('camilo', '')
+    code = (request.POST.get('code', '')).strip()
+    camilo = (request.POST.get('camilo', '')).strip()
     res = ExchangeCode.objects.filter(code=code, camilo=camilo).values('cost', 'shop_code')
     data = {}
     if len(res) > 0:

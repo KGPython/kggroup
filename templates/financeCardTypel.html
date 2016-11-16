@@ -41,7 +41,7 @@
                     <tbody class="cardIn" id="nopayList">
                          {% for row in cardList %}
                             <tr>
-                                <td>{{ row.card_value}} 元</td>
+                                <td>{{ row.card_blance}} 元</td>
                                 <td>{{ row.balance }}</td>
                                 <td>{{ row.num }}</td>
                                 <td><a href="{% url 'financeCardInfo' %}?cardtype={{ row.card_value}}&shopcode={{ shopCode }}">详情</a></td>

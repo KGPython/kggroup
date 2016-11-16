@@ -29,32 +29,7 @@
                         <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
                             <h5>入卡查询</h5>
                         </div>
-                        <div class="widget-content nopadding">
-                            <table class="table table-striped table-hover table-form-my">
-                                <thead>
-                                <tr>
-                                    <th class="hidden-phone">卡号</th>
-                                    <th class="hidden-480">面值</th>
-                                    <th class="hidden-480">余额</th>
-                                    <th>状态</th>
-                                    <th>操作</th>
-                                </tr>
-                                </thead>
-                                <tbody class="cardIn" id="cardInList">
-                                <tr>
-                                    <td><input class="form-control cardId" type="text"></td>
-                                    <td><input type='text' class='form-control' disabled="disabled"></td>
-                                    <td><input type='text' class='form-control' disabled="disabled"></td>
-                                    <td><input type='text' class='form-control' disabled="disabled"></td>
-                                    <td><button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this)">删除</button></td>
-                                </tr>
-                                </tbody>
-                            </table>
-                              <div class="cardInTotal row formline">
-                                <p class="text col-xs-3" id="totalNum">卡合计数量：<b>0</b>张</p>
-                                <p class="text col-xs-3" id="totalVal">卡合计金额：<b>0.00</b>元</p>
-                             </div>
-                        </div>
+                        {% include 'common/cardInQuery.html' %}
                     </div>
                     <div class="widget-box">
                         <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>

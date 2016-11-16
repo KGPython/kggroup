@@ -54,9 +54,9 @@ def save(request):
     cardInTotalVal = request.POST.get('cardInTotalVal',0.00)
 
     #补卡人信息
-    user_name = request.POST.get('user_name','')
-    user_phone = request.POST.get('user_phone','')
-    action_type = request.POST.get('action_type','')
+    user_name = (request.POST.get('user_name','')).strip()
+    user_phone = (request.POST.get('user_phone','')).strip()
+    action_type = (request.POST.get('action_type','')).strip()
 
     try:
         with transaction.atomic():
@@ -80,7 +80,7 @@ def save(request):
             for card in cardInList:
                 info = OrderUpCardInfo()
                 info.order_sn=order_sn
-                info.card_no=card["cardId"]
+                info.card_no=card["cardId"].strip()
                 info.card_value=card["cardVal"]
                 info.card_balance=card["balance"]
                 info.card_attr=1
@@ -151,7 +151,7 @@ def update(request):
             for card in cardOutList:
                 info = OrderUpCardInfo()
                 info.order_sn = order_sn
-                info.card_no = card["cardId"]
+                info.card_no = card["cardId"].strip()
                 info.card_value = card["cardVal"]
                 info.card_balance = card["balance"]
                 info.card_attr =2

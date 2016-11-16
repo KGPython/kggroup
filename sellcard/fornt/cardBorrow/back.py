@@ -22,7 +22,7 @@ def query(request):
     shopcode = request.session.get('s_shopcode','')
 
     cardsStr = request.POST.get('cards','')
-    borrowDepartCode = request.POST.get('borrowDepartCode','')
+    borrowDepartCode = (request.POST.get('borrowDepartCode','')).strip()
     cards = json.loads(cardsStr)
     listTotal = []
     conn = mth.getMssqlConn()

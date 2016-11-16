@@ -69,7 +69,7 @@ def saveOrder(request):
             for card in cardList:
                 orderInfo = OrderInfo()
                 orderInfo.order_id = order_sn
-                orderInfo.card_id = card['cardId']
+                orderInfo.card_id = card['cardId'].strip()
                 orderInfo.card_balance = float(card['cardVal'])
                 orderInfo.card_action = '0'
                 orderInfo.card_attr = '1'
@@ -77,7 +77,7 @@ def saveOrder(request):
             for Ycard in YcardList:
                 YorderInfo = OrderInfo()
                 YorderInfo.order_id = order_sn
-                YorderInfo.card_id = Ycard['cardId']
+                YorderInfo.card_id = Ycard['cardId'].strip()
                 YorderInfo.card_balance = float(Ycard['cardVal'])
                 YorderInfo.card_action = '0'
                 YorderInfo.card_attr = '2'

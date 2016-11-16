@@ -41,7 +41,7 @@ def saveOrder(request):
             for card in cardList:
                 orderInfo = OrderInfo()
                 orderInfo.order_id = order_sn
-                orderInfo.card_id = card['cardId']
+                orderInfo.card_id = card['cardId'].strip()
                 orderInfo.card_balance = float(card['cardVal'])
                 orderInfo.card_action = '0'
                 orderInfo.card_attr = '2'

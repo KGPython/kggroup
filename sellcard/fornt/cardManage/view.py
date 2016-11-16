@@ -17,7 +17,7 @@ def cardInStore(request):
         res={}
         conn = m.getMssqlConn()
         cur = conn.cursor()
-        sheetid = request.POST.get('orderSn','')
+        sheetid = (request.POST.get('orderSn','')).strip()
         findSheetCode = "SELECT note FROM batchsalepaytype WHERE SheetID ='"+sheetid+"'"
         cur.execute(findSheetCode)
         shopDict  = cur.fetchone()

@@ -28,10 +28,10 @@ def save(request):
     totalVal = request.POST.get('totalVal',0.00)
 
     #借卡人信息
-    borrowDepart = request.POST.get('borrowDepart','')
-    borrowName = request.POST.get('borrowName','')
-    borrowDepartCode = request.POST.get('borrowDepartCode','')
-    borrowPhone = request.POST.get('borrowPhone','')
+    borrowDepart = (request.POST.get('borrowDepart','')).strip()
+    borrowName = (request.POST.get('borrowName','')).strip()
+    borrowDepartCode = (request.POST.get('borrowDepartCode','')).strip()
+    borrowPhone = (request.POST.get('borrowPhone','')).strip()
 
     order_sn = ''
     try:

@@ -64,8 +64,8 @@ def save(request):
         hjsList = hjsStr.split(',')
 
     #买卡人信息
-    buyerName = request.POST.get('buyerName','')
-    buyerPhone = request.POST.get('buyerPhone','')
+    buyerName = (request.POST.get('buyerName','')).strip()
+    buyerPhone = (request.POST.get('buyerPhone','')).strip()
 
     order_sn = ''
     try:
@@ -76,7 +76,7 @@ def save(request):
             for cardIn in cardListIn:
                 orderInfo = OrderChangeCardInfo()
                 orderInfo.order_sn = order_sn
-                orderInfo.card_no = cardIn['cardId']
+                orderInfo.card_no = cardIn['cardId'].strip()
                 orderInfo.card_attr = '1'
                 orderInfo.card_value = cardIn['cardVal']
                 orderInfo.card_balance = cardIn['cardVal']
@@ -85,7 +85,7 @@ def save(request):
             for cardOut in cardListOut:
                 orderInfo = OrderChangeCardInfo()
                 orderInfo.order_sn = order_sn
-                orderInfo.card_no = cardOut['cardId']
+                orderInfo.card_no = cardOut['cardId'].strip()
                 orderInfo.card_attr = '0'
                 orderInfo.card_value = cardOut['cardVal']
                 orderInfo.card_balance = cardOut['cardVal']
@@ -93,7 +93,7 @@ def save(request):
             for Ycard in discList:
                 YorderInfo = OrderChangeCardInfo()
                 YorderInfo.order_sn = order_sn
-                YorderInfo.card_no = Ycard['cardId']
+                YorderInfo.card_no = Ycard['cardId'].strip()
                 YorderInfo.card_value = Ycard['cardVal']
                 YorderInfo.card_balance = Ycard['cardVal']
                 YorderInfo.card_attr = '0'

@@ -352,9 +352,9 @@ function createDiscount(cardsValTotal,rateInput) {
     var discountVal = (parseFloat(cardsValTotal)*rate/10).toString().split(".")[0]+'0';
     $('.Total #discountVal b').text(discountVal);
     if(discountVal>0){
-        $('.paysBox').show();
+        $('.discBox').show();
     }else {
-        $('.paysBox').hide();
+        $('.discBox').hide();
         $('.discountTotal #totalVal b').text(0)
     }
     return discountVal;
@@ -403,14 +403,14 @@ function setTotal(obj){
             var cardsPayVal = parseFloat(cardChangeOutTotalVal)-parseFloat(cardsInTotalVal);
             $('.Total #totalVal b').text(cardsPayVal);
             //3.2、计算优惠返点
-            var rateInput  = $('.changeCardTotal #discount input')[0];
+            var rateInput  = $('.Total #discount input')[0];
             var discountVal = createDiscount(cardsPayVal,rateInput);
             //3.3、计算订单总额
             var discBoxVal = parseFloat($('.discountTotal #totalVal b').text());
             var discPay = discBoxVal - discountVal;
             $(".Total #totalYBalance b").text(discPay);
             var orderVal = cardsPayVal + discPay;
-            $(".changeCardTotal #totalPaid b").text(orderVal);
+            $(".Total #totalPaid b").text(orderVal);
         }
 
     }else if($(cardList).hasClass('cardOut')){
@@ -439,7 +439,7 @@ function setTotal(obj){
             var cardsPayVal = parseFloat(cardsTotalVal)-parseFloat(cardChangeInTotalVal);
             $('.Total #totalVal b').text(cardsPayVal);
             //3.2、计算优惠返点
-            var rateInput  = $('.changeCardTotal #discount input')[0];
+            var rateInput  = $('.Total #discount input')[0];
             var discountVal = createDiscount(cardsPayVal,rateInput);
 
             //3.3、计算订单总额
@@ -447,7 +447,7 @@ function setTotal(obj){
             var discPay = discBoxVal - discountVal;
             $(".Total #totalYBalance b").text(discPay);
             var orderVal = cardsPayVal + discPay;
-            $(".changeCardTotal #totalPaid b").text(orderVal);
+            $(".Total #totalPaid b").text(orderVal);
 
         }
     }else{
@@ -548,7 +548,7 @@ $('.Total #discount input').blur(function(){
     //设置应付金额
     var orderVal = cardSaleTotalVal + discPay;
     $('.Total #totalPaid b').text(orderVal);
-    $('.paysBox').show();
+    $('.discBox').show();
 });
 
 /*
@@ -834,7 +834,7 @@ Array.prototype.remove = function(val) {
 // 更换卡
 function saveCardChangeOrder(url){
     //入卡列表
-    var cardListIn = getCardList($('#ListIn'),'2');
+    var cardListIn = getCardList($('#cardInList'),'2');
     var totalNumIn = parseInt($('.cardInTotal #totalNum b').text());// 卡张数合计
     var totalValIn = parseFloat($('.cardInTotal #totalVal b').text());//卡合计金额
     //出卡列表
@@ -1115,7 +1115,7 @@ function changeDiscountVal(cardSaleTotalVal,posVal) {
         $('.Total #discount input').val(0);
         //6、设置订单应付金额 = 售卡列表合计金额 + 优惠补差
         $('.Total #totalPaid b').text(cardSaleTotalVal);
-        $('.paysBox').hide();
+        $('.discBox').hide();
     }
 }
 

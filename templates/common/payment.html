@@ -1,0 +1,107 @@
+<div class="widget-box payment">
+    <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+        <h5>支付管理</h5>
+    </div>
+    <div class="widget-content nopadding">
+        <table class="table table-striped table-hover table-form-my">
+            <thead>
+                <tr>
+                    <th>选择</th>
+                    <th>支付方式</th>
+                    <th>支付额度</th>
+                    <th>备注</th>
+                </tr>
+            </thead>
+            <tbody class="payList">
+                <tr>
+                    <td><input id="" value="1" type="checkbox"></td>
+                    <td><input type='text' class='form-control payName' value="现金" disabled></td>
+                    <td><input type='text' class='form-control payVal'></td>
+                    <td><input type='text' class='form-control'></td>
+                </tr>
+                <tr>
+                    <td><input id="" value="2" type="checkbox"></td>
+                    <td><input type='text' class='form-control payName' value="代金卷" disabled></td>
+                    <td><input type='text' class='form-control payVal'></td>
+                    <td><input type='text' class='form-control'></td>
+                </tr>
+                <tr>
+                    <td><input id="blankId" value="" type="checkbox"></td>
+                    <td>
+                        <select name="" id="blank" class="form-control">
+                            <option value="">请选择银行打款方式</option>
+                            <option value="3">汇款</option>
+                            <option value="4">赊销</option>
+                            <option value="5">POS消费</option>
+                        </select>
+                    </td>
+                    <td><input type='text' class='form-control payVal'></td>
+                    <td><input type='text' class='form-control'></td>
+                </tr>
+                <tr>
+                    <td><input id="" value="6" type="checkbox"></td>
+                    <td><input type='text' class='form-control payName' value="移动积分" disabled></td>
+                    <td><input type='text' class='form-control payVal'></td>
+                    <td><input type='text' class='form-control'></td>
+                </tr>
+                <tr>
+                    <td><input id="parterId" value="" type="checkbox"></td>
+                    <td>
+                        <select name="" id="parter" class="form-control">
+                            <option value="">请选择三方平台名称</option>
+                            <option value="7">美团</option>
+                            <option value="8">糯米</option>
+                        </select>
+                    </td>
+                    <td><input type='text' class='form-control payVal'></td>
+                    <td><input type='text' class='form-control'></td>
+                </tr>
+                <tr>
+                    <td><input id="hjs" value="9" type="checkbox"></td>
+                    <td><input type='text' class='form-control payName' value="黄金手" disabled></td>
+                    <td>
+                        <input type='text' class='form-control payVal' id="hjsVal" value="0" disabled>
+                        <input type='hidden' id="hjsStr" value="">
+                    </td>
+                    <td><input type='text' class='form-control' id="remark-hjs" disabled></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div style="display: none; padding-right: 17px; background: rgba(0,0,0,0.5)" class="modal" id="hjsBox">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="myModalLabel">
+                           兑换码验证
+                        </h4>
+                    </div>
+                    <div class="modal-body widget-content">
+                        <table class="table table-striped table-form-my">
+                            <thead>
+                                <tr>
+                                    <th>卡号</th><th>卡密</th><th>金额</th><th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><input type="text" class='form-control changeCode'></td>
+                                    <td><input type="text" class='form-control changeCode'></td>
+                                    <td><input type="text" class='form-control hCost' disabled='disabled'></td>
+                                    <td><button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this)">删除</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" id="close">关闭
+                        </button>
+                        <button type="button" class="btn btn-primary" id="submit">
+                            提交更改
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

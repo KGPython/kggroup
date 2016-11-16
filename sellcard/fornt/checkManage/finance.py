@@ -38,7 +38,7 @@ def index(request):
 def cardType(request):
     shopCode = request.GET.get('shopcode','')
 
-    cardList = CardInventory.objects.values('card_value')\
+    cardList = CardInventory.objects.values('card_blance')\
             .filter(shop_code=shopCode,card_status='1',card_action='1',card_blance__gt='0')\
             .annotate(num=Count('card_no'),balance=Sum('card_blance'))\
             .order_by('card_blance')

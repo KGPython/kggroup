@@ -18,8 +18,8 @@ def index(request):
     end = today
     if request.method == 'POST':
         shopcode = request.session.get('s_shopcode','')
-        departName = request.POST.get('departName','')
-        departCode = request.POST.get('departCode','')
+        departName = (request.POST.get('departName','')).strip()
+        departCode = (request.POST.get('departCode','')).strip()
         state = request.POST.get('state','')
         start = request.POST.get('start','')
         end = request.POST.get('end','')

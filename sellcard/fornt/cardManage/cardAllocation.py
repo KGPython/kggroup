@@ -47,8 +47,8 @@ def allocationSave(request):
                 info.order_sn = orderSn
                 info.card_type = float(card['cardType'])
                 info.card_nums = card['subTotal']
-                info.cardno_start = card['start']
-                info.cardno_end = card['end']
+                info.cardno_start = card['start'].strip()
+                info.cardno_end = card['end'].strip()
                 info.save()
 
                 CardInventory.objects.filter(card_no__gte=card['start'],card_no__lte=card['end']).update(shop_code=shopIn)

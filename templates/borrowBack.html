@@ -44,75 +44,18 @@
                         </div>
                     </div>
                 </div>
+                <!--  退卡 号段查询表单 start  -->
                 <div class="widget-box">
                     <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
                         <h5>退卡号段</h5>
                     </div>
-                    <div id="demo" class="collapse in widget-content">
-                        <div id="cardsForm">
-                            <div class="row formline">
-                                <label for="" class="col-xs-1 formline-label">号段开始：</label>
-                                <div class="col-xs-3">
-                                    <input type="text" class="form-control" name="cardStart" id="cardStart" required value="{{ cardStart }}">
-                                </div>
-                                <label for="" class="col-xs-1 formline-label">号段结束：</label>
-                                <div class="col-xs-3">
-                                    <input type="text" class="form-control" name="cardEnd" id="cardEnd" required value="{{ cardEnd }}">
-                                </div>
-                                <div class="col-xs-1">
-                                    <button type="reset" class="btn btn-warning btn-add pull-right">添加</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row formline">
-                            <div class="col-xs-12">
-                                <button type="button" class="btn btn-info query-btn pull-right">查询</button>
-                            </div>
-                        </div>
-                    </div>
+                    {% include 'common/cardsQueryForm.html' %}
                 </div>
-                <div class="widget-box">
-                    <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
-                        <h5>异常数据</h5>
-                    </div>
-                    <div class="widget-content nopadding check-operat">
-                        <table class="table table-striped table-hover data-table table-form-my" id="anomaly">
-                            <thead>
-                                <tr>
-                                    <th>卡号</th>
-                                    <th>面值</th>
-                                    <th>余额</th>
-                                    <th>状态</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="widget-box">
-                    <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
-                        <h5>正常数据</h5>
-                    </div>
-                    <div class="widget-content nopadding check-operat" style="max-height: 200px;overflow-y: auto;">
-                        <table class="table table-striped table-hover data-table table-form-my" id="correct">
-                            <thead>
-                                <tr>
-                                    <th>卡号</th>
-                                    <th>面值</th>
-                                    <th>余额</th>
-                                    <th>状态</th>
-                                    <th>操作</th>
-                                </tr>
-                            </thead>
-                            <tbody  class="cardIn" id="ListIn"></tbody>
-                        </table>
+                <!--  退卡 号段查询表单 end  -->
 
-                    </div>
-                    <div class="widget-content nopadding cardInTotal" style="overflow: hidden">
-                        <p class="text col-xs-3" id="totalNum">卡合计数量：<b class="red">0</b>张</p>
-                        <p class="text col-xs-3" id="totalVal">卡合计金额：<b class="red">0.00</b>元</p>
-                    </div>
-                </div>
+                <!--  退卡 号段查询结果 start  -->
+                {% include 'common/cardsQueryResult.html' %}
+                <!--  退卡 号段查询结果 start  -->
                 <div class="enter-box">
                     <button class="btn btn-success pull-right" type="button" id="btn-enter">提交订单</button>
                 </div>
@@ -164,85 +107,7 @@
                 if(data.length==0){
                     alert('此卡断不存在，请核查!')
                 }
-                $('#anomaly').find('tbody').empty();
-                $('#correct').find('tbody').empty();
-                for(var i=0;i<data.length;i++){
-                    if(data[i].mode=='1' && data[i].detail==data[i].new_amount && data[i].is_borrow == '1' ){
-                        //正常数据
-                        var cols = $('#correct').find('th').length;
-                        var tr=$('<tr></tr>');
-                        for(var j=0;j<cols;j++){
-                            var td = $('<td></td>');
-                            if(j==0){
-                                var obj = $('<input class="form-control" disabled></input>');
-                                obj.val(data[i].cardno)
-                            }else if(j==1){
-                                var obj = $('<input class="form-control" disabled></input>');
-                                obj.val(data[i].new_amount)
-                            }else if(j==2){
-                                var obj = $('<input class="form-control" disabled></input>');
-                                obj.val(data[i].detail)
-                            }else if(j==3){
-                                var obj = $('<input class="form-control" disabled></input>');
-                                obj.val('已激活');
-                            }else if(j==4){
-                                var obj = $('<button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this)">删除</button>');
-                            }
-                            td.append(obj);
-                            tr.append(td);
-                        }
-                        $('#correct').find('tbody').append(tr);
-
-                    }
-                    else{
-                        var cols = $('#anomaly').find('th').length;
-                        var tr=$('<tr></tr>');
-                        for(var j=0;j<cols;j++){
-                            var td = $('<td></td>');
-                            if(j==0){
-                                var obj = $('<input class="form-control" disabled></input>');
-                                obj.val(data[i].cardno)
-                            }else if(j==1){
-                                var obj = $('<input class="form-control" disabled></input>');
-                                obj.val(data[i].new_amount)
-                            }else if(j==2){
-                                var obj = $('<input class="form-control" disabled></input>');
-                                obj.val(data[i].detail)
-                            }else if(j==3){
-                                var obj = $('<input class="form-control red" disabled ></input>');
-                                if(data[i].mode=='9'){
-                                    obj.val('未激活');
-                                }else if(data[i].mode=='2'){
-                                    obj.val('未到账款');
-                                }else if(data[i].mode=='r'){
-                                    obj.val('已回收');
-                                }else if(data[i].mode=='m'){
-                                    obj.val('一般挂失');
-                                }else if(data[i].mode=='l'){
-                                    obj.val('严重挂失');
-                                }else if(data[i].mode=='f'){
-                                    obj.val('已冻结');
-                                }else if(data[i].mode=='e'){
-                                    obj.val('已换卡');
-                                }else if(data[i].mode=='q'){
-                                    obj.val('退卡');
-                                }else if(data[i].mode=='-1'){
-                                    obj.val('不存在');
-                                }
-                                if(data[i].is_borrow=='0'&&data[i].mode=='1'){
-                                    obj.val('已激活，非借卡');
-                                }
-                            }else if(j==4){
-                                var obj = $('<button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this)">删除</button>');
-                            }
-                            td.append(obj);
-                            tr.append(td);
-                        }
-                        $('#anomaly').find('tbody').append(tr);
-                    }
-{#                    setTotal($('#correct').find('tbody'),'1');#}
-                    setTotal($('#correct').find('tbody'));
-                }
+                showData(data);
             },
             error:function(){
 
@@ -250,7 +115,87 @@
         })
     });
 
+    function showData(data) {
+        $('#anomaly').find('tbody').empty();
+        $('#correct').find('tbody').empty();
+        for(var i=0;i<data.length;i++){
+            if(data[i].mode=='1' && data[i].detail==data[i].new_amount && data[i].is_borrow == '1' ){
+                //正常数据
+                var cols = $('#correct').find('th').length;
+                var tr=$('<tr></tr>');
+                for(var j=0;j<cols;j++){
+                    var td = $('<td></td>');
+                    if(j==0){
+                        var obj = $('<input class="form-control" disabled></input>');
+                        obj.val(data[i].cardno)
+                    }else if(j==1){
+                        var obj = $('<input class="form-control" disabled></input>');
+                        obj.val(data[i].new_amount)
+                    }else if(j==2){
+                        var obj = $('<input class="form-control" disabled></input>');
+                        obj.val(data[i].detail)
+                    }else if(j==3){
+                        var obj = $('<input class="form-control" disabled></input>');
+                        obj.val('已激活');
+                    }else if(j==4){
+                        var obj = $('<button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this)">删除</button>');
+                    }
+                    td.append(obj);
+                    tr.append(td);
+                }
+                $('#correct').find('tbody').append(tr);
 
+            }
+            else{
+                var cols = $('#anomaly').find('th').length;
+                var tr=$('<tr></tr>');
+                for(var j=0;j<cols;j++){
+                    var td = $('<td></td>');
+                    if(j==0){
+                        var obj = $('<input class="form-control" disabled></input>');
+                        obj.val(data[i].cardno)
+                    }else if(j==1){
+                        var obj = $('<input class="form-control" disabled></input>');
+                        obj.val(data[i].new_amount)
+                    }else if(j==2){
+                        var obj = $('<input class="form-control" disabled></input>');
+                        obj.val(data[i].detail)
+                    }else if(j==3){
+                        var obj = $('<input class="form-control red" disabled ></input>');
+                        if(data[i].mode=='9'){
+                            obj.val('未激活');
+                        }else if(data[i].mode=='2'){
+                            obj.val('未到账款');
+                        }else if(data[i].mode=='r'){
+                            obj.val('已回收');
+                        }else if(data[i].mode=='m'){
+                            obj.val('一般挂失');
+                        }else if(data[i].mode=='l'){
+                            obj.val('严重挂失');
+                        }else if(data[i].mode=='f'){
+                            obj.val('已冻结');
+                        }else if(data[i].mode=='e'){
+                            obj.val('已换卡');
+                        }else if(data[i].mode=='q'){
+                            obj.val('退卡');
+                        }else if(data[i].mode=='-1'){
+                            obj.val('不存在');
+                        }
+                        if(data[i].is_borrow=='0'&&data[i].mode=='1'){
+                            obj.val('已激活，非借卡');
+                        }
+                    }else if(j==4){
+                        var obj = $('<button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this)">删除</button>');
+                    }
+                    td.append(obj);
+                    tr.append(td);
+                }
+                $('#anomaly').find('tbody').append(tr);
+            }
+{#                    setTotal($('#correct').find('tbody'),'1');#}
+            setTotal($('#correct').find('tbody'));
+        }
+    }
 
     $(document).on('click','#btn-enter',function(){
         var url = "{% url 'borrowBackSave' %}";
@@ -260,9 +205,9 @@
 <script>
     function cardBack(url){
         //售卡列表
-        var cardList = getCardList($('#ListIn'),'2');
+        var cardList = getCardList($('#cardList'),'2');
         if(cardList.length==0){
-            alert('还未添加售卡信息，请核对后再尝试提交！');
+            alert('退卡列表为空，请核对后再尝试提交！');
             return false;
         }
         var data = { 'cardStr':JSON.stringify(cardList)};

@@ -268,7 +268,7 @@ class OrderChangeCardPayment(models.Model):
 
 class OrderInfo(models.Model):
     order_id = models.CharField(max_length=20)
-    card_id = models.IntegerField()
+    card_id = models.CharField(max_length=32)
     card_balance = models.DecimalField(max_digits=11, decimal_places=2)
     card_action = models.CharField(max_length=1)
     card_attr = models.CharField(max_length=1)
