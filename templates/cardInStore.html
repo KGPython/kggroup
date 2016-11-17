@@ -63,6 +63,7 @@
 
     $('.enter-btn').click(function(){
         var orderSn = $('#orderSn').val();
+        $(this).attr('disabled',true);
         if(!orderSn){
             alert('单号不能为空');
             return false;
