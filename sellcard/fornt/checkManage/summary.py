@@ -50,7 +50,7 @@ def cardSale(request):
     if shop:
         whereStr += ' and ord.shop_code = "'+shop+'"'
 
-    sqlInfo = 'select ord.shop_code,info.card_balance, count(*) as num from order_info info,orders ord ' \
+    sqlInfo = 'select ord.shop_code,info.card_balance, count(*) as num from order_info as info,orders as ord ' \
               'where '+ whereStr+' group by ord.shop_code,info.card_balance'
     cur = conn.cursor()
     cur.execute(sqlInfo)

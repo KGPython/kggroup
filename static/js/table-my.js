@@ -848,21 +848,16 @@ function saveCardChangeOrder(url){
     var discPay = parseFloat($('.Total #totalYBalance b').text());
     var cardsOutVal = parseFloat($('.Total #totalVal b').text());
     var disRate =  (parseFloat($('.Total #discount input').val()).toFixed(2))/100;
-
     var discCode = $('.Total #disCode input').val();
-    //优惠列表信息
-    var discCardList = [];
-    var discCardsVal = 0;
-    var discCash = 0;
     //支付列表
     var payList = getPayList($('.payList'));
     var hjsStr = $('.payList #remark-hjs').val();
 
-    if(discVal>0){
-        discCardList = getCardList($('#YcardList'),'1');
-        discCardsVal = parseFloat($('.discountTotal #totalVal b').text());
-        discCash = parseFloat($('.discountTotal #Ycash').val());
-    }
+    //优惠列表信息
+    var discCardList = getCardList($('#YcardList'),'1');
+    var discCardsVal = parseFloat($('.discountTotal #totalVal b').text());
+    var discCash = parseFloat($('.discountTotal #Ycash').val());
+
     //买卡人信息
     var buyerName = $('#buyerName').val();
     var buyerPhone = $('#buyerPhone').val();

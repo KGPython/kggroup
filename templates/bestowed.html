@@ -119,37 +119,17 @@
         var buyerPhone = $('#buyerPhone').val();
         var buyerCompany = $('#buyerCompany').val();
 
-        $.ajax({
-            url:"{% url 'bestowedSave' %}",
-            method:'post',
-            dataType:'json',
-            data:{
-                'cardsStr':JSON.stringify(cardList),
-                'totalNum':totalNum,
-                'totalVal':totalVal,
-                'remarks':remarks,
-                'buyerName':buyerName,
-                'buyerPhone':buyerPhone,
-                'buyerCompany':buyerCompany
-            },
-            success:function(data){
-                if(data.msg==1){
-                    alert('订单提交成功');
-                    window.location.reload();
-                    $('input[type=text]').val('');
-                    window.location.href=data.urlRedirect
-                }else if(data.msg==0){
-                    if(data.msg_err){
-                        alert(data.msg_err);
-                    }else{
-                        alert('操作失败');
-                    }
-                }
-            },
-            error:function(XMLHttpRequest, textStatus, errorThrown){
-                alert('订单提交失败,失败原因：'+errorThrown);
-            }
-        })
+        var data ={
+            'cardsStr':JSON.stringify(cardList),
+            'totalNum':totalNum,
+            'totalVal':totalVal,
+            'remarks':remarks,
+            'buyerName':buyerName,
+            'buyerPhone':buyerPhone,
+            'buyerCompany':buyerCompany
+        };
+        var url = "{% url 'bestowedSave' %}";
+        doAjaxSave(url,data)
     })
 </script>
 </body>

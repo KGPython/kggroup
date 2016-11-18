@@ -84,7 +84,7 @@
 
                 <div class="widget-box">
                     <div class="widget-content nopadding" style="overflow: hidden">
-                        <h4 class="text-center">{{ shop | transShopCode | default:'各门店' }}销售汇总</h4>
+                        <h4 class="text-center">{{ shop | transShopCode | default:'各门店' }}销售汇总(不包含补卡和换卡)</h4>
                         <h5 class="text-right">
                             <span>销售合计：{{ dataTotal.saleTotal | default:0 }}元</span>
                             <span style="margin-right: 20px;margin-left: 20px;">优惠合计：{{ dataTotal.discTotal | default:0 }}元</span>

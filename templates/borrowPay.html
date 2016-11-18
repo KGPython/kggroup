@@ -230,7 +230,7 @@
     });
 </script>
 <script>
-    var state = "{{ state |default:'' | safe}}";
+    var state = "{{ state | default:'' | safe}}";
     $("#state").val(state);
     $("#query").click(function(){
         var start = $("#start").val();
@@ -246,8 +246,8 @@
     $(document).on('click','#btn-enter',function(){
         var action_type = '3';//借卡结算
         var url = "{% url 'borrowPaySave' %}";
-        var cardList = {{ listNoBack | safe }};
-        var orderSnList = {{ listOrderSn | safe }}
+        var cardList = {{ listNoBack | default: '' | safe }};
+        var orderSnList = {{ listOrderSn | default: '' | safe}}
         saveCardSaleOrder(action_type,url,cardList,orderSnList);
     })
 </script>

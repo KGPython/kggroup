@@ -8,6 +8,9 @@
     <title>销售明细查询</title>
     <link rel="stylesheet" href="{{ static }}/css/bootstrap-datetimepicker.min.css">
 </head>
+<style>
+    .layout { padding-left: 10px;}
+</style>
 <body>
 {% include 'common/head.html' %}
 
@@ -139,7 +142,10 @@
                                             <td>{{ row.paid_amount }}</td>
                                             <td>{{ row.disc_amount }}</td>
                                             <td>{{ row.add_time }}</td>
-                                            <td><a href="{% url 'orderDetail' %}?orderSn={{ row.order_sn }}">查看</a></td>
+                                            <td>
+                                                <a href="{% url 'orderDetail' %}?actionType={{ actionType }}&orderSn={{ row.order_sn }}">查看</a>
+                                                <a href="{% url 'cardsSaleOrderInfo' %}?orderSn={{ row.order_sn }}" class="layout">打印凭据</a>
+                                            </td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>
@@ -155,6 +161,7 @@
                                         <th>补卡人电话</th>
                                         <th>领卡日期</th>
                                         <th>操作</th>
+                                        <th>打印订单</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -168,7 +175,7 @@
                                             <td>{{ row.user_name }}</td>
                                             <td>{{ row.user_phone }}</td>
                                             <td>{{ row.modified_time | date:'Y-m-d'}}</td>
-                                            <td><a href="{% url 'orderDetail' %}?orderSn={{ row.order_sn }}">查看</a></td>
+                                            <td><a href="{% url 'orderDetail' %}?actionType={{ actionType }}&orderSn={{ row.order_sn }}">查看</a></td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>
@@ -176,7 +183,7 @@
                                 <thead>
                                     <tr>
                                         <th>换卡门店</th>
-                                        <th>换卡卡部门</th>
+                                        <th>换卡部门</th>
                                         <th>操作人</th>
                                         <th>换卡单编号</th>
                                         <th>入库总金额</th>
@@ -195,7 +202,7 @@
                                             <td>{{ row.total_in_price }}</td>
                                             <td>{{ row.total_out_price }}</td>
                                             <td>{{ row.add_time | date:'Y-m-d' }}</td>
-                                            <td><a href="{% url 'orderDetail' %}?orderSn={{ row.order_sn }}">查看</a></td>
+                                            <td><a href="{% url 'orderDetail' %}?actionType={{ actionType }}&orderSn={{ row.order_sn }}">查看</a></td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>

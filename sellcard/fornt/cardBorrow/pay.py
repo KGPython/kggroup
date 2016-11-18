@@ -231,7 +231,6 @@ def save(request):
             ActionLog.objects.create(action='借卡-结算',u_name=request.session.get('s_uname'),cards_out=cardStr+','+YcardStr,add_time=datetime.datetime.now())
     except Exception as e:
         res["msg"] = 0
-        res["msg_err"] = e.value
-        ActionLog.objects.create(action='借卡-结算',u_name=request.session.get('s_uname'),cards_out=cardStr+','+YcardStr,add_time=datetime.datetime.now(),err_msg=e.value)
+        ActionLog.objects.create(action='借卡-结算',u_name=request.session.get('s_uname'),cards_out=cardStr+','+YcardStr,add_time=datetime.datetime.now(),err_msg=e)
 
     return HttpResponse(json.dumps(res))
