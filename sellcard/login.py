@@ -37,7 +37,11 @@ def login(request):
             password = mtu.md5(password)
             shop_code=user.shop_code
             rates = DiscountRate.objects.values('val_min','val_max','discount_rate').filter(shopcode=shop_code)
-            discLevel = Shops.objects.values('disc_level').filter(shop_code=shop_code)[0]['disc_level']
+
+            discLevelList = Shops.objects.values('disc_level').filter(shop_code=shop_code)
+            discLevel = ''
+            if len(discLevelList)>0:
+                discLevel = discLevelList[0]['disc_level']
             rateList=[]
             for rate in rates:
                 item={}
