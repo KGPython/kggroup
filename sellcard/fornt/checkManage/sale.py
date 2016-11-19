@@ -35,33 +35,66 @@ def index(request):
         changeTotal = 0.00
         fillTotal = 0.00
         discTotal = 0.00
-
+        inSubTotal = 0.00
         dataList = []
+        shops = base.findShop()
 
-        for i in range(0,len(saleList)):
+        for i in range(0,len(shops)):
             item = {}
-            #纵向累加所有门店售卡合计
-            saleTotal += float(saleList[i]['sale'])
-            #横向各门店售卡汇总赋值
-            item['sale'] = float(saleList[i]['sale'])
+            item['shop_code'] = shops[i]['shop_code']
+            for sale in saleList:
+                if sale['shop_code']==item['shop_code']:
+                    #横向各门店售卡汇总赋值
+                    item['sale'] = float(sale['sale'])
 
-            # 纵向累加所有门店优惠合计
-            discTotal +=float(saleList[i]['disc'])
-            # 横向累加各门店售卡优惠合计并赋值
-            if saleList[i]['disc']==0:
-                item['disc'] = float(saleList[i]['disc'])
-            else:
-                item['disc'] += float(saleList[i]['disc'])
+                    # 横向累加各门店入账合计并赋值
+                    if 'inSub' in item:
+                        item['inSub'] += float(sale['sale'])
+                    else:
+                        item['inSub'] = float(sale['sale'])
+
+                    # 横向累加各门店售卡优惠合计并赋值
+                    if 'disc' in item:
+                        item['disc'] += float(sale['disc'])
+                    else:
+                        item['disc'] = float(sale['disc'])
 
             for fill in fillList:
-                if saleList[i]['shop_code'] == fill['shop_code']:
+                if item['shop_code'] == fill['shop_code']:
                     item['fill'] = float(fill['fill'])
-                    fillTotal += fill['fill']
+
+                    if 'inSub' in item:
+                        item['inSub'] += float(fill['fill'])
+                    else:
+                        item['inSub'] = float(fill['fill'])
             for change in changeList:
-                if saleList[i]['shop_code'] == change['shop_code']:
+                if item['shop_code'] == change['shop_code']:
                     item['change'] = float(change['change'])
-                    changeTotal += change['change']
+
+                    if 'inSub' in item:
+                        item['inSub'] += float(change['change'])
+                    else:
+                        item['inSub'] = float(change['change'])
+
+                    if 'disc' in item:
+                        item['disc'] += float(change['disc'])
+                    else:
+                        item['disc'] = float(change['disc'])
+
+            if 'sale' in item:
+                saleTotal += float(item['sale'])
+            if 'change' in item:
+                changeTotal += float(item['change'])
+            if 'fill' in item:
+                fillTotal += float(item['fill'])
+            if 'disc' in item:
+                discTotal += float(item['disc'])
+            if 'inSub' in item:
+                inSubTotal += float(item['inSub'])
+
             dataList.append(item)
+
+        # print(dataList)
                 # saleList[i]['totalIn'] = float(saleList[i]['diff_value'])+float(saleList[i]['sale'])
 
 

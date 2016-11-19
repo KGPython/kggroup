@@ -72,24 +72,24 @@
                                 </tr>
                             </thead>
                             <tbody class="cardIn" id="nopayList">
-                                {% for row in saleList %}
+                                {% for row in dataList %}
                                     <tr>
                                         <td>{{ row.shop_code | transShopCode }}</td>
                                         <td>{{ row.sale |default:0 }}</td>
                                         <td>{{ row.change |default:0 }}</td>
                                         <td>{{ row.fill |default:0 }}</td>
                                         <td>{{ row.disc |default:0}}</td>
-                                        <td>{{ row.totalIn | floatformat:2 }}</td>
-                                        <td>{{ row.totalIn | divide:totalInSum }}</td>
+                                        <td>{{ row.inSub | floatformat:2 }}</td>
+                                        <td>{{ row.inSub | divide:inSubTotal }}</td>
                                     </tr>
                                 {% endfor %}
                             <tr>
                                 <td>合计</td>
                                 <td>{{ saleTotal }}</td>
-                                <td>{{ diffTotal }}</td>
+                                <td>{{ changeTotal }}</td>
+                                <td>{{ fillTotal }}</td>
                                 <td>{{ discTotal }}</td>
-                                <td>{{ totalInSum }}</td>
-                                <td></td>
+                                <td>{{ inSubTotal }}</td>
                                 <td></td>
                             </tr>
                             </tbody>
