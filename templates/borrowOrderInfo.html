@@ -10,30 +10,76 @@
 <body>
 {% include 'common/head.html' %}
 <link rel="stylesheet" href="{{ static }}/css/orderinfoPrint.css" media="print">
-<style media="print">
-    .title{
-        height: 100px;
-        background:#fff url('{{ static }}/images/logo.jpg') 10px 0px no-repeat;
-        background-size: 80px;
-    }
-    .info-order{padding-top:20px;margin-right: 10px;}
-    .info-order p{line-height: 16px;}
-    .title h5{float: left;width: 100px;margin-top: 80px;text-align: center}
-</style>
 <style media="screen">
-    .widget-content{overflow: hidden;width: 100%;background: #fff}
-    .title{
+    .title h5 {
+        width: 100%;
+        text-align: center;
+        font-weight: normal;
+        margin-bottom: 10px;
+        padding-bottom: 5px;
+        border-bottom: 1px dashed black;
+    }
+</style>
+<style media="print">
+    .widget-content {
+        overflow: hidden;
+        width: 100%;
+        background: #fff
+    }
+
+    .title {
         height: 100px;
-        background:#fff url('{{ static }}/images/logo.jpg') 10px 0px no-repeat;
+        background: #fff url('{{ static }}/images/logo.jpg') 10px 0px no-repeat;
         background-size: 80px;
     }
-    .title h5{float: left;width: 100px;margin-top: 90px;text-align: center}
-    .title-ifno{margin-left: 120px;}
-    .info-order{float: left;width: 15%;}
-    .info-order p{font-size: 10px;line-height: 12px;}
-    .info-total p{float: left;width: 25%;padding: 2px;margin: 0}
-    .btnBox{padding: 10px;overflow: hidden}
-    .btnBox .btn-success{margin-left: 15px;}
+
+    .title h5 {
+        float: left;
+        width: 100px;
+        margin-top: 90px;
+        text-align: center
+    }
+
+    .title-ifno {
+        margin-left: 0;
+    }
+
+    .info-order{
+        float: left;
+        margin-right: 20px;
+    }
+    .info-order p {
+        font-size: 12px;
+        line-height: 12px;
+    }
+
+    .info-tel {
+        float: left;
+        width: 85%
+    }
+
+    .info-tel p {
+        float: left;
+        margin-left: 10px;
+        font-size: 10px;
+        line-height: 12px;
+    }
+
+    .info-total p {
+        float: left;
+        width: 25%;
+        padding: 2px;
+        margin: 0;
+    }
+
+    .btnBox {
+        padding: 10px;
+        overflow: hidden
+    }
+
+    .btnBox .btn-success {
+        margin-left: 15px;
+    }
 </style>
 
 <!--containt-part-->
@@ -54,7 +100,7 @@
         </p>
         <div class="widget-content nopadding">
             <div class="title">
-                <h5>借卡凭证</h5>
+                <h5>宽广超市借卡凭证</h5>
                 <div class="title-ifno">
                     <div class="info-order">
                         <p>借卡日期 :{{ today |date:'Y年m月d日' }}</p>
@@ -79,7 +125,11 @@
             <div class="widget-content fixedBox PtableBox">
                 <table class="table table-hover order-table">
                     <thead>
-                        <tr><th>卡面值</th><th>张数</th><th>小计（单位 :元）</th></tr>
+                        <tr>
+                            <th>卡面值</th>
+                            <th>张数</th>
+                            <th>小计（单位 :元）</th>
+                        </tr>
                     </thead>
                     <tbody>
                         {% for info in infoList %}
@@ -98,11 +148,6 @@
                     <p class="remark">备注 : </p>
                 </div>
             </div>
-
-        </div>
-
-        <div class="row formline tel">
-
         </div>
     </div>
 </div>
