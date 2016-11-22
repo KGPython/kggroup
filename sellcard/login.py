@@ -60,12 +60,9 @@ def login(request):
                 request.session["s_uid"] = user.id
                 request.session["s_rates"] = rateList
                 request.session["disc_level"] = discLevel
-                if user.role_id in ["2","3","5"]:
-                    #售卡前台
-                    response_data['homeurl'] = cts.URL_HOME[1]
-                else:
-                    # 售卡后台
-                    response_data['homeurl'] = cts.URL_HOME[0]
+
+                #售卡前台
+                response_data['homeurl'] = cts.URL_HOME[0]
 
                 request.session["homeurl"] = response_data['homeurl']
 

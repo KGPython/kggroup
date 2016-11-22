@@ -44,7 +44,7 @@
                                 <td>{{ row.card_blance}} 元</td>
                                 <td>{{ row.balance }}</td>
                                 <td>{{ row.num }}</td>
-                                <td><a href="{% url 'financeCardInfo' %}?cardtype={{ row.card_blance}}&shopcode={{ shopCode }}">详情</a></td>
+                                <td><a href="{% url 'stockGroupByCardNo' %}?cardtype={{ row.card_blance}}&shopcode={{ shopCode }}">详情</a></td>
                             </tr>
                         {% endfor %}
                         <tr>

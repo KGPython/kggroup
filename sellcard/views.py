@@ -33,7 +33,7 @@ def findCardType(cardTypeCode=None):
 def findPays(payId=None):
     q = Q()
     if payId:
-        q.add(Q(id=payId), Q.AND)
+        q.add(Q(id=payId,flag='0'), Q.AND)
 
     PayList = Payment.objects.values("id", "payment_name").filter(q).order_by('id')
     return PayList

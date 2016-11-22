@@ -10,6 +10,7 @@ import datetime
 from sellcard.common import Method as mtu
 from django.http import HttpResponse
 from sellcard.common.model import MyError
+
 def index(reauest):
     return render(reauest, 'bestowed.html',locals())
 
@@ -80,7 +81,8 @@ def saveOrder(request):
                 raise MyError('ERP数据库卡状态更新失败')
 
             res["msg"] = 1
-            res["urlRedirect"] = '/kg/sellcard/cardsale/orderInfo/?orderSn='+order_sn
+
+            res["urlRedirect"] ='/kg/sellcard/fornt/cardsale/orderInfo/?orderSn='+order_sn
             ActionLog.objects.create(action='实物团购返点',u_name=request.session.get('s_uname'),cards_out=cardStr,add_time=datetime.datetime.now())
 
     except Exception as e:
