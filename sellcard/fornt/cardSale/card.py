@@ -138,7 +138,9 @@ def saveOrder(request):
                 raise MyError('ERP数据库卡状态更新失败')
 
             res["msg"] = 1
-            res["urlRedirect"] = '/kg/sellcard/cardsale/orderInfo/?orderSn='+order_sn
+            res["urlRedirect"] ='/kg/sellcard/fornt/cardsale/orderInfo/?orderSn='+order_sn
+
+
             ActionLog.objects.create(url=path,u_name=request.session.get('s_uname'),cards_out=cardStr+','+YcardStr,add_time=datetime.datetime.now())
     except Exception as e:
         res["msg_err"] = e

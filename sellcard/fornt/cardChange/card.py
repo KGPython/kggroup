@@ -178,7 +178,7 @@ def save(request):
                     raise MyError('折扣授权码状态更新失败')
 
             res["msg"] = 1
-            # res["urlRedirect"] = '/kg/sellcard/cardsale/orderInfo/?orderSn=' + order_sn
+            # res["urlRedirect"] ='/kg/sellcard/fornt/cardsale/orderInfo/?orderSn=' + order_sn
             ActionLog.objects.create(action='换卡-单卡',u_name=request.session.get('s_uname'),cards_in=cardListInStr,cards_out=cardListOutStr,add_time=datetime.datetime.now())
     except Exception as e:
         res["msg"] = 0
