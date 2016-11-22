@@ -1,6 +1,10 @@
-.table > thead:first-child > tr:first-child > th {
+.table > thead> tr > th {
     border-left: 1px solid #ccc;
     border-right: 1px solid #ccc;
+    border-top: 1px solid #ccc;
+	vertical-align:middle;
+}
+.table > thead:first-child > tr:first-child > th {
     border-top: 1px solid #ccc;
 }
 .widget-content .table > tbody > tr > td,.table-form-my > tbody > tr > td{

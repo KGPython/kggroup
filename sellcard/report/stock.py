@@ -47,7 +47,7 @@ def cardType(request):
     for row in cardList:
         totalBalance += float(row['balance'])
         totalNum +=row['num']
-    return render(request,'financeCardTypel.html',locals())
+    return render(request, 'report/stockGroupByCardType.html', locals())
 
 
 @csrf_exempt

@@ -1082,12 +1082,16 @@ function getPayList(obj){
     return list;
 }
 
+function changeDiscValByThirdPart() {
+
+}
+
 /*
 * 计算返点金额
 * cardSaleTotalVal：cardSaleTotalVal：售卡总金额
 * posVal：pos刷卡金额
 * */
-function changeDiscountVal(cardSaleTotalVal,posVal) {
+function changeDiscValByPos(cardSaleTotalVal,posVal) {
     if(cardSaleTotalVal-posVal>=rates[0].val_min){
         //4、计算销售返点
         var rateInput  = $('.Total #discount input')[0];
@@ -1127,20 +1131,33 @@ $(document).on('blur','.payList tr',function(){
         if(flag && payVal){
             if($(palyList[i]).find('td').eq(1).find('select')[0]){
                 payName = $(palyList[i]).find('td').eq(1).find('select option:selected').text();
-                //处理pos刷卡与现金的返点差异问题
-                //规则：1、订单超过最小返点金额+1000，则现金与pos的返点无差异；
-                //      2、订单金额在最小返点金额和最小返点金额+1000之间，返点区分现金与pos
-                //1、判断订单金额
+
+
+                //1、判断支付方式
+                var payId = $(palyList[i]).find('td').eq(1).find('select option:selected').val();
                 var cardSaleTotalVal = parseFloat($(".Total #totalVal b").text());
-                //如果售卡金额合计在各门店：最小返点金额和最小返点金额+1000之间，则进行区别
-                if(cardSaleTotalVal<(rates[0].val_min+1000) && cardSaleTotalVal>=rates[0].val_min && disc_level=='1'){
-                    //2、判断支付方式
-                    var payId = $(palyList[i]).find('td').eq(1).find('select option:selected').val();
-                    if(payId == 5){
-                        var posVal =  parseFloat($(palyList[i]).find('td').eq(2).find('input').val());
-                        changeDiscountVal(cardSaleTotalVal,posVal)
+                //代金券
+                if(payId==2){
+
+
+                }
+                if(payId == 5){
+                    //处理pos刷卡与现金的返点差异问题
+                    //规则1：门店disc_level为1，则区分
+                    //规则2：订单超过最小返点金额+1000，则不区分；
+                    //规则3：订单金额在最小返点金额和最小返点金额+1000之间，则区分
+                    if(cardSaleTotalVal<(rates[0].val_min+1000) && cardSaleTotalVal>=rates[0].val_min && disc_level=='1') {
+                        var posVal = parseFloat($(palyList[i]).find('td').eq(2).find('input').val());
+                        changeDiscValByPos(cardSaleTotalVal, posVal)
                     }
                 }
+                if(payId==6){
+
+                }
+                if(payId == 7 || payId == 8){
+                    changeDiscValByThirdPart(cardSaleTotalVal, posVal)
+                }
+
             }else{
                 payName = $(palyList[i]).find('td').eq(1).find('input').val();
             }

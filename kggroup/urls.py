@@ -24,6 +24,6 @@ urlpatterns = [
     url(r'^js/(?P<path>.*)$', 'django.views.static.serve', {'document_root': root_path+'/static/js'}),
     url(r'^images/(?P<path>.*)$', 'django.views.static.serve', {'document_root':root_path+ '/static/images'}),
     url(r'^fonts/(?P<path>.*)$', 'django.views.static.serve', {'document_root':root_path+ '/static/fonts'}),
-    url(r'^admin/', include(admin.site.urls)),
+    # url(r'^admin/', include(admin.site.urls)),
     url(r'^kg/',include("sellcard.urls"))
 ]

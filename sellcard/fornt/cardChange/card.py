@@ -16,7 +16,6 @@ def index(request):
 
 @csrf_exempt
 @transaction.atomic
-
 def save(request):
     operator = request.session.get('s_uid','')
     shopCode = request.session.get('s_shopcode','')
@@ -144,9 +143,26 @@ def save(request):
             cardsOutNum = len(cardIdOutList)
             cardsInNum = len(cardIdInList)
 
-            resCardIn = CardInventory.objects.filter(card_no__in=cardIdInList).update(card_status='1',card_action='1')
+
+            for card in cardListIn:
+                resUpdate = CardInventory.objects.filter(card_no=card['cardId']).update(card_status='1', card_action='1')
+                resSave = 0
+                if resUpdate==0:
+                    obj = CardInventory()
+                    obj.card_no = card['cardId']
+                    obj.card_value = card['cardVal']
+                    obj.card_status = '1'
+                    obj.card_action = '1'
+                    obj.card_addtime = datetime.datetime.now()
+                    obj.shop_code = shopCode
+                    obj.card_blance = card['cardVal']
+                    obj.save()#关注返回值
+                    resSave =obj.id
+                if (resUpdate==0 and resSave==0):
+                        raise MyError(card['cardId']+'状态更新失败')
+
             resCardOut = CardInventory.objects.filter(card_no__in=cardIdOutList).update(card_status='2',card_action='0')
-            if resCardIn != cardsInNum or resCardOut != cardsOutNum:
+            if resCardOut != cardsOutNum:
                 raise MyError('系统数据库卡状态更新失败')
 
             resErpOut = mth.updateCard(cardIdOutList,'1')

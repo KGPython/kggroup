@@ -141,9 +141,9 @@ def saveOrder(request):
             res["urlRedirect"] = '/kg/sellcard/cardsale/orderInfo/?orderSn='+order_sn
             ActionLog.objects.create(url=path,u_name=request.session.get('s_uname'),cards_out=cardStr+','+YcardStr,add_time=datetime.datetime.now())
     except Exception as e:
-        res["msg_err"] = e.value
+        res["msg_err"] = e
         res["msg"] = 0
-        ActionLog.objects.create(url=path,u_name=request.session.get('s_uname'),cards_out=cardStr+','+YcardStr,add_time=datetime.datetime.now(),err_msg=e.value)
+        ActionLog.objects.create(url=path,u_name=request.session.get('s_uname'),cards_out=cardStr+','+YcardStr,add_time=datetime.datetime.now(),err_msg=e)
 
     return HttpResponse(json.dumps(res))
 
