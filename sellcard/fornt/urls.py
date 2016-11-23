@@ -78,7 +78,7 @@ urlpatterns = [
     #兑换码校验
     url(r'^fornt/changcodecheck/', 'sellcard.common.Method.changeCodeCheck',name='changeCodeCheck'),
     #更新赊销状态
-    url(r'^sellcard/nopay/update', 'sellcard.common.Method.upNoPayStatus',name='upNoPayStatus'),
+    url(r'^fornt/nopay/update', 'sellcard.common.Method.upNoPayStatus',name='upNoPayStatus'),
     #赊销管理
-    url(r'^sellcard/nopay/$', 'sellcard.fornt.cardSale.nopay.index',name='nopay'),
+    url(r'^fornt/nopay/$', 'sellcard.fornt.cardSale.nopay.index',name='nopay'),
 ]

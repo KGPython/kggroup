@@ -61,7 +61,6 @@
                 <div class="widget-box">
                     <h3 class="text-center">集团销售汇总</h3>
                     <h5 class="text-right">
-                        <span style="margin-right: 30px">备注：本表只不包括赊销未到账部分。</span>
                         <span style="margin-right: 30px">金额单位：元</span>
                     </h5>
                     <div class="widget-content nopadding">
@@ -70,6 +69,8 @@
                                 <tr valign="middle">
                                     <th>门店名称</th>
                                     <th>优惠合计</th>
+                                    <th>优惠返现</th>
+                                    <th>优惠返卡</th>
                                     <th>入款合计</th>
                                     <th>现金</th>
                                     <th>代金券</th>
@@ -88,7 +89,9 @@
                                 {% for row in dataList %}
                                     <tr>
                                         <td>{{ row.shop_code | transShopCode }}</td>
-                                        <td>{{ row.disc |default:0}}</td>
+                                        <td>{{ row.disc | floatformat:2 |default:0}}</td>
+                                        <td>{{ row.disc_cash | floatformat:2 |default:0}}</td>
+                                        <td>{{ row.disc_card | floatformat:2 |default:0}}</td>
                                         <td>{{ row.inSub | floatformat:2 | default:0  }}</td>
                                         <td>{{ row.pay_1 | floatformat:2 | default:0 }}</td>
                                         <td>{{ row.pay_2 | floatformat:2 | default:0 }}</td>
@@ -104,8 +107,10 @@
                                 {% endfor %}
                             <tr>
                                 <td>合计</td>
-                                <td>{{ totalDict.discTotal }}</td>
-                                <td>{{ totalDict.inSubTotal }}</td>
+                                <td>{{ totalDict.discTotal | floatformat:2 }}</td>
+                                <td>{{ totalDict.discCashTotal | floatformat:2 }}</td>
+                                <td>{{ totalDict.discCardTotal | floatformat:2 }}</td>
+                                <td>{{ totalDict.inSubTotal | floatformat:2 }}</td>
                                 <td>{{ totalDict.total_1 | floatformat:2}}</td>
                                 <td>{{ totalDict.total_2 | floatformat:2 }}</td>
                                 <td>{{ totalDict.total_3 | floatformat:2 }}</td>
