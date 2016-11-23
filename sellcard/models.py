@@ -285,7 +285,6 @@ class OrderChangeCardInfo(models.Model):
     card_attr = models.CharField(max_length=1, blank=True, null=True)
     card_value = models.CharField(max_length=12, blank=True, null=True)
     card_balance = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
-    add_time = models.DateTimeField()
     is_disc = models.CharField(max_length=1, blank=True, null=True)
 
     class Meta:

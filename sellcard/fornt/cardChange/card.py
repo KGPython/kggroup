@@ -79,7 +79,6 @@ def save(request):
                 orderInfo.card_attr = '1'
                 orderInfo.card_value = cardIn['cardVal']
                 orderInfo.card_balance = cardIn['cardVal']
-                orderInfo.add_time = created_time
                 orderInfo.save()
             for cardOut in cardListOut:
                 orderInfo = OrderChangeCardInfo()
@@ -182,7 +181,7 @@ def save(request):
             ActionLog.objects.create(action='换卡-单卡',u_name=request.session.get('s_uname'),cards_in=cardListInStr,cards_out=cardListOutStr,add_time=datetime.datetime.now())
     except Exception as e:
         res["msg"] = 0
-        res["msg_err"] = e.value
-        ActionLog.objects.create(action='换卡-单卡',u_name=request.session.get('s_uname'),cards_in=cardListInStr,cards_out=cardListOutStr,add_time=datetime.datetime.now(),err_msg=e.value)
+        res["msg_err"] = e
+        ActionLog.objects.create(action='换卡-单卡',u_name=request.session.get('s_uname'),cards_in=cardListInStr,cards_out=cardListOutStr,add_time=datetime.datetime.now(),err_msg=e)
 
     return HttpResponse(json.dumps(res))
