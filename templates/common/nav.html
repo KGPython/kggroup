@@ -1,0 +1,48 @@
+{% load basefilter %}
+
+<!--Header-part-->
+<div id="header" class="noprint">
+  <h1><a href="#">宽广储值卡销售管理系统</a></h1>
+</div>
+<!--close-Header-part-->
+
+<!--top-Header-menu-->
+<div id="user-nav" class="noprint">
+    <ul class="nav">
+        <li class="">
+            <a title="" href="{% url 'updatePwd' %}">
+                <span class="glyphicon glyphicon-lock" aria-hidden="true"> </span>
+                <span class="text">修改密码</span>
+            </a>
+        </li>
+        <li class="">
+            <a title="" href="{% url 'logout' %}">
+                <span class="glyphicon glyphicon-share-alt" aria-hidden="true"> </span>
+                <span class="text">({{ request.session.s_uid | transUserId }})退出登录</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<!--sidebar-menu-->
+<div id="sidebar" class="noprint">
+    <a class="hidden" href="#"><span class="glyphicon glyphicon-list"> </span>系统菜单</a>
+    <ul>
+        {% for item in  request.session.s_umenu %}
+             <li class="submenu noprint">
+                 <a href="#">
+                    <span class="glyphicon {{ item.icon }}" aria-hidden="true"></span>
+                    <span>{{ item.nav_name }}</span>
+                </a>
+                {% if item.sub %}
+                     <ul>
+                        {% for itm in item.sub %}
+                            <li><a href="{{ itm.url }}">{{ itm.nav_name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+</div>
