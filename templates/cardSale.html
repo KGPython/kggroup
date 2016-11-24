@@ -1,13 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>单卡销售</title>
-</head>
-<body>
-{% include 'common/head.html' %}
+{% extends 'common/base.html' %}
+{% block title %}单卡售卡{% endblock %}
+{% block content %}
 <!--containt-part-->
 <div id="content">
     <div id="content-header">
@@ -68,12 +61,15 @@
         </div>
     </div>
 </div>
+{% endblock %}
 <!--end-containt-part-->
+
+{% block js %}
 <script>
     var rates = {{ request.session.s_rates | safe }};
     var disc_level = {{ request.session.disc_level }};
 </script>
-{% include "common/foot.html" %}
+
 <script>
     $(document).on("change",".cardId",function(){
         var cardIdStr = $(this).val();
@@ -117,5 +113,4 @@
         }
     });
 </script>
-</body>
-</html>
+{% endblock %}

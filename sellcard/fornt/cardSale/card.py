@@ -10,6 +10,8 @@ from django.db.models import Sum,Count
 from sellcard.common import Method as mth
 from sellcard.common.model import MyError
 
+
+
 def index(request):
     operator = request.session.get('s_uid','')
     roleid= request.session.get("s_roleid",'')
