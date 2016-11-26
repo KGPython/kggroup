@@ -686,7 +686,7 @@ function saveCardSaleOrder(action_type,url,cardList,orderSns){
         }
     }
     var data = {
-        csrfmiddlewaretoken: '{{ csrf_token }}',
+        csrfmiddlewaretoken: CSRF,
         'actionType':action_type,//操作类型
         'cardStr':JSON.stringify(cardList),//售卡列表
         'orderSnList':orderSnList,
@@ -757,7 +757,7 @@ function saveCardFillOrder(url){
         return false;
     }
     var data = {
-        csrfmiddlewaretoken: '{{ csrf_token }}',
+        csrfmiddlewaretoken: CSRF,
         'cardInStr':JSON.stringify(cardInList),
         'cardInTotalNum':cardInTotalNum,
         'cardInTotalVal':cardInTotalVal,
@@ -767,7 +767,6 @@ function saveCardFillOrder(url){
     };
     doAjaxSave(url,data);
 }
-
 function updateCardFillOrder(url,target_url){
     //入卡列表
     var cardOutList = getCardFillList($('#cardOutList'),"1");
@@ -798,7 +797,7 @@ function updateCardFillOrder(url,target_url){
         type:'post',
         dataType:'json',
         data:{
-            csrfmiddlewaretoken: '{{ csrf_token }}',
+            csrfmiddlewaretoken: CSRF,
             'cardOutStr':JSON.stringify(cardOutList),
             'cardOutTotalNum':cardOutTotalNum,
             'cardOutTotalVal':cardOutTotalVal,
@@ -884,7 +883,7 @@ function saveCardChangeOrder(url){
     }
     $("#btn-enter").attr('disable',true);
     var data ={
-        csrfmiddlewaretoken: '{{ csrf_token }}',
+        csrfmiddlewaretoken: CSRF,
         'cardListIn':JSON.stringify(cardListIn),
         'totalNumIn':totalNumIn,
         'totalValIn':totalValIn,

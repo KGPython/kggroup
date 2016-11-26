@@ -144,7 +144,7 @@ def save(request):
 
 
             for card in cardListIn:
-                resUpdate = CardInventory.objects.filter(card_no=card['cardId']).update(card_status='1', card_action='1')
+                resUpdate = CardInventory.objects.filter(card_no=card['cardId']).update(card_status='1', card_action='1',shop_code=shopCode)
                 resSave = 0
                 if resUpdate==0:
                     obj = CardInventory()
