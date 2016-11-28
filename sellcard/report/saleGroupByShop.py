@@ -62,13 +62,13 @@ def index(request):
 
 
     totalDict  = {'discTotal':0,'discCashTotal':0,'discCardTotal':0,'inSubTotal':0,'total_1':0,'total_2':0,'total_3':0,
-                  'total_4':0,'total_5':0,'total_6':0,'total_7':0,'total_8':0,'total_9':0,}
+                  'total_4':0,'total_5':0,'total_6':0,'total_7':0,'total_8':0,'total_9':0,'total_10':0,'total_11':0,}
     dataList = []
     shops = base.findShop()
 
     for i in range(0,len(shops)):
         item = {'shop_code':'','disc':0,'disc_cash':0,'disc_card':0,'inSub':0,'pay_1':0,'pay_2':0,'pay_3':0,
-                'pay_4':0,'pay_5':0,'pay_6':0,'pay_7':0,'pay_8':0,'pay_9':0,}
+                'pay_4':0,'pay_5':0,'pay_6':0,'pay_7':0,'pay_8':0,'pay_9':0,'pay_10':0,'pay_11':0,}
         item['shop_code'] = shops[i]['shop_code']
         for sale in salePayList:
             if sale['shop_code']==item['shop_code']:
@@ -91,6 +91,10 @@ def index(request):
                     item['pay_8'] += float(sale['pay_value'])
                 if sale['pay_id'] == 9:
                     item['pay_9'] += float(sale['pay_value'])
+                if sale['pay_id'] == 10:
+                    item['pay_10'] += float(sale['pay_value'])
+                if sale['pay_id'] == 11:
+                    item['pay_11'] += float(sale['pay_value'])
 
                 item['inSub'] += float(sale['pay_value'])
 
@@ -128,6 +132,10 @@ def index(request):
                     item['pay_8'] += float(change['pay_value'])
                 if sale['pay_id'] == 9:
                     item['pay_9'] += float(change['pay_value'])
+                if sale['pay_id'] == 10:
+                    item['pay_10'] += float(sale['pay_value'])
+                if sale['pay_id'] == 11:
+                    item['pay_11'] += float(sale['pay_value'])
 
                 item['inSub'] = float(change['pay_value'])
         for changeDisc in changeDiscList:
@@ -151,9 +159,10 @@ def index(request):
         totalDict['total_7'] += item['pay_7']
         totalDict['total_8'] += item['pay_8']
         totalDict['total_9'] += item['pay_9']
+        totalDict['total_10'] += item['pay_10']
+        totalDict['total_11'] += item['pay_11']
 
         dataList.append(item)
-        print(dataList)
     return render(request, 'report/saleGroupByShop.html', locals())
 
 
