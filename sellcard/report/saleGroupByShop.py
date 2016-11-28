@@ -102,6 +102,10 @@ def index(request):
             if saleDisc['shop_code'] == item['shop_code']:
                 if not saleDisc['disc']:
                     saleDisc['disc'] = 0
+                if not saleDisc['disc_cash']:
+                    saleDisc['disc_cash'] = 0
+                if not saleDisc['disc_card']:
+                    saleDisc['disc_card'] = 0
                 item['disc'] += float(saleDisc['disc'])
                 item['disc_cash'] += float(saleDisc['disc_cash'])
                 item['disc_card'] += float(saleDisc['disc_card'])
@@ -142,6 +146,10 @@ def index(request):
             if changeDisc['shop_code'] == item['shop_code']:
                 if not changeDisc['disc']:
                     changeDisc['disc'] = 0
+                if not changeDisc['disc_cash']:
+                    changeDisc['disc_cash'] = 0
+                if not changeDisc['disc_card']:
+                    changeDisc['disc_card'] = 0
                 item['disc'] += float(changeDisc['disc'])
                 item['disc_cash'] += float(changeDisc['disc_cash'])
                 item['disc_card'] += float(changeDisc['disc_card'])

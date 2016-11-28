@@ -590,6 +590,35 @@ function getCardList(obj,flag){
 }
 
 
+//获取补卡信息列表
+function getCardFillList(obj,type){
+    var list = [];
+    var trs = $(obj).find('tr');
+    for(var j=0;j<trs.length;j++){
+        var item = {};
+        var status = $(trs[j]).find('td').eq(3).find('input').val();
+        if(type=="1"){
+            if(status=='未激活'){
+                var cardId = $(trs[j]).find('td').eq(0).find('input').val();
+                var val = $(trs[j]).find('td').eq(1).find('input').val();
+                var balance = $(trs[j]).find('td').eq(2).find('input').val();
+                item = {'cardId':cardId,'cardVal':val,'balance':balance};
+                list.push(item)
+            }
+        }else{
+             if(status=='已激活'){
+                var cardId = $(trs[j]).find('td').eq(0).find('input').val();
+                var val = $(trs[j]).find('td').eq(1).find('input').val();
+                var balance = $(trs[j]).find('td').eq(2).find('input').val();
+                item = {'cardId':cardId,'cardVal':val,'balance':balance};
+                list.push(item)
+            }
+        }
+
+    }
+    return list;
+}
+
 function saveCardSaleOrder(action_type,url,cardList,orderSns){
     //售卡列表
     var cardList = cardList;
@@ -656,37 +685,6 @@ function saveCardSaleOrder(action_type,url,cardList,orderSns){
 
     };
     doAjaxSave(url,data);
-}
-
-
-
-//获取补卡信息列表
-function getCardFillList(obj,type){
-    var list = [];
-    var trs = $(obj).find('tr');
-    for(var j=0;j<trs.length;j++){
-        var item = {};
-        var status = $(trs[j]).find('td').eq(3).find('input').val();
-        if(type=="1"){
-            if(status=='未激活'){
-                var cardId = $(trs[j]).find('td').eq(0).find('input').val();
-                var val = $(trs[j]).find('td').eq(1).find('input').val();
-                var balance = $(trs[j]).find('td').eq(2).find('input').val();
-                item = {'cardId':cardId,'cardVal':val,'balance':balance};
-                list.push(item)
-            }
-        }else{
-             if(status=='已激活'){
-                var cardId = $(trs[j]).find('td').eq(0).find('input').val();
-                var val = $(trs[j]).find('td').eq(1).find('input').val();
-                var balance = $(trs[j]).find('td').eq(2).find('input').val();
-                item = {'cardId':cardId,'cardVal':val,'balance':balance};
-                list.push(item)
-            }
-        }
-
-    }
-    return list;
 }
 
 function saveCardFillOrder(url){
