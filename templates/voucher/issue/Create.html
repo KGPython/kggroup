@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>新发行代金券</title>
+</head>
+<body>
+{% include 'common/head.html' %}
+<!--containt-part-->
+<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb">
+            <a data-original-title="Go to Home" href="#" title="" class="tip-bottom">
+                <span class="glyphicon glyphicon-home" aria-hidden="true"> </span> 首页
+            </a>
+            <a href="#" class="">代金券管理-发行</a>
+            <a href="#" class="current">新建</a>
+        </div>
+    </div>
+    <div class="widget-box">
+        <div class="widget-title"><span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+            <h5>代金券管理-发行</h5>
+        </div>
+        <div class="widget-content nopadding">
+            <div class="container-fluid">
+                <div id="demo" class="collapse in widget-content">
+                    <form action="{% url 'voucherIssueCreate' %}" method="post" id="Form">
+                        <div class="row formline">
+                            <label for="" class="col-xs-4 formline-label">发行张数：</label>
+                            <div class="col-xs-4">
+                                <input type="text" class="form-control" name="amount" id="amount"
+                                       required value="{{ amount }}">
+                            </div>
+
+                            <div class="col-xs-2">
+                                <button type="button" class="btn btn-info enter-btn">提交</button>
+                            </div>
+                        </div>
+                        <div class="row formline">
+                            <label for="" class="col-xs-4 formline-label">类型：</label>
+                            <div class="col-xs-4">
+                                <select name="type" id="type" class="form-control" required>
+                                    <option value="1">抵金券</option>
+                                    <option value="2">购卡券</option>
+                                    <option value="3">兑物券</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row formline">
+                            <label for="" class="col-xs-4 formline-label">代金面值：</label>
+                            <div class="col-xs-4">
+                                <input type="text" class="form-control" name="costValue" id="costValue"
+                                       required value="{{ costValue }}">
+                            </div>
+                        </div>
+                        <div class="row formline">
+                            <label for="" class="col-xs-4 formline-label">优惠金额：</label>
+                            <div class="col-xs-4">
+                                <input type="text" class="form-control" name="giftValue" id="giftValue"
+                                       value="{{ giftValue }}">
+                            </div>
+                        </div>
+                        <div class="row formline">
+                            <label for="" class="col-xs-4 formline-label">折扣：</label>
+                            <div class="col-xs-4">
+                                <input type="text" class="form-control" name="discount" id="discount"
+                                       value="{{ discount }}">
+                            </div>
+                        </div>
+                        <div class="row formline">
+                            <label for="" class="col-xs-4 formline-label">截止日期：</label>
+                            <div class="col-xs-4">
+                                <div data-link-format="yyyy-mm-dd" data-link-field="dtp_input2"
+                                     data-date-format="yyyy-mm-dd" data-date=""
+                                     class="input-group date form_date">
+                                    <input readonly="" value="{{ endDate }}" size="16" name="endDate"
+                                           id="endDate" class="form-control" required>
+                                    <span class="input-group-addon"><span
+                                            class="glyphicon glyphicon-remove"></span></span>
+                                    <span class="input-group-addon"><span
+                                            class="glyphicon glyphicon-calendar"></span></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row formline">
+                            <label for="" class="col-xs-4 formline-label">是否需要密码：</label>
+                            <div class="col-xs-1">
+                                <input type="radio" name="CPwdFlag" value="1">是
+                                <input type="radio" name="CPwdFlag" value="0" checked>否
+                            </div>
+                            <label for="" class="col-xs-1 formline-label">密码：</label>
+                            <div class="col-xs-2">
+                                <input type="text" class="form-control" name="CPwd" id="CPwd"
+                                       value="{{ CPwd }}">
+                            </div>
+                        </div>
+                        <div class="row formline">
+                            <label for="" class="col-xs-4 formline-label">最大使用次数：</label>
+                            <div class="col-xs-4">
+                                <input type="text" class="form-control" name="maxUseTime" id="maxUseTime"
+                                       required value="{{ maxUseTime }}">
+                            </div>
+                        </div>
+                        <div class="row formline">
+                            <label for="" class="col-xs-4 formline-label">限购商品注明：<br>
+                                请按照商品名称，编码，数量格式输入每种商品占一行</label>
+                            <div class="col-xs-4">
+                                <textarea rows="3" cols="20" class="form-control" name="goodsRemark"
+                                          id="goodsRemark" value="{{ goodsRemark }}"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--end-containt-part-->
+{% include "common/foot.html" %}
+<script src="{{ static }}/js/bootstrap-datetimepicker.js"></script>
+<script src="{{ static }}/js/bootstrap-datetimepicker.zh-CN.js"></script>
+<script type="text/javascript">
+    $('.form_date').datetimepicker({
+        language: 'zh-CN',
+        weekStart: 1,
+        todayBtn: 1,
+        autoclose: 1,
+        todayHighlight: 1,
+        startView: 2,
+        minView: 2,
+        forceParse: 0
+    });
+</script>
+<script>
+    var msg = "{{ msg }}";
+    if (msg == '1') {
+        alert('数据提交成功');
+        window.location.href="{% url 'voucherIssueList' %}";
+    }
+
+    $('.enter-btn').click(function () {
+        var amount = $('#amount').val();
+        if (amount == 0) {
+            alert('数量不能为零');
+            return false;
+        }
+        $("#Form").submit();
+    })
+</script>
+</body>
+</html>
