@@ -65,9 +65,9 @@ urlpatterns = [
     ################################################# 代金券管理 start ################################################
     # 发行代金券
     # 列表
-    url(r'^sellcard/voucher/issue/$', 'sellcard.fornt.voucherManage.issue.index', name="voucherIssueList"),
+    url(r'^fornt/voucher/issue/$', 'sellcard.fornt.voucherManage.issue.index', name="voucherIssueList"),
     # 创建
-    url(r'^sellcard/voucher/issue/create',
+    url(r'^fornt/voucher/issue/create',
         'sellcard.fornt.voucherManage.issue.create', name="voucherIssueCreate"),
 
     ################################################# 代金券管理 end ###################################################
