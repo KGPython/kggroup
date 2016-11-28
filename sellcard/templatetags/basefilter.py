@@ -2,7 +2,7 @@
 __author__ = 'liubf'
 from django import template
 from sellcard import views as base
-from sellcard.models import AdminUser
+from sellcard.models import AdminUser,Shops
 
 register = template.Library()
 
@@ -35,6 +35,49 @@ def transShopId(key):
         shop = base.findShop(key)[0]
         shopname = shop['shop_name']
     return shopname
+
+@register.filter
+def transShopIdByName(key):
+    """
+    门店ID转名称
+    :author Qixu
+    :create 2016/11/28
+    :param key:商店ID
+    :return:shopname:商店名
+    """
+    shopname = ''
+
+    if key:
+        shop = Shops.objects.values("shop_name").filter(id=key)
+        if shop:
+            shopname = shop[0]['shop_name']
+        else:
+            shopname = '查无ID为:' + key + '商店'
+    else:
+        shopname = '管理员无商店'
+
+    return shopname
+
+
+@register.filter
+def transCouponTypeByChinese(key):
+    """
+    代金券类型转中文
+    :author Qixu
+    :create 2016/11/28
+    :param key:类型编号
+    :return:chinese:对应中文含义
+    """
+    chinese = ''
+
+    if key == 1:
+        chinese = '抵金券'
+    elif key == 2:
+        chinese = '购卡券'
+    elif key == 3:
+        chinese = '兑换券'
+
+    return chinese
 
 
 # 部门编号转名称

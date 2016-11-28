@@ -62,6 +62,16 @@ urlpatterns = [
     url(r'^fornt/cardsale/orderInfo/explain', 'sellcard.fornt.cardSale.card.print_explain', name='cardsSaleOrderExplain'),
     ################################################# 卡管理 end   ##############################################
 
+    ################################################# 代金券管理 start ################################################
+    # 发行代金券
+    # 列表
+    url(r'^sellcard/voucher/issue/$', 'sellcard.fornt.voucherManage.issue.index', name="voucherIssueList"),
+    # 创建
+    url(r'^sellcard/voucher/issue/create',
+        'sellcard.fornt.voucherManage.issue.create', name="voucherIssueCreate"),
+
+    ################################################# 代金券管理 end ###################################################
+
     ###########################################  返点折扣授权码 start ##############################################
     #生成
     url(r'^fornt/discode/create/$', 'sellcard.fornt.disCode.create.index',name="disCodeCreate"),
