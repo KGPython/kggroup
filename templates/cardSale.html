@@ -1,7 +1,6 @@
-{% extends 'common/base.html' %}
+{% extends 'common/baseForJobs.html' %}
 {% block title %}单卡售卡{% endblock %}
 {% block content %}
-<!--containt-part-->
 <div id="content">
     <div id="content-header">
         <div id="breadcrumb">
@@ -62,14 +61,8 @@
     </div>
 </div>
 {% endblock %}
-<!--end-containt-part-->
 
 {% block js %}
-<script>
-    var rates = {{ request.session.s_rates | safe }};
-    var disc_level = {{ request.session.disc_level }};
-</script>
-
 <script>
     $(document).on("change",".cardId",function(){
         var cardIdStr = $(this).val();
@@ -90,8 +83,6 @@
 
         //卡校验
         var ajaxOpt = {'url':'{% url 'cardcheck' %}?cardId='+cardId,'method':'get'};
-{#        var cardtype = '1';#}
-{#        doAjax(this,ajaxOpt,showCardIfno,setTotal,cardtype);#}
         doAjax(this,ajaxOpt,showCardIfno,setTotal);
         addRow(this);
     });
