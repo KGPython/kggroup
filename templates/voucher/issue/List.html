@@ -98,7 +98,6 @@
                             <span>销售合计：{{ paidTotal }}</span>
                             <soan style="margin-right: 30px;margin-left: 30px;">优惠合计：{{ discTotal }}</soan>
                         </h5>
-
                         <table class="table table-striped table-hover table-form-my">
                             <thead>
                             <tr>
@@ -132,7 +131,7 @@
                         </table>
                         <div class="page">
                             <button type="button" class="btn btn-warning btn-sm"
-                                    id="print" onclick="print()">打印全部
+                                    onclick="location='{% url 'voucherIssuePrint' %}?list={{ strvar }}'">打印全部
                             </button>
                             <span>第<b>{{ page }}</b>页/共<b>{{ resList.paginator.num_pages }}</b>页</span>
                             <a href="?page=1&couponType={{ couponType }}&issueSn={{ issueSn }}
@@ -204,12 +203,6 @@
     $('#pageEnter').click(function () {
         $('#pageForm').submit();
     });
-</script>
-<script>
-    function print() {
-        $('.allTotal').show();
-        window.print();
-    }
 </script>
 </body>
 </html>

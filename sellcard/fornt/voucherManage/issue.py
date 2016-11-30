@@ -29,7 +29,7 @@ def index(request):
     page = mth.getReqVal(request, 'page', 1)
 
     kwargs = {}
-    #kwargs.setdefault('shopid', shopid)
+    # kwargs.setdefault('shopid', shopid)
 
     if couponType != '':
         kwargs.setdefault('coupontypeid', couponType)
@@ -37,23 +37,24 @@ def index(request):
     if printed != '':
         kwargs.setdefault('flag', printed)
 
-    if start!='':
+    if start != '':
         kwargs.setdefault('startdate__gte', start)
 
-    if end!='':
+    if end != '':
         kwargs.setdefault('startdate__lte', endTime)
 
     resList = KfJobsCoupon.objects.values(
         'shopid', 'createuserid', 'coupontypeid', 'startdate', 'couponno', 'value',
         'giftvalue', 'goodsremark').filter(**kwargs).order_by('shopid', 'startdate', 'createuserid')
 
-    paginator = Paginator(resList, 20)
+    paginator = Paginator(resList, 8)
     try:
         resList = paginator.page(page)
     except Exception as e:
         print(e)
 
     return render(request, 'voucher/issue/List.html', locals())
+
 
 @csrf_exempt
 @transaction.atomic
@@ -114,3 +115,20 @@ def create(request):
                                         clearvalue=0)
         msg = 1
     return render(request, 'voucher/issue/Create.html', locals())
+
+
+@csrf_exempt
+@transaction.atomic
+def printed(request):
+    """
+    打印
+    :param request:
+    :return: 打印页view
+    """
+    resList = mth.getReqVal(request, 'list', '')
+    i = 0
+    for row in resList:
+        i += 1
+        sn = row.couponno
+
+    return render(request, 'voucher/issue/Print.html', locals())

@@ -69,6 +69,9 @@ urlpatterns = [
     # 创建
     url(r'^fornt/voucher/issue/create',
         'sellcard.fornt.voucherManage.issue.create', name="voucherIssueCreate"),
+    # 打印
+    url(r'^fornt/voucher/issue/printed',
+        'sellcard.fornt.voucherManage.issue.printed', name="voucherIssuePrint"),
 
     ################################################# 代金券管理 end ###################################################
 
