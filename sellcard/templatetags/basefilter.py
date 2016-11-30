@@ -47,14 +47,14 @@ def transShopIdByName(key):
     """
     shopname = ''
 
-    if key:
+    if key=='9999':
+        shopname = '总店'
+    elif key:
         shop = Shops.objects.values("shop_name").filter(id=key)
         if shop:
             shopname = shop[0]['shop_name']
         else:
             shopname = '查无ID为:' + key + '商店'
-    else:
-        shopname = '管理员无商店'
 
     return shopname
 
@@ -75,7 +75,7 @@ def transCouponTypeByChinese(key):
     elif key == 2:
         chinese = '购卡券'
     elif key == 3:
-        chinese = '兑换券'
+        chinese = '兑物券'
 
     return chinese
 

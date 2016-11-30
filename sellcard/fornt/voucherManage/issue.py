@@ -23,6 +23,7 @@ def index(request):
     today = str(datetime.date.today())
     couponType = mth.getReqVal(request, 'couponType', '')
     printed = mth.getReqVal(request, 'printed', '')
+    issueSn = mth.getReqVal(request, 'issueSn', '')
     start = mth.getReqVal(request, 'start', today)
     end = mth.getReqVal(request, 'end', today)
     endTime = datetime.datetime.strptime(end, '%Y-%m-%d') + datetime.timedelta(1)
@@ -37,6 +38,9 @@ def index(request):
     if printed != '':
         kwargs.setdefault('flag', printed)
 
+    if issueSn != '':
+        kwargs.setdefault('couponno__contains', issueSn)
+
     if start != '':
         kwargs.setdefault('startdate__gte', start)
 
@@ -44,7 +48,7 @@ def index(request):
         kwargs.setdefault('startdate__lte', endTime)
 
     #用于全部打印时传入的券号列表
-    snlist = str(KfJobsCoupon.objects.values_list('couponno',flat=True).filter(**kwargs))
+    snlist = ','.join(KfJobsCoupon.objects.values_list('couponno',flat=True).filter(**kwargs))
 
     resList = KfJobsCoupon.objects.values(
         'shopid', 'createuserid', 'coupontypeid', 'startdate', 'couponno', 'value',
@@ -127,10 +131,10 @@ def printed(request):
     :param request:
     :return: 打印页view
     """
-    #resList = mth.getReqVal(request, 'list', '')
-    #i = 0
-    #for row in resList:
-        #i += 1
-        #sn = row.couponno
+    snlist = mth.getReqVal(request, 'snlist', '').split(',')
+
+    resList = KfJobsCoupon.objects.values(
+        'shopid',  'coupontypeid', 'enddate', 'couponno',
+        'value', 'goodsremark').filter(couponno__in=snlist)
 
     return render(request, 'voucher/issue/Print.html', locals())

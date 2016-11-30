@@ -10,24 +10,17 @@
 <body>
 {% include 'common/head.html' %}
 <link rel="stylesheet" href="{{ static }}/css/orderinfoPrint.css" media="print">
-<style media="print">
-    .title h5 {
-        width: 100%;
-        text-align: center;
-        font-weight: normal;
-        margin-bottom: 10px;
-        padding-bottom: 5px;
-        border-bottom: 1px dashed black;
-    }
-</style>
 
-<style media="screen">
+
+<style>
+    #content{border:1px solid #1e242b}
     .v_print {
         border: 1px solid #000;
-        margin-bottom: 20px;
-        margin-left: 20px;
+        margin-bottom: 2mm;
+        margin-left: 0mm;
         width: 95mm;
         height: 66mm;
+        float: left;
     }
 
     .v_print .v_title {
@@ -60,59 +53,49 @@
 
 <!--containt-part-->
 <div id="content">
-    <div class="v_print" style="text-align:center">
-        <label class="v_title">宽广超市购物券</label>
-        <div class="v_image">
+    {% for row in resList %}
+        <div class="v_print" style="text-align:center">
+            <label class="v_title">宽广超市购物券</label>
+            <div class="v_image">
+            </div>
+            <label class="v_sn">{{ row.couponno }}</label>
+            {% if row.coupontypeid == 3 %}
+                <table class="v_tb">
+                    <tr class="v_tr">
+                        <th>制作门店：{{ row.shopid | transShopIdByName }}</th>
+                        <th>券类型：A</th>
+                        <th>券总额：{{ row.value  }}元</th>
+                    </tr>
+                    <tr class="v_tr">
+                        <th>商品名称</th>
+                        <th>数量</th>
+                        <th>商品编码</th>
+                    </tr>
+                    <tr class="v_tr">
+                        <td colspan="3">{{ row.goodsremark  }}</td>
+                    </tr>
+                    <tr class="v_tr">
+                        <th colspan="3" style="text-align: left">使用范围：</th>
+                    </tr>
+                </table>
+            {% else %}
+                <table class="v_tb">
+                    <tr style="font-size:18px">
+                        <th>制作门店：{{ row.shopid  }}</th>
+                        <th>券类型：B</th>
+                    </tr>
+                    <tr style="font-size:25px">
+                        <td colspan="2">券总额：{{ row.value  }}元</td>
+                    </tr>
+                    <tr class="v_tr">
+                        <th colspan="2" style="text-align: left">使用范围：</th>
+                    </tr>
+                </table>
+            {% endif %}
+            <label class="v_foot" style=" font-size:8px">本券请于前使用</br>逾期作废，丢失不补，盖章有效
+            </label>
         </div>
-        <label class="v_sn">8888</label>
-        <table class="v_tb">
-            <tr class="v_tr">
-                <th>制作门店：</th>
-                <th>券类型：A</th>
-                <th>券总额：元</th>
-            </tr>
-            <tr class="v_tr">
-                <th>商品名称</th>
-                <th>数量</th>
-                <th>商品编码</th>
-            </tr>
-            <tr class="v_tr">
-                <td></td>
-                <td></td>
-                <td>1</td>
-            </tr>
-            <tr class="v_tr">
-                <td></td>
-                <td></td>
-                <td>2</td>
-            </tr>
-            <tr class="v_tr">
-                <th colspan="3" style="text-align: left">使用范围：</th>
-            </tr>
-        </table>
-        <label class="v_foot" style=" font-size:8px">本券请于前使用</br>逾期作废，丢失不补，盖章有效
-        </label>
-    </div>
-    <div class="v_print" style="text-align:center">
-        <label class="v_title">宽广超市购物券</label>
-        <div class="v_image">
-        </div>
-        <label class="v_sn">8888</label>
-        <table class="v_tb">
-            <tr style="font-size:18px">
-                <th>制作门店：</th>
-                <th>券类型：B</th>
-            </tr>
-            <tr style="font-size:25px">
-                <td colspan="2">券总额：元</td>
-            </tr>
-            <tr class="v_tr">
-                <th colspan="2" style="text-align: left">使用范围：</th>
-            </tr>
-        </table>
-        <label class="v_foot" style=" font-size:8px">本券请于前使用</br>逾期作废，丢失不补，盖章有效
-        </label>
-    </div>
+    {% endfor %}
 </div>
 <!--end-containt-part-->
 

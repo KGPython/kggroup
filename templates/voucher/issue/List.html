@@ -131,7 +131,7 @@
                         </table>
                         <div class="page">
                             <button type="button" class="btn btn-warning btn-sm"
-                                    onclick="printed()">进入打印
+                                    onclick="toPrint()">进入打印
                             </button>
                             <button type="button" class="btn btn-warning btn-sm"
                                     onclick="location='{% url 'voucherIssuePrint' %}'">打印全部
@@ -177,8 +177,15 @@
         </div>
     </div>
 </div>
+<form action="{% url 'voucherIssuePrint' %}" method="post" id="testForm">
+    <input type="hidden" name="snlist" value="{{ snlist }}">
+</form>
 <!--end-containt-part-->
 {% include "common/foot.html" %}
+<script>
+    $("#printed").val({{ printed }});
+    $("#couponType").val({{ couponType }});
+</script>
 <script src="{{ static }}/js/bootstrap-datetimepicker.js"></script>
 <script src="{{ static }}/js/bootstrap-datetimepicker.zh-CN.js"></script>
 <script type="text/javascript">
@@ -208,20 +215,8 @@
     });
 </script>
 <script>
-    function printed() {
-
-        console.log(123)
-        $.ajax({
-            url: '{% url 'voucherIssuePrint' %}',
-            type: 'post',
-            dataType: 'json',
-            data: {list:{{ snlist | safe}}},
-            success: function () {
-
-            },
-            error: function () {
-            }
-        })
+    function toPrint() {
+        $("#testForm").submit()
     }
 </script>
 </body>
