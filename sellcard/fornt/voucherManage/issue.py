@@ -43,6 +43,9 @@ def index(request):
     if end != '':
         kwargs.setdefault('startdate__lte', endTime)
 
+    #用于全部打印时传入的券号列表
+    snlist = str(KfJobsCoupon.objects.values_list('couponno',flat=True).filter(**kwargs))
+
     resList = KfJobsCoupon.objects.values(
         'shopid', 'createuserid', 'coupontypeid', 'startdate', 'couponno', 'value',
         'giftvalue', 'goodsremark').filter(**kwargs).order_by('shopid', 'startdate', 'createuserid')
@@ -118,17 +121,16 @@ def create(request):
 
 
 @csrf_exempt
-@transaction.atomic
 def printed(request):
     """
     打印
     :param request:
     :return: 打印页view
     """
-    resList = mth.getReqVal(request, 'list', '')
-    i = 0
-    for row in resList:
-        i += 1
-        sn = row.couponno
+    #resList = mth.getReqVal(request, 'list', '')
+    #i = 0
+    #for row in resList:
+        #i += 1
+        #sn = row.couponno
 
     return render(request, 'voucher/issue/Print.html', locals())

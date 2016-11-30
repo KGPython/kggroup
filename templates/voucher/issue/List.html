@@ -131,7 +131,10 @@
                         </table>
                         <div class="page">
                             <button type="button" class="btn btn-warning btn-sm"
-                                    onclick="location='{% url 'voucherIssuePrint' %}?list={{ strvar }}'">打印全部
+                                    onclick="printed()">进入打印
+                            </button>
+                            <button type="button" class="btn btn-warning btn-sm"
+                                    onclick="location='{% url 'voucherIssuePrint' %}'">打印全部
                             </button>
                             <span>第<b>{{ page }}</b>页/共<b>{{ resList.paginator.num_pages }}</b>页</span>
                             <a href="?page=1&couponType={{ couponType }}&issueSn={{ issueSn }}
@@ -203,6 +206,23 @@
     $('#pageEnter').click(function () {
         $('#pageForm').submit();
     });
+</script>
+<script>
+    function printed() {
+
+        console.log(123)
+        $.ajax({
+            url: '{% url 'voucherIssuePrint' %}',
+            type: 'post',
+            dataType: 'json',
+            data: {list:{{ snlist | safe}}},
+            success: function () {
+
+            },
+            error: function () {
+            }
+        })
+    }
 </script>
 </body>
 </html>
