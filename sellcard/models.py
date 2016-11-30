@@ -12,8 +12,8 @@ from __future__ import unicode_literals
 from django.db import models
 
 
-class MyshopJobsCoupon(models.Model):
-    id = models.CharField(db_column='ID', primary_key=True, max_length=20)  # Field name made lowercase.
+class KfJobsCoupon(models.Model):
+    id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     shopid = models.CharField(db_column='ShopID', max_length=10)  # Field name made lowercase.
     couponno = models.CharField(db_column='CouponNO', max_length=19)  # Field name made lowercase.
     coupontypeid = models.IntegerField(db_column='CouponTypeID')  # Field name made lowercase.
@@ -48,7 +48,7 @@ class MyshopJobsCoupon(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'MyShop_Jobs_Coupon'
+        db_table = 'KF_Jobs_Coupon'
 
 
 class ActionLog(models.Model):
@@ -222,6 +222,20 @@ class NavList(models.Model):
     class Meta:
         managed = False
         db_table = 'nav_list'
+
+
+class NavList1(models.Model):
+    nav_id = models.CharField(max_length=32)
+    nav_name = models.CharField(max_length=45)
+    parent_id = models.CharField(max_length=32)
+    url = models.CharField(max_length=120)
+    icon = models.CharField(max_length=16, blank=True, null=True)
+    sort_id = models.IntegerField()
+    flag = models.CharField(max_length=1)
+
+    class Meta:
+        managed = False
+        db_table = 'nav_list_1'
 
 
 class OrderBorrow(models.Model):

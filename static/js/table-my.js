@@ -329,7 +329,8 @@ function getCardListVal(cardList,cardtype,cls){
     return {'totalNum':totalNum,'totalVal':totalVal}
 }
 /*
-* 计算优惠金额
+* 1、设置优惠返点率
+* 2、计算优惠金额
 * */
 function createDiscount(cardsValTotal,rateInput) {
     var discCode = $(".Total #disCode input").val();
@@ -380,7 +381,6 @@ function setTotal(obj){
         var discountVal = parseFloat($('.Total #discountVal b').text());
         // 4、计算优惠差额=优惠卡列表合计-返点金额
         var discountPay = cardsTotalVal - discountVal;
-        //$('.discountTotal #balance b').text(discountPay);//设置“优惠管理”区域->应补差额
         $('.Total #totalYBalance b').text(discountPay);
         //5、设置订单应付金额 = 售卡列表合计金额 + 优惠补差
         var cardsSaleVal = parseFloat($('.Total #totalVal b').text());//售卡列表合计金额
@@ -464,51 +464,18 @@ function setTotal(obj){
         //4、优惠补差
         var discountCardTotalVal = parseFloat($(".discountTotal #totalVal b").text());
         discountPay  = discountCardTotalVal - discountVal;
-        //$('.discountTotal #balance b').text(discountPay);//设置“优惠管理”区域->应补差额
         $('.Total #totalYBalance b').text(discountPay);//设置“合计”区域->优惠补差
         //5、设置订单应付金额 = 售卡列表合计金额 + 优惠补差
         $('.Total #totalPaid b').text(cardsTotalVal+discountPay);
     }
 
-    /*// 2、计算卡列表的合计金额和合计张数
-    var cardsTotal = getCardListVal(cardList,cardtype,cls);
-    var cardsValTotal = cardsTotal.totalVal;
-    var cardsNumTotal = cardsTotal.totalNum;
-
-
-
-    // 优惠管理--应补差额=优惠卡列表合计-返点金额
-    var discountTotal = parseFloat($('.discountTotal #totalVal b').text());
-    if(discountTotal!=undefined){
-        console.log(discountTotal,discountVal);
-        var disBalance = discountTotal - discountVal;
-        $('.discountTotal #balance b').text(disBalance);
-    }*/
-
    //补卡补差
     var Ybalance = 0;
     var YtotalVal = parseFloat($('.cardOutTotal #totalVal b').text());
     if(YtotalVal!=undefined){
-        // var discountVal = parseFloat($('.cardInTotal #totalVal b').text());
-        // discountVal = isNaN(discountVal) ? 0:discountVal;
-
         Ybalance = YtotalVal - discountVal;
         $('.cardOutTotal #balance b').text(Ybalance);
     }
-
-    //展示最终应缴合计金额=售卡合计+优惠补差
-    /*var totalPaidObj = $('.Total #totalPaid b')[0];
-    if(totalPaidObj){//如果是汇总合计区域，展示最终缴费合计数额
-        //优惠补差
-        // var Ybalance = parseFloat($('.discountTotal #balance b').text());
-        //售卡合计金额
-        // var totalCardVal = parseFloat($('.Total #totalVal b').text());
-        // totalCardVal = isNaN(totalCardVal) ? 0:totalCardVal;
-        // var totalPaid = totalCardVal + Ybalance;
-        var totalPaid = cardsValTotal + discountTotal;
-        $(totalPaidObj).text(totalPaid);
-        $('.Total #totalYBalance b').text(discountTotal)
-    }*/
 }
 
 //自定义折扣授权验证
@@ -541,7 +508,6 @@ $('.Total #discount input').blur(function(){
     var discount = parseFloat(rate*cardSaleTotalVal).toFixed(2);
     $('.Total #discountVal b').text(discount);
     //设置优惠补差金额
-    //var discCardTotal = getCardListVal($(".discount"),1).totalVal;
     var discCardTotal = parseFloat($(".discountTotal #totalVal b").text());
     var discPay = discCardTotal-discount;
     $(".Total #totalYBalance b").text(discPay);
@@ -557,9 +523,6 @@ $('.Total #discount input').blur(function(){
 * obj：优惠返现input输入框
 * */
 function discCash(act) {
-    //1、获取优惠返现金额
-    // var Ycash = parseFloat($(obj).val());
-    // Ycash = isNaN(Ycash)?0:parseFloat(Ycash);
     //2、获取优惠返卡合计
     var discCardList = $('#YcardList');
     var discCardTotalVal = getCardListVal(discCardList,1,'discountTotal').totalVal;
@@ -577,21 +540,6 @@ function discCash(act) {
     saleCardTotalVal = isNaN(saleCardTotalVal) ? 0:saleCardTotalVal;
     var orderVal = saleCardTotalVal + discPay;
     $('.Total #totalPaid b').text(orderVal);
-
-    /*if(act=='sale'){
-
-
-    }
-    if(act=='change'){
-        //3、计算优惠补差金额
-        //3.1、获取优惠返点金额
-        var discountVal = parseFloat($('.Total #discountVal b').text());
-        discountVal = isNaN(discountVal) ? 0:discountVal;
-        //3.2、优惠补差金额
-        var discPay = discCardTotalVal - discountVal;
-        $('.Total #totalYBalance b').text(discPay);
-    }*/
-
 }
 
 /***************************************************折扣返点  end****************************************************/
@@ -641,6 +589,35 @@ function getCardList(obj,flag){
     return list;
 }
 
+
+//获取补卡信息列表
+function getCardFillList(obj,type){
+    var list = [];
+    var trs = $(obj).find('tr');
+    for(var j=0;j<trs.length;j++){
+        var item = {};
+        var status = $(trs[j]).find('td').eq(3).find('input').val();
+        if(type=="1"){
+            if(status=='未激活'){
+                var cardId = $(trs[j]).find('td').eq(0).find('input').val();
+                var val = $(trs[j]).find('td').eq(1).find('input').val();
+                var balance = $(trs[j]).find('td').eq(2).find('input').val();
+                item = {'cardId':cardId,'cardVal':val,'balance':balance};
+                list.push(item)
+            }
+        }else{
+             if(status=='已激活'){
+                var cardId = $(trs[j]).find('td').eq(0).find('input').val();
+                var val = $(trs[j]).find('td').eq(1).find('input').val();
+                var balance = $(trs[j]).find('td').eq(2).find('input').val();
+                item = {'cardId':cardId,'cardVal':val,'balance':balance};
+                list.push(item)
+            }
+        }
+
+    }
+    return list;
+}
 
 function saveCardSaleOrder(action_type,url,cardList,orderSns){
     //售卡列表
@@ -708,37 +685,6 @@ function saveCardSaleOrder(action_type,url,cardList,orderSns){
 
     };
     doAjaxSave(url,data);
-}
-
-
-
-//获取补卡信息列表
-function getCardFillList(obj,type){
-    var list = [];
-    var trs = $(obj).find('tr');
-    for(var j=0;j<trs.length;j++){
-        var item = {};
-        var status = $(trs[j]).find('td').eq(3).find('input').val();
-        if(type=="1"){
-            if(status=='未激活'){
-                var cardId = $(trs[j]).find('td').eq(0).find('input').val();
-                var val = $(trs[j]).find('td').eq(1).find('input').val();
-                var balance = $(trs[j]).find('td').eq(2).find('input').val();
-                item = {'cardId':cardId,'cardVal':val,'balance':balance};
-                list.push(item)
-            }
-        }else{
-             if(status=='已激活'){
-                var cardId = $(trs[j]).find('td').eq(0).find('input').val();
-                var val = $(trs[j]).find('td').eq(1).find('input').val();
-                var balance = $(trs[j]).find('td').eq(2).find('input').val();
-                item = {'cardId':cardId,'cardVal':val,'balance':balance};
-                list.push(item)
-            }
-        }
-
-    }
-    return list;
 }
 
 function saveCardFillOrder(url){
