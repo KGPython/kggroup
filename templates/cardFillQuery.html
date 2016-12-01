@@ -1,14 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>补卡查询</title>
-</head>
-<body>
-{% include 'common/head.html' %}
-<!--containt-part-->
+{% extends 'common/baseForJobs.html' %}
+{% block title %}单卡售卡{% endblock %}
+{% block content %}
 <div id="content">
     <div id="content-header">
         <div id="breadcrumb">
@@ -129,9 +121,9 @@
         </div>
     </div>
 </div>
-<!--end-containt-part-->
+{% endblock %}
 
-{% include "common/foot.html" %}
+{% block js %}
 <script>
     $(function(){
         $("#pageEnter").on("click",function(){
@@ -155,5 +147,4 @@
         window.location.href=url+"?order_sn="+order_sn;
     }
 </script>
-</body>
-</html>
+{% endblock %}

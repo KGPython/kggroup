@@ -224,20 +224,6 @@ class NavList(models.Model):
         db_table = 'nav_list'
 
 
-class NavList1(models.Model):
-    nav_id = models.CharField(max_length=32)
-    nav_name = models.CharField(max_length=45)
-    parent_id = models.CharField(max_length=32)
-    url = models.CharField(max_length=120)
-    icon = models.CharField(max_length=16, blank=True, null=True)
-    sort_id = models.IntegerField()
-    flag = models.CharField(max_length=1)
-
-    class Meta:
-        managed = False
-        db_table = 'nav_list_1'
-
-
 class OrderBorrow(models.Model):
     order_sn = models.CharField(max_length=20)
     order_val = models.DecimalField(max_digits=11, decimal_places=2)
@@ -369,7 +355,7 @@ class OrderUpCard(models.Model):
 
 class OrderUpCardInfo(models.Model):
     order_sn = models.CharField(max_length=20)
-    card_no = models.CharField(max_length=32)
+    card_no = models.CharField(unique=True, max_length=32)
     card_attr = models.CharField(max_length=1)
     card_value = models.CharField(max_length=12, blank=True, null=True)
     card_balance = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
@@ -432,6 +418,7 @@ class ReceiveInfo(models.Model):
     class Meta:
         managed = False
         db_table = 'receive_info'
+        unique_together = (('card_id_start', 'card_id_end'),)
 
 
 class Role(models.Model):

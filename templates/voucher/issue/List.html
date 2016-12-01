@@ -10,7 +10,6 @@
 </head>
 <body>
 {% include 'common/head.html' %}
-
 <!--containt-part-->
 <div id="content">
     <div id="content-header">
@@ -123,15 +122,17 @@
                                     <td>{{ row.value }}</td>
                                     <td>{{ row.giftvalue }}</td>
                                     <td>{{ row.goodsremark }}</td>
-                                    <td><a href="{% url 'orderDetail' %}?
-                                    couponno={{ row.couponno }}">打印</a></td>
+                                    <td><a href="{% url 'voucherIssuePrint' %}?snlist={{ row.couponno }}">打印</a></td>
                                 </tr>
                             {% endfor %}
                             </tbody>
                         </table>
                         <div class="page">
                             <button type="button" class="btn btn-warning btn-sm"
-                                    onclick="location='{% url 'voucherIssuePrint' %}?list={{ strvar }}'">打印全部
+                                    onclick="toPrint(9)">横向打印全部
+                            </button>
+                            <button type="button" class="btn btn-warning btn-sm"
+                                    onclick="toPrint(8)">纵向打印全部
                             </button>
                             <span>第<b>{{ page }}</b>页/共<b>{{ resList.paginator.num_pages }}</b>页</span>
                             <a href="?page=1&couponType={{ couponType }}&issueSn={{ issueSn }}
@@ -174,8 +175,16 @@
         </div>
     </div>
 </div>
+<form action="{% url 'voucherIssuePrint' %}" method="post" id="printForm">
+    <input type="hidden" name="snlist" value="{{ snlist }}">
+    <input type="hidden" name="A4" id="A4">
+</form>
 <!--end-containt-part-->
 {% include "common/foot.html" %}
+<script>
+    $("#printed").val({{ printed }});
+    $("#couponType").val({{ couponType }});
+</script>
 <script src="{{ static }}/js/bootstrap-datetimepicker.js"></script>
 <script src="{{ static }}/js/bootstrap-datetimepicker.zh-CN.js"></script>
 <script type="text/javascript">
@@ -203,6 +212,12 @@
     $('#pageEnter').click(function () {
         $('#pageForm').submit();
     });
+</script>
+<script>
+    function toPrint(val) {
+        $("#printForm #A4").val(val);
+        $("#printForm").submit();
+    }
 </script>
 </body>
 </html>

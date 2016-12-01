@@ -27,6 +27,7 @@
             <div class="container-fluid">
                 <div id="demo" class="collapse in widget-content">
                     <form action="{% url 'cardInStore' %}" method="post" id="Form">
+                        {% csrf_token %}
                         <div class="row formline">
                             <label for="" class="col-xs-4 formline-label">入库单号：</label>
                             <div class="col-xs-4">

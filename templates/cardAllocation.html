@@ -294,28 +294,14 @@
             alert('请完善领卡列表后，再尝试提交');
                 return false;
         }
-
-        $.ajax({
-            url:'{% url 'allocationSave' %}',
-            dataType:'json',
-            method:'post',
-            data:{
-                'list':JSON.stringify(list),
-                'shopIn':shopIn,
-                'shopOut':shopOut,
-                'totalNum':totalNum,
-                'totalVal':totalVal
-            },
-            success:function(data){
-                if(data.msg=='0'){
-                    alert('数据提交成功');
-                    window.location.reload();
-                    $('input[type=text]').val('')
-                }else if(data.msg=='1'){
-                    alert('数据提交失败')
-                }
-            }
-        })
+        data={
+            'list':JSON.stringify(list),
+            'shopIn':shopIn,
+            'shopOut':shopOut,
+            'totalNum':totalNum,
+            'totalVal':totalVal
+        };
+        doAjaxSave('{% url 'allocationSave' %}',data)
     })
 </script>
 </body>

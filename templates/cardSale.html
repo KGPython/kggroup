@@ -1,7 +1,6 @@
-{% extends 'common/base.html' %}
+{% extends 'common/baseForJobs.html' %}
 {% block title %}单卡售卡{% endblock %}
 {% block content %}
-<!--containt-part-->
 <div id="content">
     <div id="content-header">
         <div id="breadcrumb">
@@ -31,30 +30,9 @@
                 {% include 'common/payment.html' %}
                 {% include 'common/orderTotal.html' %}
 
-                <div class="widget-box">
-                    <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
-                        <h5>顾客信息</h5>
-                    </div>
-                    <div class="widget-content nopadding">
-                        <div id="buyerInfo" class="collapse in widget-content">
-                            <div class="row formline">
-                                <label for="" class="col-xs-1 formline-label">客户名称：</label>
-                                <div class="col-xs-2">
-                                    <input class="form-control" placeholder="" type="text" id="buyerName">
-                                </div>
-                                <label for="" class="col-xs-1 formline-label">联系电话：</label>
-                                <div class="col-xs-2">
-                                    <input class="form-control" placeholder="" type="text" id="buyerPhone">
-                                </div>
-                                <label for="" class="col-xs-1 formline-label">单位名称：</label>
-                                <div class="col-xs-5">
-                                    <input class="form-control" placeholder="" type="text" id="buyerCompany">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                {% include 'common/buyerInfo.html' %}
                 <div class="enter-box">
+                    <input id="post-token" type="hidden" value="{{ token }}">
                     <button class="btn btn-success pull-right" type="button" id="btn-enter">提交订单</button>
                 </div>
             </div>
@@ -62,14 +40,8 @@
     </div>
 </div>
 {% endblock %}
-<!--end-containt-part-->
 
 {% block js %}
-<script>
-    var rates = {{ request.session.s_rates | safe }};
-    var disc_level = {{ request.session.disc_level }};
-</script>
-
 <script>
     $(document).on("change",".cardId",function(){
         var cardIdStr = $(this).val();
@@ -90,8 +62,6 @@
 
         //卡校验
         var ajaxOpt = {'url':'{% url 'cardcheck' %}?cardId='+cardId,'method':'get'};
-{#        var cardtype = '1';#}
-{#        doAjax(this,ajaxOpt,showCardIfno,setTotal,cardtype);#}
         doAjax(this,ajaxOpt,showCardIfno,setTotal);
         addRow(this);
     });

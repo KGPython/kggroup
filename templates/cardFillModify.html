@@ -1,14 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>补卡</title>
-</head>
-<body>
-{% include 'common/head.html' %}
-<!--containt-part-->
+{% extends 'common/baseForJobs.html' %}
+{% block title %}补卡管理{% endblock %}
+{% block content %}
 <div id="content">
     <div id="content-header">
         <div id="breadcrumb">
@@ -120,8 +112,9 @@
         </div>
     </div>
 </div>
-<!--end-containt-part-->
-{% include "common/foot.html" %}
+{% endblock %}
+
+{% block js %}
 <script>
     $(document).on("change",".cardId",function(){
         var cardIdStr = $(this).val();
@@ -153,5 +146,4 @@
         setTotal(parnetTbody,'1');
     });{% endcomment %}
 </script>
-</body>
-</html>
+{% endblock %}

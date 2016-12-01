@@ -18,19 +18,32 @@ def index(request):
     rates = request.session.get('s_rates')
     disc_level = request.session.get('disc_level')
     shopcode = request.session.get('s_shopcode','')
+
+    # 在服务端session中添加key认证，避免用户重复提交表单
+    token = 'allow'  # 可以采用随机数
+    request.session['postToken'] = token
     return render(request,'cardSale.html',locals())
 
 
 @csrf_exempt
 @transaction.atomic
 def saveOrder(request):
+    res = {}
+
     path = request.path
     operator = request.session.get('s_uid','')
     shopcode = request.session.get('s_shopcode','')
     depart = request.session.get('s_depart','')
 
+    # 检测session中Token值，判断用户提交动作是否合法
+    Token = request.session.get('postToken', default=None)
+    # 获取用户表单提交的Token值
+    userToken = request.POST.get('postToken','')
+    if userToken != Token:
+        res["msg"] = 0
+        return HttpResponse(json.dumps(res))
 
-    res = {}
+
     actionType = request.POST.get('actionType','')
     #售卡列表
     cardStr = request.POST.get('cardStr','')
@@ -50,13 +63,11 @@ def saveOrder(request):
         hjsList = hjsStr.split(',')
 
     #合计信息
-    totalNum = request.POST.get('totalNum',0)
     totalVal = request.POST.get('totalVal',0.00)
 
     discountRate = request.POST.get('discount',0.00)
     disCode = request.POST.get('disCode','')
     discountVal = request.POST.get('discountVal','')
-    YtotalNum = request.POST.get('YtotalNum',0)
 
     Ybalance = request.POST.get('Ybalance',0.00)
 
@@ -142,8 +153,8 @@ def saveOrder(request):
             res["msg"] = 1
             res["urlRedirect"] ='/kg/sellcard/fornt/cardsale/orderInfo/?orderSn='+order_sn
 
-
             ActionLog.objects.create(url=path,u_name=request.session.get('s_uname'),cards_out=cardStr+','+YcardStr,add_time=datetime.datetime.now())
+            del request.session['postToken']
     except Exception as e:
         res["msg_err"] = e
         res["msg"] = 0
@@ -165,7 +176,7 @@ def info(request):
     if len(infoList):
         for info in infoList:
             totalNum += int(info['subNum'])
-        return render(request, 'orderInfo.html', locals())
+        return render(request, 'common/orderInfo.html', locals())
     else:
         err={}
         err['msg']='此订单不存在'

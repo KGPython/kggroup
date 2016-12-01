@@ -3,13 +3,16 @@
         <div class="row">
             <p class="text col-xs-2" id="totalPaid">应付金额：<b class="red">0.00</b>元</p>
             <p class="text col-xs-2" id="totalVal">售卡合计：<b class="red">{{ cardOutTotalVal |default:0.00 }}</b>元</p>
-            <p class="text col-xs-2" id="totalYBalance">优惠补差：<b class="red">0.00</b>元</p>
-            <p class="text col-xs-2" id="discount">
-                折扣额度：<input type="text" value="0.00" disabled="disabled">%
-                <button type="button" class="btn btn-warning btn-xs" id="disBtn">修改折扣率</button>
-            </p>
-            <p class="text col-xs-2" id="disCode" style="display: none">折扣授权码：<input type="text" value=""></p>
-            <p class="text col-xs-2" id="discountVal">优惠金额（赠卡）：<b class="red">0.00</b>元</p>
+            <div class="Total-discInfo">
+                <p class="text col-xs-2" id="totalYBalance">优惠补差：<b class="red">0.00</b>元</p>
+                <p class="text col-xs-2" id="discount">
+                    折扣额度：<input type="text" value="0.00" disabled="disabled">%
+                    <button type="button" class="btn btn-warning btn-xs" id="disBtn">修改折扣率</button>
+                </p>
+                <p class="text col-xs-2" id="disCode" style="display: none">折扣授权码：<input type="text" value=""></p>
+                <p class="text col-xs-2" id="discountVal">优惠金额（赠卡）：<b class="red">0.00</b>元</p>
+            </div>
+
         </div>
         <div class="row">
             <p class="text col-xs-12" id="payInfo">

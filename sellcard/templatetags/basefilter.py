@@ -47,14 +47,14 @@ def transShopIdByName(key):
     """
     shopname = ''
 
-    if key:
+    if key=='9999':
+        shopname = '总店'
+    elif key:
         shop = Shops.objects.values("shop_name").filter(id=key)
         if shop:
             shopname = shop[0]['shop_name']
         else:
             shopname = '查无ID为:' + key + '商店'
-    else:
-        shopname = '管理员无商店'
 
     return shopname
 
@@ -75,7 +75,7 @@ def transCouponTypeByChinese(key):
     elif key == 2:
         chinese = '购卡券'
     elif key == 3:
-        chinese = '兑换券'
+        chinese = '兑物券'
 
     return chinese
 
@@ -152,6 +152,14 @@ def divide(v1, v2):
         res = (float(v1) / float(v2)) * 100
 
     return str(round(res, 2)) + '%'
+
+@register.filter
+def o_index(v_i,v_o):
+    return v_o[int(v_i)]
+
+@register.filter
+def o_column(v_o,v_s):
+    return v_o[str(v_s)]
 
 
 # 转百分比

@@ -1,14 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>借卡管理--退卡</title>
-</head>
-<body>
-{% include 'common/head.html' %}
-<!--containt-part-->
+{% extends 'common/baseForJobs.html' %}
+{% block title %}借卡管理--退卡{% endblock %}
+{% block content %}
 <div id="content">
     <div id="content-header">
         <div id="breadcrumb">
@@ -57,17 +49,16 @@
                 {% include 'common/cardsQueryResult.html' %}
                 <!--  退卡 号段查询结果 start  -->
                 <div class="enter-box">
+                    <input id="post-token" type="hidden" value="{{ token }}">
                     <button class="btn btn-success pull-right" type="button" id="btn-enter">提交订单</button>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<!--end-containt-part-->
-<script>
-    var rates = {{ rates | safe }};
-</script>
-{% include "common/foot.html" %}
+{% endblock %}
+
+{% block js %}
 <script>
     $('.query-btn').click(function(){
         var borrowDepartCode = $('#borrowDepartCode').val();
@@ -192,7 +183,6 @@
                 }
                 $('#anomaly').find('tbody').append(tr);
             }
-{#                    setTotal($('#correct').find('tbody'),'1');#}
             setTotal($('#correct').find('tbody'));
         }
     }
@@ -210,9 +200,8 @@
             alert('退卡列表为空，请核对后再尝试提交！');
             return false;
         }
-        var data = { 'cardStr':JSON.stringify(cardList)};
+        var data = { 'cardStr':JSON.stringify(cardList),'postToken':$('#post-token').val()};
         doAjaxSave(url,data);
     }
 </script>
-</body>
-</html>
+{% endblock %}

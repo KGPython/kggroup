@@ -12,6 +12,11 @@ from django.db import transaction
 
 def index(request):
     rates = request.session.get('s_rates')
+
+    # 在服务端session中添加key认证，避免用户重复提交表单
+    token = 'allow'  # 可以采用随机数
+    request.session['postToken'] = token
+
     return render(request,'cardChange.html',locals())
 
 @csrf_exempt
@@ -22,6 +27,14 @@ def save(request):
     depart = request.session.get('s_depart','')
 
     res = {}
+
+    # 检测session中Token值，判断用户提交动作是否合法
+    Token = request.session.get('postToken', default=None)
+    # 获取用户表单提交的Token值
+    userToken = request.POST.get('postToken','')
+    if userToken != Token:
+        res["msg"] = 0
+        return HttpResponse(json.dumps(res))
 
     #入卡列表
     cardListInStr = request.POST.get('cardListIn','')
@@ -179,6 +192,7 @@ def save(request):
             res["msg"] = 1
             # res["urlRedirect"] ='/kg/sellcard/fornt/cardsale/orderInfo/?orderSn=' + order_sn
             ActionLog.objects.create(action='换卡-单卡',u_name=request.session.get('s_uname'),cards_in=cardListInStr,cards_out=cardListOutStr,add_time=datetime.datetime.now())
+            del request.session['postToken']
     except Exception as e:
         res["msg"] = 0
         res["msg_err"] = e

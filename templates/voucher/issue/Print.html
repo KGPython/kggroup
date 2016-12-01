@@ -5,29 +5,65 @@
     <meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>测试页</title>
+    <title>打印预览页</title>
+
+    <style type="text/css">
+        .barcodeImg {
+            margin: 10px 0px
+        }
+    </style>
 </head>
 <body>
 {% include 'common/head.html' %}
-<link rel="stylesheet" href="{{ static }}/css/orderinfoPrint.css" media="print">
+
 <style media="print">
-    .title h5 {
-        width: 100%;
-        text-align: center;
-        font-weight: normal;
-        margin-bottom: 10px;
-        padding-bottom: 5px;
-        border-bottom: 1px dashed black;
+    * {
+        margin: 0;
+        padding: 0;
+        background: #fff;
+    }
+
+    nav, aside {
+        display: none;
+    }
+
+    .noprint {
+        display: none
+    }
+
+    .glyphicon {
+        display: none
     }
 </style>
 
-<style media="screen">
+<style>
+    .A4_longitudinal {
+        margin-top: 2mm;
+        margin-bottom: 2mm;
+        margin-left: 2mm;
+        margin-right: 2mm;
+        width: 210mm;
+        height: 297mm;
+    }
+
+    .A4_transverse {
+        margin-top: 2mm;
+        margin-bottom: 2mm;
+        margin-left: 2mm;
+        margin-right: 2mm;
+        width: 297mm;
+        height: 210mm;
+    }
+
     .v_print {
         border: 1px solid #000;
-        margin-bottom: 20px;
-        margin-left: 20px;
+        margin-top: 1.5mm;
+        margin-bottom: 1.5mm;
+        margin-left: 1.5mm;
+        margin-right: 1.5mm;
         width: 95mm;
         height: 66mm;
+        float: left;
     }
 
     .v_print .v_title {
@@ -35,9 +71,9 @@
     }
 
     .v_print .v_image {
-        background: black;
         margin-left: 8mm;
         margin-right: 8mm;
+        width: 79mm;
         height: 18mm;
     }
 
@@ -57,65 +93,123 @@
         margin-bottom: 1px;
     }
 </style>
-
 <!--containt-part-->
 <div id="content">
-    <div class="v_print" style="text-align:center">
-        <label class="v_title">宽广超市购物券</label>
+    <div class="v_print">
+        <input id="src" value="11225921991"><br/>
+        <input type="button" onclick='code11()' value="code11">
+        <input type="button" onclick='code39()' value="code39">
+        <input type="button" onclick='code93()' value="code93">
+        <input type="button" onclick='code128()' value="code128">
+        <input type="button" onclick='ean8()' value="ean8">
+        <input type="button" onclick='ean13()' value="ean13">
+        <input type="button" onclick='ean13()' value="std25">
+        <input type="button" onclick='int25()' value="int25">
+        <input type="button" onclick='msi()' value="msi">
+        <input type="button" onclick='datamatrix()' value="datamatrix">
         <div class="v_image">
+            <div id="bcTarget" class="barcodeImg" style="width: 100%;height: 100%;"></div>
         </div>
-        <label class="v_sn">8888</label>
-        <table class="v_tb">
-            <tr class="v_tr">
-                <th>制作门店：</th>
-                <th>券类型：A</th>
-                <th>券总额：元</th>
-            </tr>
-            <tr class="v_tr">
-                <th>商品名称</th>
-                <th>数量</th>
-                <th>商品编码</th>
-            </tr>
-            <tr class="v_tr">
-                <td></td>
-                <td></td>
-                <td>1</td>
-            </tr>
-            <tr class="v_tr">
-                <td></td>
-                <td></td>
-                <td>2</td>
-            </tr>
-            <tr class="v_tr">
-                <th colspan="3" style="text-align: left">使用范围：</th>
-            </tr>
-        </table>
-        <label class="v_foot" style=" font-size:8px">本券请于前使用</br>逾期作废，丢失不补，盖章有效
-        </label>
     </div>
-    <div class="v_print" style="text-align:center">
-        <label class="v_title">宽广超市购物券</label>
-        <div class="v_image">
+    {% for var_i in page_count %}
+        <div class="{{ A4_class }}">
+            {% for var_j in range_tnop %}
+                {% if var_i|multiply:tnop|add:var_j < counts %}
+                    <div class="v_print" style="text-align:center">
+                        <label class="v_title">宽广超市购物券</label>
+                        <div class="v_image">
+                        </div>
+                        <label class="v_sn">
+                            {{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'couponno' }}</label>
+                        {% if var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'coupontypeid' == 3 %}
+                            <table class="v_tb">
+                                <tr class="v_tr">
+                                    <th>
+                                        制作门店：{{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'shopid' | transShopIdByName }}</th>
+                                    <th>券类型：A</th>
+                                    <th>券总额：{{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'value' }}元</th>
+                                </tr>
+                                <tr class="v_tr">
+                                    <th>商品名称</th>
+                                    <th>数量</th>
+                                    <th>商品编码</th>
+                                </tr>
+                                <tr class="v_tr">
+                                    <td colspan="3">{{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'goodsremark' }}</td>
+                                </tr>
+                                <tr class="v_tr">
+                                    <th colspan="3" style="text-align: left">使用范围：</th>
+                                </tr>
+                            </table>
+                        {% else %}
+                            <table class="v_tb">
+                                <tr style="font-size:18px">
+                                    <th>制作门店：{{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'shopid' }}</th>
+                                    <th>券类型：B</th>
+                                </tr>
+                                <tr style="font-size:25px">
+                                    <td colspan="2">
+                                        券总额：{{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'value' }}元
+                                    </td>
+                                </tr>
+                                <tr class="v_tr">
+                                    <th colspan="2" style="text-align: left">使用范围：</th>
+                                </tr>
+                            </table>
+                        {% endif %}
+                        <label class="v_foot" style=" font-size:8px">本券请于前使用</br>逾期作废，丢失不补，盖章有效
+                        </label>
+                    </div>
+                {% endif %}
+            {% endfor %}
         </div>
-        <label class="v_sn">8888</label>
-        <table class="v_tb">
-            <tr style="font-size:18px">
-                <th>制作门店：</th>
-                <th>券类型：B</th>
-            </tr>
-            <tr style="font-size:25px">
-                <td colspan="2">券总额：元</td>
-            </tr>
-            <tr class="v_tr">
-                <th colspan="2" style="text-align: left">使用范围：</th>
-            </tr>
-        </table>
-        <label class="v_foot" style=" font-size:8px">本券请于前使用</br>逾期作废，丢失不补，盖章有效
-        </label>
-    </div>
+    {% endfor %}
 </div>
 <!--end-containt-part-->
 
 {% include "common/foot.html" %}
+<script type="text/javascript" src="{{ static }}/js/jquery-1.4.4.min.js"></script>
+<script type="text/javascript" src="{{ static }}/js/jquery-barcode.js"></script>
+<script type="text/javascript">
+    function code11() {
+        $("#bcTarget").empty().barcode($("#src").val(), "code11", {barWidth: 2, barHeight: 30, showHRI: false});
+    }
+
+    function code39() {
+        $("#bcTarget").empty().barcode($("#src").val(), "code39", {barWidth: 2, barHeight: 30, showHRI: false});
+    }
+
+    function code93() {
+        $("#bcTarget").empty().barcode($("#src").val(), "code93", {barWidth: 4, barHeight: 30, showHRI: false});
+    }
+
+    function code128() {
+        $("#bcTarget").empty().barcode("12345678901234567890", "code128", {barWidth: 1, barHeight: 3, showHRI: false});
+    }
+
+    function ean8() {
+        $("#bcTarget").empty().barcode($("#src").val(), "ean8", {barWidth: 2, barHeight: 30, showHRI: false});
+    }
+
+    function ean13() {
+        $("#bcTarget").empty().barcode($("#src").val(), "ean13", {barWidth: 2, barHeight: 30, showHRI: false});
+    }
+
+    function std25() {
+        $("#bcTarget").empty().barcode($("#src").val(), "std25", {barWidth: 2, barHeight: 30, showHRI: false});
+    }
+
+    function int25() {
+        $("#bcTarget").empty().barcode($("#src").val(), "int25", {barWidth: 2, barHeight: 30, showHRI: false});
+    }
+
+    function msi() {
+        $("#bcTarget").empty().barcode($("#src").val(), "msi", {barWidth: 2, barHeight: 30, showHRI: false});
+    }
+
+    function datamatrix() {
+        $("#bcTarget").empty().barcode($("#src").val(), "datamatrix", {barWidth: 2, barHeight: 30, showHRI: false});
+    }
+</script>
 </body>
 </html>
