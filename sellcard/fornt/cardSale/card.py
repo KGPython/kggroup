@@ -63,13 +63,11 @@ def saveOrder(request):
         hjsList = hjsStr.split(',')
 
     #合计信息
-    totalNum = request.POST.get('totalNum',0)
     totalVal = request.POST.get('totalVal',0.00)
 
     discountRate = request.POST.get('discount',0.00)
     disCode = request.POST.get('disCode','')
     discountVal = request.POST.get('discountVal','')
-    YtotalNum = request.POST.get('YtotalNum',0)
 
     Ybalance = request.POST.get('Ybalance',0.00)
 

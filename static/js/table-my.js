@@ -353,7 +353,6 @@ function createDiscount(cardsValTotal,rateInput) {
     cardsValTotal = (parseFloat(cardsValTotal)/1000).toString().split(".")[0]+'000';
 
     var discountVal = parseFloat(cardsValTotal)*rate;
-    console.log(discountVal)
     $('.Total #discountVal b').text(discountVal);
     if(discountVal>0){
         $('.discBox').show();
@@ -650,13 +649,17 @@ function saveCardSaleOrder(action_type,url,cardList,orderSns){
     var discPay =parseFloat($('.Total #totalYBalance b').text());//优惠补差
     var discount = parseFloat($('.Total #discount input').val());//折扣比率
     var disCode = $('.Total #disCode input').val();
-    var discountVal = parseFloat($('.Total #discountVal b').text());//优惠金额（总合计内）
-    //赠卡列表
-    var YcardList = getCardList($('#YcardList'),'1');
-    var YtotalNum =parseInt($('.discountTotal #totalNum b').text());
-    var Ycash = parseFloat($('#Ycash').val());//优惠返现
-    var YtotalVal =parseFloat($('.discountTotal #totalVal b').text());//优惠列表合计=卡合计+返现合计
-    //var Ybalance =parseFloat($('.discountTotal #balance b').text());//优惠补差
+    var discountVal = parseFloat($('.Total #discountVal b').text());//优惠金额
+    var YcardList = [];
+    var YtotalNum=0,Ycash=0,YtotalVal=0;
+    if(discountVal){
+        //赠卡列表
+        YcardList = getCardList($('#YcardList'),'1');
+        YtotalNum =parseInt($('.discountTotal #totalNum b').text());
+        Ycash = parseFloat($('#Ycash').val());//优惠返现
+        YtotalVal =parseFloat($('.discountTotal #totalVal b').text());//优惠列表合计=卡合计+返现合计
+    }
+
     //支付列表
     var payList = getPayList($('.payList'));
     var hjsStr = $('.payList #remark-hjs').val();
@@ -820,9 +823,12 @@ function saveCardChangeOrder(url){
     var hjsStr = $('.payList #remark-hjs').val();
 
     //优惠列表信息
-    var discCardList = getCardList($('#YcardList'),'1');
-    var discCardsVal = parseFloat($('.discountTotal #totalVal b').text());
-    var discCash = parseFloat($('.discountTotal #Ycash').val());
+    var discCardList = [];
+    var discCash = 0;
+    if(discVal>0){
+        discCardList = getCardList($('#YcardList'),'1');
+        discCash = parseFloat($('.discountTotal #Ycash').val());
+    }
 
     //买卡人信息
     var buyerName = $('#buyerName').val();
