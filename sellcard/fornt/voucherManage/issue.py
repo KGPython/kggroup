@@ -131,22 +131,24 @@ def printed(request):
     :param request:
     :return: 打印页view
     """
-    snlist = mth.getReqVal(request, 'snlist', '').split(',')
-    A4 = int(mth.getReqVal(request, 'A4', '1'))
+    snlist = mth.getReqVal(request, 'snlist', '')
+    if snlist != '':
+        snlist = snlist.split(',')
+        A4 = int(mth.getReqVal(request, 'A4', '1'))
 
-    if A4 == 9:
-        tnop = 9  # The number of pages 每页显示个数
-        A4_class = 'A4_transverse'
-    else:
-        tnop = 8  # The number of pages 每页显示个数
-        A4_class = 'A4_longitudinal'
+        if A4 == 9:
+            tnop = 9  # The number of pages 每页显示个数
+            A4_class = 'A4_transverse'
+        else:
+            tnop = 8  # The number of pages 每页显示个数
+            A4_class = 'A4_longitudinal'
 
-    counts = len(snlist)
-    range_tnop = range(tnop)
-    page_count = range(counts // tnop + (0 if counts % tnop == 0 else 1))
+        counts = len(snlist)
+        range_tnop = range(tnop)
+        page_count = range(counts // tnop + (0 if counts % tnop == 0 else 1))
 
-    resList = KfJobsCoupon.objects.values(
-        'shopid', 'coupontypeid', 'enddate', 'couponno',
-        'value', 'goodsremark').filter(couponno__in=snlist)
+        resList = KfJobsCoupon.objects.values(
+            'shopid', 'coupontypeid', 'enddate', 'couponno',
+            'value', 'goodsremark').filter(couponno__in=snlist)
 
     return render(request, 'voucher/issue/Print.html', locals())
