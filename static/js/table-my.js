@@ -337,6 +337,7 @@ function createDiscount(cardsValTotal,rateInput) {
     //如果折扣授权码discCode存在，则认为是自定义折扣，取输入框内部的数值为折扣返点率
     //如果折扣授权码discCode不存在，则认为是固定返点，由系统生成折扣返点率
     var  rate= 0;
+
     if(discCode){
         rate = (parseFloat($(".Total #discount input").val()).toFixed(2))/100;
     }else {
@@ -349,7 +350,10 @@ function createDiscount(cardsValTotal,rateInput) {
             $(rateInput).val(rate*100);
         }
     }
-    var discountVal = (parseFloat(cardsValTotal)*rate/10).toString().split(".")[0]+'0';
+    cardsValTotal = (parseFloat(cardsValTotal)/1000).toString().split(".")[0]+'000';
+
+    var discountVal = parseFloat(cardsValTotal)*rate;
+    console.log(discountVal)
     $('.Total #discountVal b').text(discountVal);
     if(discountVal>0){
         $('.discBox').show();
