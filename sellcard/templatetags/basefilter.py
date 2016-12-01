@@ -153,6 +153,14 @@ def divide(v1, v2):
 
     return str(round(res, 2)) + '%'
 
+@register.filter
+def o_index(v_i,v_o):
+    return v_o[int(v_i)]
+
+@register.filter
+def o_column(v_o,v_s):
+    return v_o[str(v_s)]
+
 
 # 转百分比
 @register.filter
