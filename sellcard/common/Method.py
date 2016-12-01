@@ -318,10 +318,6 @@ def orderDetail(request):
             .filter(order_sn=orderSn)
         orderInfo = OrderChangeCardInfo.objects.values('card_no', 'card_attr', 'card_value', 'card_balance') \
             .filter(order_sn=orderSn)
-        # cardsNum = OrderChangeCardInfo.objects.values('card_attr', 'card_no') \
-        #   .filter(order_sn=orderSn) \
-        #   .annotate(total=Count('card_no')) \
-        #   .order_by('card_attr')
         cardsNum = OrderChangeCardInfo.objects.values('card_attr', 'card_no', 'card_value', 'card_balance'). \
             filter(order_sn=orderSn)
         cardsInNum = 0
@@ -331,7 +327,7 @@ def orderDetail(request):
                 cardsInNum += 1
             if num['card_attr'] == '0':
                 cardsOutNum += 1
-    return render(request, 'orderDetail.html', locals())
+    return render(request, 'report/orderDetail.html', locals())
 
 
 

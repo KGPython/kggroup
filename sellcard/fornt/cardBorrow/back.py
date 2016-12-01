@@ -15,12 +15,15 @@ def index(request):
     roleid= request.session.get("s_roleid",'')
     rates = request.session.get('s_rates')
 
+    # 在服务端session中添加key认证，避免用户重复提交表单
+    token = 'allow'  # 可以采用随机数
+    request.session['postToken'] = token
+
     return render(request, 'borrowBack.html',locals())
 
 @csrf_exempt
 def query(request):
     shopcode = request.session.get('s_shopcode','')
-
     cardsStr = request.POST.get('cards','')
     borrowDepartCode = (request.POST.get('borrowDepartCode','')).strip()
     cards = json.loads(cardsStr)
@@ -78,6 +81,15 @@ def save(request):
         cardnoList.append(card['cardId'])
     now = datetime.datetime.now()
     res = {}
+
+    # 检测session中Token值，判断用户提交动作是否合法
+    Token = request.session.get('postToken', default=None)
+    # 获取用户表单提交的Token值
+    userToken = request.POST.get('postToken','')
+    if userToken != Token:
+        res["msg"] = 0
+        return HttpResponse(json.dumps(res))
+
     try:
         with transaction.atomic():
             cardsNum = len(cardnoList)
@@ -96,9 +108,9 @@ def save(request):
 
             res['msg'] = 1
             ActionLog.objects.create(action='借卡-还卡',u_name=request.session.get('s_uname'),cards_in=cardsStr,add_time=datetime.datetime.now())
-
+            del request.session['postToken']
     except Exception as e:
         res['msg'] = 0
-        res["msg_err"] = e.value
+        res["msg_err"] = e
         ActionLog.objects.create(action='借卡-还卡',u_name=request.session.get('s_uname'),cards_in=cardsStr,add_time=datetime.datetime.now(),err_msg=e)
     return HttpResponse(json.dumps(res))

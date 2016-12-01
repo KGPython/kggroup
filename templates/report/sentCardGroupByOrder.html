@@ -1,15 +1,7 @@
+{% extends 'common/baseForReport.html' %}
 {% load basefilter %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>领卡盘点</title>
-    <link rel="stylesheet" href="{{ static }}/css/bootstrap-datetimepicker.min.css">
-</head>
-<body>
-{% include 'common/head.html' %}
+{% block title %}领卡盘点{% endblock %}
+{% block content %}
 <style>
     table a{text-decoration: underline}
 </style>
@@ -103,9 +95,8 @@
     </div>
 </div>
 <!--end-containt-part-->
-{% include "common/foot.html" %}
-<script src="{{ static }}/js/bootstrap-datetimepicker.js"></script>
-<script src="{{ static }}/js/bootstrap-datetimepicker.zh-CN.js"></script>
+{% endblock %}
+{% block js %}
 <script type="text/javascript">
     $('.form_date').datetimepicker({
         language: 'zh-CN',
@@ -132,5 +123,4 @@
     var shop = "{{ shop |default:'' | safe }}";
     $("#shop").val(shop);
 </script>
-</body>
-</html>
+{% endblock %}

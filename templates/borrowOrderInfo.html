@@ -152,14 +152,15 @@
     </div>
 </div>
 {% include "common/foot.html" %}
-<script src=""></script>
+
 <script>
     function printAll(){
         window.print();
 
     }
     function closeFun(){
-        window.history.back();
+        self.location=document.referrer;
+{#        window.history.back();#}
     }
 </script>
 

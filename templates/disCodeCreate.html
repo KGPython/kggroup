@@ -1,13 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>返点验证码</title>
-</head>
-<body>
-{% include 'common/head.html' %}
+{% extends 'common/baseForJobs.html' %}
+{% block title %}返点验证码{% endblock %}
+{% block content %}
 <style>
     .form-horizontal{width: 500px;height:700px;margin: 0 auto;padding-top: 150px;}
 </style>
@@ -49,7 +42,9 @@
         </div>
     </div>
 </div>b
-{% include "common/foot.html" %}
+{% endblock %}
+
+{% block js %}
 <script>
     $('#Form #btn-enter').click(function(){
         var prefix = $('#prefix').val();
@@ -58,5 +53,4 @@
         }
     })
 </script>
-</body>
-</html>
+{% endblock %}

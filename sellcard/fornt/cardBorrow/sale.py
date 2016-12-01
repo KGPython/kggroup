@@ -11,6 +11,9 @@ from sellcard.models import OrderBorrow,OrderBorrowInfo,CardInventory,ActionLog
 from sellcard.common.model import MyError
 @csrf_exempt
 def index(request):
+    # 在服务端session中添加key认证，避免用户重复提交表单
+    token = 'allow'  # 可以采用随机数
+    request.session['postToken'] = token
     return render(request, 'borrowSale.html',locals())
 
 @csrf_exempt
@@ -19,6 +22,15 @@ def save(request):
     shopcode = request.session.get('s_shopcode','')
 
     res = {}
+
+    # 检测session中Token值，判断用户提交动作是否合法
+    Token = request.session.get('postToken', default=None)
+    # 获取用户表单提交的Token值
+    userToken = request.POST.get('postToken','')
+    if userToken != Token:
+        res["msg"] = 0
+        return HttpResponse(json.dumps(res))
+
     #售卡列表
     cardStr = request.POST.get('cardStr','')
     cardList = json.loads(cardStr)
@@ -74,13 +86,14 @@ def save(request):
                 mth.updateCard(cardIdList,'9')
                 raise MyError('ERP数据库卡状态更新失败！')
             res["msg"] = 1
-            res["urlRedirect"] = '/kg/sellcard/borrow/sale/info/?orderSn='+order_sn
+            res["urlRedirect"] = '/kg/sellcard/fornt/borrow/sale/info/?orderSn='+order_sn
             ActionLog.objects.create(action='借卡-售卡',u_name=request.session.get('s_uname'),cards_out=cardStr,add_time=datetime.datetime.now())
+            del request.session['postToken']
     except Exception as e:
         print(e)
         res["msg"] = 0
-        res["msg_err"] = e.value
-        ActionLog.objects.create(action='借卡-售卡',u_name=request.session.get('s_uname'),cards_out=cardStr,add_time=datetime.datetime.now(),err_msg=e.value)
+        res["msg_err"] = e
+        ActionLog.objects.create(action='借卡-售卡',u_name=request.session.get('s_uname'),cards_out=cardStr,add_time=datetime.datetime.now(),err_msg=e)
 
     return HttpResponse(json.dumps(res))
 

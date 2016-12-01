@@ -14,10 +14,6 @@
 <body>
     {% include 'common/nav.html' %}
     {% block content %}  {% endblock %}
-    <script>
-        var rates = {{ request.session.s_rates | safe }};
-        var disc_level = {{ request.session.disc_level }};
-    </script>
     {% include 'common/foot.html' %}
     {% block js  %} {% endblock %}
 </body>

@@ -1,14 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>批量销售</title>
-</head>
-<body>
-{% include 'common/head.html' %}
-<!--containt-part-->
+{% extends 'common/baseForJobs.html' %}
+{% block title %}批量售卡{% endblock %}
+{% block content %}
 <div id="content">
     <div id="content-header">
         <div id="breadcrumb">
@@ -38,42 +30,18 @@
                 {% include 'common/payment.html' %}
                 {% include 'common/orderTotal.html' %}
 
-                <div class="widget-box">
-                    <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
-                        <h5>顾客信息</h5>
-                    </div>
-                    <div class="widget-content nopadding">
-                        <div id="buyerInfo" class="collapse in widget-content">
-                            <div class="row formline">
-                                <label for="" class="col-xs-1 formline-label">客户名称：</label>
-                                <div class="col-xs-2">
-                                    <input class="form-control" placeholder="" type="text" id="buyerName">
-                                </div>
-                                <label for="" class="col-xs-1 formline-label">联系电话：</label>
-                                <div class="col-xs-2">
-                                    <input class="form-control" placeholder="" type="text" id="buyerPhone">
-                                </div>
-                                <label for="" class="col-xs-1 formline-label">单位名称：</label>
-                                <div class="col-xs-5">
-                                    <input class="form-control" placeholder="" type="text" id="buyerCompany">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                {% include 'common/buyerInfo.html' %}
                 <div class="enter-box">
+                    <input id="post-token" type="hidden" value="{{ token }}">
                     <button class="btn btn-success pull-right" type="button" id="btn-enter">提交订单</button>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<!--end-containt-part-->
-<script>
-    var rates = {{ request.session.s_rates | safe }};
-    var disc_level = {{ request.session.disc_level }};
-</script>
-{% include "common/foot.html" %}
+{% endblock %}
+
+{% block js %}
 <script>
     $('.query-btn').click(function(){
         var rows = $('#cardsForm').find('.row');
@@ -219,5 +187,4 @@
         }
     });
 </script>
-</body>
-</html>
+{% endblock %}

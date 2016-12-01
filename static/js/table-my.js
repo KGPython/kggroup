@@ -401,6 +401,13 @@ function setTotal(obj){
             //3.1、计算补差金额
             var cardChangeOutTotalVal = $(".cardOutTotal #totalVal b").text();
             var cardsPayVal = parseFloat(cardChangeOutTotalVal)-parseFloat(cardsInTotalVal);
+            if(cardsPayVal>0){
+                $('.payment').show();
+                $('.Total').show();
+            }else {
+                $('.payment').hide();
+                $('.Total').hide();
+            }
             $('.Total #totalVal b').text(cardsPayVal);
             //3.2、计算优惠返点
             var rateInput  = $('.Total #discount input')[0];
@@ -437,6 +444,13 @@ function setTotal(obj){
             //3.1、计算补差金额
             var cardChangeInTotalVal = $(".cardInTotal #totalVal b").text();
             var cardsPayVal = parseFloat(cardsTotalVal)-parseFloat(cardChangeInTotalVal);
+            if(cardsPayVal>0){
+                $('.payment').show();
+                $('.Total').show();
+            }else {
+                $('.payment').hide();
+                $('.Total').hide();
+            }
             $('.Total #totalVal b').text(cardsPayVal);
             //3.2、计算优惠返点
             var rateInput  = $('.Total #discount input')[0];
@@ -646,6 +660,9 @@ function saveCardSaleOrder(action_type,url,cardList,orderSns){
     var buyerName = $('#buyerName').val();
     var buyerPhone = $('#buyerPhone').val();
     var buyerCompany = $('#buyerCompany').val();
+
+    var postToken = $('#post-token').val();
+
     if(totalVal==0){
         alert('还未添加售卡信息，请核对后再尝试提交！');
         return false;
@@ -663,7 +680,6 @@ function saveCardSaleOrder(action_type,url,cardList,orderSns){
         }
     }
     var data = {
-        csrfmiddlewaretoken: CSRF,
         'actionType':action_type,//操作类型
         'cardStr':JSON.stringify(cardList),//售卡列表
         'orderSnList':orderSnList,
@@ -681,8 +697,8 @@ function saveCardSaleOrder(action_type,url,cardList,orderSns){
         'hjsStr':hjsStr,//黄金手列表
         'buyerName':buyerName,
         'buyerPhone':buyerPhone,
-        'buyerCompany':buyerCompany
-
+        'buyerCompany':buyerCompany,
+        'postToken':postToken
     };
     doAjaxSave(url,data);
 }
@@ -704,7 +720,6 @@ function saveCardFillOrder(url){
         return false;
     }
     var data = {
-        csrfmiddlewaretoken: CSRF,
         'cardInStr':JSON.stringify(cardInList),
         'cardInTotalNum':cardInTotalNum,
         'cardInTotalVal':cardInTotalVal,
@@ -746,7 +761,6 @@ function updateCardFillOrder(url,target_url){
         type:'post',
         dataType:'json',
         data:{
-            csrfmiddlewaretoken: CSRF,
             'cardOutStr':JSON.stringify(cardOutList),
             'cardOutTotalNum':cardOutTotalNum,
             'cardOutTotalVal':cardOutTotalVal,
@@ -832,7 +846,6 @@ function saveCardChangeOrder(url){
     }
     $("#btn-enter").attr('disable',true);
     var data ={
-        csrfmiddlewaretoken: CSRF,
         'cardListIn':JSON.stringify(cardListIn),
         'totalNumIn':totalNumIn,
         'totalValIn':totalValIn,
@@ -850,7 +863,8 @@ function saveCardChangeOrder(url){
         // 支付人信息
         'buyerName':buyerName,
         'buyerPhone':buyerPhone,
-        'buyerCompany':buyerCompany
+        'buyerCompany':buyerCompany,
+        'postToken':$('#post-token').val()
     };
 
     doAjaxSave(url,data);
@@ -858,7 +872,6 @@ function saveCardChangeOrder(url){
 
 //ajax传输保存订单操作的数据
 function doAjaxSave(url,data){
-
     $("#btn-enter").attr('disabled',true);
     $.ajax({
         url:url,
@@ -1063,6 +1076,7 @@ function setTotalInfoNormal(cardSaleTotalVal){
     $('.Total #totalYBalance b').text(discountPay);
     //3、计算应付金额
     $('.Total #totalPaid b').text(cardSaleTotalVal+discountPay);
+    $('.discountTotal #Ycash').val(0)
 }
 //计算混合支付的合计金额
 $(document).on('blur','.payList tr',function(){

@@ -15,6 +15,10 @@ def index(request):
     roleid= request.session.get("s_roleid",'')
     rates = request.session.get('s_rates')
 
+    # 在服务端session中添加key认证，避免用户重复提交表单
+    token = 'allow'  # 可以采用随机数
+    request.session['postToken'] = token
+
     return render(request, 'cardsSale.html',locals())
 
 @csrf_exempt
