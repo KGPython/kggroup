@@ -38,6 +38,8 @@ def get_MssqlConn():
 
 
 def getReqVal(request, key, default=None):
+    key = key.strip()
+
     if request.method == "GET":
         val = request.GET.get(key, default)
     elif request.method == "POST":

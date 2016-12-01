@@ -4,7 +4,6 @@ from django.core.paginator import Paginator
 from django.db import transaction
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpResponseRedirect
 
 import datetime, time, json
 from random import sample
@@ -24,6 +23,7 @@ def index(request):
     today = str(datetime.date.today())
     couponType = mth.getReqVal(request, 'couponType', '')
     printed = mth.getReqVal(request, 'printed', '')
+    issueSn = mth.getReqVal(request, 'issueSn', '')
     start = mth.getReqVal(request, 'start', today)
     end = mth.getReqVal(request, 'end', today)
     endTime = datetime.datetime.strptime(end, '%Y-%m-%d') + datetime.timedelta(1)
@@ -38,14 +38,17 @@ def index(request):
     if printed != '':
         kwargs.setdefault('flag', printed)
 
+    if issueSn != '':
+        kwargs.setdefault('couponno__contains', issueSn)
+
     if start != '':
         kwargs.setdefault('startdate__gte', start)
 
     if end != '':
         kwargs.setdefault('startdate__lte', endTime)
 
-    #用于全部打印时传入的券号列表
-    snlist = str(KfJobsCoupon.objects.values_list('couponno',flat=True).filter(**kwargs))
+    # 用于全部打印时传入的券号列表
+    snlist = ','.join(KfJobsCoupon.objects.values_list('couponno', flat=True).filter(**kwargs))
 
     resList = KfJobsCoupon.objects.values(
         'shopid', 'createuserid', 'coupontypeid', 'startdate', 'couponno', 'value',
@@ -128,10 +131,22 @@ def printed(request):
     :param request:
     :return: 打印页view
     """
-    #resList = mth.getReqVal(request, 'list', '')
-    #i = 0
-    #for row in resList:
-        #i += 1
-        #sn = row.couponno
+    snlist = mth.getReqVal(request, 'snlist', '').split(',')
+    A4 = int(mth.getReqVal(request, 'A4', '1'))
+
+    if A4 == 9:
+        tnop = 9  # The number of pages 每页显示个数
+        A4_class = 'A4_transverse'
+    else:
+        tnop = 8  # The number of pages 每页显示个数
+        A4_class = 'A4_longitudinal'
+
+    counts = len(snlist)
+    range_tnop = range(tnop)
+    page_count = range(counts // tnop + (0 if counts % tnop == 0 else 1))
+
+    resList = KfJobsCoupon.objects.values(
+        'shopid', 'coupontypeid', 'enddate', 'couponno',
+        'value', 'goodsremark').filter(couponno__in=snlist)
 
     return render(request, 'voucher/issue/Print.html', locals())
