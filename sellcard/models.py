@@ -14,6 +14,7 @@ from django.db import models
 
 class KfJobsCoupon(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
+    batch = models.CharField(max_length=255)
     shopid = models.CharField(db_column='ShopID', max_length=10)  # Field name made lowercase.
     couponno = models.CharField(db_column='CouponNO', max_length=19)  # Field name made lowercase.
     coupontypeid = models.IntegerField(db_column='CouponTypeID')  # Field name made lowercase.
@@ -28,7 +29,7 @@ class KfJobsCoupon(models.Model):
     discount = models.IntegerField(db_column='Discount')  # Field name made lowercase.
     flag = models.IntegerField(db_column='Flag')  # Field name made lowercase.
     fromsheettype = models.IntegerField(db_column='FromSheetType', blank=True, null=True)  # Field name made lowercase.
-    goodsremark = models.CharField(db_column='GoodsRemark', max_length=4000, blank=True, null=True)  # Field name made lowercase.
+    rangeremark = models.CharField(db_column='RangeRemark', max_length=400, blank=True, null=True)  # Field name made lowercase.
     createuserid = models.CharField(db_column='CreateUserID', max_length=10)  # Field name made lowercase.
     updateuserid = models.CharField(db_column='UpdateUserID', max_length=10, blank=True, null=True)  # Field name made lowercase.
     updatetime = models.DateTimeField(db_column='UpdateTime', blank=True, null=True)  # Field name made lowercase.
@@ -49,6 +50,17 @@ class KfJobsCoupon(models.Model):
     class Meta:
         managed = False
         db_table = 'KF_Jobs_Coupon'
+
+
+class KfJobsCouponGoodsDetail(models.Model):
+    batch = models.CharField(max_length=255)
+    goodname = models.CharField(max_length=255, blank=True, null=True)
+    goodcode = models.CharField(max_length=255, blank=True, null=True)
+    amount = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'KF_Jobs_Coupon_Goods_Detail'
 
 
 class ActionLog(models.Model):
@@ -123,6 +135,23 @@ class CardInventory(models.Model):
     class Meta:
         managed = False
         db_table = 'card_inventory'
+
+
+class CardInventoryCopy(models.Model):
+    card_no = models.CharField(unique=True, max_length=32)
+    card_value = models.CharField(max_length=12)
+    card_status = models.CharField(max_length=1)
+    card_action = models.CharField(max_length=1)
+    card_addtime = models.DateTimeField()
+    shop_code = models.CharField(max_length=16, blank=True, null=True)
+    card_blance = models.DecimalField(max_digits=12, decimal_places=2)
+    charge_time = models.DateTimeField(blank=True, null=True)
+    order_sn = models.CharField(max_length=32, blank=True, null=True)
+    sheetid = models.CharField(max_length=32, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'card_inventory_copy'
 
 
 class CardReceive(models.Model):
@@ -222,6 +251,27 @@ class NavList(models.Model):
     class Meta:
         managed = False
         db_table = 'nav_list'
+
+
+class OldCardData(models.Model):
+    card_no = models.CharField(primary_key=True, max_length=32)
+    sheetid = models.CharField(max_length=32, blank=True, null=True)
+    detail = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'old_card_data'
+
+
+class OldCardData2(models.Model):
+    card_no = models.CharField(primary_key=True, max_length=32)
+    sheetid = models.CharField(max_length=32, blank=True, null=True)
+    detail = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+    mode = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'old_card_data2'
 
 
 class OrderBorrow(models.Model):

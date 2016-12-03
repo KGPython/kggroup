@@ -103,11 +103,12 @@
                                 <th>发行门店</th>
                                 <th>发行人</th>
                                 <th>类型</th>
+                                <th>批次</th>
                                 <th>发行日期</th>
                                 <th>券编号</th>
                                 <th>代金额度</th>
                                 <th>优惠额度</th>
-                                <th>限定商品备注</th>
+                                <th>使用范围</th>
                                 <th>操作</th>
                             </tr>
                             </thead>
@@ -117,11 +118,12 @@
                                     <td>{{ row.shopid | transShopIdByName }}</td>
                                     <td>{{ row.createuserid | transUserId }}</td>
                                     <td>{{ row.coupontypeid | transCouponTypeByChinese }}</td>
+                                    <td>{{ row.batch }}</td>
                                     <td>{{ row.startdate }}</td>
                                     <td>{{ row.couponno }}</td>
                                     <td>{{ row.value }}</td>
                                     <td>{{ row.giftvalue }}</td>
-                                    <td>{{ row.goodsremark }}</td>
+                                    <td>{{ row.rangeremark }}</td>
                                     <td><a href="{% url 'voucherIssuePrint' %}?snlist={{ row.couponno }}">打印</a></td>
                                 </tr>
                             {% endfor %}
