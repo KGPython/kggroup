@@ -57,7 +57,7 @@ def cardInfo(request):
     page = mth.getReqVal(request,'page',1)
 
     cardList = CardInventory.objects.values('card_no','card_value','card_blance','card_status','charge_time','sheetid')\
-            .filter(card_value=cardType,shop_code=shopCode,card_status='1',card_action='1',card_blance__gt='0')\
+            .filter(card_blance=cardType,shop_code=shopCode,card_status='1',card_action='1',card_blance__gt='0')\
             .order_by('card_no')
 
     totalBalance = 0.00
