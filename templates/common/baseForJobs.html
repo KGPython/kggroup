@@ -15,8 +15,9 @@
     {% include 'common/nav.html' %}
     {% block content %}  {% endblock %}
     <script>
-        var rates = {{ request.session.s_rates | safe }};
-        var disc_level = {{ request.session.disc_level }};
+        var DISC_RATES = {{ request.session.s_rates | safe }};//rates
+        var DISC_LEVEL = {{ request.session.disc_level | safe }};//disc_level
+        var SHOP = '{{ request.session.s_shopcode | safe }}';
     </script>
     {% include 'common/foot.html' %}
     {% block js  %} {% endblock %}

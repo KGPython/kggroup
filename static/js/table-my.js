@@ -341,18 +341,22 @@ function createDiscount(cardsValTotal,rateInput) {
     if(discCode){
         rate = (parseFloat($(".Total #discount input").val()).toFixed(2))/100;
     }else {
-        if(typeof(rates)!='undefined'){
-            for(var j=0;j<rates.length;j++){
-                if(rates[j].val_min<=parseFloat(cardsValTotal) && rates[j].val_max>=parseFloat(cardsValTotal)){
-                    rate=rates[j].discount_rate;
+        if(typeof(DISC_RATES)!='undefined'){
+            for(var j=0;j<DISC_RATES.length;j++){
+                if(DISC_RATES[j].val_min<=parseFloat(cardsValTotal) && DISC_RATES[j].val_max>=parseFloat(cardsValTotal)){
+                    rate=DISC_RATES[j].discount_rate;
                 }
             }
-            $(rateInput).val(rate*100);
+            $(rateInput).val(parseFloat(rate*100).toFixed(2));
         }
     }
-    cardsValTotal = (parseFloat(cardsValTotal)/1000).toString().split(".")[0]+'000';
+    var discountVal = 0;
+    if((SHOP=='C010' || SHOP=='C023') && cardsValTotal>=3000 &&cardsValTotal<=3030){
+        discountVal = 100
+    }else{
+        discountVal = (parseFloat(cardsValTotal)*rate).toString().split(".")[0];
+    }
 
-    var discountVal = parseFloat(cardsValTotal)*rate;
     $('.Total #discountVal b').text(discountVal);
     if(discountVal>0){
         $('.discBox').show();
@@ -1059,7 +1063,7 @@ function changeDiscValByPayment2(cardSaleTotalVal,discRate) {
 * posVal：pos刷卡金额
 * */
 function changeDiscValByPos(cardSaleTotalVal,posVal) {
-    if(cardSaleTotalVal-posVal>=rates[0].val_min){
+    if(cardSaleTotalVal-posVal>=DISC_RATES[0].val_min){
         setTotalInfoNormal(cardSaleTotalVal)
     }else{
         //4、优惠金额清零
@@ -1107,10 +1111,10 @@ $(document).on('blur','.payList tr',function(){
                 payName = $(palyList[i]).find('td').eq(1).find('select option:selected').text();
                 //pos刷卡
                 if(payId == 5){
-                    //规则1：门店disc_level为1，则区分
+                    //规则1：门店DISC_LEVEL为1，则区分
                     //规则2：订单超过最小返点金额+1000，则不区分；
                     //规则3：订单金额在最小返点金额和最小返点金额+1000之间，则区分
-                    if(cardSaleTotalVal<(rates[0].val_min+1000) && cardSaleTotalVal>=rates[0].val_min && disc_level=='1') {
+                    if(cardSaleTotalVal<(DISC_RATES[0].val_min+1000) && cardSaleTotalVal>=DISC_RATES[0].val_min && DISC_LEVEL=='1') {
                         var posVal = parseFloat($(palyList[i]).find('td').eq(2).find('input').val());
                         changeDiscValByPos(cardSaleTotalVal, posVal)
                     }
