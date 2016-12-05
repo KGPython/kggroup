@@ -160,6 +160,24 @@
                                             <button type="button" class="btn btn-danger clear-btn">清空</button>
                                         </div>
                                     </div>
+
+                                    <div class="row formline">
+                                        <label for="" class="col-xs-2 formline-label">商品名：</label>
+                                        <div class="col-xs-3">
+                                            <input type="text" class="form-control"
+                                                    id="v_name" name="v_name">
+                                        </div>
+
+                                        <label for="" class="col-xs-2 formline-label">商品编号：</label>
+                                        <div class="col-xs-3">
+                                            <input type="text" class="form-control"
+                                                    id="v_code" name="v_code">
+                                        </div>
+                                        <div class="col-xs-2">
+                                            <button type="button" class="btn btn-info add-btn">添加
+                                            </button>
+                                        </div>
+                                    </div>
                                     <table class="table table-striped table-hover table-form-my">
                                         <thead>
                                         <tr>
@@ -253,6 +271,16 @@
             return false;
         }
         $("#Form").submit();
+    });
+</script>
+<!--添加按钮点击事件-->
+<script type="text/javascript">
+    $('.add-btn').click(function () {
+        var tbody = $(".chooseGoodList");
+        var v_name = $('#v_name').val();
+        var v_code = $('#v_code').val();
+        var row = '<tr><td>'+v_name+'</td><td>'+v_code+"</td><td><input type='text' class='form-control'></td></tr>";
+        tbody.append(row);
     });
 </script>
 <!--代金券类型改变触发事件-->

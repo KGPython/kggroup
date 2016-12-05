@@ -104,7 +104,7 @@
                                     <th>
                                         制作门店：{{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'shopid' | transShopIdByName }}</th>
                                     <th>券类型：A</th>
-                                    <th>券总额：{{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'value' }}元
+                                    <th>券总额：{{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'value'}}元
                                     </th>
                                 </tr>
                                 <tr class="v_tr">
@@ -115,8 +115,8 @@
                                 {% for var_good in var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'GoodList' %}
                                     <tr class="v_tr">
                                         <td>{{ var_good.goodname }}</td>
-                                        <td>{{ var_good.goodcode }}</td>
                                         <td>{{ var_good.amount }}</td>
+                                        <td>{{ var_good.goodcode }}</td>
                                     </tr>
                                 {% endfor %}
                                 <tr class="v_tr">
