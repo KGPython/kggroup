@@ -3,10 +3,12 @@ __author__ = 'qixu'
 from django.core.paginator import Paginator
 from django.db import transaction
 from django.shortcuts import render
-import datetime
+from django.views.decorators.csrf import csrf_exempt
+import datetime, pymssql, json
 from random import sample
 from sellcard.common import Method as mth
-from sellcard.models import KfJobsCoupon
+from sellcard.models import KfJobsCoupon, KfJobsCouponGoodsDetail
+
 
 
 @transaction.atomic
@@ -17,6 +19,8 @@ def index(request):
     :return:列表view
     """
     shopid = request.session.get('s_shopid')
+    if shopid is None:
+        shopid = '9999'
     today = str(datetime.date.today())
     couponType = mth.getReqVal(request, 'couponType', '')
     printed = mth.getReqVal(request, 'printed', '')
@@ -27,7 +31,7 @@ def index(request):
     page = mth.getReqVal(request, 'page', 1)
 
     kwargs = {}
-    # kwargs.setdefault('shopid', shopid)
+    kwargs.setdefault('shopid', shopid)
 
     if couponType != '':
         kwargs.setdefault('coupontypeid', couponType)
@@ -48,8 +52,8 @@ def index(request):
     snlist = ','.join(KfJobsCoupon.objects.values_list('couponno', flat=True).filter(**kwargs))
 
     resList = KfJobsCoupon.objects.values(
-        'shopid', 'createuserid', 'coupontypeid', 'startdate', 'couponno', 'value',
-        'giftvalue', 'goodsremark').filter(**kwargs).order_by('shopid', 'startdate', 'createuserid')
+        'shopid', 'createuserid', 'coupontypeid', 'batch', 'startdate', 'couponno', 'value',
+        'giftvalue', 'rangeremark').filter(**kwargs).order_by('batch')
 
     paginator = Paginator(resList, 8)
     try:
@@ -60,6 +64,7 @@ def index(request):
     return render(request, 'voucher/issue/List.html', locals())
 
 
+@csrf_exempt
 @transaction.atomic
 def create(request):
     """
@@ -67,57 +72,91 @@ def create(request):
     :param request:
     :return: 新建页view
     """
+    goodList = []
     if request.method == 'POST':
         shop = request.session.get("s_shopid")
-        if shop is None:
+        if (shop is None or shop == ''):
             shop = '9999'
         shopCode = request.session.get("s_shopcode")
+        if (shopCode is None or shopCode == ''):
+            shopCode = '9999'
         user = request.session.get("s_uid")
         amount = request.POST.get('amount')
-        type = request.POST.get('type', '1')
+        type = request.POST.get('type')
+        if type == '3':
+            chooseList = request.POST.get('chooseList')
+            chooseList = json.loads(chooseList)
+        else:
+            chooseList = []
         costValue = request.POST.get('costValue')
         giftValue = request.POST.get('giftValue')
-        discount = request.POST.get('discount', '0')
+        if (giftValue is None or giftValue == ''):
+            giftValue = 0
+        discount = request.POST.get('discount')
+        if (discount is None or discount == ''):
+            discount = 0
         endDate = request.POST.get('endDate')
-        CPwdFlag = request.POST.get('CPwdFlag', '0')
-        CPwd = request.POST.get('CPwd')
-        maxUseTime = request.POST.get('maxUseTime', '1')
-        goodsRemark = request.POST.get('goodsRemark')
-
-        str = ''
-        if shopCode[0:1] == 'C':
-            str = '88814' + shopCode[2:] + datetime.datetime.now().strftime('%y%m%d')
-        elif shopCode[0:1] == 'T':
-            str = '88815' + shopCode[2:] + datetime.datetime.now().strftime('%y%m%d')
+        CPwdFlag = request.POST.get('CPwdFlag')
+        if CPwdFlag == '1':
+            CPwd = request.POST.get('CPwd')
         else:
-            str = '8889999' + datetime.datetime.now().strftime('%y%m%d')
-        List = set()
-        while len(List) < int(amount):
-            sn = ''.join(sample('0123456789', 6))
-            List.add(sn)
+            CPwd = ''
+        maxUseTime = request.POST.get('maxUseTime')
+        if (maxUseTime is None or maxUseTime == ''):
+            maxUseTime = 0
+        rangeremark = request.POST.get('rangeremark')
+        # 判断提交按钮类型：1、保存信息，2、查询商品
+        if request.POST.get('buttonvalue') == '1':
+            str = ''
+            if shopCode[0:1] == 'C':
+                str = '88814' + shopCode[2:] + datetime.datetime.now().strftime('%y%m%d')
+            elif shopCode[0:1] == 'T':
+                str = '88815' + shopCode[2:] + datetime.datetime.now().strftime('%y%m%d')
+            else:
+                str = '8889999' + datetime.datetime.now().strftime('%y%m%d')
+            List = set()
+            while len(List) < int(amount):
+                sn = ''.join(sample('0123456789', 6))
+                List.add(sn)
+            batch = shopCode + '_' + datetime.datetime.now().strftime('%y%m%d')
+            for var_sn in List:
+                KfJobsCoupon.objects.create(shopid=shop,
+                                            batch=batch,
+                                            couponno=str + var_sn,
+                                            coupontypeid=type,
+                                            startdate=datetime.datetime.now(),
+                                            enddate=datetime.datetime.strptime(endDate, "%Y-%m-%d").date(),
+                                            cpwdflag=CPwdFlag,
+                                            cpwd=CPwd,
+                                            usetime=0,
+                                            maxusetime=maxUseTime,
+                                            value=costValue,
+                                            giftvalue=giftValue,
+                                            discount=discount,
+                                            flag=0,
+                                            fromsheettype=220,
+                                            rangeremark=rangeremark,
+                                            createuserid=user,
+                                            serialid=var_sn,
+                                            clearflag=0,
+                                            clearvalue=0)
 
-        for var_sn in List:
-            KfJobsCoupon.objects.create(shopid=shop,
-                                        couponno=str + var_sn,
-                                        coupontypeid=type,
-                                        startdate=datetime.datetime.now(),
-                                        enddate=datetime.datetime.strptime(endDate, "%Y-%m-%d").date(),
-                                        cpwdflag=CPwdFlag,
-                                        cpwd=CPwd,
-                                        usetime=0,
-                                        maxusetime=maxUseTime,
-                                        value=costValue,
-                                        giftvalue=giftValue,
-                                        discount=discount,
-                                        flag=0,
-                                        fromsheettype=220,
-                                        goodsremark=goodsRemark,
-                                        createuserid=user,
-                                        serialid=var_sn,
-                                        clearflag=0,
-                                        clearvalue=0)
-        msg = 1
+            for var_good in chooseList:
+                KfJobsCouponGoodsDetail.objects.create(batch=batch,
+                                                       goodname=var_good['ShortName'].strip(),
+                                                       goodcode=var_good['CustomNo'].strip(),
+                                                       amount=int(var_good['amount']))
+
+            msg = 1
+        else:
+            goodname = request.POST.get('goodname')
+            goodcode = request.POST.get('goodcode')
+            if (goodname == '' and goodcode == ''):
+                goodList = []
+            else:
+                goodList = getGoodsList(goodname, goodcode)
     return render(request, 'voucher/issue/Create.html', locals())
+
 
 
 def printed(request):
@@ -127,6 +166,7 @@ def printed(request):
     :return: 打印页view
     """
     snlist = mth.getReqVal(request, 'snlist', '')
+    var_row = ''
     if snlist != '':
         snlist = snlist.split(',')
         A4 = int(mth.getReqVal(request, 'A4', '1'))
@@ -143,7 +183,40 @@ def printed(request):
         page_count = range(counts // tnop + (0 if counts % tnop == 0 else 1))
 
         resList = KfJobsCoupon.objects.values(
-            'shopid', 'coupontypeid', 'enddate', 'couponno',
-            'value', 'goodsremark').filter(couponno__in=snlist)
+            'shopid', 'coupontypeid', 'enddate', 'couponno', 'rangeremark',
+            'value', 'batch').filter(couponno__in=snlist)
+
+        for var_i in resList:
+            var_i['GoodList'] = KfJobsCouponGoodsDetail.objects.values(
+                'goodname', 'goodcode', 'amount').filter(batch=var_i['batch'])
+
+        print(resList)
 
     return render(request, 'voucher/issue/Print.html', locals())
+
+
+def getGoodsList(goodsname, goodscode):
+    """
+    获取商品列表
+    :param goodsname: 商品名称
+    :param goodscode: 商品编码
+    :return:列表
+    """
+    conn = pymssql.connect(host='192.168.122.141',
+                           port='1433',
+                           user='myshop',
+                           password='oyf20140208HH',
+                           database='mySHOPCMStock',
+                           charset='utf8',
+                           as_dict=True)
+    cur = conn.cursor()
+    sql = u"select ShortName, " \
+          u"       CustomNo " \
+          u"  from Goods " \
+          u" where name like '%{goodsname}%'" \
+          u"   and CustomNo like '%{goodscode}%'".format(goodsname=goodsname, goodscode=goodscode)
+    cur.execute(sql)
+    list = cur.fetchall()
+    cur.close()
+    conn.close()
+    return list
