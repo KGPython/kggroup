@@ -1,13 +1,11 @@
 #-*- coding:utf-8 -*-
 from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
-from django.db.models import Sum,Count
+from django.db.models import Sum
 import datetime
 
-from sellcard.models import Orders,OrderUpCard,OrderChangeCard
+from sellcard.models import OrderUpCard
 from sellcard.common import Method as mth
 from sellcard import views as base
-@csrf_exempt
 def index(request):
     if request.method == 'GET':
         start = str(datetime.date.today().replace(day=1))

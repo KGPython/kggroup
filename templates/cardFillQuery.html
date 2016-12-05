@@ -23,6 +23,7 @@
                         <div class="widget-content nopadding">
                             <div class="collapse in widget-content">
                                 <form id="queryForm" class="query-list" action="{% url "cardfill_query" %}" method="post">
+                                    {% csrf_token %}
                                     <div class="row formline">
                                         <label for="" class="col-xs-1 formline-label">联系电话：</label>
                                         <div class="col-xs-3">
@@ -110,6 +111,7 @@
                             <a href="?pageNum={{ page.paginator.num_pages }}&user_phone={{ user_phone }}&state={{ state }}">尾页</a>
 
                             <form method="post" id="codeForm" style="display: inline-block">
+                                {% csrf_token %}
                                 <input type="hidden" name="user_phone" value="{{ user_phone }}">
                                 <input type="hidden" name="state" value="{{ state }}">
                                 <span class="totalPage">到第</span> <input type="text" class="pageTxt"  id="pageNum" name="pageNum"  value="{{ pageNum }}"> <span>页</span>

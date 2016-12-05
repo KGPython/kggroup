@@ -33,6 +33,7 @@
                 <div class="widget-box">
                     <div class="widget-content collapse in ">
                         <form id="form" class="query-list" method="post" action="{% url 'saleGroupByShop' %}">
+                            {% csrf_token %}
                             <div class="row formline">
                                 <label for="" class="col-xs-1 formline-label">开始时间：</label>
                                 <div class="col-xs-2">

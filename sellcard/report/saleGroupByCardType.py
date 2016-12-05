@@ -1,13 +1,11 @@
 from django.shortcuts import render
 from django.db.models import Sum
-from django.views.decorators.csrf import csrf_exempt
 import datetime
 
 from sellcard.models import Orders,AdminUser
 from sellcard.common import Method as mth
 from sellcard import views as base
 
-@csrf_exempt
 def index(request):
     shop = request.session.get('s_shopcode')
     role = request.session.get('s_roleid')

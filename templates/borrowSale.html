@@ -101,6 +101,7 @@
             method:'post',
             dataType:'json',
             data:{
+                csrfmiddlewaretoken: CSRF,
                 cards:JSON.stringify(cards)
             },
             success:function(data){

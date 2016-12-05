@@ -386,6 +386,7 @@ function SoftKeyValidator(call, check_url) {
         };
 
         var data = {
+            csrfmiddlewaretoken: CSRF,
             call: call,
             jsonStr: JSON.stringify(jsonStr)
         };

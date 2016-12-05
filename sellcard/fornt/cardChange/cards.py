@@ -1,14 +1,12 @@
 #-*- coding:utf-8 -*-
 from django.shortcuts import render
 from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
 import json
 
 from sellcard.models import CardInventory
 from sellcard.common import Method as mth
 
 
-@csrf_exempt
 def index(request):
     operator = request.session.get('s_uid','')
     shopcode = request.session.get('s_shopcode','')
@@ -21,7 +19,6 @@ def index(request):
 
     return render(request, 'cardsChange.html',locals())
 
-@csrf_exempt
 def query(request):
     cardsStr = request.POST.get('cards','')
     cards = json.loads(cardsStr)

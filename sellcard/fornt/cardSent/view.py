@@ -2,7 +2,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from sellcard import views as base
-from django.views.decorators.csrf import csrf_exempt
 from django.db import transaction
 import datetime,json
 
@@ -10,13 +9,11 @@ from sellcard.common import Method as mth
 from sellcard.models import CardReceive,ReceiveInfo,CardInventory,ActionLog
 from sellcard.common.model import MyError
 
-@csrf_exempt
 def index(request):
     shops = base.findShop()
     cardTypes = base.findCardType()
     return render(request,'cardSent.html',locals())
 
-@csrf_exempt
 @transaction.atomic
 def sentOrderSave(request):
     orderSn = 'G'+mth.setOrderSn(CardReceive)

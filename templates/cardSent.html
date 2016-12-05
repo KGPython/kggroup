@@ -214,6 +214,7 @@
             dataType:'json',
             method:'post',
             data:{
+                csrfmiddlewaretoken: CSRF,
                 'list':JSON.stringify(list),
                 'shop':shop,
                 'person':person

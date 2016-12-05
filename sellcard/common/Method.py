@@ -12,7 +12,6 @@ from django.http import HttpResponse
 import datetime,json
 import pymysql,_mssql
 import decimal
-from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Count
 
 
@@ -194,7 +193,6 @@ def upChangeCode(list, shopcode):
 
 
 # 黄金手--兑换码校验
-@csrf_exempt
 def changeCodeCheck(request):
     code = (request.POST.get('code', '')).strip()
     camilo = (request.POST.get('camilo', '')).strip()
@@ -228,7 +226,6 @@ def updateCard(list, mode):
 
 
 # 更新赊销状态
-@csrf_exempt
 def upNoPayStatus(request):
     orderSn = request.POST.get('orderSn')
     dateStr = request.POST.get('date')

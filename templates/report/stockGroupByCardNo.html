@@ -61,6 +61,7 @@
 
                     <a href="?pageNum={{ cardList.paginator.num_pages }}&shopcode={{ shopCode }}&cardtype={{ cardType }}&start={{ start }}&end={{ end }}">尾页</a>
                     <form method="post" id="pageForm" style="display: inline-block">
+                        {% csrf_token %}
                         <input name="shopcode" value="{{ shopCode }}" type="hidden">
                         <input name="cardtype" value="{{ cardType }}" type="hidden">
                         <input name="start" value="{{ start }}" type="hidden">

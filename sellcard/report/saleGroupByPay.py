@@ -1,11 +1,8 @@
 #-*- coding:utf-8 -*-
 from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
-from django.db import connection
 import datetime
 
 from sellcard.common import Method as mth
-@csrf_exempt
 def index(request):
     shop = request.session.get('s_shopcode')
     role = request.session.get('s_roleid')

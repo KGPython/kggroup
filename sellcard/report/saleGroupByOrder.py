@@ -1,15 +1,13 @@
 #-*- coding:utf-8 -*-
 from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
-import datetime,time
+import datetime
 
 from sellcard.common import Method as mth
 from sellcard import views as base
 from sellcard.models import Orders,AdminUser,OrderUpCard,OrderChangeCard
 
 
-@csrf_exempt
 def index(request):
     #GET:数据展示
     role_id = request.session.get('s_roleid')

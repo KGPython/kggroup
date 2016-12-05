@@ -1,12 +1,9 @@
 __author__ = 'admin'
 from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
 
 from sellcard.common import Method as mth
-from sellcard.models import Orders,OrderInfo,OrderPaymentInfo
 
 
-@csrf_exempt
 def index(request):
     operator = str(request.session.get('s_uid',''))
     shopcode = request.session.get('s_shopcode','')

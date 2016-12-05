@@ -5,7 +5,7 @@ $(function(){
 	
 	$('.submenu > a').click(function(e)
 	{
-		//e.preventDefault();
+		e.preventDefault();
 		var submenu = $(this).siblings('ul');
 		var li = $(this).parents('li');
 		var submenus = $('#sidebar li.submenu ul');

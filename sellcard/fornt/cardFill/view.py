@@ -2,7 +2,6 @@
 from django.shortcuts import render
 from sellcard.models import OrderUpCard,OrderUpCardInfo,CardInventory,ActionLog
 from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
 from sellcard.common import Method as mtu
 from django.db import transaction
@@ -15,7 +14,6 @@ def index(request):
 
     return render(request,'cardFill.html',locals())
 
-@csrf_exempt
 def query(request):
     pageNum =mtu.getReqVal(request,"pageNum","1")
     user_phone = request.POST.get("user_phone","")
@@ -39,7 +37,6 @@ def query(request):
     result.setdefault("state", state)
     return render(request,'cardFillQuery.html',result)
 
-@csrf_exempt
 @transaction.atomic
 def save(request):
     operator_id = request.session.get('s_uid','')
@@ -126,7 +123,6 @@ def gotcard(request):
             print(e)
     return render(request,'cardFillModify.html',locals())
 
-@csrf_exempt
 def update(request):
     operator_id = request.session.get('s_uid', '')
     depart = request.session.get('s_depart','')

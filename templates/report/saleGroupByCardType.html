@@ -20,6 +20,7 @@
         <div class="widget-content nopadding">
             <div class="collapse in widget-content">
                 <form action="{% url 'saleGroupByCardType' %}" method="post" id="form">
+                    {% csrf_token %}
                     <div class="row formline">
                         <label for="" class="col-xs-1 formline-label">开始时间：</label>
                         <div class="col-xs-2">

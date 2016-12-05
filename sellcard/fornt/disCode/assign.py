@@ -1,8 +1,5 @@
 #-*- coding:utf-8 -*-
 from django.shortcuts import render
-from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
-
 from random import sample
 from sellcard.models import DisCode
 

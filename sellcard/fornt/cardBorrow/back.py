@@ -1,14 +1,12 @@
 #-*- coding:utf-8 -*-
 from django.shortcuts import render
 from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
 import json,datetime
 from sellcard.models import ActionLog,OrderBorrowInfo,CardInventory
 from sellcard.common import Method as mth
 from django.db import transaction
 from sellcard.common.model import MyError
 
-@csrf_exempt
 def index(request):
     operator = request.session.get('s_uid','')
     shopcode = request.session.get('s_shopcode','')
@@ -21,7 +19,6 @@ def index(request):
 
     return render(request, 'borrowBack.html',locals())
 
-@csrf_exempt
 def query(request):
     shopcode = request.session.get('s_shopcode','')
     cardsStr = request.POST.get('cards','')
@@ -72,7 +69,6 @@ def query(request):
     return HttpResponse(json.dumps(listTotalNew))
 
 
-@csrf_exempt
 def save(request):
     cardsStr = request.POST.get('cardStr','')
     cardList = json.loads(cardsStr)

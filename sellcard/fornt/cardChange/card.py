@@ -4,7 +4,6 @@ from django.shortcuts import render
 from sellcard.models import CardInventory, OrderChangeCard, OrderChangeCardInfo,ActionLog, OrderChangeCardPayment
 from django.http import HttpResponse
 import json
-from django.views.decorators.csrf import csrf_exempt
 import datetime
 from sellcard.common import Method as mth
 from sellcard.common.model import MyError
@@ -19,7 +18,6 @@ def index(request):
 
     return render(request,'cardChange.html',locals())
 
-@csrf_exempt
 @transaction.atomic
 def save(request):
     operator = request.session.get('s_uid','')

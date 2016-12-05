@@ -10,15 +10,17 @@
     <link rel="stylesheet" href="{{ static }}/css/common.css"  media="screen">
     <link rel="shortcut icon" href="favicon.ico" />
     <link rel="icon" href="favicon.ico" type="image/gif" />
-</head>
-<body>
-    {% include 'common/nav.html' %}
-    {% block content %}  {% endblock %}
     <script>
+        var CSRF = '{{ csrf_token }}';
         var DISC_RATES = {{ request.session.s_rates | safe }};//rates
         var DISC_LEVEL = {{ request.session.disc_level | safe }};//disc_level
         var SHOP = '{{ request.session.s_shopcode | safe }}';
     </script>
+</head>
+<body>
+    {% include 'common/nav.html' %}
+    {% block content %}  {% endblock %}
+
     {% include 'common/foot.html' %}
     {% block js  %} {% endblock %}
 </body>

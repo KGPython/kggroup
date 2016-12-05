@@ -1,6 +1,5 @@
 #-*- coding:utf-8 -*-
 from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Sum,Count
 from django.core.paginator import Paginator #分页查询
 import datetime
@@ -9,7 +8,6 @@ from sellcard.models import CardInventory
 from sellcard.common import Method as mth
 
 
-@csrf_exempt
 def index(request):
     role_id = request.session.get('s_roleid')
     shop_code = request.session.get('s_shopcode')
@@ -50,7 +48,6 @@ def cardType(request):
     return render(request, 'report/stockGroupByCardType.html', locals())
 
 
-@csrf_exempt
 def cardInfo(request):
     shopCode = mth.getReqVal(request,'shopcode','')
     cardType = mth.getReqVal(request,'cardtype','')

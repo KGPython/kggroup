@@ -3,15 +3,12 @@ __author__ = 'qixu'
 from django.core.paginator import Paginator
 from django.db import transaction
 from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
-
-import datetime, time, json
+import datetime
 from random import sample
 from sellcard.common import Method as mth
 from sellcard.models import KfJobsCoupon
 
 
-@csrf_exempt
 @transaction.atomic
 def index(request):
     """
@@ -63,7 +60,6 @@ def index(request):
     return render(request, 'voucher/issue/List.html', locals())
 
 
-@csrf_exempt
 @transaction.atomic
 def create(request):
     """
@@ -124,7 +120,6 @@ def create(request):
     return render(request, 'voucher/issue/Create.html', locals())
 
 
-@csrf_exempt
 def printed(request):
     """
     打印

@@ -2,14 +2,11 @@
 from django.shortcuts import render
 
 from sellcard import views as base
-from django.views.decorators.csrf import csrf_exempt
-
 import datetime,json
 
 from sellcard.common import Method as mth
 from sellcard.models import ReceiveInfo
 
-@csrf_exempt
 def index(request):
     shops = base.findShop()
     if request.method == 'POST':

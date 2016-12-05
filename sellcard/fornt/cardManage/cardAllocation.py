@@ -1,7 +1,6 @@
 #-*- coding:utf-8 -*-
 from django.shortcuts import render
 from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
 from django.db import transaction
 import json,datetime
 
@@ -10,7 +9,6 @@ from sellcard.common import Method as mth
 from sellcard.models import Allocation,AllocationInfo,CardInventory,ActionLog
 
 # 门店间卡调拨
-@csrf_exempt
 def index(request):
     shops = base.findShop()
     cardTypes = base.findCardType()
@@ -19,7 +17,6 @@ def index(request):
     return render(request,'cardAllocation.html',locals())
 
 
-@csrf_exempt
 @transaction.atomic
 def allocationSave(request):
 

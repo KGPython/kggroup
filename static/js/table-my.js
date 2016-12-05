@@ -691,6 +691,7 @@ function saveCardSaleOrder(action_type,url,cardList,orderSns){
         }
     }
     var data = {
+        csrfmiddlewaretoken: CSRF,
         'actionType':action_type,//操作类型
         'cardStr':JSON.stringify(cardList),//售卡列表
         'orderSnList':orderSnList,
@@ -731,6 +732,7 @@ function saveCardFillOrder(url){
         return false;
     }
     var data = {
+        csrfmiddlewaretoken: CSRF,
         'cardInStr':JSON.stringify(cardInList),
         'cardInTotalNum':cardInTotalNum,
         'cardInTotalVal':cardInTotalVal,
@@ -766,35 +768,16 @@ function updateCardFillOrder(url,target_url){
         alert('实收补差金额与应收补差金额不等，请核实后提交！');
         return false;
     }
+    var data = {
+        csrfmiddlewaretoken: CSRF,
+        'cardOutStr':JSON.stringify(cardOutList),
+        'cardOutTotalNum':cardOutTotalNum,
+        'cardOutTotalVal':cardOutTotalVal,
+        'order_sn':order_sn,
+        'paymoney':paymoney
+    };
+    doAjaxSave(url,data);
 
-    $.ajax({
-        url:url,
-        type:'post',
-        dataType:'json',
-        data:{
-            'cardOutStr':JSON.stringify(cardOutList),
-            'cardOutTotalNum':cardOutTotalNum,
-            'cardOutTotalVal':cardOutTotalVal,
-            'order_sn':order_sn,
-            'paymoney':paymoney
-        },
-        success:function(data){
-            if(data.msg==1){
-                alert('操作成功');
-                window.location.reload(true);
-                window.location.href=target_url;
-            }else if(data.msg==0){
-                if(data.msg_err){
-                    alert(data.msg_err);
-                }else{
-                    alert('操作失败');
-                }
-            }
-        },
-        error:function(XMLHttpRequest, textStatus, errorThrown){
-            alert(errorThrown);
-        }
-    })
 }
 
 Array.prototype.remove = function(val) {
@@ -860,6 +843,7 @@ function saveCardChangeOrder(url){
     }
     $("#btn-enter").attr('disable',true);
     var data ={
+        csrfmiddlewaretoken: CSRF,
         'cardListIn':JSON.stringify(cardListIn),
         'totalNumIn':totalNumIn,
         'totalValIn':totalValIn,
@@ -965,6 +949,7 @@ $(document).on('change','#hjsBox .changeCode',function(){
             dataType:'json',
             async:false,
             data:{
+                csrfmiddlewaretoken: CSRF,
                 'code':hNo,
                 'camilo':hPassword
             },

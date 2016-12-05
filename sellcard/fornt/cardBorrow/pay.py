@@ -1,14 +1,12 @@
 #-*- coding:utf-8 -*-
 from django.shortcuts import render
 from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
 import json,datetime
 from django.db import transaction
 
 from sellcard.models import OrderBorrow,CardInventory,Orders,OrderInfo,OrderPaymentInfo,ActionLog,OrderBorrowInfo
 from sellcard.common import Method as mth
 from sellcard.common.model import MyError
-@csrf_exempt
 def index(request):
     shopcode = request.session.get('s_shopcode','')
     operator = request.session.get('s_uid','')
@@ -96,7 +94,6 @@ def index(request):
         conn.close()
     return render(request,'borrowPay.html',locals())
 
-@csrf_exempt
 @transaction.atomic
 def save(request):
     res = {}

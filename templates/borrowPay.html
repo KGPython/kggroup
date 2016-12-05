@@ -28,6 +28,7 @@
                         <input type="hidden" id="buyerPhone" value="{{ listSale.0.borrow_phone }}">
                         <input type="hidden" id="buyerCompany" value="{{ listSale.0.borrow_depart }}">
                         <form id="form" class="query-list" method="post" action="{% url 'borrowPay' %}">
+                            {% csrf_token %}
                             <div class="row formline">
                                 <label for="" class="col-xs-1 formline-label">单位名称：</label>
                                 <div class="col-xs-1">
@@ -212,8 +213,6 @@
 
         //卡校验
         var ajaxOpt = {'url':'{% url 'cardcheck' %}?cardId='+cardId,'method':'get'};
-{#        var cardtype = '1';#}
-{#        doAjax(this,ajaxOpt,showCardIfno,setTotal,cardtype);#}
         doAjax(this,ajaxOpt,showCardIfno,setTotal);
         addRow(this);
     });

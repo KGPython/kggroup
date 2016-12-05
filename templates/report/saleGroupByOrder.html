@@ -32,6 +32,7 @@
         <div class="widget-content nopadding">
             <div class="collapse in widget-content">
                 <form action="{% url 'saleGroupByOrder' %}" method="post" id="form">
+                    {% csrf_token %}
                     <div class="row formline">
                         <label for="" class="col-xs-1 formline-label">售卡门店：</label>
                         <div class="col-xs-2">
@@ -225,6 +226,7 @@
                             <a href="?pageNum={{ resList.paginator.num_pages }}&shop={{ shop }}&depart={{ depart }}&operator={{ name }}&actionType={{ actionType }}&start={{ start }}&end={{ end }}">尾页</a>
 
                             <form method="post" id="pageForm" style="display: inline-block">
+                                {% csrf_token %}
                                 <input name="shop" value="{{ shop }}" type="hidden">
                                 <input name="depart" value="{{ depart }}" type="hidden">
                                 <input name="operator" value="{{ name }}" type="hidden">

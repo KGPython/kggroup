@@ -2,7 +2,6 @@
 __author__ = 'admin'
 
 from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
 from django.db import transaction
 import json
 from sellcard.models import Orders,OrderInfo,CardInventory,ActionLog
@@ -17,7 +16,6 @@ def index(request):
     request.session['postToken'] = token
     return render(request, 'bestowed.html',locals())
 
-@csrf_exempt
 @transaction.atomic
 def saveOrder(request):
     operator = request.session.get('s_uid','')

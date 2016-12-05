@@ -25,6 +25,7 @@
                     </div>
                     <div class="widget-content collapse in ">
                         <form id="form" class="query-list" method="post" action="{% url 'nopay' %}">
+                            {% csrf_token %}
                             <div class="row formline">
                                 <label for="" class="col-xs-1 formline-label">赊销方姓名：</label>
                                 <div class="col-xs-2">
@@ -112,7 +113,7 @@
                 url:"{% url 'upNoPayStatus' %}",
                 method:'post',
                 dataType:'json',
-                data:{'orderSn':orderSn,'date':date},
+                data:{csrfmiddlewaretoken: CSRF,'orderSn':orderSn,'date':date},
                 success:function(data){
                     if(data.msg=='0'){
                         alert('状态更改成功');

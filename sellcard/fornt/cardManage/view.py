@@ -1,6 +1,5 @@
 #-*- coding:utf-8 -*-
 from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
 from django.db import transaction
 import datetime,json
 
@@ -9,7 +8,6 @@ from sellcard.models import ActionLog,CardInventory
 from sellcard.common.model import MyError
 
 # 卡入库
-@csrf_exempt
 @transaction.atomic
 def cardInStore(request):
     if request.method=='POST':

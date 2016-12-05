@@ -6,7 +6,6 @@ from io import BytesIO
 
 from django.db import connection
 from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 import decimal
 from sellcard.models import AdminUser,DiscountRate,Shops
@@ -18,7 +17,6 @@ def index(request):
     return render(request, "login.html")
 
 #登录
-@csrf_exempt
 def login(request):
     user_name = mtu.getReqVal(request,"user_name","")
     password = mtu.getReqVal(request,"password","")
@@ -154,7 +152,6 @@ def logout(request):
 
     return render(request,"login.html")
 
-@csrf_exempt
 def updatePwd(request):
     data = {}
     if request.method == 'POST':

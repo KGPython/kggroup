@@ -91,6 +91,7 @@
             method:'post',
             dataType:'json',
             data:{
+                csrfmiddlewaretoken: CSRF,
                 cards:JSON.stringify(cards),
                 borrowDepartCode:borrowDepartCode
             },

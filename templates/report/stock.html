@@ -58,28 +58,4 @@
 </div>
 <!--end-containt-part-->
 {% endblock %}
-{% block js %}
-<script type="text/javascript">
-    $('.form_date').datetimepicker({
-        language: 'zh-CN',
-        weekStart: 1,
-        todayBtn: 1,
-	    autoclose: 1,
-	    todayHighlight: 1,
-	    startView: 2,
-	    minView: 2,
-	    forceParse: 0
-    });
-</script>
-<script>
-    $('#form #enter').click(function(){
-        var start = $('#start').val();
-        var end = $('#end').val();
-        if(!start || !end){
-            alert('查询日期不能为空');
-            return false;
-        }
-        $('#form').submit();
-    })
-</script>
-{% endblock %}
+

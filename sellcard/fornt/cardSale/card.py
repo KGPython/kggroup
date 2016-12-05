@@ -4,7 +4,6 @@ from sellcard.models import Orders, OrderInfo, OrderPaymentInfo, CardInventory, 
 from django.http import HttpResponse
 import json,datetime
 from django.db import transaction
-from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Sum,Count
 
 from sellcard.common import Method as mth
@@ -25,7 +24,6 @@ def index(request):
     return render(request,'cardSale.html',locals())
 
 
-@csrf_exempt
 @transaction.atomic
 def saveOrder(request):
     res = {}
@@ -180,7 +178,7 @@ def info(request):
     else:
         err={}
         err['msg']='此订单不存在'
-        return render(request,'common/500.html',locals())
+        return render(request, 'common/../../../templates/500.html', locals())
 
 
 def reprint(request):
@@ -209,7 +207,6 @@ def reprint(request):
     return HttpResponse(json.dumps(res))
 
 
-@csrf_exempt
 def print_explain(request):
     res = {}
     orderSn = request.GET.get('orderSn', '').strip()

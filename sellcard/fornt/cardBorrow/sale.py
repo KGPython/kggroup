@@ -1,7 +1,6 @@
 #-*- coding:utf-8 -*-
 from django.shortcuts import render
 from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
 from django.db import transaction
 from django.db.models import Sum,Count
 import json,datetime
@@ -9,14 +8,12 @@ import json,datetime
 from sellcard.common import Method as mth
 from sellcard.models import OrderBorrow,OrderBorrowInfo,CardInventory,ActionLog
 from sellcard.common.model import MyError
-@csrf_exempt
 def index(request):
     # 在服务端session中添加key认证，避免用户重复提交表单
     token = 'allow'  # 可以采用随机数
     request.session['postToken'] = token
     return render(request, 'borrowSale.html',locals())
 
-@csrf_exempt
 def save(request):
     operator = request.session.get('s_uid','')
     shopcode = request.session.get('s_shopcode','')

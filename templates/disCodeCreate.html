@@ -23,6 +23,7 @@
                 <div class="widget-box">
                     <div class="widget-content collapse in ">
                         <form class="form-horizontal" id="Form" action="{% url 'disCodeCreate' %}" method="post">
+                            {% csrf_token %}
                             <div class="row modalline">
                                 <label for="exampleInputName" class="control-label pull-left" style="width: 120px;">批次授权码前缀：</label>
                                 <div class="col-xs-8">
