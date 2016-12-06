@@ -15,16 +15,17 @@ def index(request):
     today = str(datetime.date.today())
     start = mth.getReqVal(request,'start',today)
     end = mth.getReqVal(request,'end',today)
+    operator =''
     if role in ('3','5'):
         operator = user
 
-    if role in ('1', '2', '6'):
+    if role in ('1', '2', '6','8'):
         operator = mth.getReqVal(request, 'operator', '')
 
 
-    if role in ('1','6'):
+    if role in ('1','6','8'):
         shop = mth.getReqVal(request, 'shop', '')
-        personList = AdminUser.objects.values('id', 'name')
+        personList = AdminUser.objects.values('id', 'name').exclude(role_id__in=('1','7','8'))
     if role in ('2','3','5'):
         shop = shop
         personList = AdminUser.objects.values('id', 'name').filter(shop_code=shop)

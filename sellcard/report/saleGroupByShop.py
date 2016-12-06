@@ -65,110 +65,114 @@ def index(request):
     shops = base.findShop()
 
     for i in range(0,len(shops)):
-        item = {'shop_code':'','disc':0,'disc_cash':0,'disc_card':0,'inSub':0,'pay_1':0,'pay_2':0,'pay_3':0,
-                'pay_4':0,'pay_5':0,'pay_6':0,'pay_7':0,'pay_8':0,'pay_9':0,'pay_10':0,'pay_11':0,}
-        item['shop_code'] = shops[i]['shop_code']
-        for sale in salePayList:
-            if sale['shop_code']==item['shop_code']:
-                #横向各门店售卡汇总赋值
-                if sale['pay_id'] == 1:
-                    item['pay_1'] += float(sale['pay_value'])
-                if sale['pay_id'] == 2:
-                    item['pay_2'] += float(sale['pay_value'])
-                if sale['pay_id'] == 3:
-                    item['pay_3'] += float(sale['pay_value'])
-                if sale['pay_id'] == 4:
-                    item['pay_4'] += float(sale['pay_value'])
-                if sale['pay_id'] == 5:
-                    item['pay_5'] += float(sale['pay_value'])
-                if sale['pay_id'] == 6:
-                    item['pay_6'] += float(sale['pay_value'])
-                if sale['pay_id'] == 7:
-                    item['pay_7'] += float(sale['pay_value'])
-                if sale['pay_id'] == 8:
-                    item['pay_8'] += float(sale['pay_value'])
-                if sale['pay_id'] == 9:
-                    item['pay_9'] += float(sale['pay_value'])
-                if sale['pay_id'] == 10:
-                    item['pay_10'] += float(sale['pay_value'])
-                if sale['pay_id'] == 11:
-                    item['pay_11'] += float(sale['pay_value'])
+        if shops[i]['shop_code'] != 'ZBTG':
+            item = {'shop_code':'','disc':0,'disc_cash':0,'disc_card':0,'inSub':0,'pay_1':0,'pay_2':0,'pay_3':0,
+                    'pay_4':0,'pay_5':0,'pay_6':0,'pay_7':0,'pay_8':0,'pay_9':0,'pay_10':0,'pay_11':0,}
+            item['shop_code'] = shops[i]['shop_code']
+            for sale in salePayList:
+                if sale['shop_code']==item['shop_code']:
 
-                item['inSub'] += float(sale['pay_value'])
+                    #横向各门店售卡汇总赋值
+                    pay_id = sale['pay_id']
+                    if sale['pay_id'] == 1:
+                        item['pay_1'] += float(sale['pay_value'])
+                    if sale['pay_id'] == 2:
+                        item['pay_2'] += float(sale['pay_value'])
+                    if sale['pay_id'] == 3:
+                        item['pay_3'] += float(sale['pay_value'])
+                    if sale['pay_id'] == 4:
+                        item['pay_4'] += float(sale['pay_value'])
+                    if sale['pay_id'] == 5:
+                        item['pay_5'] += float(sale['pay_value'])
+                    if sale['pay_id'] == 6:
+                        item['pay_6'] += float(sale['pay_value'])
+                    if sale['pay_id'] == 7:
+                        item['pay_7'] += float(sale['pay_value'])
+                    if sale['pay_id'] == 8:
+                        item['pay_8'] += float(sale['pay_value'])
+                    if sale['pay_id'] == 9:
+                        item['pay_9'] += float(sale['pay_value'])
+                    if sale['pay_id'] == 10:
+                        item['pay_10'] += float(sale['pay_value'])
+                    if sale['pay_id'] == 11:
+                        item['pay_11'] += float(sale['pay_value'])
 
-        for saleDisc in saleDiscList:
-            if saleDisc['shop_code'] == item['shop_code']:
-                if not saleDisc['disc']:
-                    saleDisc['disc'] = 0
-                if not saleDisc['disc_cash']:
-                    saleDisc['disc_cash'] = 0
-                if not saleDisc['disc_card']:
-                    saleDisc['disc_card'] = 0
-                item['disc'] += float(saleDisc['disc'])
-                item['disc_cash'] += float(saleDisc['disc_cash'])
-                item['disc_card'] += float(saleDisc['disc_card'])
+                    item['inSub'] += float(sale['pay_value'])
 
-        for fill in fillList:
-            if item['shop_code'] == fill['shop_code']:
-                item['pay_1'] += float(fill['fill'])
-                item['inSub'] = float(fill['fill'])
+            for saleDisc in saleDiscList:
+                if saleDisc['shop_code'] == item['shop_code']:
+                    if not saleDisc['disc']:
+                        saleDisc['disc'] = 0
+                    if not saleDisc['disc_cash']:
+                        saleDisc['disc_cash'] = 0
+                    if not saleDisc['disc_card']:
+                        saleDisc['disc_card'] = 0
+                    item['disc'] += float(saleDisc['disc'])
+                    item['disc_cash'] += float(saleDisc['disc_cash'])
+                    item['disc_card'] += float(saleDisc['disc_card'])
 
-        for change in changePayList:
-            if item['shop_code'] == change['shop_code']:
-                # 横向各门店售卡汇总赋值
-                if sale['pay_id'] == 1:
-                    item['pay_1'] += float(change['pay_value'])
-                if sale['pay_id'] == 2:
-                    item['pay_2'] += float(change['pay_value'])
-                if sale['pay_id'] == 3:
-                    item['pay_3'] += float(change['pay_value'])
-                if sale['pay_id'] == 4:
-                    item['pay_4'] += float(change['pay_value'])
-                if sale['pay_id'] == 5:
-                    item['pay_5'] += float(change['pay_value'])
-                if sale['pay_id'] == 6:
-                    item['pay_6'] += float(change['pay_value'])
-                if sale['pay_id'] == 7:
-                    item['pay_7'] += float(change['pay_value'])
-                if sale['pay_id'] == 8:
-                    item['pay_8'] += float(change['pay_value'])
-                if sale['pay_id'] == 9:
-                    item['pay_9'] += float(change['pay_value'])
-                if sale['pay_id'] == 10:
-                    item['pay_10'] += float(sale['pay_value'])
-                if sale['pay_id'] == 11:
-                    item['pay_11'] += float(sale['pay_value'])
+            for fill in fillList:
+                if item['shop_code'] == fill['shop_code']:
+                    item['pay_1'] += float(fill['fill'])
+                    item['inSub'] += float(fill['fill'])
 
-                item['inSub'] = float(change['pay_value'])
-        for changeDisc in changeDiscList:
-            if changeDisc['shop_code'] == item['shop_code']:
-                if not changeDisc['disc']:
-                    changeDisc['disc'] = 0
-                if not changeDisc['disc_cash']:
-                    changeDisc['disc_cash'] = 0
-                if not changeDisc['disc_card']:
-                    changeDisc['disc_card'] = 0
-                item['disc'] += float(changeDisc['disc'])
-                item['disc_cash'] += float(changeDisc['disc_cash'])
-                item['disc_card'] += float(changeDisc['disc_card'])
+            for change in changePayList:
+                if item['shop_code'] == change['shop_code']:
+                    # 横向各门店售卡汇总赋值
+                    if sale['pay_id'] == 1:
+                        item['pay_1'] += float(change['pay_value'])
+                    if sale['pay_id'] == 2:
+                        item['pay_2'] += float(change['pay_value'])
+                    if sale['pay_id'] == 3:
+                        item['pay_3'] += float(change['pay_value'])
+                    if sale['pay_id'] == 4:
+                        item['pay_4'] += float(change['pay_value'])
+                    if sale['pay_id'] == 5:
+                        item['pay_5'] += float(change['pay_value'])
+                    if sale['pay_id'] == 6:
+                        item['pay_6'] += float(change['pay_value'])
+                    if sale['pay_id'] == 7:
+                        item['pay_7'] += float(change['pay_value'])
+                    if sale['pay_id'] == 8:
+                        item['pay_8'] += float(change['pay_value'])
+                    if sale['pay_id'] == 9:
+                        item['pay_9'] += float(change['pay_value'])
+                    if sale['pay_id'] == 10:
+                        item['pay_10'] += float(sale['pay_value'])
+                    if sale['pay_id'] == 11:
+                        item['pay_11'] += float(sale['pay_value'])
 
-        totalDict['discTotal'] += item['disc']
-        totalDict['discCashTotal'] += item['disc_cash']
-        totalDict['discCardTotal'] += item['disc_card']
-        totalDict['inSubTotal'] += item['inSub']
-        totalDict['total_1'] += item['pay_1']
-        totalDict['total_2'] += item['pay_2']
-        totalDict['total_3'] += item['pay_3']
-        totalDict['total_4'] += item['pay_4']
-        totalDict['total_5'] += item['pay_5']
-        totalDict['total_6'] += item['pay_6']
-        totalDict['total_7'] += item['pay_7']
-        totalDict['total_8'] += item['pay_8']
-        totalDict['total_9'] += item['pay_9']
-        totalDict['total_10'] += item['pay_10']
-        totalDict['total_11'] += item['pay_11']
+                    item['inSub'] += float(change['pay_value'])
 
-        dataList.append(item)
+            for changeDisc in changeDiscList:
+                if changeDisc['shop_code'] == item['shop_code']:
+                    if not changeDisc['disc']:
+                        changeDisc['disc'] = 0
+                    if not changeDisc['disc_cash']:
+                        changeDisc['disc_cash'] = 0
+                    if not changeDisc['disc_card']:
+                        changeDisc['disc_card'] = 0
+                    item['disc'] += float(changeDisc['disc'])
+                    item['disc_cash'] += float(changeDisc['disc_cash'])
+                    item['disc_card'] += float(changeDisc['disc_card'])
+
+            totalDict['discTotal'] += item['disc']
+            totalDict['discCashTotal'] += item['disc_cash']
+            totalDict['discCardTotal'] += item['disc_card']
+            totalDict['inSubTotal'] += item['inSub']
+            totalDict['total_1'] += item['pay_1']
+            totalDict['total_2'] += item['pay_2']
+            totalDict['total_3'] += item['pay_3']
+            totalDict['total_4'] += item['pay_4']
+            totalDict['total_5'] += item['pay_5']
+            totalDict['total_6'] += item['pay_6']
+            totalDict['total_7'] += item['pay_7']
+            totalDict['total_8'] += item['pay_8']
+            totalDict['total_9'] += item['pay_9']
+            totalDict['total_10'] += item['pay_10']
+            totalDict['total_11'] += item['pay_11']
+
+            dataList.append(item)
     return render(request, 'report/saleGroupByShop.html', locals())
 
 

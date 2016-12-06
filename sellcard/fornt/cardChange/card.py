@@ -11,7 +11,6 @@ from django.db import transaction
 
 def index(request):
     rates = request.session.get('s_rates')
-
     # 在服务端session中添加key认证，避免用户重复提交表单
     token = 'allow'  # 可以采用随机数
     request.session['postToken'] = token
@@ -166,7 +165,7 @@ def save(request):
                     obj.card_addtime = datetime.datetime.now()
                     obj.shop_code = shopCode
                     obj.card_blance = card['cardVal']
-                    obj.save()#关注返回值
+                    obj.save()
                     resSave =obj.id
                 if (resUpdate==0 and resSave==0):
                         raise MyError(card['cardId']+'状态更新失败')

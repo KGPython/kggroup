@@ -64,7 +64,6 @@ def index(request):
     return render(request, 'voucher/issue/List.html', locals())
 
 
-@csrf_exempt
 @transaction.atomic
 def create(request):
     """

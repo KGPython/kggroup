@@ -2,14 +2,16 @@
 __author__ = 'liubf'
 
 from django.conf import settings
-from re import compile
+import re
 from django.http import HttpResponseRedirect as redirect
-from django.shortcuts import render
+from django.core.cache import cache
+from django.http import HttpResponse
+import json
 
-EXEMPT_URLS=[compile(settings.KGGROUP_LOGIN_URL.lstrip('/'))]
+EXEMPT_URLS=[re.compile(settings.KGGROUP_LOGIN_URL.lstrip('/'))]
 
 if hasattr(settings,'KGGROUP_LOGIN_EXEMPT_URLS'):
-	EXEMPT_URLS += [compile(expr) for expr in settings.KGGROUP_LOGIN_EXEMPT_URLS]
+	EXEMPT_URLS += [re.compile(expr) for expr in settings.KGGROUP_LOGIN_EXEMPT_URLS]
 
 class KgLoginMiddleware(object):
     def process_request(self, request):
@@ -26,6 +28,13 @@ class KgLoginMiddleware(object):
                         print(">>>>>>>>>begin login ："+path)
             else:
                 s_uname =  request.session.get("s_uname",default=None)
+                STATIC_VERSION = settings.STATIC_VERSION
+                request.session["s_static_version"] = STATIC_VERSION
                 print(">>>>>>>>>already login, user："+s_uname,path)
         else:
+            request.path_info = re.sub(r'\.v\d+', '', request.path_info)
             print(">>>>>>>>>static url not filter："+path)
+
+
+
+

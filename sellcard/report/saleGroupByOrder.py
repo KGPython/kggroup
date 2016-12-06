@@ -22,7 +22,8 @@ def index(request):
     #判断用户角色
     shop = ''
     operator = ''
-    if role_id in ('1','6'):
+    depart = ''
+    if role_id in ('1','6','8'):
         shop = mth.getReqVal(request,'shop','')
         depart = mth.getReqVal(request, 'depart', '')
         name = mth.getReqVal(request, 'operator', '').strip()

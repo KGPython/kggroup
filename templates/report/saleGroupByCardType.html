@@ -39,7 +39,7 @@
                             </div>
                         </div>
 
-                        {% if role == '1' or role == '6'  %}
+                        {% if role == '1' or role == '6' or role == '8'  %}
                         <label for="" class="col-xs-1 formline-label">门店：</label>
                         <div class="col-xs-1">
 
@@ -56,7 +56,7 @@
 
                         <label for="" class="col-xs-1 formline-label">售卡人：</label>
                         <div class="col-xs-1">
-                            {% if role == '1' or role == '2' or role == '6'  %}
+                            {% if role == '1' or role == '2' or role == '6' or role == '8'  %}
                             <select name="operator" id="operator" class="form-control">
                                 <option value="">全部</option>
                                 {% for person in personList %}

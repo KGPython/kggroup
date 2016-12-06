@@ -22,7 +22,7 @@ SECRET_KEY = 'ognxg1tv@%3z7%^0#c0#81tcymq4j)$%j_)gk@*luvg3w2#fd^'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG =True
-TEMPLATE_DEBUG = False
+TEMPLATE_DEBUG = True
 ALLOWED_HOSTS = ['192.168.250.18','127.0.0.1','localhost']
 
 # Application definition
@@ -47,6 +47,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    # 'sellcard.common.kgMiddleware.PostMiddleWare.PreventRepeatPost',  #
 )
 
 ROOT_URLCONF = 'kggroup.urls'
@@ -87,6 +88,18 @@ DATABASES = {
     }
 }
 
+CACHES = {
+    'default': {
+        'BACKEND': 'redis_cache.cache.RedisCache',
+        'LOCATION': '127.0.0.1:6380',
+        "OPTIONS": {
+            "CLIENT_CLASS": "redis_cache.client.DefaultClient",
+        },
+        "KEY_PREFIX":'kggroup',
+        "TIMEOUT":480,
+
+    },
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
@@ -111,6 +124,9 @@ STATIC_ROOT="comm_static"
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
+#Static file version number
+STATIC_VERSION = 'v1124'
+
 
 KGGROUP_LOGIN_URL ="/kg/sellcard/loginpage/"
 KGGROUP_LOGIN_EXEMPT_URLS=["kg/sellcard/login/","kg/sellcard/logout/","kg/sellcard/vcode/","favicon.ico"]
