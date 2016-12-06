@@ -2,12 +2,13 @@
 __author__ = 'qixu'
 from django.core.paginator import Paginator
 from django.db import transaction
+from django.db.models import Max
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 import datetime, pymssql, json
 from random import sample
 from sellcard.common import Method as mth
-from sellcard.models import KfJobsCoupon, KfJobsCouponGoodsDetail
+from sellcard.models import KfJobsCoupon, KfJobsCouponGoodsDetail, KfJobsCouponBatch
 
 
 
@@ -18,7 +19,7 @@ def index(request):
     :param request:
     :return:列表view
     """
-    shopid = request.session.get('s_shopid')
+    shopid = request.session.get('s_shopcode')
     if shopid is None:
         shopid = '9999'
     today = str(datetime.date.today())
@@ -73,7 +74,7 @@ def create(request):
     """
     goodList = []
     if request.method == 'POST':
-        shop = request.session.get("s_shopid")
+        shop = request.session.get("s_shopcode")
         if (shop is None or shop == ''):
             shop = '9999'
         shopCode = request.session.get("s_shopcode")
@@ -104,27 +105,48 @@ def create(request):
         if (maxUseTime is None or maxUseTime == ''):
             maxUseTime = 0
         rangeremark = request.POST.get('rangeremark')
+
         # 判断提交按钮类型：1、保存信息，2、查询商品
         if request.POST.get('buttonvalue') == '1':
-            str = ''
-            if shopCode[0:1] == 'C':
-                str = '88814' + shopCode[2:] + datetime.datetime.now().strftime('%y%m%d')
-            elif shopCode[0:1] == 'T':
-                str = '88815' + shopCode[2:] + datetime.datetime.now().strftime('%y%m%d')
+            today = datetime.datetime.now().strftime('%Y%m%d')
+            endDate = datetime.datetime.strptime(endDate, "%Y-%m-%d").date()
+            # 获取本次批次号：本次批号为历史最大批号加1，若不存在历史批号则为1
+            batchs = KfJobsCouponBatch.objects.values('batch'
+                                                      ).filter(shopid=shopCode,
+                                                               createdate=today)
+            batch = batchs.aggregate(Max('batch'))
+
+            if batch['batch__max'] is None:
+                batch = 1
             else:
-                str = '8889999' + datetime.datetime.now().strftime('%y%m%d')
+                batch = int(batch['batch__max']) + 1
+            batch = str(batch)
+            # 拼接券号
+            v_str = ''
+            if shopCode[0:1] == 'C':
+                v_str = '88814' + shopCode[2:] + today[2:]
+            elif shopCode[0:1] == 'T':
+                v_str = '88815' + shopCode[2:] + today[2:]
+            else:
+                v_str = '8889999' + datetime.datetime.now().strftime('%y%m%d')
+            v_str = v_str + batch
             List = set()
             while len(List) < int(amount):
-                sn = ''.join(sample('0123456789', 6))
+                sn = v_str + ''.join(sample('0123456789', 5))
                 List.add(sn)
-            batch = shopCode + '_' + datetime.datetime.now().strftime('%y%m%d')
+
+            # 插入卡券批次表
+            KfJobsCouponBatch.objects.create(batch=batch,
+                                             shopid=shopCode,
+                                             createdate=today)
+            # 插入卡券表
             for var_sn in List:
                 KfJobsCoupon.objects.create(shopid=shop,
                                             batch=batch,
-                                            couponno=str + var_sn,
+                                            couponno=var_sn,
                                             coupontypeid=type,
                                             startdate=datetime.datetime.now(),
-                                            enddate=datetime.datetime.strptime(endDate, "%Y-%m-%d").date(),
+                                            enddate=endDate,
                                             cpwdflag=CPwdFlag,
                                             cpwd=CPwd,
                                             usetime=0,
@@ -140,12 +162,25 @@ def create(request):
                                             clearflag=0,
                                             clearvalue=0)
 
+            # 插入卡券商品明细表
             for var_good in chooseList:
                 KfJobsCouponGoodsDetail.objects.create(batch=batch,
                                                        goodname=var_good['ShortName'].strip(),
                                                        goodcode=var_good['CustomNo'].strip(),
                                                        amount=int(var_good['amount']))
 
+            # 传入代金券信息元组：
+            #   shop：门店编码
+            #   type：代金券类型
+            #   （strat）：创建时间
+            #   endDate：结束日期
+            #   costValue：券面值
+            #   batch：批次号
+            #   v_str：执行存储过程参数
+            tuple_info = (shop, type, datetime.datetime.now(), endDate, int(costValue), batch, v_str)
+
+            # 插入SQL-sevser数据库调用方法
+            InsertCoupon(tuple_info, List)
             msg = 1
         else:
             goodname = request.POST.get('goodname')
@@ -219,3 +254,60 @@ def getGoodsList(goodsname, goodscode):
     cur.close()
     conn.close()
     return list
+
+
+def InsertCoupon(cardinfo, list):
+    """
+    插入久久表
+    :param cardinfo: 代金券信息
+    :param list: 代金券券号列表
+    :return:信号值
+    """
+    conn = pymssql.connect(host='192.168.122.141',
+                           port='1433',
+                           user='myshop',
+                           password='oyf20140208HH',
+                           database='myshopcmcard',
+                           charset='utf8',
+                           as_dict=True)
+    conn.autocommit(False)
+    cur = conn.cursor()
+
+    sql = u"Insert into MyShop_Coupon99" \
+          u"(CouponID,ShopID,CouponNO,CouponTypeID,StartDate,EndDate," \
+          u"CPWdFlag,CPwd,UseTime,MaxUseTime,Value," \
+          u"Discount,Flag,FromSheetType,FromSDate,FromListNO," \
+          u"FromPOSID,SerialID,ClearFlag)" \
+          u"Values({coupon},{shop},{sn},{type},{start},{end}," \
+          u"0,null,0,1,{value}," \
+          u"0,0,220,null,null," \
+          u"null,{batch},0)".format(coupon='%s',
+                                    shop='%s',
+                                    sn='%s',
+                                    type='%s',
+                                    start='%s',
+                                    end='%s',
+                                    value='%s',
+                                    batch='%s')
+
+    params = []
+
+    for item in list:
+        param = (cardinfo[6], cardinfo[0], item, cardinfo[1], cardinfo[2], cardinfo[3], cardinfo[4], cardinfo[6])
+        params.append(param)
+
+    try:
+        cur.executemany(sql, params)
+        conn.commit()
+
+    except:
+        conn.rollback()
+
+    cur.close()
+    cursor = conn.cursor()
+    sql = "exec IF_MyShop_Coupon99 @CouponID='" + cardinfo[6] + "'"
+    cursor.execute(sql)
+    conn.commit()
+    cursor.close()
+    conn.close()
+    return

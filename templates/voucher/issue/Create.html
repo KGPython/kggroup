@@ -24,6 +24,7 @@
             <h5>代金券管理-发行</h5>
         </div>
         <form action="{% url 'voucherIssueCreate' %}" method="post" id="Form">
+        {% csrf_token %}
             <input name="buttonvalue" id="buttonvalue" type="hidden">
             <input name="chooseList" id="chooseList" value="{{ chooseList }}" type="hidden">
             <div class="widget-content nopadding">
