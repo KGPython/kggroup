@@ -28,11 +28,12 @@
         <div class="widget-content nopadding">
             <div class="collapse in widget-content">
                 <form action="{% url 'voucherIssueList' %}" method="post" id="form">
+                    {% csrf_token %}
                     <div class="row formline">
                         <label for="" class="col-xs-1 formline-label">发行门店：</label>
                         <div class="col-xs-2">
                             <input name="shop" id="shop" type="text" class="form-control"
-                                   value="{{ shopid | transShopIdByName }}" readonly>
+                                   value="{{ shopid | transShopCode }}" readonly>
                         </div>
 
                         <label for="" class="col-xs-1 formline-label">是否打印：</label>
@@ -115,7 +116,7 @@
                             <tbody class="cardIn" id="nopayList">
                             {% for row in resList %}
                                 <tr>
-                                    <td>{{ row.shopid | transShopIdByName }}</td>
+                                    <td>{{ row.shopid | transShopCode }}</td>
                                     <td>{{ row.createuserid | transUserId }}</td>
                                     <td>{{ row.coupontypeid | transCouponTypeByChinese }}</td>
                                     <td>{{ row.batch }}</td>
@@ -158,6 +159,7 @@
                             &start={{ start }}&end={{ end }}&printed={{ printed }}">尾页</a>
 
                             <form method="post" id="pageForm" style="display: inline-block">
+                                {% csrf_token %}
                                 <input name="couponType" value="{{ couponType }}" type="hidden">
                                 <input name="issueSn" value="{{ issueSn }}" type="hidden">
                                 <input name="start" value="{{ start }}" type="hidden">

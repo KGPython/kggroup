@@ -52,6 +52,16 @@ class KfJobsCoupon(models.Model):
         db_table = 'KF_Jobs_Coupon'
 
 
+class KfJobsCouponBatch(models.Model):
+    batch = models.IntegerField()
+    shopid = models.CharField(db_column='shopID', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    createdate = models.CharField(max_length=8, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'KF_Jobs_Coupon_Batch'
+
+
 class KfJobsCouponGoodsDetail(models.Model):
     batch = models.CharField(max_length=255)
     goodname = models.CharField(max_length=255, blank=True, null=True)
