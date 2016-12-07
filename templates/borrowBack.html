@@ -201,7 +201,7 @@
             alert('退卡列表为空，请核对后再尝试提交！');
             return false;
         }
-        var data = { 'cardStr':JSON.stringify(cardList),'postToken':$('#post-token').val()};
+        var data = { csrfmiddlewaretoken: CSRF,'cardStr':JSON.stringify(cardList),'postToken':$('#post-token').val()};
         doAjaxSave(url,data);
     }
 </script>

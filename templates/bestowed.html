@@ -89,6 +89,7 @@
         var buyerCompany = $('#buyerCompany').val();
         var postToken = $('#post-token').val();
         var data ={
+            csrfmiddlewaretoken: CSRF,
             'cardsStr':JSON.stringify(cardList),
             'totalNum':totalNum,
             'totalVal':totalVal,
