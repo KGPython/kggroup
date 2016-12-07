@@ -12,8 +12,8 @@
     <link rel="icon" href="favicon.ico" type="image/gif" />
     <script>
         var CSRF = '{{ csrf_token }}';
-        var DISC_RATES = {{ request.session.s_rates | safe }};//rates
-        var DISC_LEVEL = {{ request.session.disc_level | safe }};//disc_level
+        var DISC_RATES = {{ request.session.s_rates | safe }};
+        var DISC_LEVEL = {{ request.session.disc_level | default:0 | safe}};
         var SHOP = '{{ request.session.s_shopcode | safe }}';
     </script>
 </head>
