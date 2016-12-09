@@ -52,16 +52,29 @@ def index(request):
     # 用于全部打印时传入的券号列表
     snlist = ','.join(KfJobsCoupon.objects.values_list('couponno', flat=True).filter(**kwargs))
 
-    resList = KfJobsCoupon.objects.values(
+    List = KfJobsCoupon.objects.values(
         'shopid', 'createuserid', 'coupontypeid', 'batch', 'startdate', 'couponno', 'value',
         'giftvalue', 'rangeremark').filter(**kwargs).order_by('batch')
 
-    paginator = Paginator(resList, 8)
+    # 表单分页开始
+    paginator = Paginator(List, 8)
+
     try:
-        resList = paginator.page(page)
+        List = paginator.page(page)
+
+        if List.number > 1:
+            page_up = List.previous_page_number
+        else:
+            page_up = 1
+
+        if List.number < List.paginator.num_pages:
+            page_down = List.next_page_number
+        else:
+            page_down = List.paginator.num_pages
+
     except Exception as e:
         print(e)
-
+    # 表单分页结束
     return render(request, 'voucher/issue/List.html', locals())
 
 
@@ -223,8 +236,6 @@ def printed(request):
         for var_i in resList:
             var_i['GoodList'] = KfJobsCouponGoodsDetail.objects.values(
                 'goodname', 'goodcode', 'amount').filter(batch=var_i['batch'])
-
-        print(resList)
 
     return render(request, 'voucher/issue/Print.html', locals())
 

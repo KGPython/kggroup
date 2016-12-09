@@ -89,22 +89,28 @@
 </div>
 <!--end-containt-part-->
 {% include "common/foot.html" %}
+<!--分页JS-->
 <script>
+    //确定按钮
     $('#pageEnter').click(function () {
         $('#pageForm').submit();
     })
+    //首页
     $('#page_a_head').click(function () {
         $('#page').val(1);
         $('#pageForm').submit();
     })
+    //上一页
     $('#page_a_up').click(function () {
         $('#page').val({{ page_up }});
         $('#pageForm').submit();
     })
+    //下一页
     $('#page_a_down').click(function () {
         $('#page').val({{ page_down }});
         $('#pageForm').submit();
     })
+    //尾页
     $('#page_a_foot').click(function () {
         $('#page').val({{ List.paginator.num_pages }});
         $('#pageForm').submit();

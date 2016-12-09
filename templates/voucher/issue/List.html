@@ -90,6 +90,28 @@
                             <button type="button" class="btn btn-info enter-btn pull-right" id="enter">查询</button>
                         </div>
                     </div>
+
+                    <div class="page">
+                        <span>第<b>{{ page }}</b>页/共<b>{{ List.paginator.num_pages }}</b>页</span>
+                        <a id="page_a_head">首页</a>
+                        {% if List.has_previous %}
+                            <a id="page_a_up">上一页</a>
+                        {% else %}
+                            <a href="javascript:void(0)">上一页</a>
+                        {% endif %}
+                        {% if List.has_next %}
+                            <a id="page_a_down">下一页</a>
+                        {% else %}
+                            <a href="javascript:void(0)">下一页</a>
+                        {% endif %}
+                        <a id="page_a_foot">尾页</a>
+                        <span class="totalPage">到第</span>
+                        <input class="pageTxt" id="page" name="page" value="1" type="text">
+                        <span>页</span>
+                        <button type="button" class="btn btn-info btn-sm"
+                                id="pageEnter">确定
+                        </button>
+                    </div>
                 </form>
                 <div class="widget-box">
                     <div class="widget-content nopadding" style="overflow: hidden">
@@ -114,7 +136,7 @@
                             </tr>
                             </thead>
                             <tbody class="cardIn" id="nopayList">
-                            {% for row in resList %}
+                            {% for row in List %}
                                 <tr>
                                     <td>{{ row.shopid | transShopCode }}</td>
                                     <td>{{ row.createuserid | transUserId }}</td>
@@ -130,49 +152,50 @@
                             {% endfor %}
                             </tbody>
                         </table>
-                        <div class="page">
-                            <button type="button" class="btn btn-warning btn-sm"
-                                    onclick="toPrint(9)">横向打印全部
-                            </button>
-                            <button type="button" class="btn btn-warning btn-sm"
-                                    onclick="toPrint(8)">纵向打印全部
-                            </button>
-                            <span>第<b>{{ page }}</b>页/共<b>{{ resList.paginator.num_pages }}</b>页</span>
-                            <a href="?page=1&couponType={{ couponType }}&issueSn={{ issueSn }}
-                            &start={{ start }}&end={{ end }}&printed={{ printed }}">首页</a>
-                            {% if resList.has_previous %}
-                                <a href="?page={{ resList.previous_page_number }}
-                                &couponType={{ couponType }}&issueSn={{ issueSn }}
-                                &start={{ start }}&end={{ end }}&printed={{ printed }}">上一页</a>
-                            {% else %}
-                                <a href="javascript:void(0)">上一页</a>
-                            {% endif %}
-                            {% if resList.has_next %}
-                                <a href="?page={{ resList.next_page_number }}
-                                &couponType={{ couponType }}&issueSn={{ issueSn }}
-                                &start={{ start }}&end={{ end }}&printed={{ printed }}">下一页</a>
-                            {% else %}
-                                <a href="javascript:void(0)">下一页</a>
-                            {% endif %}
-                            <a href="?pageNum={{ resList.paginator.num_pages }}
-                            &couponType={{ couponType }}&issueSn={{ issueSn }}
-                            &start={{ start }}&end={{ end }}&printed={{ printed }}">尾页</a>
+                        <button type="button" class="btn btn-warning btn-sm"
+                                onclick="toPrint(9)">横向打印全部
+                        </button>
+                        <button type="button" class="btn btn-warning btn-sm"
+                                onclick="toPrint(8)">纵向打印全部
+                        </button>
+                        {#                        <div class="page">#}
 
-                            <form method="post" id="pageForm" style="display: inline-block">
-                                {% csrf_token %}
-                                <input name="couponType" value="{{ couponType }}" type="hidden">
-                                <input name="issueSn" value="{{ issueSn }}" type="hidden">
-                                <input name="start" value="{{ start }}" type="hidden">
-                                <input name="end" value="{{ end }}" type="hidden">
-                                <input name="printed" value="{{ printed }}" type="hidden">
-                                <span class="totalPage">到第</span>
-                                <input class="pageTxt" id="page" name="page" value="1" type="text">
-                                <span>页</span>
-                                <button type="button" class="btn btn-info btn-sm"
-                                        id="pageEnter">确定
-                                </button>
-                            </form>
-                        </div>
+                        {#                            <span>第<b>{{ page }}</b>页/共<b>{{ resList.paginator.num_pages }}</b>页</span>#}
+                        {#                            <a href="?page=1&couponType={{ couponType }}&issueSn={{ issueSn }}#}
+                        {#                            &start={{ start }}&end={{ end }}&printed={{ printed }}">首页</a>#}
+                        {#                            {% if resList.has_previous %}#}
+                        {#                                <a href="?page={{ resList.previous_page_number }}#}
+                        {#                                &couponType={{ couponType }}&issueSn={{ issueSn }}#}
+                        {#                                &start={{ start }}&end={{ end }}&printed={{ printed }}">上一页</a>#}
+                        {#                            {% else %}#}
+                        {#                                <a href="javascript:void(0)">上一页</a>#}
+                        {#                            {% endif %}#}
+                        {#                            {% if resList.has_next %}#}
+                        {#                                <a href="?page={{ resList.next_page_number }}#}
+                        {#                                &couponType={{ couponType }}&issueSn={{ issueSn }}#}
+                        {#                                &start={{ start }}&end={{ end }}&printed={{ printed }}">下一页</a>#}
+                        {#                            {% else %}#}
+                        {#                                <a href="javascript:void(0)">下一页</a>#}
+                        {#                            {% endif %}#}
+                        {#                            <a href="?pageNum={{ resList.paginator.num_pages }}#}
+                        {#                            &couponType={{ couponType }}&issueSn={{ issueSn }}#}
+                        {#                            &start={{ start }}&end={{ end }}&printed={{ printed }}">尾页</a>#}
+                        {##}
+                        {#                            <form method="post" id="pageForm" style="display: inline-block">#}
+                        {#                                {% csrf_token %}#}
+                        {#                                <input name="couponType" value="{{ couponType }}" type="hidden">#}
+                        {#                                <input name="issueSn" value="{{ issueSn }}" type="hidden">#}
+                        {#                                <input name="start" value="{{ start }}" type="hidden">#}
+                        {#                                <input name="end" value="{{ end }}" type="hidden">#}
+                        {#                                <input name="printed" value="{{ printed }}" type="hidden">#}
+                        {#                                <span class="totalPage">到第</span>#}
+                        {#                                <input class="pageTxt" id="page" name="page" value="1" type="text">#}
+                        {#                                <span>页</span>#}
+                        {#                                <button type="button" class="btn btn-info btn-sm"#}
+                        {#                                        id="pageEnter">确定#}
+                        {#                                </button>#}
+                        {#                            </form>#}
+                        {#                        </div>#}
                     </div>
                 </div>
             </div>
@@ -180,6 +203,7 @@
     </div>
 </div>
 <form action="{% url 'voucherIssuePrint' %}" method="post" id="printForm">
+    {% csrf_token %}
     <input type="hidden" name="snlist" value="{{ snlist }}">
     <input type="hidden" name="A4" id="A4">
 </form>
@@ -213,9 +237,32 @@
         }
         $('#form').submit();
     });
+</script>
+<script>
+    //确定按钮
     $('#pageEnter').click(function () {
-        $('#pageForm').submit();
-    });
+        $('#form').submit();
+    })
+    //首页
+    $('#page_a_head').click(function () {
+        $('#page').val(1);
+        $('#form').submit();
+    })
+    //上一页
+    $('#page_a_up').click(function () {
+        $('#page').val({{ page_up }});
+        $('#form').submit();
+    })
+    //下一页
+    $('#page_a_down').click(function () {
+        $('#page').val({{ page_down }});
+        $('#form').submit();
+    })
+    //尾页
+    $('#page_a_foot').click(function () {
+        $('#page').val({{ List.paginator.num_pages }});
+        $('#form').submit();
+    })
 </script>
 <script>
     function toPrint(val) {

@@ -176,6 +176,109 @@ def index(request):
     return render(request, 'report/saleGroupByShop.html', locals())
 
 
+def detail(request):
+    today = datetime.date.today()
+    page = mth.getReqVal(request, 'page', 1)
+    shop_code = request.GET.get('shop_code')
+    pay_id = request.GET.get('pay_id')
 
+    if pay_id == '2':
+        pay_name = '代金券'
+    if pay_id == '3':
+        pay_name = '汇款'
+    if pay_id == '4':
+        pay_name = '赊账'
+    if pay_id == '5':
+        pay_name = 'Pos'
+    if pay_id == '6':
+        pay_name = '移动积分'
+    if pay_id == '7':
+        pay_name = '美团'
+    if pay_id == '8':
+        pay_name = '糯米'
+    if pay_id == '9':
+        pay_name = '黄金手'
+    if pay_id == '10':
+        pay_name = '慧购线上'
+    if pay_id == '11':
+        pay_name = '慧购线下'
 
+    start = request.GET.get('start', today)
+    end = request.GET.get('end', today)
+    endTime = str(datetime.datetime.strptime(end, '%Y-%m-%d').date() + datetime.timedelta(1))
 
+    conn = mth.getMysqlConn()
+    cur = conn.cursor()
+
+    sqlstr = u"select ord.order_sn," \
+             u"        case" \
+             u"        when ord.action_type = '1' then" \
+             u"           '单卡售卡'" \
+             u"        when ord.action_type = '2' then" \
+             u"           '批量售卡'" \
+             u"        when ord.action_type = '3' then" \
+             u"           '借卡结算'" \
+             u"        when ord.action_type = '5' then" \
+             u"	          '实物团购返点'" \
+             u"        else" \
+             u"	          '其它售卡'" \
+             u"        end as action_type," \
+             u"       ord.buyer_name as user_name," \
+             u"       ord.buyer_tel as user_phone," \
+             u"       ord.buyer_company as user_company," \
+             u"       opi.pay_value" \
+             u"  from orders ord, order_payment_info opi" \
+             u" where ord.shop_code = '{shop_code_ord}' " \
+             u"   and ord.add_time >= '{start_ord}' " \
+             u"   and ord.add_time <= '{end_ord}'" \
+             u"   and ord.order_sn = opi.order_id" \
+             u"   and opi.pay_id = {pay_id_ord}" \
+             u" union " \
+             u"select occ.order_sn, " \
+             u"        case" \
+             u"        when occ.action_type = '1' then" \
+             u"           '大面值换小面值'" \
+             u"        when occ.action_type = '2' then" \
+             u"	          '小面值换大面值'" \
+             u"        else" \
+             u"	          '其它换卡'" \
+             u"        end as action_type," \
+             u"       occ.user_name," \
+             u"       occ.user_phone," \
+             u"       '' as user_company," \
+             u"       occp.pay_value" \
+             u"  from order_change_card occ, order_change_card_payment occp" \
+             u" where occ.shop_code = '{shop_code_occ}' " \
+             u"   and occ.add_time >= '{start_occ}' " \
+             u"   and occ.add_time <= '{end_occ}'" \
+             u"   and occ.order_sn = occp.order_id" \
+             u"   and occp.pay_id = {pay_id_occ}" \
+        .format(shop_code_ord=shop_code,
+                start_ord=start,
+                end_ord=endTime,
+                pay_id_ord=pay_id,
+                shop_code_occ=shop_code,
+                start_occ=start,
+                end_occ=endTime,
+                pay_id_occ=pay_id)
+    cur.execute(sqlstr)
+    List = cur.fetchall()
+
+    paginator = Paginator(List, 20)
+
+    try:
+        List = paginator.page(page)
+
+        if List.number > 1:
+            page_up = List.previous_page_number
+        else:
+            page_up = 1
+
+        if List.number < List.paginator.num_pages:
+            page_down = List.next_page_number
+        else:
+            page_down = List.paginator.num_pages
+
+    except Exception as e:
+        print(e)
+    return render(request, 'report/saleGroupByShop/Detail.html', locals())

@@ -102,7 +102,7 @@
                             <table class="v_tb">
                                 <tr class="v_tr">
                                     <th>
-                                        制作门店：{{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'shopid' | transShopIdByName }}</th>
+                                        制作门店：{{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'shopid' | transShopCode }}</th>
                                     <th>券类型：A</th>
                                     <th>券总额：{{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'value'}}元
                                     </th>
@@ -128,7 +128,7 @@
                             <table class="v_tb">
                                 <tr style="font-size:18px">
                                     <th>
-                                        制作门店：{{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'shopid'| transShopIdByName }}</th>
+                                        制作门店：{{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'shopid'| transShopCode }}</th>
                                     <th>券类型：B</th>
                                 </tr>
                                 <tr style="font-size:25px">
