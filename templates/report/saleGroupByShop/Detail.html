@@ -1,0 +1,114 @@
+{% load basefilter %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>销售汇总--汇款明细</title>
+    <link rel="stylesheet" href="{{ static }}/css/bootstrap-datetimepicker.min.css">
+</head>
+<body>
+{% include 'common/head.html' %}
+<!--containt-part-->
+<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb">
+            <a data-original-title="Go to Home" href="#" title="" class="tip-bottom">
+                <span class="glyphicon glyphicon-home" aria-hidden="true"> </span> 首页
+            </a>
+            <a href="#" class="">销售汇总</a>
+            <a href="#" class="current">{{ pay_name }}明细</a>
+        </div>
+    </div>
+    <div class="widget-box">
+        <div class="widget-title"><span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+            <h5>{{ shop_code | transShopCode }}{{ pay_name }}明细列表</h5>
+        </div>
+        <div class="widget-content nopadding">
+            <div class="collapse in widget-content">
+                <div class="widget-box">
+                    <div class="widget-content nopadding" style="overflow: hidden">
+                        <table class="table table-striped table-hover table-form-my">
+                            <thead>
+                            <tr>
+                                <th>订单号</th>
+                                <th>类型</th>
+                                <th>姓名</th>
+                                <th>电话</th>
+                                <th>公司</th>
+                                <th>{{ pay_name }}明细值</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for row in List %}
+                                <tr>
+                                    <td>{{ row.order_sn }}</td>
+                                    <td>{{ row.action_type }}</td>
+                                    <td>{{ row.user_name }}</td>
+                                    <td>{{ row.user_phone }}</td>
+                                    <td>{{ row.user_company }}</td>
+                                    <td>{{ row.pay_value }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        <div class="page">
+                            <span>第<b>{{ page }}</b>页/共<b>{{ List.paginator.num_pages }}</b>页</span>
+                            <a id="page_a_head">首页</a>
+                            {% if List.has_previous %}
+                                <a id="page_a_up">上一页</a>
+                            {% else %}
+                                <a href="javascript:void(0)">上一页</a>
+                            {% endif %}
+                            {% if List.has_next %}
+                                <a id="page_a_down">下一页</a>
+                            {% else %}
+                                <a href="javascript:void(0)">下一页</a>
+                            {% endif %}
+                            <a id="page_a_foot">尾页</a>
+                            <form method="GET" id="pageForm" style="display: inline-block">
+                                {% csrf_token %}
+                                <input name="shop_code" value="{{ shop_code }}" type="hidden">
+                                <input name="pay_id" value="{{ pay_id }}" type="hidden">
+                                <input name="start" value="{{ start }}" type="hidden">
+                                <input name="end" value="{{ end }}" type="hidden">
+                                <span class="totalPage">到第</span>
+                                <input class="pageTxt" id="page" name="page" value="1" type="text">
+                                <span>页</span>
+                                <button type="button" class="btn btn-info btn-sm"
+                                        id="pageEnter">确定
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--end-containt-part-->
+{% include "common/foot.html" %}
+<script>
+    $('#pageEnter').click(function () {
+        $('#pageForm').submit();
+    })
+    $('#page_a_head').click(function () {
+        $('#page').val(1);
+        $('#pageForm').submit();
+    })
+    $('#page_a_up').click(function () {
+        $('#page').val({{ page_up }});
+        $('#pageForm').submit();
+    })
+    $('#page_a_down').click(function () {
+        $('#page').val({{ page_down }});
+        $('#pageForm').submit();
+    })
+    $('#page_a_foot').click(function () {
+        $('#page').val({{ List.paginator.num_pages }});
+        $('#pageForm').submit();
+    })
+</script>
+</body>
+</html>
