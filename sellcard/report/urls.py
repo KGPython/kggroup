@@ -7,6 +7,9 @@ urlpatterns = [
 
     #集团销售汇总--按门店分类汇总
     url(r'^report/kgsale/shop/$', 'sellcard.report.saleGroupByShop.index',name="saleGroupByShop"),
+
+    url(r'^report/kgsale/shop/r', 'sellcard.report.saleGroupByShop.remittance', name="saleGroupByShopRem"),
+
     #集团销售汇总--按支付分类汇总
     url(r'^report/kgsale/payment/$', 'sellcard.report.saleGroupByPay.index',name="saleGroupByPay"),
 

@@ -98,7 +98,8 @@
                                         <td>{{ row.inSub | floatformat:2 | default:0  }}</td>
                                         <td>{{ row.pay_1 | floatformat:2 | default:0 }}</td>
                                         <td>{{ row.pay_2 | floatformat:2 | default:0 }}</td>
-                                        <td>{{ row.pay_3 | floatformat:2 | default:0 }}</td>
+                                        <td><a href="{% url 'saleGroupByShopRem' %}?shop_code=
+{{ row.shop_code }}&start={{ start }}&end={{ end }}">{{ row.pay_3 | floatformat:2 | default:0 }}</a></td>
                                         <td>{{ row.pay_4 | floatformat:2 | default:0 }}</td>
                                         <td>{{ row.pay_5 | floatformat:2 | default:0 }}</td>
                                         <td>{{ row.pay_6 | floatformat:2 | default:0 }}</td>
