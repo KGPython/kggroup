@@ -65,7 +65,6 @@ def index(request):
     shops = base.findShop()
 
     for i in range(0,len(shops)):
-        shopName = shops[i]['shop_code']
         if shops[i]['shop_code'] != 'ZBTG':
             item = {'shop_code':'','disc':0,'disc_cash':0,'disc_card':0,'inSub':0,'pay_1':0,'pay_2':0,'pay_3':0,
                     'pay_4':0,'pay_5':0,'pay_6':0,'pay_7':0,'pay_8':0,'pay_9':0,'pay_10':0,'pay_11':0,}
