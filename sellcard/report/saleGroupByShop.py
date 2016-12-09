@@ -65,6 +65,7 @@ def index(request):
     shops = base.findShop()
 
     for i in range(0,len(shops)):
+        shopName = shops[i]['shop_code']
         if shops[i]['shop_code'] != 'ZBTG':
             item = {'shop_code':'','disc':0,'disc_cash':0,'disc_card':0,'inSub':0,'pay_1':0,'pay_2':0,'pay_3':0,
                     'pay_4':0,'pay_5':0,'pay_6':0,'pay_7':0,'pay_8':0,'pay_9':0,'pay_10':0,'pay_11':0,}
@@ -119,28 +120,28 @@ def index(request):
             for change in changePayList:
                 if item['shop_code'] == change['shop_code']:
                     # 横向各门店售卡汇总赋值
-                    if sale['pay_id'] == 1:
+                    if change['pay_id'] == 1:
                         item['pay_1'] += float(change['pay_value'])
-                    if sale['pay_id'] == 2:
+                    if change['pay_id'] == 2:
                         item['pay_2'] += float(change['pay_value'])
-                    if sale['pay_id'] == 3:
+                    if change['pay_id'] == 3:
                         item['pay_3'] += float(change['pay_value'])
-                    if sale['pay_id'] == 4:
+                    if change['pay_id'] == 4:
                         item['pay_4'] += float(change['pay_value'])
-                    if sale['pay_id'] == 5:
+                    if change['pay_id'] == 5:
                         item['pay_5'] += float(change['pay_value'])
-                    if sale['pay_id'] == 6:
+                    if change['pay_id'] == 6:
                         item['pay_6'] += float(change['pay_value'])
-                    if sale['pay_id'] == 7:
+                    if change['pay_id'] == 7:
                         item['pay_7'] += float(change['pay_value'])
-                    if sale['pay_id'] == 8:
+                    if change['pay_id'] == 8:
                         item['pay_8'] += float(change['pay_value'])
-                    if sale['pay_id'] == 9:
+                    if change['pay_id'] == 9:
                         item['pay_9'] += float(change['pay_value'])
-                    if sale['pay_id'] == 10:
-                        item['pay_10'] += float(sale['pay_value'])
-                    if sale['pay_id'] == 11:
-                        item['pay_11'] += float(sale['pay_value'])
+                    if change['pay_id'] == 10:
+                        item['pay_10'] += float(change['pay_value'])
+                    if change['pay_id'] == 11:
+                        item['pay_11'] += float(change['pay_value'])
 
                     item['inSub'] += float(change['pay_value'])
 

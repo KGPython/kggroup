@@ -23,8 +23,7 @@ def index(request):
         cur.execute(sql)
         payList = cur.fetchall()
 
-        nopay = "SELECT SUM(b.pay_value) AS pay_value FROM orders as a,order_payment_info as b " \
-                "WHERE a.add_time >='"+start+"' AND a.add_time <='"+str(endTime)+"' AND a.order_sn = b.order_id AND b.is_pay='0' AND b.pay_id=4"
+        nopay = "SELECT SUM(b.pay_value) AS pay_value FROM orders as a,order_payment_info as b "+whereStr+" AND a.order_sn = b.order_id AND b.is_pay='0' AND b.pay_id=4"
 
         cur.execute(nopay)
         nopayDict = cur.fetchone()
