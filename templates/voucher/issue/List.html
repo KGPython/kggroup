@@ -158,44 +158,6 @@
                         <button type="button" class="btn btn-warning btn-sm"
                                 onclick="toPrint(8)">纵向打印全部
                         </button>
-                        {#                        <div class="page">#}
-
-                        {#                            <span>第<b>{{ page }}</b>页/共<b>{{ resList.paginator.num_pages }}</b>页</span>#}
-                        {#                            <a href="?page=1&couponType={{ couponType }}&issueSn={{ issueSn }}#}
-                        {#                            &start={{ start }}&end={{ end }}&printed={{ printed }}">首页</a>#}
-                        {#                            {% if resList.has_previous %}#}
-                        {#                                <a href="?page={{ resList.previous_page_number }}#}
-                        {#                                &couponType={{ couponType }}&issueSn={{ issueSn }}#}
-                        {#                                &start={{ start }}&end={{ end }}&printed={{ printed }}">上一页</a>#}
-                        {#                            {% else %}#}
-                        {#                                <a href="javascript:void(0)">上一页</a>#}
-                        {#                            {% endif %}#}
-                        {#                            {% if resList.has_next %}#}
-                        {#                                <a href="?page={{ resList.next_page_number }}#}
-                        {#                                &couponType={{ couponType }}&issueSn={{ issueSn }}#}
-                        {#                                &start={{ start }}&end={{ end }}&printed={{ printed }}">下一页</a>#}
-                        {#                            {% else %}#}
-                        {#                                <a href="javascript:void(0)">下一页</a>#}
-                        {#                            {% endif %}#}
-                        {#                            <a href="?pageNum={{ resList.paginator.num_pages }}#}
-                        {#                            &couponType={{ couponType }}&issueSn={{ issueSn }}#}
-                        {#                            &start={{ start }}&end={{ end }}&printed={{ printed }}">尾页</a>#}
-                        {##}
-                        {#                            <form method="post" id="pageForm" style="display: inline-block">#}
-                        {#                                {% csrf_token %}#}
-                        {#                                <input name="couponType" value="{{ couponType }}" type="hidden">#}
-                        {#                                <input name="issueSn" value="{{ issueSn }}" type="hidden">#}
-                        {#                                <input name="start" value="{{ start }}" type="hidden">#}
-                        {#                                <input name="end" value="{{ end }}" type="hidden">#}
-                        {#                                <input name="printed" value="{{ printed }}" type="hidden">#}
-                        {#                                <span class="totalPage">到第</span>#}
-                        {#                                <input class="pageTxt" id="page" name="page" value="1" type="text">#}
-                        {#                                <span>页</span>#}
-                        {#                                <button type="button" class="btn btn-info btn-sm"#}
-                        {#                                        id="pageEnter">确定#}
-                        {#                                </button>#}
-                        {#                            </form>#}
-                        {#                        </div>#}
                     </div>
                 </div>
             </div>

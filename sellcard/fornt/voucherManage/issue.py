@@ -4,12 +4,10 @@ from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models import Max
 from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
 import datetime, pymssql, json
 from random import sample
 from sellcard.common import Method as mth
 from sellcard.models import KfJobsCoupon, KfJobsCouponGoodsDetail, KfJobsCouponBatch
-
 
 
 @transaction.atomic
@@ -203,7 +201,6 @@ def create(request):
             else:
                 goodList = getGoodsList(goodname, goodcode)
     return render(request, 'voucher/issue/Create.html', locals())
-
 
 
 def printed(request):
