@@ -108,38 +108,57 @@
                                     <td>{{ row.disc_card | floatformat:2 |default:0 }}</td>
                                     <td>{{ row.inSub | floatformat:2 | default:0 }}</td>
                                     <td>{{ row.pay_1 | floatformat:2 | default:0 }}</td>
-                                    <td><a href="{% url 'saleGroupByShopDet' %}?shop_code=
-{{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=3">
-                                        {{ row.pay_2 | floatformat:2 | default:0 }}</a></td>
-                                    <td><a href="{% url 'saleGroupByShopDet' %}?shop_code=
-{{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=3">
-                                        {{ row.pay_3 | floatformat:2 | default:0 }}</a></td>
-                                    <td><a href="{% url 'saleGroupByShopDet' %}?shop_code=
-{{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=4">
-                                        {{ row.pay_4 | floatformat:2 | default:0 }}</a></td>
-                                    <td><a href="{% url 'saleGroupByShopDet' %}?shop_code=
-{{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=5">
-                                        {{ row.pay_5 | floatformat:2 | default:0 }}</a></td>
-                                    <td><a href="{% url 'saleGroupByShopDet' %}?shop_code=
-{{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=6">
-                                        {{ row.pay_6 | floatformat:2 | default:0 }}</a></td>
-                                    <td><a href="{% url 'saleGroupByShopDet' %}?shop_code=
-{{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=7">
-                                        {{ row.pay_7 | floatformat:2 | default:0 }}</a></td>
-                                    <td><a href="{% url 'saleGroupByShopDet' %}?shop_code=
-{{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=8">
-                                        {{ row.pay_8 | floatformat:2 | default:0 }}</a></td>
-                                    <td><a href="{% url 'saleGroupByShopDet' %}?shop_code=
-{{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=9">
-                                        {{ row.pay_9 | floatformat:2 | default:0 }}</a></td>
-                                    <td><a href="{% url 'saleGroupByShopDet' %}?shop_code=
-{{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=10">
-                                        {{ row.pay_10 | floatformat:2 | default:0 }}</a></td>
-                                    <td><a href="{% url 'saleGroupByShopDet' %}?shop_code=
-{{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=11">
-                                        {{ row.pay_11 | floatformat:2 | default:0 }}</a></td>
-                                    <td>{% if inSubTotal != '0' %}
-                                        {{ row.inSub | divide:totalDict.inSubTotal }}{% endif %}</td>
+                                    <td>
+                                        <a href="{% url 'saleGroupByShopDet' %}?shop_code={{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=3">
+                                            {{ row.pay_2 | floatformat:2 | default:0 }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'saleGroupByShopDet' %}?shop_code={{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=3">
+                                            {{ row.pay_3 | floatformat:2 | default:0 }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'saleGroupByShopDet' %}?shop_code={{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=4">
+                                            {{ row.pay_4 | floatformat:2 | default:0 }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'saleGroupByShopDet' %}?shop_code={{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=5">
+                                            {{ row.pay_5 | floatformat:2 | default:0 }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'saleGroupByShopDet' %}?shop_code={{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=6">
+                                            {{ row.pay_6 | floatformat:2 | default:0 }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'saleGroupByShopDet' %}?shop_code={{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=7">
+                                            {{ row.pay_7 | floatformat:2 | default:0 }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'saleGroupByShopDet' %}?shop_code={{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=8">
+                                            {{ row.pay_8 | floatformat:2 | default:0 }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'saleGroupByShopDet' %}?shop_code={{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=9">
+                                            {{ row.pay_9 | floatformat:2 | default:0 }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'saleGroupByShopDet' %}?shop_code={{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=10">
+                                            {{ row.pay_10 | floatformat:2 | default:0 }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'saleGroupByShopDet' %}?shop_code={{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=11">
+                                            {{ row.pay_11 | floatformat:2 | default:0 }}
+                                        </a>
+                                    </td>
+                                    <td>{% if inSubTotal != '0' %}{{ row.inSub | divide:totalDict.inSubTotal }}{% endif %}</td>
                                 </tr>
                             {% endfor %}
                             <tr>

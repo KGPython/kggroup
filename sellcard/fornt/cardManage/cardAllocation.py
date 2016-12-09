@@ -50,12 +50,12 @@ def allocationSave(request):
 
                 CardInventory.objects.filter(card_no__gte=card['start'],card_no__lte=card['end']).update(shop_code=shopIn)
 
-        res['msg']='0'
+        res['msg']='1'
         ActionLog.objects.create(action='门店卡调拨',u_name=request.session.get('s_uname'),cards_out=cardStr+',shopIn:'+shopIn+',shopOut:'+shopOut,add_time=datetime.datetime.now())
 
     except Exception as e:
         print(e)
-        res['msg']='1'
+        res['msg']='0'
         ActionLog.objects.create(action='门店卡调拨',u_name=request.session.get('s_uname'),cards_out=cardStr+',shopIn:'+shopIn+',shopOut:'+shopOut,add_time=datetime.datetime.now(),err_msg=e)
 
     return HttpResponse(json.dumps(res))
