@@ -38,6 +38,7 @@
                                 <th>电话</th>
                                 <th>公司</th>
                                 <th>{{ pay_name }}明细值</th>
+                                <th>是否到账</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -49,6 +50,7 @@
                                     <td>{{ row.user_phone }}</td>
                                     <td>{{ row.user_company }}</td>
                                     <td>{{ row.pay_value }}</td>
+                                    <td>{{ row.is_pay }}</td>
                                 </tr>
                             {% endfor %}
                             </tbody>

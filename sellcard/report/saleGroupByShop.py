@@ -227,7 +227,13 @@ def detail(request):
              u"       ord.buyer_name as user_name," \
              u"       ord.buyer_tel as user_phone," \
              u"       ord.buyer_company as user_company," \
-             u"       opi.pay_value" \
+             u"       opi.pay_value," \
+             u"        case" \
+             u"        when opi.is_pay = '1' then" \
+             u"           '已到账'" \
+             u"        when opi.is_pay = '0' then" \
+             u"           '未到账'" \
+             u"        end as is_pay" \
              u"  from orders ord, order_payment_info opi" \
              u" where ord.shop_code = '{shop_code_ord}' " \
              u"   and ord.add_time >= '{start_ord}' " \
@@ -247,7 +253,13 @@ def detail(request):
              u"       occ.user_name," \
              u"       occ.user_phone," \
              u"       '' as user_company," \
-             u"       occp.pay_value" \
+             u"       occp.pay_value," \
+             u"        case" \
+             u"        when occp.is_pay = '1' then" \
+             u"           '已到账'" \
+             u"        when occp.is_pay = '0' then" \
+             u"           '未到账'" \
+             u"        end as is_pay" \
              u"  from order_change_card occ, order_change_card_payment occp" \
              u" where occ.shop_code = '{shop_code_occ}' " \
              u"   and occ.add_time >= '{start_occ}' " \
