@@ -114,6 +114,9 @@ def index(request):
 
             for fill in fillList:
                 if item['shop_code'] == fill['shop_code']:
+                    if not fill['fill']:
+                        fill['fill']=0
+
                     item['pay_1'] += float(fill['fill'])
                     item['inSub'] += float(fill['fill'])
 
