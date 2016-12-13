@@ -49,9 +49,10 @@
                             <input type="text" class="form-control" name="issueSn" id="issueSn" required
                                    value="{{ issueSn }}">
                         </div>
-
+                        <label for="" class="col-xs-1 formline-label">批次：</label>
                         <div class="col-xs-2">
-                            <a href="{% url 'voucherIssueCreate' %}" class="btn btn-success pull-right">新建</a>
+                            <input type="text" class="form-control" name="batch" id="batch" required
+                                   value="{{ batch }}">
                         </div>
                     </div>
                     <div class="row formline">
@@ -152,12 +153,18 @@
                             {% endfor %}
                             </tbody>
                         </table>
-                        <button type="button" class="btn btn-warning btn-sm"
-                                onclick="toPrint(9)">横向打印全部
+{#                        <button type="button" class="btn btn-warning btn-sm"#}
+{#                                onclick="toPrint(9)">横向打印全部#}
+{#                        </button>#}
+
+                        <div class="col-xs-10">
+                            <a href="{% url 'voucherIssueCreate' %}" class="btn btn-success pull-right">新建</a>
+                        </div>
+                    <div class="col-xs-1">
+                        <button type="button" class="btn btn-warning pull-right"
+                                onclick="toPrint(8)">打印全部
                         </button>
-                        <button type="button" class="btn btn-warning btn-sm"
-                                onclick="toPrint(8)">纵向打印全部
-                        </button>
+                         </div>
                     </div>
                 </div>
             </div>
