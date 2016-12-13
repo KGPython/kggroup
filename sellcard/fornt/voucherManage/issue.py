@@ -25,6 +25,7 @@ def index(request):
     couponType = mth.getReqVal(request, 'couponType', '')
     printed = mth.getReqVal(request, 'printed', '')
     issueSn = mth.getReqVal(request, 'issueSn', '')
+    batch = mth.getReqVal(request, 'batch', '')
     start = mth.getReqVal(request, 'start', today)
     end = mth.getReqVal(request, 'end', today)
     endTime = datetime.datetime.strptime(end, '%Y-%m-%d') + datetime.timedelta(1)
@@ -38,6 +39,9 @@ def index(request):
 
     if printed != '':
         kwargs.setdefault('flag', printed)
+
+    if batch != '':
+        kwargs.setdefault('batch', batch)
 
     if issueSn != '':
         kwargs.setdefault('couponno__contains', issueSn)

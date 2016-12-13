@@ -36,7 +36,7 @@ def index(request):
 
 def getInfo(voucherSn):
     """
-    获取商品列表
+    获取券信息
     :param voucherSn: 核销券号
     :return:券信息
     """
