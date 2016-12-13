@@ -54,7 +54,7 @@ def getInfo(voucherSn):
           u"        StartDate," \
           u"        EndDate," \
           u"        CPwdFlag," \
-          u"        CPwd," \
+          u"        ltrim(rtrim(CPwd)) as CPwd," \
           u"        ClearFlag," \
           u"        Value" \
           u"  from MyShop_Coupon " \
