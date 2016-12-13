@@ -6,6 +6,7 @@ from django.db.models import Max
 from django.shortcuts import render
 import datetime, pymssql, json
 from random import sample
+from sellcard.common import Constants
 from sellcard.common import Method as mth
 from sellcard.models import KfJobsCoupon, KfJobsCouponGoodsDetail, KfJobsCouponBatch
 
@@ -188,7 +189,9 @@ def create(request):
             #   costValue：券面值
             #   batch：批次号
             #   v_str：执行存储过程参数
-            tuple_info = (shop, type, datetime.datetime.now(), endDate, int(costValue), batch, v_str)
+            #   CPwdFlag：是否需要密码
+            #   CPwd：密码
+            tuple_info = (shop, type, datetime.datetime.now(), endDate, int(costValue), batch, v_str, CPwdFlag, CPwd)
 
             # 插入SQL-sevser数据库调用方法
             InsertCoupon(tuple_info, List)
@@ -244,11 +247,11 @@ def getGoodsList(goodsname, goodscode):
     :param goodscode: 商品编码
     :return:列表
     """
-    conn = pymssql.connect(host='192.168.122.141',
-                           port='1433',
-                           user='myshop',
-                           password='oyf20140208HH',
-                           database='mySHOPCMStock',
+    conn = pymssql.connect(host=Constants.KGGROUP_DB_STOCK_SERVER,
+                           port=Constants.KGGROUP_DB_STOCK_PORT,
+                           user=Constants.KGGROUP_DB_STOCK_USER,
+                           password=Constants.KGGROUP_DB_STOCK_PASSWORD,
+                           database=Constants.KGGROUP_DB_STOCK_DATABASE,
                            charset='utf8',
                            as_dict=True)
     cur = conn.cursor()
@@ -271,11 +274,11 @@ def InsertCoupon(cardinfo, list):
     :param list: 代金券券号列表
     :return:信号值
     """
-    conn = pymssql.connect(host='192.168.122.141',
-                           port='1433',
-                           user='myshop',
-                           password='oyf20140208HH',
-                           database='myshopcmcard',
+    conn = pymssql.connect(host=Constants.KGGROUP_DB_SERVER,
+                           port=Constants.KGGROUP_DB_PORT,
+                           user=Constants.KGGROUP_DB_USER,
+                           password=Constants.KGGROUP_DB_PASSWORD,
+                           database=Constants.KGGROUP_DB_DATABASE,
                            charset='utf8',
                            as_dict=True)
     conn.autocommit(False)
@@ -287,7 +290,7 @@ def InsertCoupon(cardinfo, list):
           u"Discount,Flag,FromSheetType,FromSDate,FromListNO," \
           u"FromPOSID,SerialID,ClearFlag)" \
           u"Values({coupon},{shop},{sn},{type},{start},{end}," \
-          u"0,null,0,1,{value}," \
+          u"{CPWdFlag},{CPwd},0,1,{value}," \
           u"0,0,220,null,null," \
           u"null,{batch},0)".format(coupon='%s',
                                     shop='%s',
@@ -295,13 +298,17 @@ def InsertCoupon(cardinfo, list):
                                     type='%s',
                                     start='%s',
                                     end='%s',
+                                    CPWdFlag='%s',
+                                    CPwd='%s',
                                     value='%s',
                                     batch='%s')
 
     params = []
 
     for item in list:
-        param = (cardinfo[6], cardinfo[0], item, cardinfo[1], cardinfo[2], cardinfo[3], cardinfo[4], cardinfo[6])
+        param = (
+        cardinfo[6], cardinfo[0], item, cardinfo[1], cardinfo[2], cardinfo[3], cardinfo[7], cardinfo[8], cardinfo[4],
+        cardinfo[6])
         params.append(param)
 
     try:
