@@ -126,6 +126,8 @@ def create(request):
         if request.POST.get('buttonvalue') == '1':
             today = datetime.datetime.now().strftime('%Y%m%d')
             endDate = datetime.datetime.strptime(endDate, "%Y-%m-%d").date()
+            name = request.session.get("s_uname")
+
             # 获取本次批次号：本次批号为历史最大批号加1，若不存在历史批号则为1
             batchs = KfJobsCouponBatch.objects.values('batch'
                                                       ).filter(shopid=shopCode,
@@ -186,16 +188,18 @@ def create(request):
                                                        amount=int(var_good['amount']))
 
             # 传入代金券信息元组：
-            #   shop：门店编码
-            #   type：代金券类型
-            #   （strat）：创建时间
-            #   endDate：结束日期
-            #   costValue：券面值
-            #   batch：批次号
-            #   v_str：执行存储过程参数
-            #   CPwdFlag：是否需要密码
-            #   CPwd：密码
-            tuple_info = (shop, type, datetime.datetime.now(), endDate, int(costValue), batch, v_str, CPwdFlag, CPwd)
+            #   0：shop：门店编码
+            #   1：type：代金券类型
+            #   2：（strat）：创建时间
+            #   3：endDate：结束日期
+            #   4：costValue：券面值
+            #   5：batch：批次号
+            #   6：v_str：执行存储过程参数
+            #   7：CPwdFlag：是否需要密码
+            #   8：CPwd：密码
+            #   9：name：操作人姓名
+            tuple_info = (
+            shop, type, datetime.datetime.now(), endDate, int(costValue), batch, v_str, CPwdFlag, CPwd, name)
 
             # 插入SQL-sevser数据库调用方法
             InsertCoupon(tuple_info, List)
@@ -275,6 +279,16 @@ def InsertCoupon(cardinfo, list):
     """
     插入久久表
     :param cardinfo: 代金券信息
+            #   0：shop：门店编码
+            #   1：type：代金券类型
+            #   2：（strat）：创建时间
+            #   3：endDate：结束日期
+            #   4：costValue：券面值
+            #   5：batch：批次号
+            #   6：v_str：执行存储过程参数
+            #   7：CPwdFlag：是否需要密码
+            #   8：CPwd：密码
+            #   9：name：操作人姓名
     :param list: 代金券券号列表
     :return:信号值
     """
@@ -295,24 +309,36 @@ def InsertCoupon(cardinfo, list):
           u"FromPOSID,SerialID,ClearFlag)" \
           u"Values({coupon},{shop},{sn},{type},{start},{end}," \
           u"{CPWdFlag},{CPwd},0,1,{value}," \
-          u"0,0,220,null,null," \
-          u"null,{batch},0)".format(coupon='%s',
-                                    shop='%s',
-                                    sn='%s',
-                                    type='%s',
-                                    start='%s',
-                                    end='%s',
-                                    CPWdFlag='%s',
-                                    CPwd='%s',
-                                    value='%s',
-                                    batch='%s')
+          u"0,0,220,{create},null," \
+          u"{name},{batch},0)".format(coupon='%s',
+                                      shop='%s',
+                                      sn='%s',
+                                      type='%s',
+                                      start='%s',
+                                      end='%s',
+                                      CPWdFlag='%s',
+                                      CPwd='%s',
+                                      value='%s',
+                                      create='%s',
+                                      name='%s',
+                                      batch='%s')
 
     params = []
 
     for item in list:
         param = (
-        cardinfo[6], cardinfo[0], item, cardinfo[1], cardinfo[2], cardinfo[3], cardinfo[7], cardinfo[8], cardinfo[4],
-        cardinfo[6])
+            cardinfo[6],
+            cardinfo[0],
+            item,
+            cardinfo[1],
+            cardinfo[2],
+            cardinfo[3],
+            cardinfo[7],
+            cardinfo[8],
+            cardinfo[4],
+            cardinfo[2],
+            cardinfo[9],
+            cardinfo[6])
         params.append(param)
 
     try:

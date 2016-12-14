@@ -26,10 +26,12 @@ def index(request):
             else:
                 msg = 4
         if request.POST.get('btn_value') == 'save':
+            spend = request.POST.get('spend')
             shop = request.session.get("s_shopcode")
+            name = request.session.get("s_uname")
             if (shop is None or shop == ''):
                 shop = '9999'
-            UpdateCoupon(voucherSn, shop)
+            UpdateCoupon(voucherSn, shop, spend, name)
             msg = 5
     return render(request, 'voucher/balance/index.html', locals())
 
@@ -66,11 +68,13 @@ def getInfo(voucherSn):
     return v_info
 
 
-def UpdateCoupon(voucherSn, shop):
+def UpdateCoupon(voucherSn, shop, spend, name):
     """
     调存储过程核销
-    :param voucherSn: 代金券信息
-    :param shop: 代金券券号列表
+    :param voucherSn: 代金券号
+    :param shop: 核销门店
+    :param spend: 花费
+    :param name: 操作人姓名
     :return:void
     """
     conn = pymssql.connect(host=Constants.KGGROUP_DB_SERVER,
@@ -82,7 +86,7 @@ def UpdateCoupon(voucherSn, shop):
                            as_dict=True)
     conn.autocommit(False)
     cursor = conn.cursor()
-    sql = "exec kgInsertCouponAcc99 @CouponNO='" + voucherSn + "', @ShopID='" + shop + "'"
+    sql = "exec kgInsertCouponAcc99 @CouponNO='" + voucherSn + "', @ShopID='" + shop + "', @sValue='" + spend + "', @clearnote ='" + name + "'"
     cursor.execute(sql)
     conn.commit()
     cursor.close()
