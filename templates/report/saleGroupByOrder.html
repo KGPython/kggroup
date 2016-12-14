@@ -176,7 +176,10 @@
                                             <td>{{ row.user_name }}</td>
                                             <td>{{ row.user_phone }}</td>
                                             <td>{{ row.modified_time | date:'Y-m-d'}}</td>
-                                            <td><a href="{% url 'orderDetail' %}?actionType={{ actionType }}&orderSn={{ row.order_sn }}">查看</a></td>
+                                            <td>
+                                                <a href="{% url 'orderDetail' %}?actionType={{ actionType }}&orderSn={{ row.order_sn }}">查看</a>
+                                                <a href="{% url 'cardsSaleOrderInfo' %}?orderSn={{ row.order_sn }}" class="layout">打印凭据</a>
+                                            </td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>
@@ -203,7 +206,10 @@
                                             <td>{{ row.total_in_price }}</td>
                                             <td>{{ row.total_out_price }}</td>
                                             <td>{{ row.add_time | date:'Y-m-d' }}</td>
-                                            <td><a href="{% url 'orderDetail' %}?actionType={{ actionType }}&orderSn={{ row.order_sn }}">查看</a></td>
+                                            <td>
+                                                <a href="{% url 'orderDetail' %}?actionType={{ actionType }}&orderSn={{ row.order_sn }}">查看</a>
+                                                <a href="{% url 'cardChangeOrderInfo' %}?orderSn={{ row.order_sn }}" class="layout">打印凭据</a>
+                                            </td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>
