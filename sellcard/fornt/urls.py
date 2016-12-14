@@ -57,9 +57,12 @@ urlpatterns = [
     ################################################# 卡管理 end ###############################################
 
     ################################################# 卡管理 start ##############################################
+    # 售卡打印订单
     url(r'^fornt/cardsale/orderInfo/$','sellcard.fornt.cardSale.card.info',name='cardsSaleOrderInfo'),
     url(r'^fornt/cardsale/orderInfo/print', 'sellcard.fornt.cardSale.card.reprint', name='cardsSaleOrderReprint'),
     url(r'^fornt/cardsale/orderInfo/explain', 'sellcard.fornt.cardSale.card.print_explain', name='cardsSaleOrderExplain'),
+    # 更换卡打印订单
+    url(r'^fornt/cardChange/orderInfo/$', 'sellcard.fornt.cardChange.card.info', name='cardChangeOrderInfo'),
     ################################################# 卡管理 end   ##############################################
 
     ################################################# 代金券管理 start ################################################
