@@ -105,6 +105,8 @@ def create(request):
         else:
             chooseList = []
         costValue = request.POST.get('costValue')
+        if (costValue is None or costValue == ''):
+            costValue = 0
         giftValue = request.POST.get('giftValue')
         if (giftValue is None or giftValue == ''):
             giftValue = 0
@@ -120,12 +122,20 @@ def create(request):
         maxUseTime = request.POST.get('maxUseTime')
         if (maxUseTime is None or maxUseTime == ''):
             maxUseTime = 0
-        rangeremark = request.POST.get('rangeremark')
+        range = request.POST.get('range')
+        rangeremark = ''
+        if range == '0':
+            rangeremark = '全部店'
+        if range == '1':
+            rangeremark = '发行店'
 
         # 判断提交按钮类型：1、保存信息，2、查询商品
         if request.POST.get('buttonvalue') == '1':
             today = datetime.datetime.now().strftime('%Y%m%d')
-            endDate = datetime.datetime.strptime(endDate, "%Y-%m-%d").date()
+            if (endDate is not None and endDate != ''):
+                endDate = datetime.datetime.strptime(endDate, "%Y-%m-%d").date()
+            else:
+                endDate = datetime.datetime.strptime("9999-12-31", "%Y-%m-%d").date()
             name = request.session.get("s_uname")
 
             # 获取本次批次号：本次批号为历史最大批号加1，若不存在历史批号则为1
@@ -198,8 +208,9 @@ def create(request):
             #   7：CPwdFlag：是否需要密码
             #   8：CPwd：密码
             #   9：name：操作人姓名
+            #   10：range：是否限定使用范围：0）不限定，1）本店
             tuple_info = (
-            shop, type, datetime.datetime.now(), endDate, int(costValue), batch, v_str, CPwdFlag, CPwd, name)
+                shop, type, datetime.datetime.now(), endDate, int(costValue), batch, v_str, CPwdFlag, CPwd, name, range)
 
             # 插入SQL-sevser数据库调用方法
             InsertCoupon(tuple_info, List)
@@ -277,7 +288,7 @@ def getGoodsList(goodsname, goodscode):
 
 def InsertCoupon(cardinfo, list):
     """
-    插入久久表
+    插入第三方库
     :param cardinfo: 代金券信息
             #   0：shop：门店编码
             #   1：type：代金券类型
@@ -289,6 +300,7 @@ def InsertCoupon(cardinfo, list):
             #   7：CPwdFlag：是否需要密码
             #   8：CPwd：密码
             #   9：name：操作人姓名
+            #   10：range：是否限定使用范围：0）不限定，1）本店
     :param list: 代金券券号列表
     :return:信号值
     """
@@ -300,8 +312,41 @@ def InsertCoupon(cardinfo, list):
                            charset='utf8',
                            as_dict=True)
     conn.autocommit(False)
-    cur = conn.cursor()
+    #插入类型表
+    typecursor = conn.cursor()
+    sql = u" SELECT " \
+          u" CASE " \
+          u" WHEN MAX (CouponTypeID) IS NULL THEN " \
+          u"   800000001 " \
+          u" ELSE " \
+          u"   MAX (CouponTypeID) + 1 " \
+          u" END AS CouponTypeID " \
+          u" FROM " \
+          u"	MyShop_CouponType " \
+          u" WHERE " \
+          u"	CouponTypeID LIKE '8%' "
+    typecursor.execute(sql)
+    type = typecursor.fetchone()
+    type =type['CouponTypeID']
 
+    sql = u"insert into MyShop_CouponType" \
+          u"(ShopID,CouponTypeID,CouponTypeName,CouponFlag,ValidDay," \
+          u" StartDate,EndDate,Value,MaxValue,Discount," \
+          u" Note,PayValue,UseScope,IfCurrShop,EnableValue,PayType)" \
+          u"values(" \
+          u" 'K001',{coupontypeid},'{coupontypename}',2,0," \
+          u" GETdate(),{EndDate},{value},null,100," \
+          u" '',0.00,1,{ifcurrshop},0,'') ".format(coupontypeid=type,
+                                                   coupontypename=cardinfo[6],
+                                                   EndDate=cardinfo[3],
+                                                   value=cardinfo[4],
+                                                   ifcurrshop=cardinfo[10])
+    typecursor.execute(sql)
+    conn.commit()
+    typecursor.close()
+
+    cur = conn.cursor()
+    #插入临时久久表
     sql = u"Insert into MyShop_Coupon99" \
           u"(CouponID,ShopID,CouponNO,CouponTypeID,StartDate,EndDate," \
           u"CPWdFlag,CPwd,UseTime,MaxUseTime,Value," \
@@ -330,7 +375,7 @@ def InsertCoupon(cardinfo, list):
             cardinfo[6],
             cardinfo[0],
             item,
-            cardinfo[1],
+            type,
             cardinfo[2],
             cardinfo[3],
             cardinfo[7],
@@ -350,6 +395,7 @@ def InsertCoupon(cardinfo, list):
 
     cur.close()
     cursor = conn.cursor()
+    #读取久久表调用存储过程插入正式表
     sql = "exec IF_MyShop_Coupon99 @CouponID='" + cardinfo[6] + "'"
     cursor.execute(sql)
     conn.commit()

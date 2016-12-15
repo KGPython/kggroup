@@ -24,7 +24,7 @@
             <h5>代金券管理-发行</h5>
         </div>
         <form action="{% url 'voucherIssueCreate' %}" method="post" id="Form">
-        {% csrf_token %}
+            {% csrf_token %}
             <input name="buttonvalue" id="buttonvalue" type="hidden">
             <input name="chooseList" id="chooseList" value="{{ chooseList }}" type="hidden">
             <div class="widget-content nopadding">
@@ -93,8 +93,10 @@
                         </div>
                         <label for="" class="col-xs-1 formline-label">使用范围</label>
                         <div class="col-xs-3">
-                            <input type="text" class="form-control" name="rangeremark" id="rangeremark"
-                                   required value="{{ rangeremark }}">
+                            {#                            <input type="text" class="form-control" name="rangeremark" id="rangeremark"#}
+                            {#                                   required value="{{ rangeremark }}">#}
+                            <input type="radio" name="range" value="0" checked>全部
+                            <input type="radio" name="range" value="1">本店
                         </div>
                     </div>
                     <div class="row formline">
@@ -166,13 +168,13 @@
                                         <label for="" class="col-xs-2 formline-label">商品名：</label>
                                         <div class="col-xs-3">
                                             <input type="text" class="form-control"
-                                                    id="v_name" name="v_name">
+                                                   id="v_name" name="v_name">
                                         </div>
 
                                         <label for="" class="col-xs-2 formline-label">商品编号：</label>
                                         <div class="col-xs-3">
                                             <input type="text" class="form-control"
-                                                    id="v_code" name="v_code">
+                                                   id="v_code" name="v_code">
                                         </div>
                                         <div class="col-xs-2">
                                             <button type="button" class="btn btn-info add-btn">添加
@@ -242,6 +244,7 @@
     else {
         $('#l_CPwd,#CPwd').hide();
     }
+    $("input[name='range'][value={{ range }}]").attr("checked", true);
 </script>
 <!--保存成功跳回列表-->
 <script type="text/javascript">
@@ -280,7 +283,7 @@
         var tbody = $(".chooseGoodList");
         var v_name = $('#v_name').val();
         var v_code = $('#v_code').val();
-        var row = '<tr><td>'+v_name+'</td><td>'+v_code+"</td><td><input type='text' class='form-control'></td></tr>";
+        var row = '<tr><td>' + v_name + '</td><td>' + v_code + "</td><td><input type='text' class='form-control'></td></tr>";
         tbody.append(row);
     });
 </script>

@@ -146,7 +146,7 @@
         $('#form').submit();
     });
     $('#btn_save').click(function () {
-        if ('{{ info.CPwd }}' != 'None' && $('#inputCPwd').val() != '{{ info.CPwd }}') {
+        if ('{{ info.CPwd }}' != '' && $('#inputCPwd').val() != '{{ info.CPwd }}') {
             alert('输入的密码有误！');
         }
         else {
