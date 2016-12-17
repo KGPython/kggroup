@@ -14,6 +14,7 @@ from django.db import models
 
 class KfJobsCoupon(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
+    couponname = models.CharField(db_column='CouponName', max_length=255)  # Field name made lowercase.
     batch = models.CharField(max_length=255)
     shopid = models.CharField(db_column='ShopID', max_length=10)  # Field name made lowercase.
     couponno = models.CharField(db_column='CouponNO', max_length=19)  # Field name made lowercase.
@@ -66,7 +67,7 @@ class KfJobsCouponGoodsDetail(models.Model):
     batch = models.CharField(max_length=255)
     goodname = models.CharField(max_length=255, blank=True, null=True)
     goodcode = models.CharField(max_length=255, blank=True, null=True)
-    amount = models.IntegerField(blank=True, null=True)
+    amount = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         managed = False

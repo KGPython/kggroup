@@ -31,17 +31,22 @@
                 <div class="collapse in widget-content">
                     <div class="row formline">
                         <label for="" class="col-xs-1 formline-label">发行张数：</label>
-                        <div class="col-xs-3">
+                        <div class="col-xs-1">
                             <input type="text" class="form-control" name="amount" id="amount"
                                    required value="{{ amount }}">
                         </div>
 
                         <label for="" class="col-xs-1 formline-label">类型：</label>
-                        <div class="col-xs-3">
+                        <div class="col-xs-1">
                             <select name="type" id="type" class="form-control" required>
                                 <option value="1">优惠券</option>
                                 <option value="2">购物券</option>
                             </select>
+                        </div>
+                        <label for="" class="col-xs-1 formline-label">券名称：</label>
+                        <div class="col-xs-3">
+                            <input type="text" class="form-control" name="name" id="name"
+                                   required value="{{ name }}">
                         </div>
                         <label for="" class="col-xs-1 formline-label">代金面值：</label>
                         <div class="col-xs-3">
@@ -80,15 +85,15 @@
                             {#                            <input type="text" class="form-control" name="rangeremark" id="rangeremark"#}
                             {#                                   required value="{{ rangeremark }}">#}
                             <div class="col-xs-10">
-                            <input type="radio" name="range" value="0" checked>全部
-                            <input type="radio" name="range" value="1">本店
-                                 </div>
+                                <input type="radio" name="range" value="0" checked>全部
+                                <input type="radio" name="range" value="1">本店
+                            </div>
                             <div class="col-xs-2">
-                             <button type="button" class="btn btn-info save-btn">保存</button>
-                                </div>
+                                <button type="button" class="btn btn-info save-btn">保存</button>
+                            </div>
                         </div>
                     </div>
-                    <div class="row formline"  style="display:none">
+                    <div class="row formline" style="display:none">
                         <label for="" class="col-xs-1 formline-label">优惠金额：</label>
                         <div class="col-xs-3">
                             <input type="text" class="form-control" name="giftValue" id="giftValue"
@@ -227,12 +232,12 @@
 <script>
     $("#type").val({{ type }});
     $("#buttonvalue").val();
-{#    if ($("#type").val() == 3) {#}
-{#        $('#chooseGoods').show();#}
-{#    }#}
-{#    else {#}
-{#        $('#chooseGoods').hide();#}
-{#    }#}
+    {#    if ($("#type").val() == 3) {#}
+    {#        $('#chooseGoods').show();#}
+    {#    }#}
+    {#    else {#}
+    {#        $('#chooseGoods').hide();#}
+    {#    }#}
     $("input[name='CPwdFlag'][value={{ CPwdFlag }}]").attr("checked", true);
     if ('{{ CPwdFlag }}' == '1') {
         $('#l_CPwd,#CPwd').show();

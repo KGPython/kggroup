@@ -56,8 +56,7 @@
         margin-left: 1.5mm;
         margin-right: 1.5mm;
         width: 95mm;
-{#        height: {{ v_print_height }};#}
-        float: left;
+    {#        height: {{ v_print_height }};#} float: left;
     }
 
     .v_print .v_title {
@@ -92,57 +91,57 @@
             {% for var_j in range_tnop %}
                 {% if var_i|multiply:tnop|add:var_j < counts %}
                     <div class="v_print" style="text-align:center">
-                        <label class="v_title">宽广超市购物券</label>
+                        <label class="v_title">宽广超市{{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'couponname' }}</label>
                         <div class="v_image"
                              id="{{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'couponno' }}">
                         </div>
                         <label class="v_sn">
                             {{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'couponno' }}</label>
-{#                        {% if var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'coupontypeid' == 3 %}#}
-                            <table class="v_tb">
+                        {#                        {% if var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'coupontypeid' == 3 %}#}
+                        <table class="v_tb">
+                            <tr class="v_tr">
+                                <th colspan="2">
+                                    发行店：{{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'shopid' | transShopCode }}</th>
+                                <th>
+                                    类型：{{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'coupontypeid' | transCouponTypeByChinese }}</th>
+                            </tr>
+                            <tr class="v_tr">
+                                <th>商品名称</th>
+                                <th>数量</th>
+                                <th>商品编码</th>
+                            </tr>
+                            {% for var_good in var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'GoodList' %}
                                 <tr class="v_tr">
-                                    <th>
-                                        制作门店：{{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'shopid' | transShopCode }}</th>
-                                    <th>券类型：{{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'coupontypeid' | transCouponTypeByChinese }}</th>
-                                    <th>券总额：{{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'value' }}元
-                                    </th>
+                                    <td>{{ var_good.goodname }}</td>
+                                    <td>{{ var_good.amount }}</td>
+                                    <td>{{ var_good.goodcode }}</td>
                                 </tr>
-                                <tr class="v_tr">
-                                    <th>商品名称</th>
-                                    <th>数量</th>
-                                    <th>商品编码</th>
-                                </tr>
-                                {% for var_good in var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'GoodList' %}
-                                    <tr class="v_tr">
-                                        <td>{{ var_good.goodname }}</td>
-                                        <td>{{ var_good.amount }}</td>
-                                        <td>{{ var_good.goodcode }}</td>
-                                    </tr>
-                                {% endfor %}
-                                <tr class="v_tr">
-                                    <th colspan="3" style="text-align: left">
-                                        使用范围：{{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'rangeremark' }}</th>
-                                </tr>
-                            </table>
-{#                        {% else %}#}
-{#                            <table class="v_tb">#}
-{#                                <tr style="font-size:18px">#}
-{#                                    <th>#}
-{#                                        制作门店：{{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'shopid'| transShopCode }}</th>#}
-{#                                    <th>券类型：B</th>#}
-{#                                </tr>#}
-{#                                <tr style="font-size:25px">#}
-{#                                    <td colspan="2">#}
-{#                                        券总额：{{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'value' }}元#}
-{#                                    </td>#}
-{#                                </tr>#}
-{#                                <tr class="v_tr">#}
-{#                                    <th colspan="2" style="text-align: left">#}
-{#                                        使用范围：{{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'rangeremark' }}</th>#}
-{#                                </tr>#}
-{#                            </table>#}
+                            {% endfor %}
+                            <tr class="v_tr">
+                                <th colspan="2" style="text-align: left">
+                                    使用范围：{{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'rangeremark' }}</th>
+                                <th>V：{{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'value' }}</th>
+                            </tr>
+                        </table>
+                        {#                        {% else %}#}
+                        {#                            <table class="v_tb">#}
+                        {#                                <tr style="font-size:18px">#}
+                        {#                                    <th>#}
+                        {#                                        制作门店：{{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'shopid'| transShopCode }}</th>#}
+                        {#                                    <th>券类型：B</th>#}
+                        {#                                </tr>#}
+                        {#                                <tr style="font-size:25px">#}
+                        {#                                    <td colspan="2">#}
+                        {#                                        券总额：{{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'value' }}元#}
+                        {#                                    </td>#}
+                        {#                                </tr>#}
+                        {#                                <tr class="v_tr">#}
+                        {#                                    <th colspan="2" style="text-align: left">#}
+                        {#                                        使用范围：{{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'rangeremark' }}</th>#}
+                        {#                                </tr>#}
+                        {#                            </table>#}
 
-{#                        {% endif %}#}
+                        {#                        {% endif %}#}
                         <label class="v_foot"
                                style=" font-size:8px">本券请于{{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'enddate' }}前使用<br/>逾期作废，丢失不补，盖章有效
                         </label>

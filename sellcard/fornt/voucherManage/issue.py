@@ -98,6 +98,8 @@ def create(request):
             shopCode = '9999'
         user = request.session.get("s_uid")
         amount = request.POST.get('amount')
+        name = request.POST.get('name')
+
         type = request.POST.get('type')
         chooseList = request.POST.get('chooseList')
         chooseList = json.loads(chooseList)
@@ -169,6 +171,7 @@ def create(request):
             # 插入卡券表
             for var_sn in List:
                 KfJobsCoupon.objects.create(shopid=shop,
+                                            couponname=name,
                                             batch=batch,
                                             couponno=var_sn,
                                             coupontypeid=type,
@@ -196,15 +199,10 @@ def create(request):
                                                        goodcode=var_good['CustomNo'].strip(),
                                                        amount=int(var_good['amount']))
 
-            typename = ''
-            if type == '1':
-                typename = '优惠券'
-            elif type == '2':
-                typename = '购物券'
 
             # 传入代金券信息元组：
             # 0：shop：门店编码
-            #   1：type：代金券类型
+            #   1：name：代金券类型名称
             #   2：（strat）：创建时间
             #   3：endDate：结束日期
             #   4：costValue：券面值
@@ -215,7 +213,7 @@ def create(request):
             #   9：name：操作人姓名
             #   10：range：是否限定使用范围：0）不限定，1）本店
             tuple_info = (
-                shop, typename, datetime.datetime.now(), endDate, int(costValue), batch, v_str, CPwdFlag, CPwd, name,
+                shop, name, datetime.datetime.now(), endDate, int(costValue), batch, v_str, CPwdFlag, CPwd, name,
                 range)
 
             # 插入SQL-sevser数据库调用方法
@@ -255,10 +253,11 @@ def printed(request):
         page_count = range(counts // tnop + (0 if counts % tnop == 0 else 1))
 
         resList = KfJobsCoupon.objects.values(
-            'shopid', 'coupontypeid','startdate', 'enddate', 'couponno', 'rangeremark',
+            'shopid', 'couponname', 'coupontypeid','startdate', 'enddate', 'couponno', 'rangeremark',
             'value', 'batch').filter(couponno__in=snlist)
 
         for var_i in resList:
+            var_i['value'] ='{:.2f}'.format(var_i['value'])
             batch =''
             if var_i['shopid'][0:1] == 'C':
                 batch = '14' + var_i['shopid'][2:]+ var_i['startdate'].strftime('%y%m%d')+ var_i['batch']
@@ -302,7 +301,7 @@ def InsertCoupon(cardinfo, list):
     插入第三方库
     :param cardinfo: 代金券信息
             #   0：shop：门店编码
-            #   1：type：代金券类型
+            #   1：name：代金券类型名称
             #   2：（strat）：创建时间
             #   3：endDate：结束日期
             #   4：costValue：券面值
