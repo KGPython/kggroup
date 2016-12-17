@@ -58,10 +58,6 @@
                                    required value="{{ costValue }}">
                         </div>
 
-                        <div class="col-xs-2">
-                            <input type="text" class="form-control" name="CPwd" id="CPwd"
-                                   value="{{ CPwd }}" style="display:none">
-                        </div>
                         <label for="" class="col-xs-1 formline-label">截止日期：</label>
                         <div class="col-xs-3">
                             <div data-link-format="yyyy-mm-dd" data-link-field="dtp_input2"
@@ -95,6 +91,11 @@
                             <input type="radio" name="CPwdFlag" value="0" checked onchange="radiochange(0)">否
                             <input type="radio" name="CPwdFlag" value="1" onchange="radiochange(1)">是
                             <label id="l_CPwd" for="" class="formline-label" style="display:none">密码：</label>
+                        </div>
+
+                        <div class="col-xs-2">
+                            <input type="text" class="form-control" name="CPwd" id="CPwd"
+                                   value="{{ CPwd }}" style="display:none">
                         </div>
                         <label for="" class="col-xs-1 formline-label">优惠金额：</label>
                         <div class="col-xs-3">

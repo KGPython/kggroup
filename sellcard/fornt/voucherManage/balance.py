@@ -4,7 +4,7 @@ from django.db import transaction
 from django.shortcuts import render
 import datetime, pymssql
 from sellcard.common import Constants
-
+from sellcard.common import Method as mth
 
 @transaction.atomic
 def index(request):
@@ -14,8 +14,8 @@ def index(request):
     :return:视图view
     """
     if request.method == 'POST':
-        voucherSn = request.POST.get('voucherSn')
-        if request.POST.get('btn_value') == 'query':
+        voucherSn = mth.getReqVal(request, 'voucherSn', '')
+        if mth.getReqVal(request, 'btn_value', '') == 'query':
             info = getInfo(voucherSn)
             if info is None:
                 msg = 1
@@ -25,8 +25,8 @@ def index(request):
                 msg = 3
             else:
                 msg = 4
-        if request.POST.get('btn_value') == 'save':
-            spend = request.POST.get('spend')
+        if  mth.getReqVal(request, 'btn_value', '') == 'save':
+            spend = mth.getReqVal(request, 'spend', '')
             shop = request.session.get("s_shopcode")
             name = request.session.get("s_uname")
             if (shop is None or shop == ''):

@@ -97,32 +97,32 @@ def create(request):
         if (shopCode is None or shopCode == ''):
             shopCode = '9999'
         user = request.session.get("s_uid")
-        amount = request.POST.get('amount')
-        couponname = request.POST.get('couponname')
+        amount = mth.getReqVal(request, 'amount', '')
+        couponname = mth.getReqVal(request, 'couponname', '')
 
-        type = request.POST.get('type')
-        chooseList = request.POST.get('chooseList')
+        type = mth.getReqVal(request, 'type', '')
+        chooseList = mth.getReqVal(request, 'chooseList', '')
         chooseList = json.loads(chooseList)
 
-        costValue = request.POST.get('costValue')
+        costValue = mth.getReqVal(request, 'costValue', '')
         if (costValue is None or costValue == ''):
             costValue = 0
-        giftValue = request.POST.get('giftValue')
+        giftValue = mth.getReqVal(request, 'giftValue', '')
         if (giftValue is None or giftValue == ''):
             giftValue = 0
-        discount = request.POST.get('discount')
+        discount = mth.getReqVal(request, 'discount', '')
         if (discount is None or discount == ''):
             discount = 0
-        endDate = request.POST.get('endDate')
-        CPwdFlag = request.POST.get('CPwdFlag')
+        endDate = mth.getReqVal(request, 'endDate', '')
+        CPwdFlag = mth.getReqVal(request, 'CPwdFlag', '')
         if CPwdFlag == '1':
-            CPwd = request.POST.get('CPwd')
+            CPwd = mth.getReqVal(request, 'CPwd', '')
         else:
             CPwd = ''
-        maxUseTime = request.POST.get('maxUseTime')
+        maxUseTime = mth.getReqVal(request, 'maxUseTime', '')
         if (maxUseTime is None or maxUseTime == ''):
             maxUseTime = 0
-        range = request.POST.get('range')
+        range = mth.getReqVal(request, 'range', '')
         rangeremark = ''
         if range == '0':
             rangeremark = '全部店'
@@ -130,7 +130,7 @@ def create(request):
             rangeremark = '发行店'
 
         # 判断提交按钮类型：1、保存信息，2、查询商品
-        if request.POST.get('buttonvalue') == '1':
+        if mth.getReqVal(request, 'buttonvalue', '') == '1':
             today = datetime.datetime.now().strftime('%Y%m%d')
             if (endDate is not None and endDate != ''):
                 endDate = datetime.datetime.strptime(endDate, "%Y-%m-%d").date()
@@ -220,8 +220,8 @@ def create(request):
             InsertCoupon(tuple_info, List)
             msg = 1
         else:
-            goodname = request.POST.get('goodname')
-            goodcode = request.POST.get('goodcode')
+            goodname = mth.getReqVal(request, 'goodname', '')
+            goodcode = mth.getReqVal(request, 'goodcode', '')
             if (goodname == '' and goodcode == ''):
                 goodList = []
             else:
