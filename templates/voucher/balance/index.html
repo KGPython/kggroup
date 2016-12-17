@@ -146,13 +146,13 @@
         $('#form').submit();
     });
     $('#btn_save').click(function () {
-        if ('{{ info.CPwd }}' != '' && $('#inputCPwd').val() != '{{ info.CPwd }}') {
-            alert('输入的密码有误！');
-        }
-        else {
+{#        if ('{{ info.CPwd }}' != '' && $('#inputCPwd').val() != '{{ info.CPwd }}') {#}
+{#            alert('输入的密码有误！');#}
+{#        }#}
+{#        else {#}
             $('#btn_value').val('save');
             $('#form').submit();
-        }
+{#        }#}
     });
     $('#btn_close').click(function () {
         window.location("{% url 'voucherBalance' %}");

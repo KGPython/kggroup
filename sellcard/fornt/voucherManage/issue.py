@@ -98,7 +98,7 @@ def create(request):
             shopCode = '9999'
         user = request.session.get("s_uid")
         amount = request.POST.get('amount')
-        name = request.POST.get('name')
+        couponname = request.POST.get('couponname')
 
         type = request.POST.get('type')
         chooseList = request.POST.get('chooseList')
@@ -136,7 +136,7 @@ def create(request):
                 endDate = datetime.datetime.strptime(endDate, "%Y-%m-%d").date()
             else:
                 endDate = datetime.datetime.strptime("9999-12-31", "%Y-%m-%d").date()
-            name = request.session.get("s_uname")
+            name = request.session.get("s_unameChinese")
 
             # 获取本次批次号：本次批号为历史最大批号加1，若不存在历史批号则为1
             batchs = KfJobsCouponBatch.objects.values('batch'
@@ -171,7 +171,7 @@ def create(request):
             # 插入卡券表
             for var_sn in List:
                 KfJobsCoupon.objects.create(shopid=shop,
-                                            couponname=name,
+                                            couponname=couponname,
                                             batch=batch,
                                             couponno=var_sn,
                                             coupontypeid=type,
@@ -197,7 +197,7 @@ def create(request):
                 KfJobsCouponGoodsDetail.objects.create(batch=batch_sn,
                                                        goodname=var_good['ShortName'].strip(),
                                                        goodcode=var_good['CustomNo'].strip(),
-                                                       amount=int(var_good['amount']))
+                                                       amount=var_good['amount'])
 
 
             # 传入代金券信息元组：
