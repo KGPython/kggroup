@@ -39,9 +39,8 @@
                         <label for="" class="col-xs-1 formline-label">类型：</label>
                         <div class="col-xs-3">
                             <select name="type" id="type" class="form-control" required>
-                                <option value="1">抵金券</option>
-                                <option value="2">购卡券</option>
-                                <option value="3">兑物券</option>
+                                <option value="1">优惠券</option>
+                                <option value="2">购物券</option>
                             </select>
                         </div>
                         <label for="" class="col-xs-1 formline-label">代金面值：</label>
@@ -51,15 +50,16 @@
                         </div>
                     </div>
                     <div class="row formline">
-                        <label for="" class="col-xs-1 formline-label">优惠金额：</label>
-                        <div class="col-xs-3">
-                            <input type="text" class="form-control" name="giftValue" id="giftValue"
-                                   value="{{ giftValue }}">
+
+                        <label for="" class="col-xs-1 formline-label">需要密码：</label>
+                        <div class="col-xs-1">
+                            <input type="radio" name="CPwdFlag" value="0" checked onchange="radiochange(0)">否
+                            <input type="radio" name="CPwdFlag" value="1" onchange="radiochange(1)">是
+                            <label id="l_CPwd" for="" class="formline-label" style="display:none">密码：</label>
                         </div>
-                        <label for="" class="col-xs-1 formline-label">折扣：</label>
-                        <div class="col-xs-3">
-                            <input type="text" class="form-control" name="discount" id="discount"
-                                   value="{{ discount }}">
+                        <div class="col-xs-2">
+                            <input type="text" class="form-control" name="CPwd" id="CPwd"
+                                   value="{{ CPwd }}" style="display:none">
                         </div>
                         <label for="" class="col-xs-1 formline-label">截止日期：</label>
                         <div class="col-xs-3">
@@ -74,43 +74,39 @@
                                         class="glyphicon glyphicon-calendar"></span></span>
                             </div>
                         </div>
-                    </div>
-                    <div class="row formline">
-                        <label for="" class="col-xs-1 formline-label">需要密码：</label>
-                        <div class="col-xs-1">
-                            <input type="radio" name="CPwdFlag" value="0" checked onchange="radiochange(0)">否
-                            <input type="radio" name="CPwdFlag" value="1" onchange="radiochange(1)">是
-                            <label id="l_CPwd" for="" class="formline-label" style="display:none">密码：</label>
+
+                        <label for="" class="col-xs-1 formline-label">使用范围</label>
+                        <div class="col-xs-3">
+                            {#                            <input type="text" class="form-control" name="rangeremark" id="rangeremark"#}
+                            {#                                   required value="{{ rangeremark }}">#}
+                            <div class="col-xs-10">
+                            <input type="radio" name="range" value="0" checked>全部
+                            <input type="radio" name="range" value="1">本店
+                                 </div>
+                            <div class="col-xs-2">
+                             <button type="button" class="btn btn-info save-btn">保存</button>
+                                </div>
                         </div>
-                        <div class="col-xs-2">
-                            <input type="text" class="form-control" name="CPwd" id="CPwd"
-                                   value="{{ CPwd }}" style="display:none">
+                    </div>
+                    <div class="row formline"  style="display:none">
+                        <label for="" class="col-xs-1 formline-label">优惠金额：</label>
+                        <div class="col-xs-3">
+                            <input type="text" class="form-control" name="giftValue" id="giftValue"
+                                   value="{{ giftValue }}">
+                        </div>
+                        <label for="" class="col-xs-1 formline-label">折扣：</label>
+                        <div class="col-xs-3">
+                            <input type="text" class="form-control" name="discount" id="discount"
+                                   value="{{ discount }}">
                         </div>
                         <label for="" class="col-xs-1 formline-label">最大使用次数：</label>
                         <div class="col-xs-3">
                             <input type="text" class="form-control" name="maxUseTime" id="maxUseTime"
                                    required value="{{ maxUseTime }}">
                         </div>
-                        <label for="" class="col-xs-1 formline-label">使用范围</label>
-                        <div class="col-xs-3">
-                            {#                            <input type="text" class="form-control" name="rangeremark" id="rangeremark"#}
-                            {#                                   required value="{{ rangeremark }}">#}
-                            <input type="radio" name="range" value="0" checked>全部
-                            <input type="radio" name="range" value="1">本店
-                        </div>
                     </div>
-                    <div class="row formline">
-                        <div class="col-xs-11">
-                        </div>
-                        <div class="col-xs-1">
-                            <div class="col-xs-6">
-                            </div>
-                            <div class="col-xs-6">
-                                <button type="button" class="btn btn-info save-btn">保存</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row formline" id="chooseGoods" style="display:none">
+
+                    <div class="row formline" id="chooseGoods">
                         <div class="col-xs-5">
                             <div class="widget-box">
                                 <div class="widget-content nopadding" style="overflow: hidden">
@@ -231,12 +227,12 @@
 <script>
     $("#type").val({{ type }});
     $("#buttonvalue").val();
-    if ($("#type").val() == 3) {
-        $('#chooseGoods').show();
-    }
-    else {
-        $('#chooseGoods').hide();
-    }
+{#    if ($("#type").val() == 3) {#}
+{#        $('#chooseGoods').show();#}
+{#    }#}
+{#    else {#}
+{#        $('#chooseGoods').hide();#}
+{#    }#}
     $("input[name='CPwdFlag'][value={{ CPwdFlag }}]").attr("checked", true);
     if ('{{ CPwdFlag }}' == '1') {
         $('#l_CPwd,#CPwd').show();
@@ -288,16 +284,16 @@
     });
 </script>
 <!--代金券类型改变触发事件-->
-<script type="text/javascript">
-    $("#type").change(function () {
-        if ($(this).val() == 3) {
-            $('#chooseGoods').show();
-        }
-        else {
-            $('#chooseGoods').hide();
-        }
-    });
-</script>
+{#<script type="text/javascript">#}
+{#    $("#type").change(function () {#}
+{#        if ($(this).val() == 3) {#}
+{#            $('#chooseGoods').show();#}
+{#        }#}
+{#        else {#}
+{#            $('#chooseGoods').hide();#}
+{#        }#}
+{#    });#}
+{#</script>#}
 <!--是否需要密码改变事件-->
 <script type="text/javascript">
     function radiochange(val) {

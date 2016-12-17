@@ -36,14 +36,14 @@
                                    value="{{ shopid | transShopCode }}" readonly>
                         </div>
 
-                        <label for="" class="col-xs-1 formline-label">是否打印：</label>
-                        <div class="col-xs-2">
-                            <select name="printed" id="printed" class="form-control" required="required">
-                                <option value="">全部</option>
-                                <option value="0">未打印</option>
-                                <option value="1">已打印</option>
-                            </select>
-                        </div>
+{#                        <label for="" class="col-xs-1 formline-label">是否打印：</label>#}
+{#                        <div class="col-xs-2">#}
+{#                            <select name="printed" id="printed" class="form-control" required="required">#}
+{#                                <option value="">全部</option>#}
+{#                                <option value="0">未打印</option>#}
+{#                                <option value="1">已打印</option>#}
+{#                            </select>#}
+{#                        </div>#}
                         <label for="" class="col-xs-1 formline-label">查询券号：</label>
                         <div class="col-xs-2">
                             <input type="text" class="form-control" name="issueSn" id="issueSn" required
@@ -54,15 +54,18 @@
                             <input type="text" class="form-control" name="batch" id="batch" required
                                    value="{{ batch }}">
                         </div>
+
+                        <div class="col-xs-2">
+                            <button type="button" class="btn btn-info enter-btn pull-right" id="enter">查询</button>
+                        </div>
                     </div>
                     <div class="row formline">
                         <label for="" class="col-xs-1 formline-label">类型：</label>
                         <div class="col-xs-2">
                             <select name="couponType" id="couponType" class="form-control" required="required">
                                 <option value="">全部</option>
-                                <option value="1">抵金券</option>
-                                <option value="2">购卡券</option>
-                                <option value="3">兑物券</option>
+                                <option value="1">优惠券</option>
+                                <option value="2">购物券</option>
                             </select>
                         </div>
                         <label for="" class="col-xs-1 formline-label">查询开始时间：</label>
@@ -86,9 +89,6 @@
                                 <span class="input-group-addon"><span
                                         class="glyphicon glyphicon-calendar"></span></span>
                             </div>
-                        </div>
-                        <div class="col-xs-2">
-                            <button type="button" class="btn btn-info enter-btn pull-right" id="enter">查询</button>
                         </div>
                     </div>
 

@@ -197,8 +197,14 @@ def create(request):
                                                        goodcode=var_good['CustomNo'].strip(),
                                                        amount=int(var_good['amount']))
 
+            typename = ''
+            if type == '1':
+                typename = '优惠券'
+            elif type == '2':
+                typename = '购物券'
+
             # 传入代金券信息元组：
-            #   0：shop：门店编码
+            # 0：shop：门店编码
             #   1：type：代金券类型
             #   2：（strat）：创建时间
             #   3：endDate：结束日期
@@ -210,7 +216,8 @@ def create(request):
             #   9：name：操作人姓名
             #   10：range：是否限定使用范围：0）不限定，1）本店
             tuple_info = (
-                shop, type, datetime.datetime.now(), endDate, int(costValue), batch, v_str, CPwdFlag, CPwd, name, range)
+                shop, typename, datetime.datetime.now(), endDate, int(costValue), batch, v_str, CPwdFlag, CPwd, name,
+                range)
 
             # 插入SQL-sevser数据库调用方法
             InsertCoupon(tuple_info, List)
@@ -312,7 +319,7 @@ def InsertCoupon(cardinfo, list):
                            charset='utf8',
                            as_dict=True)
     conn.autocommit(False)
-    #插入类型表
+    # 插入类型表
     typecursor = conn.cursor()
     sql = u" SELECT " \
           u" CASE " \
@@ -327,7 +334,7 @@ def InsertCoupon(cardinfo, list):
           u"	CouponTypeID LIKE '8%' "
     typecursor.execute(sql)
     type = typecursor.fetchone()
-    type =type['CouponTypeID']
+    type = type['CouponTypeID']
 
     sql = u"insert into MyShop_CouponType" \
           u"(ShopID,CouponTypeID,CouponTypeName,CouponFlag,ValidDay," \
@@ -337,7 +344,7 @@ def InsertCoupon(cardinfo, list):
           u" 'K001',{coupontypeid},'{coupontypename}',2,0," \
           u" GETdate(),{EndDate},{value},null,100," \
           u" '',0.00,1,{ifcurrshop},0,'') ".format(coupontypeid=type,
-                                                   coupontypename=cardinfo[6],
+                                                   coupontypename=cardinfo[1],
                                                    EndDate=cardinfo[3],
                                                    value=cardinfo[4],
                                                    ifcurrshop=cardinfo[10])
@@ -346,7 +353,7 @@ def InsertCoupon(cardinfo, list):
     typecursor.close()
 
     cur = conn.cursor()
-    #插入临时久久表
+    # 插入临时久久表
     sql = u"Insert into MyShop_Coupon99" \
           u"(CouponID,ShopID,CouponNO,CouponTypeID,StartDate,EndDate," \
           u"CPWdFlag,CPwd,UseTime,MaxUseTime,Value," \
@@ -395,7 +402,7 @@ def InsertCoupon(cardinfo, list):
 
     cur.close()
     cursor = conn.cursor()
-    #读取久久表调用存储过程插入正式表
+    # 读取久久表调用存储过程插入正式表
     sql = "exec IF_MyShop_Coupon99 @CouponID='" + cardinfo[6] + "'"
     cursor.execute(sql)
     conn.commit()
