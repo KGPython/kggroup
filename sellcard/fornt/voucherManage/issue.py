@@ -255,12 +255,17 @@ def printed(request):
         page_count = range(counts // tnop + (0 if counts % tnop == 0 else 1))
 
         resList = KfJobsCoupon.objects.values(
-            'shopid', 'coupontypeid', 'enddate', 'couponno', 'rangeremark',
+            'shopid', 'coupontypeid','startdate', 'enddate', 'couponno', 'rangeremark',
             'value', 'batch').filter(couponno__in=snlist)
 
         for var_i in resList:
+            batch =''
+            if var_i['shopid'][0:1] == 'C':
+                batch = '14' + var_i['shopid'][2:]+ var_i['startdate'].strftime('%y%m%d')+ var_i['batch']
+            elif var_i['shopid'][0:1] == 'T':
+                batch = '15' + var_i['shopid'][2:]+ var_i['startdate'].strftime('%y%m%d')+ var_i['batch']
             var_i['GoodList'] = KfJobsCouponGoodsDetail.objects.values(
-                'goodname', 'goodcode', 'amount').filter(batch=var_i['batch'])
+                'goodname', 'goodcode', 'amount').filter(batch=batch)
 
     return render(request, 'voucher/issue/Print.html', locals())
 
