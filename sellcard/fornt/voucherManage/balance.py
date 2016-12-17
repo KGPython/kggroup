@@ -14,7 +14,7 @@ def index(request):
     :return:视图view
     """
     if request.method == 'POST':
-        voucherSn = mth.getReqVal(request, 'voucherSn', '')
+        voucherSn = mth.getReqVal(request, 'voucherSn', '').strip()
         if mth.getReqVal(request, 'btn_value', '') == 'query':
             info = getInfo(voucherSn)
             if info is None:
