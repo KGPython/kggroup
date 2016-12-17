@@ -40,9 +40,9 @@ def getReqVal(request, key, default=None):
     key = key.strip()
 
     if request.method == "GET":
-        val = request.GET.get(key, default)
+        val = request.GET.get(key, default).strip()
     elif request.method == "POST":
-        val = request.POST.get(key, default)
+        val = request.POST.get(key, default).strip()
 
     return val
 
