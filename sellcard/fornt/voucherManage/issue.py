@@ -99,11 +99,9 @@ def create(request):
         user = request.session.get("s_uid")
         amount = request.POST.get('amount')
         type = request.POST.get('type')
-        if type == '3':
-            chooseList = request.POST.get('chooseList')
-            chooseList = json.loads(chooseList)
-        else:
-            chooseList = []
+        chooseList = request.POST.get('chooseList')
+        chooseList = json.loads(chooseList)
+
         costValue = request.POST.get('costValue')
         if (costValue is None or costValue == ''):
             costValue = 0
@@ -158,6 +156,7 @@ def create(request):
             else:
                 v_str = '8889999' + datetime.datetime.now().strftime('%y%m%d')
             v_str = v_str + batch
+            batch_sn = v_str[3:]
             List = set()
             while len(List) < int(amount):
                 sn = v_str + ''.join(sample('0123456789', 5))
@@ -192,7 +191,7 @@ def create(request):
 
             # 插入卡券商品明细表
             for var_good in chooseList:
-                KfJobsCouponGoodsDetail.objects.create(batch=batch,
+                KfJobsCouponGoodsDetail.objects.create(batch=batch_sn,
                                                        goodname=var_good['ShortName'].strip(),
                                                        goodcode=var_good['CustomNo'].strip(),
                                                        amount=int(var_good['amount']))
