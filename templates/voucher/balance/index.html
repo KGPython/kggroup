@@ -91,7 +91,7 @@
                                     {% endif %}
                                     <label for="" class="col-xs-2 formline-label">花费：</label>
                                     <div class="col-xs-3">
-                                        <input type="text" class="form-control" id="spend" name="spend">
+                                        <input type="text" class="form-control" id="spend" name="spend" value="{{ info.Value }}">
                                     </div>
                                     <div class="col-xs-1">
                                         <button type="button" class="btn btn-warning pull-right" id="btn_save">
@@ -140,6 +140,11 @@
         var voucherSn = $('#voucherSn').val();
         if (!voucherSn) {
             alert('请输入券号');
+            return false;
+        }
+        var spend = $('#spend').val();
+        if (!spend) {
+            alert('请输入花费');
             return false;
         }
         $('#btn_value').val('query');
