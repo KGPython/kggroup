@@ -328,12 +328,18 @@ def orderDetail(request):
                 cardsOutNum += 1
     return render(request, 'report/orderDetail.html', locals())
 
-def getCityShops(city):
-    shops = Shops.objects.values('shop_code','shop_name').filter(city=city)
+def getCityShops(city=None):
+    kwargs = {}
+    if city:
+        kwargs.setdefault('city',city)
+    shops = Shops.objects.values('shop_code','shop_name').filter(**kwargs)
     return shops
 
-def getCityShopsCode(city):
-    shops = Shops.objects.values('shop_code').filter(city=city)
+def getCityShopsCode(city=None):
+    kwargs = {}
+    if city:
+        kwargs.setdefault('city', city)
+    shops = Shops.objects.values('shop_code').filter(**kwargs).exclude(shop_code='ZBTG')
     shopsCode = [shop['shop_code'] for shop in shops]
     return shopsCode
 

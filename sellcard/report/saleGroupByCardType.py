@@ -11,16 +11,16 @@ def index(request):
     shop = request.session.get('s_shopcode')
     role = request.session.get('s_roleid')
     user = request.session.get('s_uid')
+
     shops = []
     shopsCodeStr = ''
+    if role_id == '1':
+        shops = mth.getCityShopsCode()
     if role_id == '9':
-        shops = mth.getCityShops('T')
-        shopsCode = mth.getCityShopsCode('T')
-        shopsCodeStr = "'" + "','".join(shopsCode) + "'"
+        shops = mth.getCityShopsCode('T')
     if role_id == '8':
-        shops = mth.getCityShops('C')
-        shopsCode = mth.getCityShopsCode('C')
-        shopsCodeStr = "'" + "','".join(shopsCode) + "'"
+        shops = mth.getCityShopsCode('C')
+    shopsCodeStr = "'" + "','".join(shops) + "'"
 
     today = str(datetime.date.today())
     start = mth.getReqVal(request,'start',today)
@@ -33,13 +33,13 @@ def index(request):
 
     if role == '8':
         shop = mth.getReqVal(request, 'shop', '')
-        personList = AdminUser.objects.values('id', 'name').filter(shop_code__in=shops).exclude(role_id__in=('1', '7', '8', '9'))
+        personList = AdminUser.objects.values('id', 'name').filter(shop_code__in=shops).exclude(role_id__in=('1', '7', '9'))
     elif role == '9':
         shop = mth.getReqVal(request, 'shop', '')
-        personList = AdminUser.objects.values('id', 'name').filter(shop_code__in=shops).exclude(role_id__in=('1', '7', '8', '9'))
+        personList = AdminUser.objects.values('id', 'name').filter(shop_code__in=shops).exclude(role_id__in=('1', '7', '8'))
     elif role in ('1','6'):
         shop = mth.getReqVal(request, 'shop', '')
-        personList = AdminUser.objects.values('id', 'name').exclude(role_id__in=('1','7','8','9'))
+        personList = AdminUser.objects.values('id', 'name').exclude(role_id__in=('7','8','9'))
 
     if role in ('2','3','5'):
         shop = shop

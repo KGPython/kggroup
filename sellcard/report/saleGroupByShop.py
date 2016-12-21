@@ -21,14 +21,16 @@ def index(request):
 
     conn = mth.getMysqlConn()
     cur = conn.cursor()
+    if role_id == '1':
+        shops = mth.getCityShops()
+        shopsCode = mth.getCityShopsCode()
     if role_id == '9':
         shops = mth.getCityShops('T')
         shopsCode = mth.getCityShopsCode('T')
-        shopsCodeStr = "'"+"','".join(shopsCode)+"'"
     if role_id == '8':
         shops = mth.getCityShops('C')
         shopsCode = mth.getCityShopsCode('C')
-        shopsCodeStr = "'"+"','".join(shopsCode)+"'"
+    shopsCodeStr = "'" + "','".join(shopsCode) + "'"
 
     saleDiscGroupByShop = 'select shop_code,SUM(disc_amount) as disc,SUM(y_cash) as disc_cash, SUM(disc_amount-y_cash) as disc_card ' \
                           'from orders ' \

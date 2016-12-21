@@ -42,17 +42,14 @@
                         {% if role == '1' or role == '6' or role == '8' or role == '9'  %}
                         <label for="" class="col-xs-1 formline-label">门店：</label>
                         <div class="col-xs-1">
-
                             <select name="shop" id="shop" class="form-control">
                                 <option value="">全部</option>
                                 {% for shop in shops %}
-                                    <option value="{{ shop.shop_code }}">{{ shop.shop_code | transShopCode }}</option>
+                                    <option value="{{ shop }}">{{ shop | transShopCode }}</option>
                                 {% endfor %}
                             </select>
                         </div>
                         {% endif %}
-
-
 
                         <label for="" class="col-xs-1 formline-label">售卡人：</label>
                         <div class="col-xs-1">

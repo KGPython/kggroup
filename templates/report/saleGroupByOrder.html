@@ -40,7 +40,7 @@
                                 <select name="shop" id="shop" class="form-control" required="required">
                                     <option value="">全部</option>
                                     {% for shop in shops %}
-                                        <option value="{{ shop.shop_code }}">{{ shop.shop_code | transShopCode }}</option>
+                                        <option value="{{ shop }}">{{ shop | transShopCode }}</option>
                                     {% endfor %}
                                 </select>
                             {% else %}

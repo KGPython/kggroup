@@ -19,10 +19,10 @@ def index(request):
     if role_id == '2':
         kwargs.setdefault('shop_code',shop_code)
     if role_id == '9':
-        shops_code = mth.getCityShops('T')
+        shops_code = mth.getCityShopsCode('T')
         kwargs.setdefault('shop_code__in', shops_code)
     if role_id == '8':
-        shops_code = mth.getCityShops('C')
+        shops_code = mth.getCityShopsCode('C')
         kwargs.setdefault('shop_code__in', shops_code)
 
     cardList = CardInventory.objects\

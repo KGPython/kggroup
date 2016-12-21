@@ -15,10 +15,12 @@ def index(request):
     depart_id = request.session.get('s_depart')
     user_id = request.session.get('s_uid') #当前用户ID
     shops = []
+    if role_id == '1':
+        shops = mth.getCityShopsCode()
     if role_id == '9':
-        shops = mth.getCityShops('T')
+        shops = mth.getCityShopsCode('T')
     if role_id == '8':
-        shops = mth.getCityShops('C')
+        shops = mth.getCityShopsCode('C')
     departs = base.findDepart()
     today = str(datetime.date.today())
 
