@@ -2,6 +2,7 @@
 __author__ = 'admin'
 from django.shortcuts import render
 from sellcard.models import CardInventory, OrderChangeCard, OrderChangeCardInfo,ActionLog, OrderChangeCardPayment
+from django.db.models import Sum,Count
 from django.http import HttpResponse
 import json
 import datetime
@@ -196,3 +197,46 @@ def save(request):
         ActionLog.objects.create(action='换卡-单卡',u_name=request.session.get('s_uname'),cards_in=cardListInStr,cards_out=cardListOutStr,add_time=datetime.datetime.now(),err_msg=e)
 
     return HttpResponse(json.dumps(res))
+
+
+def info(request):
+    orderSn = request.GET.get('orderSn','').strip()
+    today = datetime.date.today()
+
+    order = OrderChangeCard.objects\
+        .values('shop_code', 'depart', 'operator_id', 'order_sn', 'total_in_price', 'total_in_amount',
+                    'total_out_price', 'total_out_amount', 'add_time')\
+        .filter(order_sn=orderSn)
+    infoList = OrderChangeCardInfo.objects.values('card_no', 'card_attr', 'card_value', 'card_balance')\
+        .filter(order_sn=orderSn)
+
+    totalNumIn = totalValueIn = totalNumOut = totalValueOut = 0
+
+    if len(order):
+        for d in order:
+            if d['total_out_price'] > d['total_in_price']:
+                isPrint = True
+            else:
+                isPrint = False
+    else:
+        err={}
+        err['msg']='此订单不存在'
+        return render(request, 'common/500.html', locals())
+
+    if len(infoList):
+        for info in infoList:
+            # 进卡
+            if info['card_attr'] == '1':
+                totalValueIn += float(info['card_value'])
+                totalNumIn += 1
+            # 出卡
+            if info['card_attr'] == '0':
+                totalValueOut += float(info['card_value'])
+                totalNumOut += 1
+            # 差额
+            totalDiff = totalValueOut - totalValueIn
+        return render(request, 'common/changeInfo.html', locals())
+    else:
+        err={}
+        err['msg']='此订单不存在'
+        return render(request, 'common/500.html', locals())

@@ -70,12 +70,16 @@ def transCouponTypeByChinese(key):
     """
     chinese = ''
 
+    # if key == 1:
+    #     chinese = '抵金券'
+    # elif key == 2:
+    #     chinese = '购卡券'
+    # elif key == 3:
+    #     chinese = '兑物券'
     if key == 1:
-        chinese = '抵金券'
+        chinese = '优惠券'
     elif key == 2:
-        chinese = '购卡券'
-    elif key == 3:
-        chinese = '兑物券'
+        chinese = '购物券'
 
     return chinese
 

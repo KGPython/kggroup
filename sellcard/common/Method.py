@@ -6,6 +6,7 @@ from PIL import Image, ImageDraw, ImageFont
 from sellcard.common import Constants
 from sellcard.models import CardInventory, Orders, OrderChangeCard, OrderUpCard, ExchangeCode, OrderPaymentInfo, \
     OrderInfo, DisCode, OrderUpCardInfo, OrderChangeCardInfo,Shops
+    OrderInfo, DisCode, OrderUpCardInfo, OrderChangeCardInfo, OrderChangeCardPayment
 from django.conf import settings
 from django.core import serializers
 from django.http import HttpResponse
@@ -328,13 +329,5 @@ def orderDetail(request):
                 cardsOutNum += 1
     return render(request, 'report/orderDetail.html', locals())
 
-def getCityShops(city):
-    shops = Shops.objects.values('shop_code').filter(city=city)
-    return shops
-
-def getCityShopsCode(city):
-    shops = Shops.objects.values('shop_code').filter(city=city)
-    shopsCode = [shop['shop_code'] for shop in shops]
-    return shopsCode
 
 

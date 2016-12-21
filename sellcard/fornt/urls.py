@@ -57,9 +57,12 @@ urlpatterns = [
     ################################################# 卡管理 end ###############################################
 
     ################################################# 卡管理 start ##############################################
+    # 售卡打印订单
     url(r'^fornt/cardsale/orderInfo/$','sellcard.fornt.cardSale.card.info',name='cardsSaleOrderInfo'),
     url(r'^fornt/cardsale/orderInfo/print', 'sellcard.fornt.cardSale.card.reprint', name='cardsSaleOrderReprint'),
     url(r'^fornt/cardsale/orderInfo/explain', 'sellcard.fornt.cardSale.card.print_explain', name='cardsSaleOrderExplain'),
+    # 更换卡打印订单
+    url(r'^fornt/cardChange/orderInfo/$', 'sellcard.fornt.cardChange.card.info', name='cardChangeOrderInfo'),
     ################################################# 卡管理 end   ##############################################
 
     ################################################# 代金券管理 start ################################################
@@ -72,6 +75,9 @@ urlpatterns = [
     # 打印
     url(r'^fornt/voucher/issue/printed/$',
         'sellcard.fornt.voucherManage.issue.printed', name="voucherIssuePrint"),
+    # 核销代金券
+    # 主页
+    url(r'^fornt/voucher/balance/$', 'sellcard.fornt.voucherManage.balance.index', name="voucherBalance"),
 
     ################################################# 代金券管理 end ###################################################
 

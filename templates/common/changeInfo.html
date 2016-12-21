@@ -1,0 +1,174 @@
+{% load basefilter %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>订单详情</title>
+</head>
+<body>
+{% include 'common/head.html' %}
+<link rel="stylesheet" href="{{ static }}/css/orderinfoPrint.css" media="print">
+<style media="print">
+    .title h5 {
+        width: 100%;
+        text-align: center;
+        font-weight: normal;
+        margin-bottom: 10px;
+        padding-bottom: 5px;
+        border-bottom: 1px dashed black;
+    }
+</style>
+<style media="screen">
+    .widget-content {
+        overflow: hidden;
+        width: 100%;
+        background: #fff
+    }
+
+    .title {
+        height: 100px;
+        background: #fff url('{{ static }}/images/logo.jpg') 10px 0px no-repeat;
+        background-size: 80px;
+    }
+
+    .title h5 {
+        float: left;
+        width: 100px;
+        margin-top: 90px;
+        text-align: center
+    }
+
+    .title-ifno {
+        margin-left: 0;
+    }
+
+    .info-order {
+        width: 90%;
+    }
+
+    .info-order p {
+        font-size: 12px;
+        line-height: 12px;
+    }
+
+    .info-tel {
+        float: left;
+        width: 85%
+    }
+
+    .info-tel p {
+        float: left;
+        margin-left: 10px;
+        font-size: 10px;
+        line-height: 12px;
+    }
+
+    .info-total p {
+        float: left;
+        width: 25%;
+        padding: 2px;
+        margin: 0;
+    }
+
+    .btnBox {
+        padding: 10px;
+        overflow: hidden
+    }
+
+    .btnBox .btn-success {
+        margin-left: 15px;
+    }
+</style>
+
+<!--containt-part-->
+<div id="content">
+    <div id="content-header" class="noprint">
+        <div id="breadcrumb">
+            <a data-original-title="Go to Home" href="#" title="" class="tip-bottom">
+                <span class="glyphicon glyphicon-home" aria-hidden="true"> </span> 首页
+            </a>
+            <a href="#" class="current">订单详情</a>
+        </div>
+    </div>
+
+    <div class="widget-box" id="printContent">
+        <p class="noprint btnBox">
+            <input class="btn btn-success pull-right" type="button" value="返回" onclick="closeFun()">
+            <input class="btn btn-success pull-right" type="button" value="打印(不包括优惠)"
+                   onclick="javascript:printContent()">
+            <input class="btn btn-success pull-right" type="button" value="打印(包括优惠)" onclick="javascript:printAll()">
+        </p>
+        <div class="widget-content nopadding">
+            <div class="title">
+                <h5>宽广超市换卡收据</h5>
+                <div class="title-ifno">
+                    <div class="info-order">
+                        <p>购买日期 :{{ order.0.add_time |date:'Y年m月d日' }}</p>
+                        <p id="ordersn">订单编号 :{{ orderSn }}</p>
+                        <p>收款单位 :{{ order.0.shop_code | transShopCode }} </p>
+                        <p>收款单位电话：{{ order.0.shop_code | transShopCodeToTel }}</p>
+                        <p>收款人 : {{ order.0.operator_id | transUserId }}</p>
+                        <p>交款人 : {{ order.0.buyer_name }}</p>
+                    </div>
+                </div>
+
+            </div>
+            <div class="widget-content fixedBox PtableBox">
+                <table class="table table-hover order-table">
+                    <thead>
+                    <tr>
+                        <th>出卡</th>
+                        <th>入卡</th>
+                        <th>补差</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="discRow">
+                            <td class="">{{ totalValueOut }}</td>
+                            <td class="">{{ totalValueIn }}</td>
+                            <td>{{ totalDiff }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="info-total allTotal">
+                    <p>换卡补差金额 :{{ totalDiff }}元</p>
+                </div>
+                <div class="info-total discTotal" style="display: none">
+                    <p>换卡补差金额 :{{ totalDiff }}元</p>
+                </div>
+                <div class="info-total">
+                    <p class="remark">
+                        换卡补差金额(大写):
+                        {{ totalDiff | rmbUpper}}
+                    </p>
+                    <p class="remark">备注 :此收据不得作为经营性业务收支结算凭证使用。 </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% include "common/foot.html" %}
+<script>
+    function printContent() {
+        var orderSn = '{{ orderSn | safe }}';
+        $('.allTotal').hide();
+        $('.discRow').hide().addClass('noprint');
+        $('.discTotal').show().removeClass('noprint');
+        window.print();
+    }
+    function printAll() {
+        $('.allTotal').show();
+        $('.discRow').show().removeClass('noprint');
+        $('.discTotal').hide().removeClass('noprint');
+        window.print();
+
+    }
+    function closeFun() {
+        self.location=document.referrer;
+{#        window.history.back();#}
+    }
+</script>
+</body>
+</html>
