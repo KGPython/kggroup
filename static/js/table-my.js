@@ -444,7 +444,6 @@ function createDiscount(discRate,cardsValTotal) {
     var rateInput  = $('.Total #discount input');
     var discCode = $(".Total #disCode").val();
     var  rate= 0;
-    console.log(discRate);
     if(discRate!==''){
         rate = discRate;
     }else{
