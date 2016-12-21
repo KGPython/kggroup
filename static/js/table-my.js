@@ -618,13 +618,13 @@ function saveCardFillOrder(url){
 }
 
 //更新补卡订单
-function updateCardFillOrder(url,target_url){
+function updateCardFillOrder(url){
     //入卡列表
     var cardOutList = getCardFillList($('#cardOutList'),"1");
    
     var cardOutTotalNum = parseInt($('.cardOutTotal #totalNum b').text());
     var cardOutTotalVal = parseFloat($('.cardOutTotal #totalVal b').text());
-    var cardOutBalance = parseFloat($('.cardOutTotal #balance b').text());
+    var cardOutBalance = parseFloat($('.cardOutTotal #balance span').text());
 
     //订单信息
     var order_sn = $('#order_sn').val();
@@ -985,14 +985,14 @@ function setTotalByCardList(obj){
         var cardsTotalVal = cardsTotal.totalVal;
 
         //3、如果是补卡模块，则计算补卡补差
-        var fillCardPayInput  = $('.cardOutTotal #balance b');
+        var fillCardPayInput  = $('.cardOutTotal #balance span');
         if(fillCardPayInput.length>0){
             var cardsOutVal = parseFloat($('.cardOutTotal #totalVal b').text());
             if(cardsOutVal!=undefined){
                 var cardsInVal = parseFloat($('.cardInTotal #totalVal b').text());
                 cardsInVal = isNaN(cardsInVal) ? 0:cardsInVal;
                 fillCardPay = cardsOutVal - cardsInVal;
-                $('.cardOutTotal #balance b').text(fillCardPay);
+                $('.cardOutTotal #balance span').text(fillCardPay);
             }
         }
         //3、如果是换卡模块，则计算换卡补差

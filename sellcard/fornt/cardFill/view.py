@@ -167,11 +167,11 @@ def update(request):
                 mtu.updateCard(cardIdOutList,"9")
                 raise MyError('ERP数据库卡状态更新失败！')
             res["msg"] = 1
+            res['urlRedirect'] = '/kg/sellcard/fornt/cardfill/query/'
             ActionLog.objects.create(action='补卡-领卡',u_name=request.session.get('s_uname'),cards_out=cardOutStr,add_time=datetime.datetime.now())
 
     except Exception as e:
         res["msg"] = 0
-        res["msg_err"] = e.value
         ActionLog.objects.create(action='补卡-领卡',u_name=request.session.get('s_uname'),cards_out=cardOutStr,add_time=datetime.datetime.now(),err_msg=e)
 
     return HttpResponse(json.dumps(res))
