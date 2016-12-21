@@ -15,6 +15,8 @@ def index(request):
     return render(request,'cardFill.html',locals())
 
 def query(request):
+    shopCode = request.session.get('s_shopcode')
+
     pageNum =mtu.getReqVal(request,"pageNum","1")
     user_phone = request.POST.get("user_phone","")
     state = request.POST.get("state","")
@@ -25,6 +27,8 @@ def query(request):
         karrs.setdefault("user_phone__contains",user_phone)
     if state:
         karrs.setdefault("state",state)
+    if shopCode:
+        karrs.setdefault("shop_code",shopCode)
 
     order_list = OrderUpCard.objects.values("order_sn","total_amount","total_price","action_type","user_name",
                                "user_phone","state","add_time",)\
