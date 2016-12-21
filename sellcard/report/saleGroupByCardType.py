@@ -16,11 +16,14 @@ def index(request):
     shopsCodeStr = ''
     if role_id == '1':
         shops = mth.getCityShopsCode()
+        shopsCodeStr = "'" + "','".join(shops) + "'"
     if role_id == '9':
         shops = mth.getCityShopsCode('T')
+        shopsCodeStr = "'" + "','".join(shops) + "'"
     if role_id == '8':
         shops = mth.getCityShopsCode('C')
-    shopsCodeStr = "'" + "','".join(shops) + "'"
+        shopsCodeStr = "'" + "','".join(shops) + "'"
+
 
     today = str(datetime.date.today())
     start = mth.getReqVal(request,'start',today)
