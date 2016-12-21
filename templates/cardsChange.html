@@ -148,8 +148,7 @@
                     tr.append(td);
                 }
                 $('#correct').find('tbody').append(tr);
-{#                setTotal($('#correct').find('tbody'),'1');#}
-                setTotal($('#correct').find('tbody'));
+                setTotalByCardList($('#correct').find('tbody'));
             }
             else{
                 var cols = $('#anomaly').find('th').length;
@@ -225,9 +224,7 @@
         }
         //卡校验
         var ajaxOpt = {'url':'{% url 'cardcheck' %}?cardId='+cardId,'method':'get'};
-{#        var cardtype = '1';#}
-{#        doAjax(this,ajaxOpt,showCardIfno,setTotal,cardtype);#}
-        doAjax(this,ajaxOpt,showCardIfno,setTotal);
+        doAjax(this,ajaxOpt,showCardIfno,setTotalByCardList);
         addRow(this);
 
     });
@@ -237,7 +234,7 @@
         saveCardChangeOrder(url);
     })
 </script>
-<script>
+{% comment %}<script>
     //折扣授权码验证
     $('#disCode input').blur(function(){
         var disCode = $(this).val();
@@ -245,5 +242,5 @@
             checkDiscode("{% url 'disCodeCheck' %}?discode="+disCode+"&shop={{ shopcode |safe }}");
         }
     });
-</script>
+</script>{% endcomment %}
 {% endblock %}

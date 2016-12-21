@@ -7,10 +7,20 @@ from sellcard.common import Method as mth
 from sellcard import views as base
 
 def index(request):
+    role_id = request.session.get('s_roleid')
     shop = request.session.get('s_shopcode')
     role = request.session.get('s_roleid')
     user = request.session.get('s_uid')
-    shops = base.findShop()
+    shops = []
+    shopsCodeStr = ''
+    if role_id == '9':
+        shops = mth.getCityShops('T')
+        shopsCode = mth.getCityShopsCode('T')
+        shopsCodeStr = "'" + "','".join(shopsCode) + "'"
+    if role_id == '8':
+        shops = mth.getCityShops('C')
+        shopsCode = mth.getCityShopsCode('C')
+        shopsCodeStr = "'" + "','".join(shopsCode) + "'"
 
     today = str(datetime.date.today())
     start = mth.getReqVal(request,'start',today)
@@ -18,14 +28,19 @@ def index(request):
     operator =''
     if role in ('3','5'):
         operator = user
-
-    if role in ('1', '2', '6','8'):
+    if role in ('1', '2', '6','8','9'):
         operator = mth.getReqVal(request, 'operator', '')
 
-
-    if role in ('1','6','8'):
+    if role == '8':
         shop = mth.getReqVal(request, 'shop', '')
-        personList = AdminUser.objects.values('id', 'name').exclude(role_id__in=('1','7','8'))
+        personList = AdminUser.objects.values('id', 'name').filter(shop_code__in=shops).exclude(role_id__in=('1', '7', '8', '9'))
+    elif role == '9':
+        shop = mth.getReqVal(request, 'shop', '')
+        personList = AdminUser.objects.values('id', 'name').filter(shop_code__in=shops).exclude(role_id__in=('1', '7', '8', '9'))
+    elif role in ('1','6'):
+        shop = mth.getReqVal(request, 'shop', '')
+        personList = AdminUser.objects.values('id', 'name').exclude(role_id__in=('1','7','8','9'))
+
     if role in ('2','3','5'):
         shop = shop
         personList = AdminUser.objects.values('id', 'name').filter(shop_code=shop)
@@ -39,6 +54,8 @@ def index(request):
         kwargs.setdefault('shop_code',shop)
     if operator:
        kwargs.setdefault('operator_id',operator)
+    if len(shops)>0:
+        kwargs.setdefault('shop_code__in', shops)
     dataTotal = Orders.objects.filter(**kwargs).aggregate(saleTotal=Sum('paid_amount'),discTotal=Sum('disc_amount'))
 
     #卡面值列表
@@ -48,7 +65,8 @@ def index(request):
         whereStr += ' and operator_id = "'+str(operator)+'" '
     if shop:
         whereStr += ' and ord.shop_code = "'+shop+'"'
-
+    if shopsCodeStr:
+        whereStr += ' and ord.shop_code IN (' + shopsCodeStr + ')'
     sqlInfo = 'select ord.shop_code,info.card_balance, count(*) as num from order_info as info,orders as ord ' \
               'where '+ whereStr+' group by ord.shop_code,info.card_balance'
     cur = conn.cursor()

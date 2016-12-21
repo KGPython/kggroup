@@ -75,7 +75,7 @@
 
         var ajaxOpt = {'url':'{% url 'cardcheck_mssql' %}?cardId='+cardId,'method':'get'};
 
-        doAjax2(this,ajaxOpt,showCardIfno2,setTotal);
+        doAjax2(this,ajaxOpt,showCardIfno2,setTotalByCardList);
         addRow(this);
     });
 
@@ -83,11 +83,5 @@
         var url = "{% url 'cardfill_save' %}";
         saveCardFillOrder(url);
     });
-    {% comment %}$(document).on('click','.table tr .btn-del',function(){
-        var parnetTbody = $(this).parent().parent().parent()[0];
-        $(this).parents('tr').remove();
-        cardType='2';
-        setTotal(parnetTbody,cardType);
-    });{% endcomment %}
 </script>
 {% endblock %}

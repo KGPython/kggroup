@@ -106,7 +106,7 @@
 
         //卡校验
         var ajaxOpt = {'url': '{% url 'cardcheck_change' %}?cardId=' + cardId, 'method': 'get'};
-        doAjax2(this, ajaxOpt, showCardIfno3, setTotal);
+        doAjax2(this, ajaxOpt, showCardIfno3, setTotalByCardList);
         addRow(this);
     });
 
@@ -121,7 +121,7 @@
         saveCardChangeOrder(url);
     });
 </script>
-<script>
+{% comment %}<script>
     //折扣授权码验证
     $('#disCode input').blur(function(){
         var disCode = $(this).val();
@@ -129,5 +129,5 @@
             checkDiscode("{% url 'disCodeCheck' %}?discode="+disCode+"&shop={{ shopcode |safe }}");
         }
     });
-</script>
+</script>{% endcomment %}
 {% endblock %}

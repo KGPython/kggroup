@@ -4,7 +4,7 @@ from django.db.models import Sum,Count
 from django.core.paginator import Paginator #分页查询
 import datetime
 
-from sellcard.models import CardInventory
+from sellcard.models import CardInventory,Shops
 from sellcard.common import Method as mth
 
 
@@ -16,8 +16,14 @@ def index(request):
     kwargs.setdefault('card_status','1')
     kwargs.setdefault('card_action','1')
     kwargs.setdefault('card_blance__gt','0')
-    if role_id=='2':
+    if role_id == '2':
         kwargs.setdefault('shop_code',shop_code)
+    if role_id == '9':
+        shops_code = mth.getCityShops('T')
+        kwargs.setdefault('shop_code__in', shops_code)
+    if role_id == '8':
+        shops_code = mth.getCityShops('C')
+        kwargs.setdefault('shop_code__in', shops_code)
 
     cardList = CardInventory.objects\
             .values('shop_code')\

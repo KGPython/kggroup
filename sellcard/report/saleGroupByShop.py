@@ -8,6 +8,7 @@ from sellcard.models import OrderUpCard
 from sellcard.common import Method as mth
 from sellcard import views as base
 def index(request):
+    role_id = request.session.get('s_roleid')
     if request.method == 'GET':
         start = str(datetime.date.today().replace(day=1))
         end = str(datetime.date.today())
@@ -20,51 +21,58 @@ def index(request):
 
     conn = mth.getMysqlConn()
     cur = conn.cursor()
+    if role_id == '9':
+        shops = mth.getCityShops('T')
+        shopsCode = mth.getCityShopsCode('T')
+        shopsCodeStr = "'"+"','".join(shopsCode)+"'"
+    if role_id == '8':
+        shops = mth.getCityShops('C')
+        shopsCode = mth.getCityShopsCode('C')
+        shopsCodeStr = "'"+"','".join(shopsCode)+"'"
 
     saleDiscGroupByShop = 'select shop_code,SUM(disc_amount) as disc,SUM(y_cash) as disc_cash, SUM(disc_amount-y_cash) as disc_card ' \
                           'from orders ' \
-                          'where add_time>="{start}" and add_time<="{end}" ' \
+                          'where add_time>="{start}" and add_time<="{end}" and shop_code in ({shopsCodeStr})' \
                           'group by shop_code ' \
-                          .format(start=start, end=endTime)
+                          .format(start=start, end=endTime,shopsCodeStr=shopsCodeStr)
     cur.execute(saleDiscGroupByShop)
     saleDiscList = cur.fetchall()
 
     salePayGroupByShop = 'select ord.shop_code,info.pay_id ,SUM(info.pay_value) as pay_value ' \
                 'from orders as ord , order_payment_info as info ' \
-                'where ord.add_time>="{start}" and ord.add_time<="{end}" and ord.order_sn = info.order_id ' \
+                'where ord.add_time>="{start}" and ord.add_time<="{end}" and shop_code in ({shopsCodeStr}) and ord.order_sn = info.order_id ' \
                 'group by ord.shop_code,info.pay_id' \
-                .format(start=start, end=endTime)
+                .format(start=start, end=endTime,shopsCodeStr=shopsCodeStr)
     cur.execute(salePayGroupByShop)
     salePayList = cur.fetchall()
 
 
     fillList = OrderUpCard.objects\
             .values('shop_code')\
-            .filter(add_time__gte=start,add_time__lte=endTime)\
+            .filter(add_time__gte=start,add_time__lte=endTime,shop_code__in=shopsCode)\
             .annotate(fill=Sum('diff_price'))\
             .order_by('shop_code')
 
     changeDiscGroupByShop = 'select shop_code,SUM(disc) as disc,SUM(disc_cash) as disc_cash,(SUM(disc-disc_cash)) as disc_card ' \
                   'from order_change_card ' \
-                  'where add_time>="{start}" and add_time<="{end}" ' \
+                  'where add_time>="{start}" and add_time<="{end}" and shop_code in ({shopsCodeStr}) ' \
                   'group by shop_code ' \
-                  .format(start=start, end=endTime)
+                  .format(start=start, end=endTime,shopsCodeStr=shopsCodeStr)
     cur.execute(changeDiscGroupByShop)
     changeDiscList = cur.fetchall()
     changePayGroupByShop = 'select ord.shop_code ,info.pay_id ,SUM(info.pay_value) as pay_value ' \
                            'from order_change_card as ord , order_change_card_payment as info ' \
-                           'where ord.add_time>="{start}" and ord.add_time<="{end}" and ord.order_sn = info.order_id ' \
+                           'where ord.add_time>="{start}" and ord.add_time<="{end}" and shop_code in ({shopsCodeStr}) and ord.order_sn = info.order_id ' \
                            'group by ord.shop_code,info.pay_id' \
-                           .format(start=start, end=endTime)
+                           .format(start=start, end=endTime,shopsCodeStr=shopsCodeStr)
     cur.execute(changePayGroupByShop)
     changePayList = cur.fetchall()
 
 
     totalDict  = {'discTotal':0,'discCashTotal':0,'discCardTotal':0,'inSubTotal':0,'total_1':0,'total_2':0,'total_3':0,
                   'total_4':0,'total_5':0,'total_6':0,'total_7':0,'total_8':0,'total_9':0,'total_10':0,'total_11':0,}
-    dataList = []
-    shops = base.findShop()
 
+    dataList = []
     for i in range(0,len(shops)):
         if shops[i]['shop_code'] != 'ZBTG':
             item = {'shop_code':'','disc':0,'disc_cash':0,'disc_card':0,'inSub':0,'pay_1':0,'pay_2':0,'pay_3':0,

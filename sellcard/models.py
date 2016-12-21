@@ -441,7 +441,7 @@ class Orders(models.Model):
     add_time = models.DateTimeField()
     y_cash = models.DecimalField(max_digits=11, decimal_places=0, blank=True, null=True)
     diff_price = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
-    discount_rate = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    discount_rate = models.DecimalField(max_digits=6, decimal_places=4, blank=True, null=True)
     remark = models.TextField(blank=True, null=True)
     print_num = models.SmallIntegerField(blank=True, null=True)
 
@@ -505,6 +505,7 @@ class Shops(models.Model):
     shop_code = models.CharField(max_length=16, blank=True, null=True)
     tel = models.CharField(max_length=12, blank=True, null=True)
     disc_level = models.CharField(max_length=1, blank=True, null=True)
+    city = models.CharField(max_length=12, blank=True, null=True)
 
     class Meta:
         managed = False

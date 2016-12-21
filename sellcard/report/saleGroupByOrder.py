@@ -14,7 +14,11 @@ def index(request):
     shopcode = request.session.get('s_shopcode')
     depart_id = request.session.get('s_depart')
     user_id = request.session.get('s_uid') #当前用户ID
-    shops = base.findShop()
+    shops = []
+    if role_id == '9':
+        shops = mth.getCityShops('T')
+    if role_id == '8':
+        shops = mth.getCityShops('C')
     departs = base.findDepart()
     today = str(datetime.date.today())
 
@@ -23,7 +27,7 @@ def index(request):
     shop = ''
     operator = ''
     depart = ''
-    if role_id in ('1','6','8'):
+    if role_id in ('1','6','8','9'):
         shop = mth.getReqVal(request,'shop','')
         depart = mth.getReqVal(request, 'depart', '')
         name = mth.getReqVal(request, 'operator', '').strip()
@@ -33,6 +37,7 @@ def index(request):
                 return render(request, 'report/saleGroupByOrder.html', locals())
             else:
                 operator = user[0]['id']
+
     if  role_id == '2':
         shop = shopcode
         depart = mth.getReqVal(request, 'depart', '')
@@ -59,6 +64,8 @@ def index(request):
     kwargs = {}
     if shop:
         kwargs.setdefault('shop_code',shop)
+    else:
+        kwargs.setdefault('shop_code__in', shops)
     if operator:
         kwargs.setdefault('operator_id',operator)
     if depart:

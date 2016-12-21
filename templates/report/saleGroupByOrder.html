@@ -36,11 +36,11 @@
                     <div class="row formline">
                         <label for="" class="col-xs-1 formline-label">售卡门店：</label>
                         <div class="col-xs-2">
-                            {% if role_id == '1' or  role_id == '6' or role_id == '8'%}
+                            {% if role_id == '1' or  role_id == '6' or role_id == '8' or role_id == '9'%}
                                 <select name="shop" id="shop" class="form-control" required="required">
                                     <option value="">全部</option>
                                     {% for shop in shops %}
-                                        <option value="{{ shop.shop_code }}">{{ shop.shop_name }}</option>
+                                        <option value="{{ shop.shop_code }}">{{ shop.shop_code | transShopCode }}</option>
                                     {% endfor %}
                                 </select>
                             {% else %}
@@ -51,7 +51,7 @@
 
                         <label for="" class="col-xs-1 formline-label">售卡部门：</label>
                         <div class="col-xs-2">
-                            {% if role_id == '1' or  role_id == '2' or role_id == '6' or role_id == '8'%}
+                            {% if role_id == '1' or  role_id == '2' or role_id == '6' or role_id == '8' or role_id == '9'%}
                                 <select name="depart" id="depart" class="form-control" required="required">
                                     <option value="">全部</option>
                                     {% for depart in departs %}
@@ -65,7 +65,7 @@
                         </div>
                         <label for="" class="col-xs-1 formline-label">售卡人员：</label>
                         <div class="col-xs-2">
-                            {% if role_id == '1' or  role_id == '2' or role_id == '6' or role_id == '8'%}
+                            {% if role_id == '1' or  role_id == '2' or role_id == '6' or role_id == '8' or role_id == '9'%}
                                 <input type="text" class="form-control" name="operator" id="orderSn" required value="{{ name }}">
                             {% else %}
                                 <input name="operator" id="operator" type="hidden" value="{{ user_id }}">

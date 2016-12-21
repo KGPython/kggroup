@@ -179,9 +179,8 @@
 <script>
     //1、获取借卡合计金额
     var cardOutTotalVal = parseFloat({{ cardOutTotalVal | default:0 | safe }});
-    var rateInput  = $('.Total #discount input');
     //2、计算折扣返点金额
-    var discountVal = createDiscount(cardOutTotalVal,rateInput);
+    var discountVal = createDiscount('',cardOutTotalVal);
 
     //3、计算优惠补差 getCardListVal(cardList,cardtype,cls)
     var discCardTotalVal = getCardListVal($(".discount"),1,"discount").totalVal;
@@ -213,7 +212,7 @@
 
         //卡校验
         var ajaxOpt = {'url':'{% url 'cardcheck' %}?cardId='+cardId,'method':'get'};
-        doAjax(this,ajaxOpt,showCardIfno,setTotal);
+        doAjax(this,ajaxOpt,showCardIfno,setTotalByCardList);
         addRow(this);
     });
 </script>
@@ -238,14 +237,5 @@
         var orderSnList = {{ listOrderSn | safe}}
         saveCardSaleOrder(action_type,url,cardList,orderSnList);
     })
-</script>
-<script>
-    //折扣授权码验证
-    $('#disCode input').blur(function(){
-        var disCode = $(this).val();
-        if(disCode){
-            checkDiscode("{% url 'disCodeCheck' %}?discode="+disCode+"&shop={{ shopcode |safe }}");
-        }
-    });
 </script>
 {% endblock %}

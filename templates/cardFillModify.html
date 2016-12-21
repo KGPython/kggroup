@@ -131,8 +131,7 @@
         }
 
         var ajaxOpt = {'url':'{% url 'cardcheck' %}?cardId='+cardId,'method':'get'};
-{#        doAjax(this,ajaxOpt,showCardIfno,setTotal,"1");#}
-        doAjax(this,ajaxOpt,showCardIfno,setTotal);
+        doAjax(this,ajaxOpt,showCardIfno,setTotalByCardList);
         addRow(this);
     });
 
@@ -140,10 +139,5 @@
         var url = "{% url 'cardfill_update' %}";
         updateCardFillOrder(url,"{% url 'cardfill_query' %}");
     })
-{% comment %}   $(document).on('click','.table tr .btn-del',function(){
-        var parnetTbody = $(this).parent().parent().parent()[0];
-        $(this).parents('tr').remove();
-        setTotal(parnetTbody,'1');
-    });{% endcomment %}
 </script>
 {% endblock %}
