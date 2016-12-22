@@ -294,6 +294,8 @@ def convertToStr(val, *arg):
 def orderDetail(request):
     orderSn = request.GET.get('orderSn', '')
     actionType = request.GET.get('actionType', '1')
+    total_in_price = total_out_price = 0.00
+
     if actionType == '1':
         order = Orders.objects \
             .values('order_sn', 'shop_code', 'paid_amount', 'disc_amount', 'action_type', 'buyer_name', 'buyer_tel',
@@ -317,8 +319,19 @@ def orderDetail(request):
             .filter(order_sn=orderSn)
         orderInfo = OrderChangeCardInfo.objects.values('card_no', 'card_attr', 'card_value', 'card_balance') \
             .filter(order_sn=orderSn)
-        cardsNum = OrderChangeCardInfo.objects.values('card_attr', 'card_no', 'card_value', 'card_balance'). \
-            filter(order_sn=orderSn)
+        cardsNum = OrderChangeCardInfo.objects.values('card_attr', 'card_no', 'card_value', 'card_balance') \
+            .filter(order_sn=orderSn)
+
+        # 比较进卡金额与出卡金额，如果出卡金额 > 金卡金额，则认为是补差价购卡
+        for d in order:
+            total_in_price = d['total_in_price']
+            total_out_price = d['total_out_price']
+
+        if total_out_price > total_in_price:
+            # 获取补差购卡支付方式、金额、是否支付（赊销、汇款）
+            orderPayment = OrderChangeCardPayment.objects.values('pay_id', 'pay_value', 'is_pay')\
+                .filter(order_id=orderSn)
+
         cardsInNum = 0
         cardsOutNum = 0
         for num in cardsNum:
