@@ -201,16 +201,19 @@ def save(request):
             order.save()
 
             #获取所有出卡列表
-            cardListTotal = cardList+YcardList
-            cardIdList = []
-            for card in cardListTotal:
-                cardIdList.append(card['cardId'])
-            cardsNum = len(cardIdList)
+            cardIdBorrowList = []
+            for card in cardList:
+                cardIdBorrowList.append(card['cardId'])
 
-            # 更新kggroup内部卡状态
-            resCard = CardInventory.objects.filter(card_no__in=cardIdList).update(card_status='2',card_action='0')
-            if resCard != cardsNum:
+            cardIdDisclist = []
+            for card in YcardList:
+                cardIdDisclist.append(card['cardId'])
+
+            # 更新kggroup内部优惠赠送卡状态
+            resCard = CardInventory.objects.filter(card_no__in=cardIdDisclist).update(card_status='2',card_action='0')
+            if resCard != len(cardIdDisclist):
                 raise MyError('系统数据库卡状态更新失败')
+
             #更新折扣授权码校验码状态
             if disCode:
                 resCode = mth.updateDisCode(disCode,shopcode,order_sn)
@@ -223,14 +226,14 @@ def save(request):
             if orderSnNum != resBorrow:
                 raise MyError('借卡单状态更新失败')
 
-            resBorrow2 = OrderBorrowInfo.objects.filter(card_no__in=cardIdList, is_back=None).update(is_back='0')
-            if resBorrow2 != cardsNum-len(YcardList):
+            resBorrow2 = OrderBorrowInfo.objects.filter(card_no__in=cardIdBorrowList, is_back=None).update(is_back='0')
+            if resBorrow2 != len(cardIdBorrowList):
                 raise MyError('借卡单详情内部数据更新失败')
 
-            # 更新ERP内部卡状态
-            resErp = mth.updateCard(cardIdList, '1')
-            if resErp != cardsNum:
-                mth.updateCard(cardIdList, '9')
+            # 更新ERP内部优惠赠送卡状态
+            resErp = mth.updateCard(cardIdDisclist, '1')
+            if resErp != len(cardIdDisclist):
+                mth.updateCard(cardIdDisclist, '9')
                 raise MyError('ERP数据库卡状态更新失败')
 
             res["msg"] = 1
