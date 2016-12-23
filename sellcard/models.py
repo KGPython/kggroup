@@ -11,6 +11,20 @@ from __future__ import unicode_literals
 
 from django.db import models
 
+class KfJobsCouponSn(models.Model):
+    id = models.IntegerField(primary_key=True)
+    sn = models.CharField(max_length=6)
+    batch = models.CharField(max_length=3)
+    voucher = models.CharField(max_length=13)
+    salt = models.CharField(max_length=16)
+    result = models.CharField(max_length=16)
+    request_shop = models.CharField(max_length=255, blank=True, null=True)
+    request_name = models.CharField(max_length=255, blank=True, null=True)
+    request_date = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'KF_Jobs_Coupon_SN'
 
 class KfJobsCoupon(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
