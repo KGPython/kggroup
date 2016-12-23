@@ -1,0 +1,361 @@
+
+
+select * from  MyShop_Coupon9
+
+------------自研卡券生成程序 数据接口---2016.09.21---新建xiezq-
+-----券中间表，等待程序写入卡库的新增赠券表........   程序在完结前调用
+if not exists (select * from sysobjects where id = object_id('dbo.MyShop_Coupon99'))
+  Create table dbo.MyShop_Coupon99
+  (  sheetid            varchar(20)     null            --传输单号 （同券号）
+     ShopID		varchar(10)	not null,	--来源门店
+     CouponNO	  	varchar(20)	not null,	--无规则券号
+     CouponTypeID 	int		not null,	--赠券类型编码
+     StartDate		datetime	not null,	--开始使用日期
+     EndDate		datetime	not null,	--结束使用日期
+     CPwdFlag		int default 0	not null,	--券使用时是否需要输入密码 0=不需要 1=需要
+     CPwd          	char(32)        null,           --券密码
+     UseTime		int default 0	not null,	--目前使用次数
+     MaxUseTime		int		not null,	--最大使用次数
+     Value		dec(12,3)	not null,	--券面值
+     Discount      	int    default 0 not null, 	--券折扣率 例子: 10=9折 20=8折 30=7折
+     Flag		int default 0 	not null,	--券状态 0=可使用 1=暂停使用 99=已取消 100=已使用
+     FromSheetType	int		null,		--来源单据类型 220=团购发券
+     FromSheetID	varchar(20)	null,		--来源单号
+     FromSDate		varchar(1000)	null,		--来源日期
+     FromListNO		varchar(1000)	null,		--来源小票号
+     FromPOSID		varchar(1000)	null,		--来源POS机号
+     SerialID		varchar(20)	not null,	--统一计算编码(备查,累计送的时候就需用用到此列去查询)	
+     ClearFlag		int		not null,	--是否已经回收 0=未回收 1=已回收 (达到最大使用次数后即回收并冲减掉剩余的金额) 
+     ClearValue		dec(12,3) default 0 not null,	--回收冲减剩余金额
+     ClearShopID	varchar(10)	null,		--回收机构
+     ClearSheetType	int		null,		--回收单据类型 110=销售回收 259026=礼品券兑换单
+     ClearSheetID	varchar(16)	null,		--回收单据号
+     ClearSDate		varchar(1000)	null,		--回收日期
+     ClearListNO	varchar(1000)	null,		--回收小票号
+     ClearPOSID		varchar(1000)	null,		--回收POS机号
+  )
+go
+
+--券主档表......
+if not exists (select * from sysobjects where id = object_id('dbo.MyShop_Coupon'))
+  Create table dbo.MyShop_Coupon
+  (
+     ShopID		varchar(10)	not null,	--来源门店
+     CouponNO	  	varchar(20)	not null,	--门店号+10位无规则券号
+     CouponTypeID 	int		not null,	--赠券类型编码
+     StartDate		datetime	not null,	--开始使用日期
+     EndDate		datetime	not null,	--结束使用日期
+     CPwdFlag		int default 0	not null,	--券使用时是否需要输入密码 0=不需要 1=需要
+     CPwd          	char(32)        null,           --券密码
+     UseTime		int default 0	not null,	--目前使用次数
+     MaxUseTime		int		not null,	--最大使用次数
+     Value		dec(12,3)	not null,	--券面值
+     Discount      	int    default 0 not null, 	--券折扣率 例子: 10=9折 20=8折 30=7折
+     Flag		int default 0 	not null,	--券状态 0=可使用 1=暂停使用 99=已取消 100=已使用
+     FromSheetType	int		null,		--来源单据类型 110=销售\220=团购发券
+     FromSheetID	varchar(20)	null,		--来源单号
+     FromSDate		varchar(1000)	null,		--来源日期
+     FromListNO		varchar(1000)	null,		--来源小票号
+     FromPOSID		varchar(1000)	null,		--来源POS机号
+     SerialID		varchar(20)	not null,	--统一计算编码(备查,累计送的时候就需用用到此列去查询)	
+     ClearFlag		int		not null,	--是否已经回收 0=未回收 1=已回收 (达到最大使用次数后即回收并冲减掉剩余的金额) 
+     ClearValue		dec(12,3) default 0 not null,	--回收冲减剩余金额
+     ClearShopID	varchar(10)	null,		--回收机构
+     ClearSheetType	int		null,		--回收单据类型 110=销售回收 259026=礼品券兑换单
+     ClearSheetID	varchar(16)	null,		--回收单据号
+     ClearSDate		varchar(1000)	null,		--回收日期
+     ClearListNO	varchar(1000)	null,		--回收小票号
+     ClearPOSID		varchar(1000)	null,		--回收POS机号
+  )
+go
+
+
+--券三级帐.......
+if not exists (select * from sysobjects where id = object_id('dbo.CouponAcc0'))
+begin
+  create table dbo.CouponAcc0
+  (
+    SerialID              int identity(1,1) not null primary key,       --三级帐编号 自动加1
+    CouponNO              varchar(20)     not null,               	--券号
+    ShopID                char(4)         not null,               	--发生店号
+    OccurDate             datetime default getdate() not null,         	--发生时间
+    RecordDate            datetime default getdate() not null, 		--记帐时间
+    DirectFlag            smallint        not null,               	--增减方向 增=1 减=-1
+    Value                 dec(12,2),			               	--发生额
+    ResultValue           dec(12,2),			               	--结存额
+    SheetID               char(16)        not null,               	--单据编号
+    SheetType             int             not null,               	--单据类型 100=赠送 101=销售出库 110=消费
+    ClearFlag		  int DeFault 0	  not null,			--是否清理余额 0=不是 1=是
+    Note                  varchar(64)     null                         	--备注
+  );
+  create index CouponAccCouponNO0 on CouponAcc0(CouponNO);
+end;
+go
+
+
+
+/*
+----取流水编码
+  declare @Err		int;
+    declare @SerialID	varchar(20);
+      declare @TmpDate	datetime;
+  execute @Err=myshopSHStock.dbo.TL_GetNewSerial 2599, @SerialID output, @TmpDate output;
+  
+  print @SerialID
+  
+*/ 
+
+
+  ---写需同步卡总部券资料     
+   Insert into myshopcmcard.dbo.MyShop_Coupon99
+(ShopID,CouponNO,CouponTypeID,StartDate,EndDate,CPWdFlag,CPwd,UseTime,MaxUseTime,Value,Discount,Flag,FromSheetType,FromSDate,FromListNO,FromPOSID,SerialID,ClearFlag)
+Values(@MyShopID,@NewCouponNO,@TicketType,@StartDate,@EndDate,0,null,0,1,@Value,0,0,220,CONVERT(varchar(1000),@Sdate,20),Cast(@ListNO as varchar(1000)),Cast(@POSID as varchar(1000)),@SerialID,0);
+
+
+
+
+
+-------------------------------------------------------------------------
+--IF_MyShop_Coupon99	        卡总部接收线上生产赠券信息，写入赠券主档表
+--说明：
+--参数：
+--返回：标志0=成功		断点3454XX
+--表：
+--函数：
+
+-------------------------------------------------------------------------
+if exists (select * from sysobjects where id = object_id('dbo.IF_MyShop_Coupon99') and sysstat & 0xf = 4)
+    drop procedure dbo.IF_MyShop_Coupon99
+GO
+
+Create procedure dbo.IF_MyShop_Coupon99 @SheetID varchar(16)
+WITH ENCRYPTION
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+AS BEGIN
+  declare @Err		int;
+  declare @BreakPoint	int;
+  declare @StartWork	int;
+  declare @Msg		varchar(255);
+  declare @CouponNO	varchar(20);
+  declare @Note		varchar(64);
+  declare @Value	dec(12,3);
+  declare @ShopID	varchar(10);
+  declare @Count	int;
+  
+  SET NOCOUNT ON
+  select @Msg = '',@Err=0;
+  select @BreakPoint =2222222;               
+
+  --事务控制
+  Begin transaction;
+  select @StartWork = 1;  
+
+
+  --写入券主档表......
+  DECLARE Cur_IntoMyShop_Coupon cursor local for
+     select ShopID,CouponNO,Value From MyShop_Coupon99 where SheetID=@SheetID;
+  OPEN Cur_IntoMyShop_Coupon
+  WHILE (1=1)
+  BEGIN
+	if @@Error != 0 goto ErrHandle;
+	FETCH NEXT FROM Cur_IntoMyShop_Coupon INTO @ShopID,@CouponNO,@Value;
+	if @@fetch_status !=0 break;
+
+        select @Count=0;
+        select @Count=Count(*) from MyShop_Coupon where CouponNO=@CouponNO;
+        if @Count=0   	--新增赠券
+        begin
+	  select @BreakPoint=2222223;     
+          
+          --新增券时候不用写Value,在记录三级帐的时候统一增加减少
+          Insert into MyShop_Coupon
+            (ShopID,CouponNO,CouponTypeID,StartDate,EndDate,CPwdFlag,CPwd,UseTime,MaxUseTime,
+             Value,Discount,Flag,FromSDate,FromListNO,FromPOSID,FromSheetType,FromSheetID,SerialID,
+             ClearFlag,ClearValue,ClearShopID,ClearSheetType,ClearSheetID,ClearSDate,ClearListNO,ClearPOSID)
+          select ShopID,CouponNO,CouponTypeID,StartDate,EndDate,CPwdFlag,CPwd,UseTime,MaxUseTime,
+             0,Discount,Flag,FromSDate,FromListNO,FromPOSID,FromSheetType,FromSheetID,SerialID,
+             ClearFlag,ClearValue,ClearShopID,ClearSheetType,ClearSheetID,ClearSDate,ClearListNO,ClearPOSID
+          From MyShop_Coupon99 where CouponNO=@CouponNO;
+
+	  select @Note = '新增赠券资料';
+	  exec @Err=InsertCouponAcc @CouponNO,@ShopID,1,@Value,'',100,@Note;  
+	  IF (@Err != 0) or (@@error != 0)
+	  BEGIN
+		select @Msg='记录券三级帐失败!' + @CouponNO;
+		if @Err = -333
+		select @Msg=@Msg + '该券已经被删除：';
+		GOTO ErrHandle;
+	  END
+
+        end else begin	--调整已有赠券信息.....以后需要更新一列就加一列更新,不然容易出现资料不同步或错误.....
+	  select BreakPoint=3489576512;
+        end;
+  END;
+  CLOSE Cur_IntoMyShop_Coupon;
+  DEALLOCATE Cur_IntoMyShop_Coupon;
+    
+  Delete From MyShop_Coupon99 where SheetID=@SheetID;
+
+  Commit Transaction;
+  Select @StartWork = 0;   
+
+  Return 0;
+
+ErrHandle:
+
+  if @StartWork = 1 and @@TRANCOUNT > 0 Rollback Transaction;
+  Raiserror('%s,断点=%d,Err=%d',16,1,@Msg,@BreakPoint,@Err);
+  Return -1;
+End
+go
+
+
+
+-----------------------------------------------------------------
+--InsertCouponAcc		记录券三级帐公用存储过程
+--参数：卡号、店号、方向、发生金额、发生积分、单据号、单据类型、备注、发生日期
+--参数说明：
+--返回：正常或异常;		断点号(5501XX)
+--表：
+--算法：
+--备注：修改券余额，由此过程统一执行,不在外部执行......
+--建立：郭振滔 2012.5.8 
+--修改: 郭振滔 2012.5.24 增加一些回收的记录（回收机构，回收日期，回收单据类型，回收单据类型名称，回收小票，回收收银机
+--修改: 郭振滔 2012.6.5 消费时参数@SheetID记录的是收银机号+小票号
+-----------------------------------------------------------------
+IF exists (select * from sysobjects
+        where id = object_id('dbo.InsertCouponAcc') and sysstat & 0xf = 4)
+  drop procedure dbo.InsertCouponAcc
+GO
+
+create procedure dbo.InsertCouponAcc @CouponNO varchar(20),@ShopID char(4),@DirectFlag smallint,@Value dec(12,2),
+       @SheetID char(16),@SheetType int,@Note varchar(64),@OccurDate datetime=null
+WITH ENCRYPTION
+as
+BEGIN 
+  declare @Err		int;
+  declare @BreakPoint	int;
+  declare @Msg		varchar(255);
+  declare @StartWork          int;
+
+  declare @ResultValue	dec(10,2);
+  declare @ResultPoint	dec(12,2);
+  declare @Mode		char(1);
+  declare @UseTime	int;
+  declare @MaxUseTime	int;
+  
+  declare @OldSheetType int;
+  declare @ClearSheetID	varchar(16);		--回收单据号
+  declare @ClearSDate	varchar(1000);		--回收日期
+  declare @ClearListNO	varchar(1000);		--回收小票号
+  declare @ClearPOSID	varchar(1000);		--回收POS机号
+
+  
+  SET NOCOUNT ON
+
+  Begin transaction;
+  select @StartWork = 1;  
+
+  select @OldSheetType=@SheetType;
+
+  if @SheetType=-110 select @SheetType=110;
+
+  select @BreakPoint=25901234;
+
+  Select @ResultValue=Value from MyShop_Coupon where CouponNO=@CouponNO;
+
+  if @ResultValue is null
+  begin
+    select @Err=-333;
+    select @Msg='未找到券信息！';
+    goto ErrHandle;    
+  end;  
+
+  if (@ResultValue+@DirectFlag*@Value)<0
+  begin
+    select @Msg='券面值不足扣减，不允许负面值！';
+    goto ErrHandle;    
+  end;
+
+   
+  Update MyShop_Coupon
+  Set Value=Value+@DirectFlag*@Value
+  where CouponNO=@CouponNO;
+  
+  select @ResultValue=Value from MyShop_Coupon where CouponNO=@CouponNO;
+
+  --写表  
+  if @OccurDate is null select @OccurDate=getdate();
+
+  insert into CouponAcc0
+     (CouponNO,ShopID,OccurDate,RecordDate,DirectFlag,Value,ResultValue,SheetID,SheetType,Note)
+  values(@CouponNO,@ShopID,@OccurDate,@OccurDate,@DirectFlag,@Value,@ResultValue,@SheetID,@SheetType,@Note)
+    
+
+  --如果是消费/兑换扣减，而又是消费减少金额，则清0余额
+  if @OldSheetType=110 and @DirectFlag*@Value<0
+  begin
+    Update MyShop_Coupon
+    Set UseTime=UseTime+1
+    where CouponNO=@CouponNO;
+
+    select @UseTime=UseTime,@MaxUseTime=MaxUseTime From MyShop_Coupon where CouponNO=@CouponNO;
+
+    if @UseTime>=@MaxUseTime and @MaxUseTime>0
+    begin
+
+      select @ClearSheetID=@SheetID;
+
+      --POS端消费，@SheetID中保存着小票号+收银机号
+      if @SheetType=110
+      begin
+        select @ClearSheetID=null;
+	select @ClearPOSID=SubString(@SheetID,1,CHARINDEX(',',@SheetID)-1);
+	select @ClearListNO=SubString(@SheetID,CHARINDEX(',',@SheetID)+1,Len(@SheetID));
+      end;
+
+      --余额清0回收
+      Update MyShop_Coupon
+      Set Value=Value-@ResultValue,ClearFlag=1,ClearValue=@ResultValue,ClearShopID=@ShopID,ClearSheetType=@SheetType,
+          ClearSDate=@OccurDate,ClearListNO=@ClearListNO,ClearPOSID=@ClearPOSID,ClearSheetID=@ClearSheetID
+      where CouponNO=@CouponNO;
+
+      --余额清理
+      select @Note='券使用次数达到最大后余额清理回收';
+      insert into CouponAcc0
+       (CouponNO,ShopID,OccurDate,RecordDate,DirectFlag,Value,ResultValue,SheetID,SheetType,Note,ClearFlag)  
+      values(@CouponNO,@ShopID,@OccurDate,@OccurDate,-1,@ResultValue,0,@SheetID,@SheetType,@Note,1)  
+    end; 
+  end;  
+
+  if @OldSheetType=-110 and @DirectFlag*@Value>0			--销售冲正
+  begin
+    Update MyShop_Coupon
+    Set UseTime=UseTime-1
+    where CouponNO=@CouponNO;
+
+    select @UseTime=UseTime,@MaxUseTime=MaxUseTime From MyShop_Coupon where CouponNO=@CouponNO;    
+    
+    --如果冲正后使用次数不足最大使用次数的，已回收的卡就得将之前清0的余额返回到券上，并更新回收标志...
+    if @UseTime<=@MaxUseTime or @MaxUseTime<=0
+    begin
+       Update MyShop_Coupon
+       Set Value=Value+ClearValue,ClearFlag=0
+       where CouponNO=@CouponNO and ClearFlag=1;
+    end;       
+  end 
+
+  Commit Transaction;
+  Select @StartWork = 0;   
+
+  Return 0;
+
+ErrHandle:
+  if @StartWork = 1 and @@TRANCOUNT > 0 Rollback Transaction;
+  raiserror('%s,断点=%d,Err=%d',16,1,@Msg,@BreakPoint,@Err);
+  return -1;
+End
+go
+
+
