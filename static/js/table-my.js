@@ -987,11 +987,11 @@ function setTotalByCardList(obj){
         //3、如果是补卡模块，则计算补卡补差
         var fillCardPayInput  = $('.cardOutTotal #balance span');
         if(fillCardPayInput.length>0){
-            var cardsOutVal = parseFloat($('.cardOutTotal #totalVal b').text());
+            var cardsOutVal = parseFloat($('.cardOutTotal #totalVal b').text()).toFixed(2);
             if(cardsOutVal!=undefined){
-                var cardsInVal = parseFloat($('.cardInTotal #totalVal b').text());
+                var cardsInVal = parseFloat($('.cardInTotal #totalVal b').text()).toFixed(2);
                 cardsInVal = isNaN(cardsInVal) ? 0:cardsInVal;
-                fillCardPay = cardsOutVal - cardsInVal;
+                fillCardPay = parseFloat(cardsOutVal - cardsInVal).toFixed(1);
                 $('.cardOutTotal #balance span').text(fillCardPay);
             }
         }
