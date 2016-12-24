@@ -20,18 +20,23 @@ def index(request):
         voucher = request.POST.get('voucher', '')
         result = request.POST.get('result', '')
 
-        salts = KfJobsCouponSn.objects.values('salt'
-                                              ).filter(batch=batch,
-                                                       voucher=voucher)
-        if salts is not None and len(salts) > 0:
-            salt = salts[0]['salt']
+        get_info = KfJobsCouponSn.objects.values('salt', 'sn'
+                                                 ).filter(batch=batch,
+                                                          voucher=voucher)
+        if get_info is not None and len(get_info) > 0:
+            salt = get_info[0]['salt']
+            sn = get_info[0]['sn']
 
             m = hashlib.md5()
             m.update(voucher.encode(encoding='UTF-8'))
             verifier = m.hexdigest()
+            mdfive = verifier + sn
+            m.update(mdfive.encode(encoding='UTF-8'))
+            verifier = m.hexdigest()
             mdfive = verifier + salt
             m.update(mdfive.encode(encoding='UTF-8'))
             verifier = m.hexdigest()
+
             if (result == verifier):
                 msg = 1
             else:

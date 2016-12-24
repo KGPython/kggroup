@@ -3,8 +3,7 @@ __author__ = 'qixu'
 from django.db import transaction
 from django.db.models import Max
 from django.shortcuts import render
-import datetime, hashlib
-from random import sample
+import datetime, hashlib, random
 from sellcard.models import KfJobsCouponSn
 
 
@@ -29,17 +28,26 @@ def index(request):
             batch = int(batch['batch__max'][2:]) + 1
         batch = year + str(batch)
 
+        chars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9',]
+
         List = set()
         while len(List) < int(amount):
-            var_sn = batch + ''.join(sample('0123456789', 10))
+            y = [y for y in [random.randint(x - x, len(chars) - 1) for x in range(10)]]
+            charlist = [chars[i] for i in y]
+            var_sn = batch + ''.join(map(str, charlist))
             List.add(var_sn)
         n = 0
         for voucher in List:
             n = n + 1
             sn = str(n).zfill(6)
-            salt = ''.join(sample('0123456789abcdefghijklmnopqrstuvwxyz', 16))
+            y = [y for y in [random.randint(x - x, len(chars) - 1) for x in range(16)]]
+            charlist = [chars[i] for i in y]
+            salt = ''.join(map(str, charlist))
             m = hashlib.md5()
             m.update(voucher.encode(encoding='UTF-8'))
+            result = m.hexdigest()
+            mdfive = result + sn
+            m.update(mdfive.encode(encoding='UTF-8'))
             result = m.hexdigest()
             mdfive = result + salt
             m.update(mdfive.encode(encoding='UTF-8'))
