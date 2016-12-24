@@ -15,6 +15,8 @@ urlpatterns = [
     # 主页
     url(r'^voucher/balance/$', 'sellcard.fornt.voucher.balance.index', name="voucherBalance"),
 
+    url(r'^voucher/verifier/sent/$', 'sellcard.fornt.voucher.verifier.sent.index', name="verifierSent"),
+
 
 
 ]
