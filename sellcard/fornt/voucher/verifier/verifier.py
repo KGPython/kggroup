@@ -29,11 +29,15 @@ def index(request):
 
             m = hashlib.md5()
             m.update(voucher.encode(encoding='UTF-8'))
-            verifier = m.hexdigest()
-            mdfive = verifier + sn
+            mdfive_vou = m.hexdigest()
+            m.update(sn.encode(encoding='UTF-8'))
+            mdfive_sn = m.hexdigest()
+            m.update(salt.encode(encoding='UTF-8'))
+            mdfive_salt = m.hexdigest()
+            mdfive = mdfive_vou + mdfive_sn
             m.update(mdfive.encode(encoding='UTF-8'))
-            verifier = m.hexdigest()
-            mdfive = verifier + salt
+            mdfive = m.hexdigest()
+            mdfive = mdfive + mdfive_salt
             m.update(mdfive.encode(encoding='UTF-8'))
             verifier = m.hexdigest()
 
