@@ -60,6 +60,7 @@ def index(request):
                                           batch=batch,
                                           voucher=voucher,
                                           salt=salt,
-                                          result=result)
+                                          result=result,
+                                          state=0)
         msg = 1
     return render(request, 'voucher/verifier/create.html', locals())
