@@ -1,0 +1,68 @@
+{% load basefilter %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>检验券真伪</title>
+</head>
+<body>
+{% include 'common/head.html' %}
+<!--containt-part-->
+<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb">
+            <a data-original-title="Go to Home" href="#" title="" class="tip-bottom">
+                <span class="glyphicon glyphicon-home" aria-hidden="true"> </span> 首页
+            </a>
+            <a href="#" class="">代金券管理</a>
+            <a href="#" class="current">检验券真伪</a>
+        </div>
+    </div>
+    <div class="widget-box">
+        <div class="widget-content nopadding">
+            <div class="collapse in widget-content">
+                <form action="{% url 'voucherVerifier' %}" method="post" id="form">
+                    {% csrf_token %}
+                    <input type="hidden" id="btn_value" name="btn_value">
+                    <div class="row formline" id="div_query">
+                        <label for="" class="col-xs-1 formline-label">发行批次：</label>
+                        <div class="col-xs-2">
+                            <input type="text" class="form-control" name="batch" id="batch" required>
+                        </div>
+                        <label for="" class="col-xs-1 formline-label">券号：</label>
+                        <div class="col-xs-2">
+                            <input type="text" class="form-control" name="voucher" id="voucher" required>
+                        </div>
+                        <label for="" class="col-xs-1 formline-label">二维码：</label>
+                        <div class="col-xs-2">
+                            <input type="text" class="form-control" name="result" id="result" required>
+                        </div>
+                        <div class="col-xs-1">
+                            <button type="button" class="btn btn-success pull-right" id="btn_save">验证</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!--end-containt-part-->
+{% include "common/foot.html" %}
+<script>
+    var msg = {{ msg }};
+    if (msg == 1) {
+        alert('这是真的！');
+        window.location("{% url 'voucherBalance' %}");
+    }else {
+        alert('这是假的！');
+    }
+</script>
+<script type="text/javascript">
+    $('#btn_save').click(function () {
+        $("#form").submit();
+    });
+</script>
+</body>
+</html>

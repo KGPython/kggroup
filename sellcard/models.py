@@ -88,22 +88,6 @@ class KfJobsCouponGoodsDetail(models.Model):
         db_table = 'KF_Jobs_Coupon_Goods_Detail'
 
 
-class KfJobsCouponSn(models.Model):
-    sn = models.CharField(max_length=6)
-    batch = models.CharField(max_length=3)
-    voucher = models.CharField(max_length=13)
-    salt = models.CharField(max_length=16)
-    result = models.CharField(max_length=32)
-    request_shop = models.CharField(max_length=255, blank=True, null=True)
-    request_name = models.CharField(max_length=255, blank=True, null=True)
-    request_date = models.DateTimeField(blank=True, null=True)
-    state = models.IntegerField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'KF_Jobs_Coupon_SN'
-
-
 class ActionLog(models.Model):
     id = models.BigIntegerField(primary_key=True)
     action = models.CharField(max_length=45, blank=True, null=True)
@@ -178,7 +162,7 @@ class CardInventory(models.Model):
         db_table = 'card_inventory'
 
 
-class CardInventoryCopy1(models.Model):
+class CardInventoryCopy(models.Model):
     card_no = models.CharField(unique=True, max_length=32)
     card_value = models.CharField(max_length=12)
     card_status = models.CharField(max_length=1)
@@ -192,33 +176,7 @@ class CardInventoryCopy1(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'card_inventory_copy1'
-
-
-class CardInventoryCopyNew(models.Model):
-    card_no = models.CharField(unique=True, max_length=32)
-    card_value = models.CharField(max_length=12)
-    card_status = models.CharField(max_length=1)
-    card_action = models.CharField(max_length=1)
-    card_addtime = models.DateTimeField()
-    shop_code = models.CharField(max_length=16, blank=True, null=True)
-    card_blance = models.DecimalField(max_digits=12, decimal_places=2)
-    charge_time = models.DateTimeField(blank=True, null=True)
-    order_sn = models.CharField(max_length=32, blank=True, null=True)
-    sheetid = models.CharField(max_length=32, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'card_inventory_copy_new'
-
-
-class CardNoSheetid1215(models.Model):
-    card_no = models.CharField(primary_key=True, max_length=255)
-    sheetid = models.CharField(max_length=255, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'card_no_sheetid1215'
+        db_table = 'card_inventory_copy'
 
 
 class CardReceive(models.Model):
@@ -320,15 +278,6 @@ class NavList(models.Model):
         db_table = 'nav_list'
 
 
-class OldCard89(models.Model):
-    card_no = models.CharField(primary_key=True, max_length=255)
-    new_amount = models.CharField(max_length=255, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'old_card_89'
-
-
 class OldCardData(models.Model):
     card_no = models.CharField(primary_key=True, max_length=32)
     sheetid = models.CharField(max_length=32, blank=True, null=True)
@@ -348,86 +297,6 @@ class OldCardData2(models.Model):
     class Meta:
         managed = False
         db_table = 'old_card_data2'
-
-
-class OldCardData4(models.Model):
-    card_no = models.CharField(primary_key=True, max_length=255)
-    sheetid = models.CharField(max_length=255, blank=True, null=True)
-    detail = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'old_card_data4'
-
-
-class OldCardData5(models.Model):
-    card_no = models.CharField(primary_key=True, max_length=255)
-    sheetid = models.CharField(max_length=255, blank=True, null=True)
-    detail = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'old_card_data5'
-
-
-class OldCardData6(models.Model):
-    card_no = models.CharField(primary_key=True, max_length=255)
-    sheetid = models.CharField(max_length=255, blank=True, null=True)
-    detail = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'old_card_data6'
-
-
-class OldCardData7(models.Model):
-    card_no = models.CharField(primary_key=True, max_length=255)
-    sheetid = models.CharField(max_length=255, blank=True, null=True)
-    detail = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'old_card_data7'
-
-
-class OldCardData8(models.Model):
-    card_no = models.CharField(primary_key=True, max_length=255)
-    sheetid = models.CharField(max_length=255, blank=True, null=True)
-    detail = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'old_card_data8'
-
-
-class OldCardData9(models.Model):
-    card_no = models.CharField(primary_key=True, max_length=255)
-    sheetid = models.CharField(max_length=255, blank=True, null=True)
-    detail = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'old_card_data9'
-
-
-class OldCardDataWumianzhi(models.Model):
-    card_no = models.CharField(primary_key=True, max_length=255)
-    new_amount = models.CharField(max_length=255, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'old_card_data_wumianzhi'
-
-
-class OldCradData3(models.Model):
-    card_no = models.CharField(max_length=32, blank=True, null=True)
-    sheetid = models.CharField(max_length=32, blank=True, null=True)
-    detail = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
-    mode = models.IntegerField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'old_crad_data3'
 
 
 class OrderBorrow(models.Model):

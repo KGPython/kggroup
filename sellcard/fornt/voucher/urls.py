@@ -18,5 +18,11 @@ urlpatterns = [
     url(r'^voucher/verifier/sent/$', 'sellcard.fornt.voucher.verifier.sent.index', name="verifierSent"),
 
 
+    # 生成验证码
+    # 主页
+    url(r'^voucher/verifier/create/$', 'sellcard.fornt.voucher.verifier.create.index', name="voucherVerifierCreate"),
+    # 检验券真伪
+    # 主页
+    url(r'^voucher/verifier/verifier/$', 'sellcard.fornt.voucher.verifier.verifier.index', name="voucherVerifier"),
 
 ]
