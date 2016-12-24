@@ -8,7 +8,7 @@ import datetime, pymssql, json
 from random import sample
 from sellcard.common import Constants
 from sellcard.common import Method as mth
-from sellcard.models import KfJobsCoupon, KfJobsCouponGoodsDetail, KfJobsCouponBatch
+from sellcard.models import KfJobsCoupon, KfJobsCouponGoodsDetail, KfJobsCouponBatch, KfJobsCouponSn
 
 
 @transaction.atomic
@@ -97,7 +97,10 @@ def create(request):
         if (shopCode is None or shopCode == ''):
             shopCode = '9999'
         user = request.session.get("s_uid")
-        amount = mth.getReqVal(request, 'amount', '')
+        # amount = mth.getReqVal(request, 'amount', '')
+        sn_batch = mth.getReqVal(request, 'sn_batch', '')
+        sn_start = mth.getReqVal(request, 'sn_start', '')
+        sn_end = mth.getReqVal(request, 'sn_end', '')
         couponname = mth.getReqVal(request, 'couponname', '')
 
         type = mth.getReqVal(request, 'type', '')
@@ -149,7 +152,6 @@ def create(request):
             else:
                 batch = int(batch['batch__max']) + 1
             batch = str(batch)
-            # 拼接券号
             v_str = ''
             if shopCode[0:1] == 'C':
                 v_str = '88814' + shopCode[2:] + today[2:]
@@ -159,38 +161,78 @@ def create(request):
                 v_str = '8889999' + datetime.datetime.now().strftime('%y%m%d')
             v_str = v_str + batch
             batch_sn = v_str[3:]
-            List = set()
-            while len(List) < int(amount):
-                sn = v_str + ''.join(sample('0123456789', 5))
-                List.add(sn)
+
+            List = KfJobsCouponSn.objects.values('voucher').filter(batch=sn_batch,
+                                                                   request_shop=shopCode,
+                                                                   )
+            sqlVoucher = u'select jcs.voucher ' \
+                         u'  from KF_Jobs_Coupon_SN jcs ' \
+                         u' where jcs.batch = "{batch}" ' \
+                         u'   and jcs.request_shop = "{shop}" ' \
+                         u'   and jcs.sn between "{sn_start}" and "{sn_end}"'.format(batch=sn_batch,
+                                                                                     shop=shopCode,
+                                                                                     sn_start=sn_start.zfill(6),
+                                                                                     sn_end=sn_end.zfill(6))
+            conn = mth.getMysqlConn()
+            cur = conn.cursor()
+            cur.execute(sqlVoucher)
+            List = cur.fetchall()
+
+            # 拼接券号
+            # List = set()
+            # while len(List) < int(amount):
+            #     sn = v_str + ''.join(sample('0123456789', 5))
+            #     List.add(sn)
 
             # 插入卡券批次表
             KfJobsCouponBatch.objects.create(batch=batch,
                                              shopid=shopCode,
                                              createdate=today)
             # 插入卡券表
-            for var_sn in List:
-                KfJobsCoupon.objects.create(shopid=shop,
-                                            couponname=couponname,
-                                            batch=batch,
-                                            couponno=var_sn,
-                                            coupontypeid=type,
-                                            startdate=datetime.datetime.now(),
-                                            enddate=endDate,
-                                            cpwdflag=CPwdFlag,
-                                            cpwd=CPwd,
-                                            usetime=0,
-                                            maxusetime=maxUseTime,
-                                            value=costValue,
-                                            giftvalue=giftValue,
-                                            discount=discount,
-                                            flag=0,
-                                            fromsheettype=220,
-                                            rangeremark=rangeremark,
-                                            createuserid=user,
-                                            serialid=var_sn,
-                                            clearflag=0,
-                                            clearvalue=0)
+            # for var_sn in List:
+            #     KfJobsCoupon.objects.create(shopid=shop,
+            #                                 couponname=couponname,
+            #                                 batch=batch,
+            #                                 couponno=var_sn,
+            #                                 coupontypeid=type,
+            #                                 startdate=datetime.datetime.now(),
+            #                                 enddate=endDate,
+            #                                 cpwdflag=CPwdFlag,
+            #                                 cpwd=CPwd,
+            #                                 usetime=0,
+            #                                 maxusetime=maxUseTime,
+            #                                 value=costValue,
+            #                                 giftvalue=giftValue,
+            #                                 discount=discount,
+            #                                 flag=0,
+            #                                 fromsheettype=220,
+            #                                 rangeremark=rangeremark,
+            #                                 createuserid=user,
+            #                                 serialid=var_sn,
+            #                                 clearflag=0,
+            #                                 clearvalue=0)
+
+            KfJobsCoupon.objects.create(shopid=shop,
+                                        couponname=couponname,
+                                        batch=batch,
+                                        couponno=1,
+                                        coupontypeid=type,
+                                        startdate=datetime.datetime.now(),
+                                        enddate=endDate,
+                                        cpwdflag=CPwdFlag,
+                                        cpwd=CPwd,
+                                        usetime=0,
+                                        maxusetime=maxUseTime,
+                                        value=costValue,
+                                        giftvalue=giftValue,
+                                        discount=discount,
+                                        flag=0,
+                                        fromsheettype=220,
+                                        rangeremark=rangeremark,
+                                        createuserid=user,
+                                        serialid=1,
+                                        clearflag=0,
+                                        clearvalue=0)
 
             # 插入卡券商品明细表
             for var_good in chooseList:
@@ -198,7 +240,6 @@ def create(request):
                                                        goodname=var_good['ShortName'].strip(),
                                                        goodcode=var_good['CustomNo'].strip(),
                                                        amount=var_good['amount'])
-
 
             # 传入代金券信息元组：
             # 0：shop：门店编码
@@ -253,16 +294,16 @@ def printed(request):
         page_count = range(counts // tnop + (0 if counts % tnop == 0 else 1))
 
         resList = KfJobsCoupon.objects.values(
-            'shopid', 'couponname', 'coupontypeid','startdate', 'enddate', 'couponno', 'rangeremark',
+            'shopid', 'couponname', 'coupontypeid', 'startdate', 'enddate', 'couponno', 'rangeremark',
             'value', 'batch').filter(couponno__in=snlist)
 
         for var_i in resList:
-            var_i['value'] ='{:.2f}'.format(var_i['value'])
-            batch =''
+            var_i['value'] = '{:.2f}'.format(var_i['value'])
+            batch = ''
             if var_i['shopid'][0:1] == 'C':
-                batch = '14' + var_i['shopid'][2:]+ var_i['startdate'].strftime('%y%m%d')+ var_i['batch']
+                batch = '14' + var_i['shopid'][2:] + var_i['startdate'].strftime('%y%m%d') + var_i['batch']
             elif var_i['shopid'][0:1] == 'T':
-                batch = '15' + var_i['shopid'][2:]+ var_i['startdate'].strftime('%y%m%d')+ var_i['batch']
+                batch = '15' + var_i['shopid'][2:] + var_i['startdate'].strftime('%y%m%d') + var_i['batch']
             var_i['GoodList'] = KfJobsCouponGoodsDetail.objects.values(
                 'goodname', 'goodcode', 'amount').filter(batch=batch)
 
@@ -384,7 +425,7 @@ def InsertCoupon(cardinfo, list):
         param = (
             cardinfo[6],
             cardinfo[0],
-            item,
+            item['voucher'],
             type,
             cardinfo[2],
             cardinfo[3],
