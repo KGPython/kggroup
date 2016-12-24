@@ -14,7 +14,9 @@ urlpatterns = [
     # 核销代金券
     # 主页
     url(r'^voucher/balance/$', 'sellcard.fornt.voucher.balance.index', name="voucherBalance"),
-
+    # 生成验证码
+    # 创建
+    url(r'^voucher/verifier/create/$', 'sellcard.fornt.voucher.verifier.create.index', name="voucherVerifierCreate"),
 
 
 ]
