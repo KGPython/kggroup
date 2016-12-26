@@ -86,7 +86,7 @@ def UpdateCoupon(voucherSn, shop, spend, name):
                            as_dict=True)
     conn.autocommit(False)
     cursor = conn.cursor()
-    sql = "exec kgInsertCouponAcc99 @CouponNO='" + voucherSn + "', @ShopID='" + shop + "', @sValue='" + spend + "', @clearnote ='" + name + "'"
+    sql = "exec kgInsertCouponAcc99 @CouponNO='" + voucherSn + "', @ShopID='" + shop + "', @sValue=" + spend + ", @clearnote ='" + name + "'"
     cursor.execute(sql)
     conn.commit()
     cursor.close()

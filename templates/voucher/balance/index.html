@@ -91,7 +91,8 @@
                                     {% endif %}
                                     <label for="" class="col-xs-2 formline-label">花费：</label>
                                     <div class="col-xs-3">
-                                        <input type="text" class="form-control" id="spend" name="spend" value="{{ info.Value }}">
+                                        <input type="number" class="form-control" id="spend" name="spend"
+                                               value="{{ info.Value }}">
                                     </div>
                                     <div class="col-xs-1">
                                         <button type="button" class="btn btn-warning pull-right" id="btn_save">
@@ -142,22 +143,23 @@
             alert('请输入券号');
             return false;
         }
-        var spend = $('#spend').val();
-        if (!spend) {
-            alert('请输入花费');
-            return false;
-        }
+
         $('#btn_value').val('query');
         $('#form').submit();
     });
     $('#btn_save').click(function () {
-{#        if ('{{ info.CPwd }}' != '' && $('#inputCPwd').val() != '{{ info.CPwd }}') {#}
-{#            alert('输入的密码有误！');#}
-{#        }#}
-{#        else {#}
-            $('#btn_value').val('save');
-            $('#form').submit();
-{#        }#}
+        {#        if ('{{ info.CPwd }}' != '' && $('#inputCPwd').val() != '{{ info.CPwd }}') {#}
+        {#            alert('输入的密码有误！');#}
+        {#        }#}
+        {#        else {#}
+        var spend = $('#spend').val();
+        if (!spend) {
+            alert('花费请输入数值');
+            return false;
+        }
+        $('#btn_value').val('save');
+        $('#form').submit();
+        {#        }#}
     });
     $('#btn_close').click(function () {
         window.location("{% url 'voucherBalance' %}");
