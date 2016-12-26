@@ -21,6 +21,7 @@ class KfJobsCouponSn(models.Model):
     request_shop = models.CharField(max_length=255, blank=True, null=True)
     request_name = models.CharField(max_length=255, blank=True, null=True)
     request_date = models.DateTimeField(blank=True, null=True)
+    state = models.IntegerField(max_length=1, blank=True, null=True)
 
     class Meta:
         managed = False
