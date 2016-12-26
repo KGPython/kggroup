@@ -231,10 +231,11 @@ def save(request):
                 raise MyError('借卡单详情内部数据更新失败')
 
             # 更新ERP内部优惠赠送卡状态
-            resErp = mth.updateCard(cardIdDisclist, '1')
-            if resErp != len(cardIdDisclist):
-                mth.updateCard(cardIdDisclist, '9')
-                raise MyError('ERP数据库卡状态更新失败')
+            if len(cardIdDisclist)>0:
+                resErp = mth.updateCard(cardIdDisclist, '1')
+                if resErp != len(cardIdDisclist):
+                    mth.updateCard(cardIdDisclist, '9')
+                    raise MyError('ERP数据库卡状态更新失败')
 
             res["msg"] = 1
             res["urlRedirect"] ='/kg/sellcard/fornt/cardsale/orderInfo/?orderSn='+order_sn
