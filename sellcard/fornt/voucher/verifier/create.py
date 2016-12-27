@@ -28,7 +28,7 @@ def index(request):
             batch = int(batch['batch__max'][2:]) + 1
         batch = year + str(batch)
 
-        chars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9',]
+        chars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ]
 
         List = set()
         while len(List) < int(amount):
@@ -46,14 +46,18 @@ def index(request):
             m = hashlib.md5()
             m.update(voucher.encode(encoding='UTF-8'))
             mdfive_vou = m.hexdigest()
+            m = hashlib.md5()
             m.update(sn.encode(encoding='UTF-8'))
             mdfive_sn = m.hexdigest()
+            m = hashlib.md5()
             m.update(salt.encode(encoding='UTF-8'))
             mdfive_salt = m.hexdigest()
-            mdfive = mdfive_vou + mdfive_sn
+            mdfive = mdfive_vou + '/' + mdfive_sn
+            m = hashlib.md5()
             m.update(mdfive.encode(encoding='UTF-8'))
             mdfive = m.hexdigest()
-            mdfive = mdfive + mdfive_salt
+            mdfive = mdfive + '/' + mdfive_salt
+            m = hashlib.md5()
             m.update(mdfive.encode(encoding='UTF-8'))
             result = m.hexdigest()
             KfJobsCouponSn.objects.create(sn=sn,
