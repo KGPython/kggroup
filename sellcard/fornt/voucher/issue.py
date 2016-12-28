@@ -162,13 +162,11 @@ def create(request):
             v_str = v_str + batch
             batch_sn = v_str[3:]
 
-            List = KfJobsCouponSn.objects.values('voucher').filter(batch=sn_batch,
-                                                                   request_shop=shopCode,
-                                                                   )
             sqlVoucher = u'select jcs.voucher ' \
                          u'  from KF_Jobs_Coupon_SN jcs ' \
                          u' where jcs.batch = "{batch}" ' \
                          u'   and jcs.request_shop = "{shop}" ' \
+                         u'   and jcs.state = 0 ' \
                          u'   and jcs.sn between "{sn_start}" and "{sn_end}"'.format(batch=sn_batch,
                                                                                      shop=shopCode,
                                                                                      sn_start=sn_start.zfill(6),
@@ -215,7 +213,7 @@ def create(request):
             KfJobsCoupon.objects.create(shopid=shop,
                                         couponname=couponname,
                                         batch=batch,
-                                        couponno=1,
+                                        couponno=batch,
                                         coupontypeid=type,
                                         startdate=datetime.datetime.now(),
                                         enddate=endDate,
@@ -230,7 +228,7 @@ def create(request):
                                         fromsheettype=220,
                                         rangeremark=rangeremark,
                                         createuserid=user,
-                                        serialid=1,
+                                        serialid=batch,
                                         clearflag=0,
                                         clearvalue=0)
 
@@ -259,6 +257,13 @@ def create(request):
 
             # 插入SQL-sevser数据库调用方法
             InsertCoupon(tuple_info, List)
+
+            #修改验证码表
+            for var_vou in List:
+                KfJobsCouponSn.objects.filter(batch=sn_batch,
+                                              request_shop=shopCode,
+                                              state=0,
+                                              voucher=var_vou['voucher']).update(state=1)
             msg = 1
         else:
             goodname = mth.getReqVal(request, 'goodname', '')

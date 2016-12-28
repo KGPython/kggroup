@@ -49,11 +49,11 @@
                         </div>
                     </div>
                     <div class="row formline">
-{#                        <label for="" class="col-xs-1 formline-label">发行张数：</label>#}
-{#                        <div class="col-xs-3">#}
-{#                            <input type="text" class="form-control" name="amount" id="amount"#}
-{#                                   required value="{{ amount }}">#}
-{#                        </div>#}
+                        {#                        <label for="" class="col-xs-1 formline-label">发行张数：</label>#}
+                        {#                        <div class="col-xs-3">#}
+                        {#                            <input type="text" class="form-control" name="amount" id="amount"#}
+                        {#                                   required value="{{ amount }}">#}
+                        {#                        </div>#}
 
                         <label for="" class="col-xs-1 formline-label">券名称：</label>
                         <div class="col-xs-3">
@@ -105,7 +105,7 @@
                         </div>
                     </div>
                     <div class="row formline" style="display:none">
-                         <label for="" class="col-xs-1 formline-label">需要密码：</label>
+                        <label for="" class="col-xs-1 formline-label">需要密码：</label>
                         <div class="col-xs-1">
                             <input type="radio" name="CPwdFlag" value="0" checked onchange="radiochange(0)">否
                             <input type="radio" name="CPwdFlag" value="1" onchange="radiochange(1)">是
@@ -280,6 +280,7 @@
 <!--保存按钮点击事件-->
 <script type="text/javascript">
     $('.save-btn').click(function () {
+        $(this).attr("disabled", true);
         $('#buttonvalue').val(1);
 
         var row = [];
@@ -292,11 +293,11 @@
         });
         $('#chooseList').val(JSON.stringify(row));
 
-{#        var amount = $('#amount').val();#}
-{#        if (amount == 0) {#}
-{#            alert('数量不能为零');#}
-{#            return false;#}
-{#        }#}
+        {#        var amount = $('#amount').val();#}
+        {#        if (amount == 0) {#}
+        {#            alert('数量不能为零');#}
+        {#            return false;#}
+        {#        }#}
         $("#Form").submit();
     });
 </script>
