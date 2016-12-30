@@ -241,7 +241,7 @@ def create(request):
 
             # 传入代金券信息元组：
             # 0：shop：门店编码
-            #   1：name：代金券类型名称
+            #   1：couponname：代金券类型名称
             #   2：（strat）：创建时间
             #   3：endDate：结束日期
             #   4：costValue：券面值
@@ -252,7 +252,7 @@ def create(request):
             #   9：name：操作人姓名
             #   10：range：是否限定使用范围：0）不限定，1）本店
             tuple_info = (
-                shop, name, datetime.datetime.now(), endDate, int(costValue), batch, v_str, CPwdFlag, CPwd, name,
+                shop, couponname, datetime.datetime.now(), endDate, int(costValue), batch, v_str, CPwdFlag, CPwd, name,
                 range)
 
             # 插入SQL-sevser数据库调用方法
@@ -347,7 +347,7 @@ def InsertCoupon(cardinfo, list):
     插入第三方库
     :param cardinfo: 代金券信息
             #   0：shop：门店编码
-            #   1：name：代金券类型名称
+            #   1：couponname：代金券类型名称
             #   2：（strat）：创建时间
             #   3：endDate：结束日期
             #   4：costValue：券面值
