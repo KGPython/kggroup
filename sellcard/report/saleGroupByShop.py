@@ -8,6 +8,7 @@ from sellcard.models import OrderUpCard
 from sellcard.common import Method as mth
 from sellcard import views as base
 def index(request):
+    shop = request.session.get('s_shopcode','')
     role_id = request.session.get('s_roleid')
     if request.method == 'GET':
         start = str(datetime.date.today().replace(day=1))
@@ -30,6 +31,10 @@ def index(request):
     if role_id == '8':
         shops = mth.getCityShops('C')
         shopsCode = mth.getCityShopsCode('C')
+    if role_id == '10':
+        shops = base.findShop(shop)
+        shopsCode = [shop]
+
     shopsCodeStr = "'" + "','".join(shopsCode) + "'"
 
     saleDiscGroupByShop = 'select shop_code,SUM(disc_amount) as disc,SUM(y_cash) as disc_cash, SUM(disc_amount-y_cash) as disc_card ' \

@@ -737,7 +737,6 @@ function saveCardChangeOrder(url){
 
 //ajax传输保存订单操作的数据
 function doAjaxSave(url,data){
-    console.log(url);
     $("#btn-enter").attr('disabled',true);
     $.ajax({
         url:url,

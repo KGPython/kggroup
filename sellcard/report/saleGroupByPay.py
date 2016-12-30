@@ -15,7 +15,7 @@ def index(request):
         endTime = datetime.datetime.strptime(end,'%Y-%m-%d').date() + datetime.timedelta(1)
         whereStr ="WHERE a.add_time >='"+start+"' AND a.add_time <='"+str(endTime)+"' AND a.order_sn = b.order_id "
 
-        if role == '2':
+        if role in ('2','10') :
             whereStr += " AND a.shop_code ='"+shop+"'"
         conn = mth.getMysqlConn()
         cur = conn.cursor()

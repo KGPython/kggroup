@@ -16,7 +16,7 @@ def index(request):
     kwargs.setdefault('card_status','1')
     kwargs.setdefault('card_action','1')
     kwargs.setdefault('card_blance__gt','0')
-    if role_id == '2':
+    if role_id in ('2','10'):
         kwargs.setdefault('shop_code',shop_code)
     if role_id == '9':
         shops_code = mth.getCityShopsCode('T')

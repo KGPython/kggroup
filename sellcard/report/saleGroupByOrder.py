@@ -40,7 +40,7 @@ def index(request):
             else:
                 operator = user[0]['id']
 
-    if  role_id == '2':
+    if  role_id in ('2','10') :
         shop = shopcode
         depart = mth.getReqVal(request, 'depart', '')
         name = mth.getReqVal(request, 'operator', '').strip()

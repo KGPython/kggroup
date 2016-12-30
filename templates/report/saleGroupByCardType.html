@@ -53,7 +53,7 @@
 
                         <label for="" class="col-xs-1 formline-label">售卡人：</label>
                         <div class="col-xs-1">
-                            {% if role == '1' or role == '2' or role == '6' or role == '8' or role == '9'  %}
+                            {% if role == '1' or role == '2' or role == '6' or role == '8' or role == '9'  or role == '10' %}
                             <select name="operator" id="operator" class="form-control">
                                 <option value="">全部</option>
                                 {% for person in personList %}
