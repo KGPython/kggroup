@@ -28,16 +28,16 @@
                 <tbody class="cardSent">
                     <tr>
                         <td>
-                            <select name="" id="" class="form-control type">
+                            <select name="" id="" class="form-control type" onblur="checkCardSent(this)">
                                 {% for type in cardTypes %}
                                     <option value="{{ type.card_type_name }}">{{ type.card_type_name }}元</option>
                                 {% endfor %}
                                 <option value=""></option>
                             </select>
                         </td>
-                        <td><input type='text' class='form-control start cardno'></td>
-                        <td><input type='text' class='form-control end cardno'></td>
-                        <td><input type='text' class='form-control subTotal'></td>
+                        <td><input type='text' class='form-control start cardno' onblur="checkCardSent(this)"></td>
+                        <td><input type='text' class='form-control end cardno' onblur="checkCardSent(this)"></td>
+                        <td><input type='text' class='form-control subTotal' onblur="checkCardSent(this)"></td>
                         <td><button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this);">删除</button></td>
                     </tr>
                 </tbody>
@@ -123,23 +123,39 @@
     }
 </script>
 <script>
-    $(document).on('change','.cardSent .cardno',function(){
 
+    function checkCardSent(obj) {
+        var _this = obj;
         //1、重复校验
-        checkRepeat(this);
+        checkRepeat(_this);
         //2、交叉校验
-        checkCross(this);
+        checkCross(_this);
 
         //3、计算小计并生成新的一行
+        var parentTr = $(_this).parent().parent();
+        //3.0 判断卡面值和卡号长度
+        var cardVal = parentTr.find('select').val();
         //3.1 处理号段起始值
-        var parentTr = $(this).parent().parent();
+
         var startStr = parentTr.find('.start').val();
         var start = startStr.split('=')[0];
         parentTr.find('.start').val(start);
+
+        if((parseInt(cardVal)<1000 && start.length!=9) || (parseInt(cardVal)>=1000 && start.length!=10)){
+            parentTr.find('.start').css({'color':'red'})
+        }else{
+            parentTr.find('.start').css({'color':'#555'})
+        }
         //3.2处理号段截止值
         var endStr = parentTr.find('.end').val();
         var end = endStr.split('=')[0];
         parentTr.find('.end').val(end);
+
+        if((parseInt(cardVal)<1000 && end.length!=9) || (parseInt(cardVal)>=1000 && end.length!=10)){
+            parentTr.find('.end').css({'color':'red'})
+        }else{
+            parentTr.find('.end').css({'color':'#555'})
+        }
 
         if(parseInt(end)<parseInt(start)){
             alert('起始卡号不能大于截至卡号');
@@ -155,18 +171,18 @@
             for(var i=0;i<columsL;i++){
                 var td = $("<td></td>");
                 if(i==0){
-                    var obj = $("<select type='text' class='form-control type'></select>");
+                    var obj = $('<select type="text" class="form-control type" onblur="checkCardSent(this)"></select>');
                     var list={{ cardTypes | safe}};
                     for(var j=0;j<list.length;j++){
                         var option = $("<option></option>").val(list[j].card_type_name).text(list[j].card_type_name+'元');
                         $(obj).append(option)
                     }
                 }else if(i==1){
-                    var obj = $('<input type="text" class="form-control start cardno">');
+                    var obj = $('<input type="text" class="form-control start cardno" onblur="checkCardSent(this)">');
                 }else if(i==2){
-                    var obj = $('<input type="text" class="form-control end cardno">');
+                    var obj = $('<input type="text" class="form-control end cardno" onblur="checkCardSent(this)">');
                 }else if(i==3){
-                    var obj = $('<input type="text" class="form-control subTotal">');
+                    var obj = $('<input type="text" class="form-control subTotal" onblur="checkCardSent(this)">');
                 }else{
                     var obj = $('<button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this);">删除</button>');
                 }
@@ -176,7 +192,7 @@
             tbody.append(row)
         }
 
-    });
+    }
 
     //保存订单信息
     $('.btn-enter').click(function(){

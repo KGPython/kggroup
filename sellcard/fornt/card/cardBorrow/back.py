@@ -93,7 +93,7 @@ def save(request):
             if resCard != cardsNum:
                 raise MyError('系统数据库卡状态更新失败')
 
-            resBorrow = OrderBorrowInfo.objects.filter(card_no__in=cardnoList,is_back=None).update(is_back='1',back_time=now)
+            resBorrow = OrderBorrowInfo.objects.filter(card_no__in=cardnoList,is_back__in=(None,'')).update(is_back='1',back_time=now)
             if resBorrow != cardsNum:
                 raise MyError('退还卡状态更新失败')
 

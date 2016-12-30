@@ -80,7 +80,7 @@ def index(request):
         #查询未退卡明细
         sqlCardNoBack = 'select a.order' \
                         '_sn,b.card_no as cardId,b.card_balance as cardVal from order_borrow as a,order_borrow_info as b ' \
-                  ' where a.order_sn=b.order_sn and b.is_back is null '+whereStr+''
+                  ' where a.shopcode ="'+shopcode+'" and a.order_sn=b.order_sn and (b.is_back is null or b.is_back=" " )'+whereStr+''
         cur.execute(sqlCardNoBack)
 
         listNoBack = cur.fetchall()
@@ -226,7 +226,7 @@ def save(request):
             if orderSnNum != resBorrow:
                 raise MyError('借卡单状态更新失败')
 
-            resBorrow2 = OrderBorrowInfo.objects.filter(card_no__in=cardIdBorrowList, is_back=None).update(is_back='0')
+            resBorrow2 = OrderBorrowInfo.objects.filter(card_no__in=cardIdBorrowList, is_back__in=(None,'')).update(is_back='0')
             if resBorrow2 != len(cardIdBorrowList):
                 raise MyError('借卡单详情内部数据更新失败')
 
