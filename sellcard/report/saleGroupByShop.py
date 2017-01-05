@@ -31,7 +31,7 @@ def index(request):
     if role_id == '8':
         shops = mth.getCityShops('C')
         shopsCode = mth.getCityShopsCode('C')
-    if role_id == '10':
+    if role_id == '10' or role_id == '2':
         shops = base.findShop(shop)
         shopsCode = [shop]
 
@@ -200,6 +200,22 @@ def detail(request):
     page = mth.getReqVal(request, 'page', 1)
     shop_code = request.GET.get('shop_code')
     pay_id = request.GET.get('pay_id')
+
+    shop = request.session.get('s_shopcode', '')
+    role_id = request.session.get('s_roleid')
+    if role_id == '9':
+        shopsCode = mth.getCityShopsCode('T')
+        if shop_code not in shopsCode:
+            return render(request,'500.html',locals())
+    if role_id == '8':
+        shopsCode = mth.getCityShopsCode('C')
+        if shop_code not in shopsCode:
+            return render(request,'500.html',locals())
+    if role_id == '10' or role_id == '2':
+        if shop != shop_code:
+            return render(request, '500.html', locals())
+
+
 
     if pay_id == '2':
         pay_name = '代金券'

@@ -175,6 +175,11 @@ def save(request):
             if resCardOut != cardsOutNum:
                 raise MyError('系统数据库卡状态更新失败')
 
+            if discCode:
+                resCode = mth.updateDisCode(discCode,shopCode,order_sn)
+                if resCode == 0:
+                    raise MyError('折扣授权码状态更新失败')
+
             resErpOut = mth.updateCard(cardIdOutList,'1')
             resErpIn = mth.updateCard(cardIdInList,'9')
             if resErpIn != cardsInNum or resErpOut != cardsOutNum:
@@ -182,10 +187,7 @@ def save(request):
                 mth.updateCard(cardIdOutList,'1')
                 raise MyError('ERP数据库卡状态更新失败')
 
-            if discCode:
-                resCode = mth.updateDisCode(discCode,shopCode,order_sn)
-                if resCode == 0:
-                    raise MyError('折扣授权码状态更新失败')
+
 
             res["msg"] = 1
             # res["urlRedirect"] ='/kg/sellcard/fornt/cardsale/orderInfo/?orderSn=' + order_sn
