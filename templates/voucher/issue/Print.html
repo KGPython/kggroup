@@ -32,40 +32,40 @@
 
 <style>
     .A4_longitudinal {
-        margin-top: 2mm;
-        margin-bottom: 2mm;
-        margin-left: 2mm;
-        margin-right: 2mm;
+        margin-top: 0mm;
+        margin-bottom: 0mm;
+        margin-left: 0mm;
+        margin-right: 0mm;
         width: 210mm;
         height: 297mm;
     }
 
-    .A4_transverse {
-        margin-top: 2mm;
-        margin-bottom: 2mm;
-        margin-left: 2mm;
-        margin-right: 2mm;
-        width: 297mm;
-        height: 210mm;
-    }
+{#    .A4_transverse {#}
+{#        margin-top: 2mm;#}
+{#        margin-bottom: 2mm;#}
+{#        margin-left: 2mm;#}
+{#        margin-right: 2mm;#}
+{#        width: 297mm;#}
+{#        height: 210mm;#}
+{#    }#}
 
     .v_print {
         border: 1px solid #000;
-        margin-top: 1.5mm;
-        margin-bottom: 1.5mm;
-        margin-left: 1.5mm;
-        margin-right: 1.5mm;
+        margin-top: 4mm;
+        margin-bottom: 4mm;
+        margin-left: 4mm;
+        margin-right: 4mm;
         width: 95mm;
-    {#        height: {{ v_print_height }};#} float: left;
+        float: left;
     }
 
     .v_print .v_title {
         font-size: 18px;
     }
 
-    .v_print .v_image {
-        height: 18mm;
-    }
+{#    .v_print .v_image {#}
+{#        height: 18mm;#}
+{#    }#}
 
     .v_print .v_tb {
         margin-left: 8mm;
@@ -85,32 +85,34 @@
 </style>
 <!--containt-part-->
 <div id="content">
-    <input type="button" class="noprint btn btn-warning btn-sm" onclick='printcode()' value="打印预览">
+    <input type="button" class="noprint btn btn-warning btn-sm" onclick='printcode()' value="打印">
     {% for var_i in page_count %}
-        <div class="{{ A4_class }}">
+        <div class="A4_longitudinal">
             {% for var_j in range_tnop %}
                 {% if var_i|multiply:tnop|add:var_j < counts %}
                     <div class="v_print" style="text-align:center">
-                        <label class="v_title">宽广超市{{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'couponname' }}</label>
-                        <div class="v_image"
-                             id="{{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'couponno' }}">
-                        </div>
-                        <label class="v_sn">
-                            {{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'couponno' }}</label>
+                        <label class="v_title">宽广超市{{ resList.coupon_name }}</label>
+{#                        <div class="v_image"#}
+{#                             id="{{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'couponno' }}">#}
+{#                        </div>#}
+{#                        <label class="v_sn">#}
+{#                            {{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'couponno' }}</label>#}
                         {#                        {% if var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'coupontypeid' == 3 %}#}
                         <table class="v_tb">
                             <tr class="v_tr">
                                 <th colspan="2">
-                                    发行店：{{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'shopid' | transShopCode }}</th>
+                                    发行店：{{ resList.shop_code | transShopCode }}</th>
                                 <th>
-                                    类型：{{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'coupontypeid' | transCouponTypeByChinese }}</th>
+                                    类型：{{ resList.type | transCouponTypeByEnglish }}</th>
                             </tr>
+                        {% if good_len != 0%}
                             <tr class="v_tr">
                                 <th>商品名称</th>
                                 <th>数量</th>
                                 <th>商品编码</th>
                             </tr>
-                            {% for var_good in var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'GoodList' %}
+                         {% endif %}
+                            {% for var_good in GoodList %}
                                 <tr class="v_tr">
                                     <td>{{ var_good.goodname }}</td>
                                     <td>{{ var_good.amount }}</td>
@@ -119,8 +121,8 @@
                             {% endfor %}
                             <tr class="v_tr">
                                 <th colspan="2" style="text-align: left">
-                                    使用范围：{{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'rangeremark' }}</th>
-                                <th>V：{{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'value' }}</th>
+                                    使用范围：{{ resList.range }}</th>
+                                <th>V：{{ resList.values }}</th>
                             </tr>
                         </table>
                         {#                        {% else %}#}
@@ -143,7 +145,7 @@
 
                         {#                        {% endif %}#}
                         <label class="v_foot"
-                               style=" font-size:8px">本券不找零，不兑换，请于{{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'enddate' }}前使用<br/>逾期作废，丢失不补，盖章有效
+                               style=" font-size:8px">本券不找零，不兑换，请于{{ resList.end_date }}前使用<br/>逾期作废，丢失不补，盖章有效
                         </label>
                     </div>
                 {% endif %}
@@ -161,16 +163,16 @@
 
 <script type="text/javascript">
     function printcode() {
-        var arr =
-        {{snlist |safe}}
-        for (var i = 0; i < arr.length; i++) {
-            var sn = arr[i]
-            $("#" + sn).empty().barcode(sn, "code128", {
-                barWidth: 2,
-                barHeight: $(".v_print .v_image").height(),
-                showHRI: false
-            })
-        }
+{#        var arr =#}
+{#        {{snlist |safe}}#}
+{#        for (var i = 0; i < arr.length; i++) {#}
+{#            var sn = arr[i]#}
+{#            $("#" + sn).empty().barcode(sn, "code128", {#}
+{#                barWidth: 2,#}
+{#                barHeight: $(".v_print .v_image").height(),#}
+{#                showHRI: false#}
+{#            })#}
+{#        }#}
         window.print()
     }
 </script>

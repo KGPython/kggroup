@@ -70,19 +70,42 @@ def transCouponTypeByChinese(key):
     """
     chinese = ''
 
-    # if key == 1:
-    #     chinese = '抵金券'
-    # elif key == 2:
-    #     chinese = '购卡券'
-    # elif key == 3:
-    #     chinese = '兑物券'
     if key == 1:
-        chinese = '优惠券'
+        chinese = '换卡券'
     elif key == 2:
-        chinese = '购物券'
+        chinese = '换物券'
+    elif key == 3:
+        chinese = '通用券'
+    elif key == 4:
+        chinese = '通用券'
+    # if key == 1:
+    #     chinese = '优惠券'
+    # elif key == 2:
+    #     chinese = '购物券'
 
     return chinese
 
+@register.filter
+def transCouponTypeByEnglish(key):
+    """
+    代金券类型转字母
+    :author Qixu
+    :create 2016/11/28
+    :param key:类型编号
+    :return:english:对应字母
+    """
+    english = ''
+
+    if key == 1:
+        english = 'A'
+    elif key == 2:
+        english = 'B'
+    elif key == 3:
+        english = 'C1'
+    elif key == 4:
+        english = 'C2'
+
+    return english
 
 # 部门编号转名称
 @register.filter

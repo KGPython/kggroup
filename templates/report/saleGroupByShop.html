@@ -109,7 +109,7 @@
                                     <td>{{ row.inSub | floatformat:2 | default:0 }}</td>
                                     <td>{{ row.pay_1 | floatformat:2 | default:0 }}</td>
                                     <td>
-                                        <a href="{% url 'saleGroupByShopDet' %}?shop_code={{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=3">
+                                        <a href="{% url 'saleGroupByShopDet' %}?shop_code={{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=2">
                                             {{ row.pay_2 | floatformat:2 | default:0 }}
                                         </a>
                                     </td>
