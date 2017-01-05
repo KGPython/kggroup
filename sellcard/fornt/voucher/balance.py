@@ -5,6 +5,7 @@ from django.shortcuts import render
 import datetime, pymssql
 from sellcard.common import Constants
 from sellcard.common import Method as mth
+from sellcard.models import KfJobsCoupon, KfJobsCouponSn
 
 @transaction.atomic
 def index(request):
@@ -16,22 +17,50 @@ def index(request):
     if request.method == 'POST':
         voucherSn = mth.getReqVal(request, 'voucherSn', '').strip()
         if mth.getReqVal(request, 'btn_value', '') == 'query':
-            info = getInfo(voucherSn)
-            if info is None:
+            data_info = KfJobsCouponSn.objects.values('state','coupon_code','serial_id','used_flag'
+                                                   ).filter(voucher=voucherSn)
+            if data_info is None:
                 msg = 1
-            elif info['ClearFlag'] != 0:
+            elif data_info[0]['state'] != 1:
+                msg = 1
+            elif data_info[0]['used_flag'] == 1:
                 msg = 2
-            elif info['EndDate'] < datetime.datetime.now():
-                msg = 3
+            elif data_info[0]['serial_id'] != '0':
+                info = getInfo(voucherSn)
+                if info is None:
+                    msg = 1
+                elif info['ClearFlag'] != 0:
+                    msg = 2
+                elif info['end_date'] < datetime.datetime.now():
+                    msg = 3
+                else:
+                    msg = 4
             else:
-                msg = 4
+                info = KfJobsCoupon.objects.values('shop_code','type','start_date','end_date','values'
+                                                   ).filter(coupon_code=data_info[0]['coupon_code'])
+                if info is None:
+                    msg = 1
+                elif info[0]['end_date'] < datetime.datetime.now():
+                    msg = 3
+                else:
+                    info = info[0]
+                    info['spend'] = info['values']
+                    msg = 4
         if  mth.getReqVal(request, 'btn_value', '') == 'save':
             spend = mth.getReqVal(request, 'spend', '')
+            type = mth.getReqVal(request, 'type', '')
             shop = request.session.get("s_shopcode")
-            name = request.session.get("s_uname")
+            name = request.session.get("s_unameChinese")
             if (shop is None or shop == ''):
                 shop = '9999'
-            UpdateCoupon(voucherSn, shop, spend, name)
+            if type == '通用券':
+                UpdateCoupon(voucherSn, shop, spend, name)# 调用ERP过程
+
+            # 修改验证码表
+            KfJobsCouponSn.objects.filter(voucher=voucherSn).update(used_flag=1,
+                                                                    used_shop=shop,
+                                                                    used_name=name,
+                                                                    used_date=datetime.datetime.now())
             msg = 5
     return render(request, 'voucher/balance/index.html', locals())
 
@@ -50,15 +79,14 @@ def getInfo(voucherSn):
                            charset='utf8',
                            as_dict=True)
     cur = conn.cursor()
-    sql = u"select ShopID," \
+    sql = u"select ShopID as shop_code," \
           u"        CouponNO," \
           u"        CouponTypeID," \
-          u"        StartDate," \
-          u"        EndDate," \
-          u"        CPwdFlag," \
-          u"        ltrim(rtrim(CPwd)) as CPwd," \
+          u"        3 as type," \
+          u"        StartDate as start_date," \
+          u"        EndDate as end_date," \
           u"        ClearFlag," \
-          u"        Value" \
+          u"        Value as spend" \
           u"  from MyShop_Coupon " \
           u" where CouponNO = '{voucherSn}'".format(voucherSn=voucherSn)
     cur.execute(sql)

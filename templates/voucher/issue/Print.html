@@ -31,7 +31,7 @@
 </style>
 
 <style>
-    .A4_longitudinal {
+    .A4 {
         margin-top: 0mm;
         margin-bottom: 0mm;
         margin-left: 0mm;
@@ -39,15 +39,6 @@
         width: 210mm;
         height: 297mm;
     }
-
-{#    .A4_transverse {#}
-{#        margin-top: 2mm;#}
-{#        margin-bottom: 2mm;#}
-{#        margin-left: 2mm;#}
-{#        margin-right: 2mm;#}
-{#        width: 297mm;#}
-{#        height: 210mm;#}
-{#    }#}
 
     .v_print {
         border: 1px solid #000;
@@ -62,10 +53,6 @@
     .v_print .v_title {
         font-size: 18px;
     }
-
-{#    .v_print .v_image {#}
-{#        height: 18mm;#}
-{#    }#}
 
     .v_print .v_tb {
         margin-left: 8mm;
@@ -85,19 +72,13 @@
 </style>
 <!--containt-part-->
 <div id="content">
-    <input type="button" class="noprint btn btn-warning btn-sm" onclick='printcode()' value="打印">
+    <input type="button" class="noprint btn btn-warning btn-sm" onclick='window.print()' value="打印">
     {% for var_i in page_count %}
-        <div class="A4_longitudinal">
+        <div class="A4">
             {% for var_j in range_tnop %}
                 {% if var_i|multiply:tnop|add:var_j < counts %}
                     <div class="v_print" style="text-align:center">
                         <label class="v_title">宽广超市{{ resList.coupon_name }}</label>
-{#                        <div class="v_image"#}
-{#                             id="{{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'couponno' }}">#}
-{#                        </div>#}
-{#                        <label class="v_sn">#}
-{#                            {{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'couponno' }}</label>#}
-                        {#                        {% if var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'coupontypeid' == 3 %}#}
                         <table class="v_tb">
                             <tr class="v_tr">
                                 <th colspan="2">
@@ -122,30 +103,14 @@
                             <tr class="v_tr">
                                 <th colspan="2" style="text-align: left">
                                     使用范围：{{ resList.range }}</th>
-                                <th>V：{{ resList.values }}</th>
+                                {% if is_show != '0'%}
+                                    <th>V：{{ resList.values }}</th>
+                                {% endif %}
                             </tr>
                         </table>
-                        {#                        {% else %}#}
-                        {#                            <table class="v_tb">#}
-                        {#                                <tr style="font-size:18px">#}
-                        {#                                    <th>#}
-                        {#                                        制作门店：{{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'shopid'| transShopCode }}</th>#}
-                        {#                                    <th>券类型：B</th>#}
-                        {#                                </tr>#}
-                        {#                                <tr style="font-size:25px">#}
-                        {#                                    <td colspan="2">#}
-                        {#                                        券总额：{{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'value' }}元#}
-                        {#                                    </td>#}
-                        {#                                </tr>#}
-                        {#                                <tr class="v_tr">#}
-                        {#                                    <th colspan="2" style="text-align: left">#}
-                        {#                                        使用范围：{{ var_i|multiply:tnop|add:var_j|o_index:resList|o_column:'rangeremark' }}</th>#}
-                        {#                                </tr>#}
-                        {#                            </table>#}
-
-                        {#                        {% endif %}#}
                         <label class="v_foot"
-                               style=" font-size:8px">本券不找零，不兑换，请于{{ resList.end_date }}前使用<br/>逾期作废，丢失不补，盖章有效
+                               style=" font-size:8px">本券不找零，不兑换，请于{{ resList.end_date }}前使用
+                            <br/>逾期作废，丢失不补，盖章有效
                         </label>
                     </div>
                 {% endif %}
@@ -153,28 +118,8 @@
         </div>
         <p style="page-break-after:always;"></p>
     {% endfor %}
-
 </div>
 <!--end-containt-part-->
-
 {% include "common/foot.html" %}
-<script type="text/javascript" src="{{ static }}/js/jquery-1.4.4.min.js"></script>
-<script type="text/javascript" src="{{ static }}/js/jquery-barcode.js"></script>
-
-<script type="text/javascript">
-    function printcode() {
-{#        var arr =#}
-{#        {{snlist |safe}}#}
-{#        for (var i = 0; i < arr.length; i++) {#}
-{#            var sn = arr[i]#}
-{#            $("#" + sn).empty().barcode(sn, "code128", {#}
-{#                barWidth: 2,#}
-{#                barHeight: $(".v_print .v_image").height(),#}
-{#                showHRI: false#}
-{#            })#}
-{#        }#}
-        window.print()
-    }
-</script>
 </body>
 </html>

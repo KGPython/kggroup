@@ -224,6 +224,8 @@ class KfJobsCoupon(models.Model):
     start_date = models.DateTimeField()
     end_date = models.DateTimeField(blank=True, null=True)
     range = models.CharField(max_length=255)
+    payment_type = models.IntegerField()
+    pay_account = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     discount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     amount = models.IntegerField()
     print_amount = models.IntegerField(blank=True, null=True)
@@ -231,6 +233,7 @@ class KfJobsCoupon(models.Model):
     remark = models.CharField(max_length=400, blank=True, null=True)
     create_uesr_id = models.IntegerField(blank=True, null=True)
     create_user_name = models.CharField(max_length=255, blank=True, null=True)
+    create_date = models.CharField(max_length=8, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -310,6 +313,11 @@ class KfJobsCouponSn(models.Model):
     request_date = models.DateTimeField(blank=True, null=True)
     state = models.IntegerField(blank=True, null=True)
     coupon_code = models.CharField(max_length=255, blank=True, null=True)
+    serial_id = models.CharField(max_length=20, blank=True, null=True)
+    used_flag = models.IntegerField(blank=True, null=True)
+    used_shop = models.CharField(max_length=255, blank=True, null=True)
+    used_name = models.CharField(max_length=255, blank=True, null=True)
+    used_date = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         managed = False

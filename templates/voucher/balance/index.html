@@ -43,26 +43,27 @@
                                     <label for="" class="col-xs-2 formline-label">发行门店：</label>
                                     <div class="col-xs-3">
                                         <input type="text" class="form-control" readonly
-                                               value="{{ info.ShopID }}">
+                                               value="{{ info.shop_code | transShopCode }}">
                                     </div>
 
                                     <label for="" class="col-xs-2 formline-label">发行日期：</label>
                                     <div class="col-xs-3">
                                         <input type="text" class="form-control" readonly
-                                               value="{{ info.StartDate }}">
+                                               value="{{ info.start_date }}">
                                     </div>
                                 </div>
                                 <div class="row formline">
                                     <label for="" class="col-xs-2 formline-label">券类型：</label>
                                     <div class="col-xs-3">
                                         <input type="text" class="form-control" readonly
-                                               value="{{ info.CouponTypeID }}">
+                                               id="type" name="type"
+                                               value="{{ info.type | transCouponTypeByChinese }}">
                                     </div>
 
                                     <label for="" class="col-xs-2 formline-label">券号：</label>
                                     <div class="col-xs-3">
                                         <input type="text" class="form-control" readonly
-                                               value="{{ info.CouponNO }}">
+                                               value="{{ voucherSn }}">
                                     </div>
                                 </div>
 
@@ -70,29 +71,17 @@
                                     <label for="" class="col-xs-2 formline-label">截至日期：</label>
                                     <div class="col-xs-3">
                                         <input type="text" class="form-control" readonly
-                                               value="{{ info.EndDate }}">
+                                               value="{{ info.end_date }}">
                                     </div>
 
                                     <label for="" class="col-xs-2 formline-label">券面值：</label>
                                     <div class="col-xs-3">
                                         <input type="text" class="form-control" readonly
-                                               value="{{ info.Value }}">
+                                               id="spend" name="spend" value="{{ info.spend }}">
                                     </div>
                                 </div>
                                 <div class="row formline">
-                                    {% if info.CPwdFlag == 1 %}
-                                        <label for="" class="col-xs-2 formline-label">此券需要输入密码：</label>
-                                        <div class="col-xs-3">
-                                            <input type="text" class="form-control" id="inputCPwd" name="inputCPwd">
-                                        </div>
-                                    {% else %}
-                                        <div class="col-xs-5">
-                                        </div>
-                                    {% endif %}
-                                    <label for="" class="col-xs-2 formline-label">花费：</label>
-                                    <div class="col-xs-3">
-                                        <input type="number" class="form-control" id="spend" name="spend"
-                                               value="{{ info.Value }}">
+                                    <div class="col-xs-5">
                                     </div>
                                     <div class="col-xs-1">
                                         <button type="button" class="btn btn-warning pull-right" id="btn_save">
