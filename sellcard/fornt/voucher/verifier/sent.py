@@ -31,6 +31,7 @@ def save(request):
             return HttpResponse(json.dumps(res))
 
         path = request.path
+        batch = request.POST.get('batch')
         start=request.POST.get('start')
         end=request.POST.get('end')
         subTotal=int(request.POST.get('subTotal'))
@@ -39,8 +40,9 @@ def save(request):
 
         try:
             with transaction.atomic():
-                updataNum = KfJobsCouponSn.objects.filter(sn__lte=end,sn__gte=start)\
-                    .update(request_name = person,request_shop = shop,request_date=datetime.datetime.now(),state=0)
+                l = KfJobsCouponSn.objects.filter(sn__lte=end,sn__gte=start,batch=batch,state=0)
+                updataNum = KfJobsCouponSn.objects.filter(sn__lte=end,sn__gte=start,batch=batch,state=0)\
+                    .update(request_name = person,request_shop = shop,request_date=datetime.datetime.now(),state=1)
 
                 if updataNum == subTotal:
                     res['msg'] = 1

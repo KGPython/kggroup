@@ -1,5 +1,5 @@
 {% extends 'common/baseForJobs.html' %}
-{% block title %}代金卷验证卡领取{% endblock %}
+{% block title %}代金卷验证码领取{% endblock %}
 {% block content %}
 <div id="content">
     <div id="content-header">
@@ -7,12 +7,12 @@
             <a data-original-title="Go to Home" href="#" title="" class="tip-bottom">
                 <span class="glyphicon glyphicon-home" aria-hidden="true"> </span> 首页
             </a>
-            <a href="#" class="current">领卡</a>
+            <a href="#" class="current">领券号</a>
         </div>
     </div>
     <div class="widget-box">
         <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
-            <h5>领卡管理</h5>
+            <h5>领券管理</h5>
 
         </div>
             <div class="widget-box">
@@ -20,6 +20,7 @@
 
                 <thead>
                     <tr>
+                        <th>批次号</th>
                         <th>起始流水号</th>
                         <th>结束流水号</th>
                         <th>小计</th>
@@ -27,6 +28,7 @@
                 </thead>
                 <tbody class="cardSent">
                     <tr>
+                        <td><input type='text' name="batch" class='form-control' id='batch'></td>
                         <td><input type='text' name="start" class='form-control start cardno'></td>
                         <td><input type='text' name="end"  class='form-control end cardno'></td>
                         <td><input type='text' name="subTotal"  class='form-control subTotal'></td>
@@ -66,7 +68,7 @@
         var end = parentTr.find('.end').val();
 
         if(parseInt(end)<parseInt(start)){
-            alert('起始卡号不能大于截至卡号');
+            alert('起始券号不能大于截至券号');
             return false;
         }
         if(parseInt(end)&&parseInt(start)){
@@ -77,23 +79,25 @@
     });
     //保存订单信息
     $('.btn-enter').click(function(){
-        //1、获得卡列表
+        //1、获得券列表
+        var batch = $('#batch').val();
         var start = $('.start').val();
         var end = $('.end').val();
         var subTotal = $('.subTotal').val();
-        if(!start || !end || !subTotal){
-            alert('请完善领卡列表后，再尝试提交');
+        if(!batch || !start || !end || !subTotal){
+            alert('请完善领券列表后，再尝试提交');
             return false;
         }
         //2、获取领取人信息
         var shop = $('#shop').val();
         var person = $('#person').val();
         if(!shop || !person){
-            alert('请完善领卡人员后，再尝试提交');
+            alert('请完善领券人员后，再尝试提交');
             return false;
         }
         var data = {
             csrfmiddlewaretoken: CSRF,
+            'batch':batch,
             'start':start,
             'end':end,
             'subTotal':subTotal,

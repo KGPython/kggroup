@@ -1,4 +1,4 @@
-from django.conf.urls import url
+from django.conf.urls import include,url
 urlpatterns = [
     #库存盘点--卡类型
     url(r'^report/stock/$', 'sellcard.report.stock.index',name="stock"),
@@ -23,5 +23,6 @@ urlpatterns = [
     #領卡单据盘点
     url('^report/cardSent/order/$','sellcard.report.cardSentGroupByOrder.index',name='sentCardGroupByOrder'),
     url('^report/cardSent/order/info/$','sellcard.report.cardSentGroupByOrder.info',name='cardSentOrderInfo'),
-
+    # 代金券分析
+    url('^report/', include('sellcard.report.voucher.urls'))
 ]

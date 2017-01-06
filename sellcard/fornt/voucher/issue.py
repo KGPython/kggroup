@@ -7,8 +7,7 @@ from django.shortcuts import render
 import datetime, pymssql, json
 from sellcard.common import Constants
 from sellcard.common import Method as mth
-from sellcard.models import KfJobsCoupon, KfJobsCouponGoodsDetail, KfJobsCouponBatch, KfJobsCouponSn
-
+from sellcard.models import KfJobsCoupon, KfJobsCouponGoodsDetail, KfJobsCouponSn
 
 @transaction.atomic
 def index(request):
@@ -144,7 +143,7 @@ def create(request):
                          u'  from KF_Jobs_Coupon_SN jcs ' \
                          u' where jcs.batch = "{batch}" ' \
                          u'   and jcs.request_shop = "{shop}" ' \
-                         u'   and jcs.state = 0 ' \
+                         u'   and jcs.state = 1 ' \
                          u'   and jcs.sn between "{sn_start}" and "{sn_end}"'.format(batch=sn_batch,
                                                                                      shop=shopCode,
                                                                                      sn_start=sn_start.zfill(6),
@@ -211,8 +210,8 @@ def create(request):
                 for var_vou in List:
                     KfJobsCouponSn.objects.filter(batch=sn_batch,
                                                   request_shop=shopCode,
-                                                  state=0,
-                                                  voucher=var_vou['voucher']).update(state=1,
+                                                  state=1,
+                                                  voucher=var_vou['voucher']).update(state=2,
                                                                                      coupon_code=coupon_code,
                                                                                      serial_id=serial_id)
                 msg = 1
