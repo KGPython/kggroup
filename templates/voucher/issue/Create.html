@@ -35,48 +35,45 @@
                             <input type="text" class="form-control" name="sn_batch" id="sn_batch"
                                    required value="{{ sn_batch }}">
                         </div>
-
                         <label for="" class="col-xs-1 formline-label">验证码号段开始：</label>
-                        <div class="col-xs-3">
+                        <div class="col-xs-1">
                             <input type="text" class="form-control" name="sn_start" id="sn_start"
                                    required value="{{ sn_start }}">
                         </div>
-
                         <label for="" class="col-xs-1 formline-label">验证码号段结束：</label>
-                        <div class="col-xs-3">
+                        <div class="col-xs-1">
                             <input type="text" class="form-control" name="sn_end" id="sn_end"
                                    required value="{{ sn_end }}">
                         </div>
+                        <label for="" class="col-xs-1 formline-label">付款方式：</label>
+                        <div class="col-xs-1">
+                            <select name="payment_type" id="payment_type" class="form-control" required>
+                                <option value="1">现金</option>
+                                <option value="3">汇款</option>
+                                <option value="4">赊销</option>
+                                <option value="5">POS机消费</option>
+                            </select>
+                        </div>
+                        <label for="" class="col-xs-1 formline-label">实收总金额：</label>
+                        <div class="col-xs-1">
+                            <input type="text" class="form-control" name="pay_account" id="pay_account"
+                                   required value="{{ pay_account }}">
+                        </div>
                     </div>
                     <div class="row formline">
-                        {#                        <label for="" class="col-xs-1 formline-label">发行张数：</label>#}
-                        {#                        <div class="col-xs-3">#}
-                        {#                            <input type="text" class="form-control" name="amount" id="amount"#}
-                        {#                                   required value="{{ amount }}">#}
-                        {#                        </div>#}
-
                         <label for="" class="col-xs-1 formline-label">券名称：</label>
                         <div class="col-xs-3">
                             <input type="text" class="form-control" name="couponname" id="couponname"
                                    required value="{{ couponname }}">
                         </div>
-
                         <label for="" class="col-xs-1 formline-label">类型：</label>
                         <div class="col-xs-3">
                             <select name="type" id="type" class="form-control" required>
-                                <option value="1">优惠券</option>
-                                <option value="2">购物券</option>
+                                <option value="1">换卡券</option>
+                                <option value="2">换物券</option>
+                                <option value="3">通用券</option>
                             </select>
                         </div>
-                    </div>
-                    <div class="row formline">
-
-                        <label for="" class="col-xs-1 formline-label">代金面值：</label>
-                        <div class="col-xs-3">
-                            <input type="text" class="form-control" name="costValue" id="costValue"
-                                   required value="{{ costValue }}">
-                        </div>
-
                         <label for="" class="col-xs-1 formline-label">截止日期：</label>
                         <div class="col-xs-3">
                             <div data-link-format="yyyy-mm-dd" data-link-field="dtp_input2"
@@ -90,11 +87,20 @@
                                         class="glyphicon glyphicon-calendar"></span></span>
                             </div>
                         </div>
-
+                    </div>
+                    <div class="row formline">
+                        <label for="" class="col-xs-1 formline-label">单张代金面值：</label>
+                        <div class="col-xs-3">
+                            <input type="text" class="form-control" name="costValue" id="costValue"
+                                   required value="{{ costValue }}">
+                        </div>
+                        <label for="" class="col-xs-1 formline-label">单张返点金额：</label>
+                        <div class="col-xs-3">
+                            <input type="text" class="form-control" name="discount" id="discount"
+                                   value="{{ discount }}">
+                        </div>
                         <label for="" class="col-xs-1 formline-label">使用范围</label>
                         <div class="col-xs-3">
-                            {#                            <input type="text" class="form-control" name="rangeremark" id="rangeremark"#}
-                            {#                                   required value="{{ rangeremark }}">#}
                             <div class="col-xs-10">
                                 <input type="radio" name="range" value="0" checked>全部
                                 <input type="radio" name="range" value="1">本店
@@ -104,35 +110,6 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row formline" style="display:none">
-                        <label for="" class="col-xs-1 formline-label">需要密码：</label>
-                        <div class="col-xs-1">
-                            <input type="radio" name="CPwdFlag" value="0" checked onchange="radiochange(0)">否
-                            <input type="radio" name="CPwdFlag" value="1" onchange="radiochange(1)">是
-                            <label id="l_CPwd" for="" class="formline-label" style="display:none">密码：</label>
-                        </div>
-
-                        <div class="col-xs-2">
-                            <input type="text" class="form-control" name="CPwd" id="CPwd"
-                                   value="{{ CPwd }}" style="display:none">
-                        </div>
-                        <label for="" class="col-xs-1 formline-label">优惠金额：</label>
-                        <div class="col-xs-3">
-                            <input type="text" class="form-control" name="giftValue" id="giftValue"
-                                   value="{{ giftValue }}">
-                        </div>
-                        <label for="" class="col-xs-1 formline-label">折扣：</label>
-                        <div class="col-xs-3">
-                            <input type="text" class="form-control" name="discount" id="discount"
-                                   value="{{ discount }}">
-                        </div>
-                        <label for="" class="col-xs-1 formline-label">最大使用次数：</label>
-                        <div class="col-xs-3">
-                            <input type="text" class="form-control" name="maxUseTime" id="maxUseTime"
-                                   required value="{{ maxUseTime }}">
-                        </div>
-                    </div>
-
                     <div class="row formline" id="chooseGoods">
                         <div class="col-xs-5">
                             <div class="widget-box">
@@ -143,7 +120,6 @@
                                             <input type="text" class="form-control"
                                                    value="{{ goodname }}" id="goodname" name="goodname">
                                         </div>
-
                                         <label for="" class="col-xs-2 formline-label">商品编号：</label>
                                         <div class="col-xs-3">
                                             <input type="text" class="form-control"
@@ -179,21 +155,18 @@
                         <div class="col-xs-7">
                             <div class="widget-box">
                                 <div class="widget-content nopadding" style="overflow: hidden">
-
                                     <div class="row formline">
                                         <h4 for="" class="col-xs-10 formline">允许兑换的商品列表：</h4>
                                         <div class="col-xs-2">
                                             <button type="button" class="btn btn-danger clear-btn">清空</button>
                                         </div>
                                     </div>
-
                                     <div class="row formline">
                                         <label for="" class="col-xs-2 formline-label">商品名：</label>
                                         <div class="col-xs-3">
                                             <input type="text" class="form-control"
                                                    id="v_name" name="v_name">
                                         </div>
-
                                         <label for="" class="col-xs-2 formline-label">商品编号：</label>
                                         <div class="col-xs-3">
                                             <input type="text" class="form-control"
@@ -252,29 +225,20 @@
 </script>
 <!--绑定控件值-->
 <script>
+    $("#payment_type").val({{ payment_type }});
     $("#type").val({{ type }});
     $("#buttonvalue").val();
-    {#    if ($("#type").val() == 3) {#}
-    {#        $('#chooseGoods').show();#}
-    {#    }#}
-    {#    else {#}
-    {#        $('#chooseGoods').hide();#}
-    {#    }#}
-    $("input[name='CPwdFlag'][value={{ CPwdFlag }}]").attr("checked", true);
-    if ('{{ CPwdFlag }}' == '1') {
-        $('#l_CPwd,#CPwd').show();
-    }
-    else {
-        $('#l_CPwd,#CPwd').hide();
-    }
     $("input[name='range'][value={{ range }}]").attr("checked", true);
 </script>
 <!--保存成功跳回列表-->
 <script type="text/javascript">
     var msg = "{{ msg }}";
     if (msg == '1') {
-        alert('数据提交成功');
+        alert('数据提交成功，共记录了{{ len_list }}张代金券');
         window.location.href = "{% url 'voucherIssueList' %}";
+    }
+    if (msg == '2') {
+        alert('输入券号区间查无可用券号');
     }
 </script>
 <!--保存按钮点击事件-->
@@ -282,7 +246,6 @@
     $('.save-btn').click(function () {
         $(this).attr("disabled", true);
         $('#buttonvalue').val(1);
-
         var row = [];
         $(".chooseGoodList tr").each(function () {
             var item = {};
@@ -292,12 +255,6 @@
             row.push(item);
         });
         $('#chooseList').val(JSON.stringify(row));
-
-        {#        var amount = $('#amount').val();#}
-        {#        if (amount == 0) {#}
-        {#            alert('数量不能为零');#}
-        {#            return false;#}
-        {#        }#}
         $("#Form").submit();
     });
 </script>
@@ -310,28 +267,6 @@
         var row = '<tr><td>' + v_name + '</td><td>' + v_code + "</td><td><input type='text' class='form-control'></td></tr>";
         tbody.append(row);
     });
-</script>
-<!--代金券类型改变触发事件-->
-{#<script type="text/javascript">#}
-{#    $("#type").change(function () {#}
-{#        if ($(this).val() == 3) {#}
-{#            $('#chooseGoods').show();#}
-{#        }#}
-{#        else {#}
-{#            $('#chooseGoods').hide();#}
-{#        }#}
-{#    });#}
-{#</script>#}
-<!--是否需要密码改变事件-->
-<script type="text/javascript">
-    function radiochange(val) {
-        if (val == 1) {
-            $('#l_CPwd,#CPwd').show();
-        }
-        else {
-            $('#l_CPwd,#CPwd').hide();
-        }
-    }
 </script>
 <!--查询按钮点击事件-->
 <script type="text/javascript">
