@@ -12,17 +12,20 @@
 {% include 'common/head.html' %}
 <style>
     table a {
-        text-decoration: underline
+        text-decoration: underline;
+        color: #000;
     }
+    table a:hover{color: #FF0000}
 
     table th, table td {
-        text-align: center
+        text-align: center;
+        color: #000
     }
     .saleCol{background-color: #46b8da;}
-    .totalRow td{background-color: #d58512;color: #000}
+    .totalRow td{background-color: #d58512;}
     .discCol{background-color:#c1e2b3}
-    .discTypeTotal{background-color: #8a6d3b;color: #000}
-    .discTotal,.saleTotal{background-color: #23527c;color: #000}
+    .discTypeTotal{background-color: #8a6d3b;}
+    .discTotal,.saleTotal{background-color: #23527c;}
 </style>
 <!--containt-part-->
 <div id="content">
@@ -86,13 +89,13 @@
                             <tr>
                                 <th rowspan="3">门店名称</th>
                                 <th colspan="8">优惠部分</th>
-                                <th colspan="12">优惠部分</th>
+                                <th colspan="12">销售部分</th>
                                 <th rowspan="3">销售占比</th>
                             </tr>
                             <tr valign="middle">
                                 <th colspan="6">优惠返现</th>
-                                <th rowspan="2">优惠返卡</th>
-                                <th rowspan="2">优惠合计</th>
+                                <th rowspan="2">优惠<br>返卡</th>
+                                <th rowspan="2">优惠<br>合计</th>
 
 
                                 <th rowspan="2">现金</th>
@@ -104,9 +107,9 @@
                                 <th rowspan="2">美团</th>
                                 <th rowspan="2">糯米</th>
                                 <th rowspan="2">黄金手</th>
-                                <th rowspan="2">慧购线上</th>
-                                <th rowspan="2">慧购线下</th>
-                                <th rowspan="2">销售合计</th>
+                                <th rowspan="2">慧购<br>线上</th>
+                                <th rowspan="2">慧购<br>线下</th>
+                                <th rowspan="2">销售<br>合计</th>
                             </tr>
                             <tr>
                                 <th>移动</th>
@@ -133,7 +136,7 @@
 
                                     <td class="saleCol">{{ row.pay_1 | floatformat:2 | default:0 }}</td>
                                     <td class="saleCol">
-                                        <a href="{% url 'saleGroupByShopDet' %}?shop_code={{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=3">
+                                        <a href="{% url 'saleGroupByShopDet' %}?shop_code={{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=2">
                                             {{ row.pay_2 | floatformat:2 | default:0 }}
                                         </a>
                                     </td>
