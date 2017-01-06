@@ -91,6 +91,8 @@ def create(request):
         sn_end = mth.getReqVal(request, 'sn_end', '')
         couponname = mth.getReqVal(request, 'couponname', '')
         pay_account = mth.getReqVal(request, 'pay_account', '')
+        if (pay_account is None or pay_account == ''):
+            pay_account = 0
         payment_type = mth.getReqVal(request, 'payment_type', '')
         type = mth.getReqVal(request, 'type', '')
         chooseList = mth.getReqVal(request, 'chooseList', '')
@@ -156,10 +158,6 @@ def create(request):
             len_list = len(List)
 
             if len_list != 0:
-                # 插入卡券批次表
-                # KfJobsCouponBatch.objects.create(batch=batch,
-                #                                  shopid=shopCode,
-                #                                  createdate=today)
                 # 插入卡券批次表
                 KfJobsCoupon.objects.create(coupon_code=coupon_code,
                                             coupon_name=couponname,

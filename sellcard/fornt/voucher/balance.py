@@ -21,7 +21,7 @@ def index(request):
                                                    ).filter(voucher=voucherSn)
             if data_info is None:
                 msg = 1
-            elif data_info[0]['state'] != 1:
+            elif data_info[0]['state'] != 2:
                 msg = 1
             elif data_info[0]['used_flag'] == 1:
                 msg = 2
@@ -62,6 +62,16 @@ def index(request):
                                                                     used_name=name,
                                                                     used_date=datetime.datetime.now())
             msg = 5
+        if  mth.getReqVal(request, 'btn_value', '') == 'old':
+            info = getInfo(voucherSn)
+            if info is None:
+                msg = 1
+            elif info['ClearFlag'] != 0:
+                msg = 2
+            elif info['end_date'] < datetime.datetime.now():
+                msg = 3
+            else:
+                msg = 4
     return render(request, 'voucher/balance/index.html', locals())
 
 

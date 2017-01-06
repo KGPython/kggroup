@@ -35,6 +35,9 @@
                         <div class="col-xs-1">
                             <button type="button" class="btn btn-success pull-right" id="btn_query">查询</button>
                         </div>
+                        <div class="col-xs-1">
+                            <button type="button" class="btn btn-success pull-right" id="btn_old">旧券查询</button>
+                        </div>
                     </div>
                     <div class="row formline" id="vouInfo" style="display:none">
                         <div class="widget-box">
@@ -136,19 +139,19 @@
         $('#btn_value').val('query');
         $('#form').submit();
     });
-    $('#btn_save').click(function () {
-        {#        if ('{{ info.CPwd }}' != '' && $('#inputCPwd').val() != '{{ info.CPwd }}') {#}
-        {#            alert('输入的密码有误！');#}
-        {#        }#}
-        {#        else {#}
-        var spend = $('#spend').val();
-        if (!spend) {
-            alert('花费请输入数值');
+    $('#btn_old').click(function () {
+        var voucherSn = $('#voucherSn').val();
+        if (!voucherSn) {
+            alert('请输入券号');
             return false;
         }
+
+        $('#btn_value').val('old');
+        $('#form').submit();
+    });
+    $('#btn_save').click(function () {
         $('#btn_value').val('save');
         $('#form').submit();
-        {#        }#}
     });
     $('#btn_close').click(function () {
         window.location("{% url 'voucherBalance' %}");
