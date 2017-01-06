@@ -76,4 +76,4 @@ def index(request):
     cur.execute(sqlInfo)
     dataInfo =cur.fetchall()
 
-    return render(request, 'report/saleGroupByCardType.html', locals())
+    return render(request, 'report/card/saleGroupByCardType.html', locals())

@@ -11,5 +11,5 @@ urlpatterns = [
     #卡操作（售/换/借/补/领/入库等）
     url('^sellcard/',include('sellcard.fornt.urls')),
     #报表相关
-    url('^sellcard/',include('sellcard.report.urls'))
+    url('^sellcard/', include('sellcard.report.urls'))
 ]

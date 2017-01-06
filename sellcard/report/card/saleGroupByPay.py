@@ -43,4 +43,4 @@ def index(request):
         payTotal = 0.00
         for row in payList:
             payTotal += float(row['pay_value'])
-    return render(request, 'report/saleGroupByPay.html', locals())
+    return render(request, 'report/card/saleGroupByPay.html', locals())

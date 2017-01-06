@@ -36,7 +36,7 @@ def index(request):
         if name:
             user = AdminUser.objects.values('id').filter(name=name)
             if not user:
-                return render(request, 'report/saleGroupByOrder.html', locals())
+                return render(request, 'report/card/saleGroupByOrder.html', locals())
             else:
                 operator = user[0]['id']
 
@@ -47,7 +47,7 @@ def index(request):
         if name:
             user = AdminUser.objects.values('id').filter(name=name)
             if not user:
-                return render(request, 'report/saleGroupByOrder.html', locals())
+                return render(request, 'report/card/saleGroupByOrder.html', locals())
             else:
                 operator = user[0]['id']
 
@@ -99,5 +99,5 @@ def index(request):
         resList = paginator.page(page)
     except Exception as e:
         print(e)
-    return  render(request, 'report/saleGroupByOrder.html', locals())
+    return  render(request, 'report/card/saleGroupByOrder.html', locals())
 
