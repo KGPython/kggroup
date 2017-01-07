@@ -5,34 +5,34 @@ urlpatterns = [
 
     # 发行代金券
     # 列表
-    url(r'^voucher/issue/$', 'sellcard.fornt.voucher.issue.index', name="voucherIssueList"),
+    url(r'^issue/$', 'sellcard.fornt.voucher.issue.index', name="voucherIssueList"),
     # 创建
-    url(r'^voucher/issue/create/$',
+    url(r'^issue/create/$',
         'sellcard.fornt.voucher.issue.create', name="voucherIssueCreate"),
     # 打印
-    url(r'^voucher/issue/printed/$',
+    url(r'^issue/printed/$',
         'sellcard.fornt.voucher.issue.printed', name="voucherIssuePrint"),
     # 核销代金券
     # 主页
-    url(r'^voucher/balance/$', 'sellcard.fornt.voucher.balance.index', name="voucherBalance"),
+    url(r'^balance/$', 'sellcard.fornt.voucher.balance.index', name="voucherBalance"),
 
 
     #验证码发放
-    url(r'^voucher/verifier/sent/$', 'sellcard.fornt.voucher.verifier.sent.index', name="verifierSent"),
-    url(r'^voucher/verifier/sent/save/$', 'sellcard.fornt.voucher.verifier.sent.save', name="verifierSentSave"),
+    url(r'^verifier/sent/$', 'sellcard.fornt.voucher.verifier.sent.index', name="verifierSent"),
+    url(r'^verifier/sent/save/$', 'sellcard.fornt.voucher.verifier.sent.save', name="verifierSentSave"),
 
 
     # 生成验证码
-    url(r'^voucher/verifier/create/$', 'sellcard.fornt.voucher.verifier.create.index', name="voucherVerifierCreate"),
+    url(r'^verifier/create/$', 'sellcard.fornt.voucher.verifier.create.index', name="voucherVerifierCreate"),
     # 检验券真伪
-    url(r'^voucher/verifier/verifier/$', 'sellcard.fornt.voucher.verifier.verifier.index', name="voucherVerifier"),
+    url(r'^verifier/verifier/$', 'sellcard.fornt.voucher.verifier.verifier.index', name="voucherVerifier"),
 
     # 赊销代金券
     #列表
-    url(r'^voucher/credit/$', 'sellcard.fornt.voucher.credit.index', name="voucherCredit"),
+    url(r'^credit/$', 'sellcard.fornt.voucher.credit.index', name="voucherCredit"),
     #赊销操作Get
-    url(r'^voucher/credit/create/$', 'sellcard.fornt.voucher.credit.create', name="voucherCreditCreate"),
+    url(r'^credit/create/$', 'sellcard.fornt.voucher.credit.create', name="voucherCreditCreate"),
     #赊销操作Post
-    url(r'^voucher/credit/create/save/$', 'sellcard.fornt.voucher.credit.createSave', name="voucherCreditCreateSave"),
+    url(r'^credit/create/save/$', 'sellcard.fornt.voucher.credit.createSave', name="voucherCreditCreateSave"),
 
 ]
