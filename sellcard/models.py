@@ -226,6 +226,7 @@ class KfJobsCoupon(models.Model):
     range = models.CharField(max_length=255)
     payment_type = models.IntegerField()
     pay_account = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    credit_account = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     discount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     amount = models.IntegerField()
     print_amount = models.IntegerField(blank=True, null=True)
@@ -248,6 +249,19 @@ class KfJobsCouponBatch(models.Model):
     class Meta:
         managed = False
         db_table = 'kf_jobs_coupon_batch'
+
+
+class KfJobsCouponCredit(models.Model):
+    coupon_code = models.CharField(max_length=255, blank=True, null=True)
+    payment_type = models.IntegerField(blank=True, null=True)
+    pay_account = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    create_uesr_id = models.IntegerField(blank=True, null=True)
+    create_user_name = models.CharField(max_length=255, blank=True, null=True)
+    create_date = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'kf_jobs_coupon_credit'
 
 
 class KfJobsCouponGoodsDetail(models.Model):

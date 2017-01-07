@@ -1,6 +1,6 @@
 #-*- coding:utf-8 -*-
 from django.shortcuts import render
-from django.db.models import Count
+from django.db.models import Count,Sum
 from django.core.paginator import Paginator #分页查询
 import datetime, pymssql
 from sellcard.common import Constants
@@ -9,11 +9,10 @@ from sellcard.models import Shops,KfJobsCoupon,KfJobsCouponSn
 
 def index(request):
     """
-       发行代金券列表controllers
+       代金券库存盘点列表controllers
        :param request:
        :return:列表view
     """
-    #
     shop = request.session.get('s_shopcode')
     role = request.session.get('s_roleid')
     shops = Shops.objects.values('shop_code','shop_name','city').order_by('shop_code')

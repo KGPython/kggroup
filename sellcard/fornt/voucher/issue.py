@@ -154,6 +154,8 @@ def create(request):
             cur = conn.cursor()
             cur.execute(sqlVoucher)
             List = cur.fetchall()
+            cur.close()
+            conn.close()
 
             len_list = len(List)
 
@@ -247,12 +249,12 @@ def printed(request):
 
     good_len = len(GoodList)
     tnop = 1 # The number of pages 每页显示个数
-    if good_len <= 3:
-        tnop = 12
-    elif good_len>3 and good_len<=6:
+    if good_len <= 4:
         tnop = 10
-    else:
+    elif good_len>4 and good_len<=8:
         tnop = 8
+    else:
+        tnop = 6
     range_tnop = range(tnop)
     page_count = range(counts // tnop + (0 if counts % tnop == 0 else 1))
 

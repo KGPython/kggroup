@@ -46,11 +46,14 @@
         margin-bottom: 4mm;
         margin-left: 4mm;
         margin-right: 4mm;
+        padding-top: 4mm;
+        padding-bottom: 4mm;
         width: 95mm;
         float: left;
     }
 
     .v_print .v_title {
+        height: 15mm;
         font-size: 18px;
     }
 
@@ -58,7 +61,7 @@
         margin-left: 8mm;
         margin-right: 8mm;
         width: 79mm;
-        height: 26mm;
+        height: 30mm;
         font-size: 12px;
     }
 
@@ -67,7 +70,7 @@
     }
 
     .v_print .v_foot {
-        margin-bottom: 1px;
+        height: 15mm;
     }
 </style>
 <!--containt-part-->
@@ -109,7 +112,7 @@
                             </tr>
                         </table>
                         <label class="v_foot"
-                               style=" font-size:8px">本券不找零，不兑换，请于{{ resList.end_date }}前使用
+                               style=" font-size:10px">本券不找零，不兑换，请于{{ resList.end_date }}前使用
                             <br/>逾期作废，丢失不补，盖章有效
                         </label>
                     </div>
