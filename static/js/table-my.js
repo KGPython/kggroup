@@ -1102,7 +1102,7 @@ $(document).on('blur','.payList tr',function(){
                 else if(payId == 7 || payId == 8 || payId == 10){
                     changeDiscValByPayment(cardSaleTotalVal,0.02)
                 }
-                else if(payId == 11){
+                else if(payId == 11 ){
                     changeDiscValByPayment2(cardSaleTotalVal,0.02)
                 }
                 else {

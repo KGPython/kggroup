@@ -4,9 +4,12 @@ from django.shortcuts import render
 from django.db.models import Sum
 import datetime
 
-from sellcard.models import OrderUpCard
+from sellcard.models import OrderUpCard,Payment
 from sellcard.common import Method as mth
 from sellcard import views as base
+
+
+
 def index(request):
     shop = request.session.get('s_shopcode','')
     role_id = request.session.get('s_roleid')
@@ -75,15 +78,19 @@ def index(request):
     cur.execute(changePayGroupByShop)
     changePayList = cur.fetchall()
 
-
-    totalDict  = {'discTotal':0,'discCashTotal':0,'discCardTotal':0,'inSubTotal':0,'total_1':0,'total_2':0,'total_3':0,
+    paymentsRate = Payment.objects.values('id', 'dis_rate').filter(dis_rate__gte=0)
+    paymentsRateDict = {item['id']: float(item['dis_rate']) for item in paymentsRate}
+    totalDict  = {'discTotal':0,
+                  'discCashTotal':0,'total_disc_6':0,'total_disc_7':0,'total_disc_8':0,'total_disc_10':0,'total_disc_11':0,'total_disc_qita':0,'discCardTotal':0,
+                  'inSubTotal':0,'total_1':0,'total_2':0,'total_3':0,
                   'total_4':0,'total_5':0,'total_6':0,'total_7':0,'total_8':0,'total_9':0,'total_10':0,'total_11':0,}
 
     dataList = []
     for i in range(0,len(shops)):
         if shops[i]['shop_code'] != 'ZBTG':
-            item = {'shop_code':'','disc':0,'disc_cash':0,'disc_card':0,'inSub':0,'pay_1':0,'pay_2':0,'pay_3':0,
-                    'pay_4':0,'pay_5':0,'pay_6':0,'pay_7':0,'pay_8':0,'pay_9':0,'pay_10':0,'pay_11':0,}
+            item = {'shop_code':'',
+                    'disc':0,'disc_6':0,'disc_7':0,'disc_8':0,'disc_10':0,'disc_11':0,'disc_cash':0,'disc_card':0,
+                    'inSub':0,'pay_1':0,'pay_2':0,'pay_3':0, 'pay_4':0,'pay_5':0,'pay_6':0,'pay_7':0,'pay_8':0,'pay_9':0,'pay_10':0,'pay_11':0,}
             item['shop_code'] = shops[i]['shop_code']
             for sale in salePayList:
                 if sale['shop_code']==item['shop_code']:
@@ -102,16 +109,21 @@ def index(request):
                         item['pay_5'] += float(sale['pay_value'])
                     if sale['pay_id'] == 6:
                         item['pay_6'] += float(sale['pay_value'])
+                        item['disc_6'] += float(sale['pay_value'])*paymentsRateDict[6]
                     if sale['pay_id'] == 7:
                         item['pay_7'] += float(sale['pay_value'])
+                        item['disc_7'] += float(sale['pay_value']) * paymentsRateDict[7]
                     if sale['pay_id'] == 8:
                         item['pay_8'] += float(sale['pay_value'])
+                        item['disc_8'] += float(sale['pay_value']) * paymentsRateDict[8]
                     if sale['pay_id'] == 9:
                         item['pay_9'] += float(sale['pay_value'])
                     if sale['pay_id'] == 10:
                         item['pay_10'] += float(sale['pay_value'])
+                        item['disc_10'] += float(sale['pay_value']) * paymentsRateDict[10]
                     if sale['pay_id'] == 11:
                         item['pay_11'] += float(sale['pay_value'])
+                        item['disc_11'] += float(sale['pay_value']) * paymentsRateDict[11]
 
                     item['inSub'] += float(sale['pay_value'])
 
@@ -177,6 +189,11 @@ def index(request):
 
             totalDict['discTotal'] += item['disc']
             totalDict['discCashTotal'] += item['disc_cash']
+            totalDict['total_disc_6'] += item['disc_6']
+            totalDict['total_disc_7'] += item['disc_7']
+            totalDict['total_disc_8'] += item['disc_8']
+            totalDict['total_disc_10'] += item['disc_10']
+            totalDict['total_disc_11'] += item['disc_11']
             totalDict['discCardTotal'] += item['disc_card']
             totalDict['inSubTotal'] += item['inSub']
             totalDict['total_1'] += item['pay_1']
@@ -192,7 +209,10 @@ def index(request):
             totalDict['total_11'] += item['pay_11']
 
             dataList.append(item)
-    return render(request, 'report/saleGroupByShop.html', locals())
+    totalDict['total_disc_qita'] = totalDict['discCashTotal']-totalDict['total_disc_6']-totalDict['total_disc_7']\
+                                   -totalDict['total_disc_8']-totalDict['total_disc_10']-totalDict['total_disc_11']
+
+    return render(request, 'report/card/saleGroupByShop/saleGroupByShop.html', locals())
 
 
 def detail(request):
@@ -206,11 +226,11 @@ def detail(request):
     if role_id == '9':
         shopsCode = mth.getCityShopsCode('T')
         if shop_code not in shopsCode:
-            return render(request,'500.html',locals())
+            return render(request, '500.html', locals())
     if role_id == '8':
         shopsCode = mth.getCityShopsCode('C')
         if shop_code not in shopsCode:
-            return render(request,'500.html',locals())
+            return render(request, '500.html', locals())
     if role_id == '10' or role_id == '2':
         if shop != shop_code:
             return render(request, '500.html', locals())
@@ -328,4 +348,4 @@ def detail(request):
 
     except Exception as e:
         print(e)
-    return render(request, 'report/saleGroupByShop/Detail.html', locals())
+    return render(request, 'report/card/saleGroupByShop/Detail.html', locals())

@@ -27,7 +27,7 @@ def index(request):
         cur.execute(sqlOrder)
         orders = cur.fetchall()
 
-    return render(request, 'report/sentCardGroupByOrder.html', locals())
+    return render(request, 'report/card/sentCardGroupByOrder.html', locals())
 
 def info(request):
     order_sn = request.GET.get('order_sn')
@@ -39,4 +39,4 @@ def info(request):
     for recInfo in recInfoList:
         totalNum += int(recInfo['card_nums'])
 
-    return render(request, 'report/cardSentOrderInfo.html', locals())
+    return render(request, 'report/card/cardSentOrderInfo.html', locals())

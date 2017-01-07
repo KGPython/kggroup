@@ -37,7 +37,7 @@ def index(request):
     for row in cardList:
         totalBalance += float(row['balance'])
         totalNum +=row['num']
-    return render(request, 'report/stock.html', locals())
+    return render(request, 'report/card/stock/stock.html', locals())
 
 def cardType(request):
     shopCode = request.GET.get('shopcode','')
@@ -51,7 +51,7 @@ def cardType(request):
     for row in cardList:
         totalBalance += float(row['balance'])
         totalNum +=row['num']
-    return render(request, 'report/stockGroupByCardType.html', locals())
+    return render(request, 'report/card/stockGroupByCardType.html', locals())
 
 
 def cardInfo(request):
@@ -75,4 +75,4 @@ def cardInfo(request):
     except Exception as e:
         print(e)
 
-    return render(request, 'report/stockGroupByCardNo.html', locals())
+    return render(request, 'report/card/stock/stockGroupByCardNo.html', locals())

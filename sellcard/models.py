@@ -646,7 +646,7 @@ class Orders(models.Model):
 class Payment(models.Model):
     payment_name = models.CharField(max_length=60)
     flag = models.CharField(max_length=255)
-
+    dis_rate = models.DecimalField(max_digits=5, decimal_places=3, blank=True, null=True)
     class Meta:
         managed = False
         db_table = 'payment'

@@ -75,15 +75,21 @@ class KfJobsCouponGoodsDetail(models.Model):
 
 
 class KfJobsCouponSn(models.Model):
-    id = models.IntegerField(primary_key=True)
     sn = models.CharField(max_length=6)
     batch = models.CharField(max_length=3)
     voucher = models.CharField(max_length=13)
     salt = models.CharField(max_length=16)
-    result = models.CharField(max_length=16)
+    result = models.CharField(max_length=32)
     request_shop = models.CharField(max_length=255, blank=True, null=True)
     request_name = models.CharField(max_length=255, blank=True, null=True)
     request_date = models.DateTimeField(blank=True, null=True)
+    state = models.IntegerField(blank=True, null=True)
+    coupon_code = models.CharField(max_length=255, blank=True, null=True)
+    serial_id = models.CharField(max_length=20, blank=True, null=True)
+    used_flag = models.IntegerField(blank=True, null=True)
+    used_shop = models.CharField(max_length=255, blank=True, null=True)
+    used_name = models.CharField(max_length=255, blank=True, null=True)
+    used_date = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -226,6 +232,28 @@ class CardType(models.Model):
         db_table = 'card_type'
 
 
+class CashierList(models.Model):
+    username = models.CharField(max_length=32)
+    password = models.CharField(max_length=64)
+    name = models.CharField(max_length=255, blank=True, null=True)
+    shop_code = models.CharField(max_length=4, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'cashier_list'
+
+
+class CashierLog(models.Model):
+    uid = models.CharField(max_length=3, blank=True, null=True)
+    cardno = models.CharField(max_length=255, blank=True, null=True)
+    addtime = models.DateTimeField(blank=True, null=True)
+    time = models.CharField(max_length=255, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'cashier_log'
+
+
 class Departs(models.Model):
     depart_id = models.CharField(max_length=10)
     depart_name = models.CharField(max_length=45)
@@ -292,6 +320,32 @@ class ExchangeCode(models.Model):
         db_table = 'exchange_code'
 
 
+class KfJobsCouponNew(models.Model):
+    coupon_code = models.CharField(max_length=255)
+    coupon_name = models.CharField(max_length=255)
+    batch = models.IntegerField()
+    shop_code = models.CharField(max_length=255)
+    type = models.IntegerField()
+    values = models.DecimalField(max_digits=10, decimal_places=2)
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField(blank=True, null=True)
+    range = models.CharField(max_length=255)
+    payment_type = models.IntegerField()
+    pay_account = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    discount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    amount = models.IntegerField()
+    print_amount = models.IntegerField(blank=True, null=True)
+    state = models.IntegerField(blank=True, null=True)
+    remark = models.CharField(max_length=400, blank=True, null=True)
+    create_uesr_id = models.IntegerField(blank=True, null=True)
+    create_user_name = models.CharField(max_length=255, blank=True, null=True)
+    create_date = models.CharField(max_length=8, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'kf_jobs_coupon_new'
+
+
 class NavList(models.Model):
     nav_id = models.CharField(max_length=32)
     nav_name = models.CharField(max_length=45)
@@ -304,6 +358,16 @@ class NavList(models.Model):
     class Meta:
         managed = False
         db_table = 'nav_list'
+
+
+class OldCard10(models.Model):
+    card_no = models.CharField(primary_key=True, max_length=255)
+    sheetid = models.CharField(max_length=255, blank=True, null=True)
+    detail = models.CharField(max_length=12, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'old_card_10'
 
 
 class OldCard89(models.Model):
@@ -448,6 +512,19 @@ class OrderBorrowInfo(models.Model):
         db_table = 'order_borrow_info'
 
 
+class OrderBorrowInfoCopy(models.Model):
+    order_sn = models.CharField(max_length=20, blank=True, null=True)
+    card_no = models.CharField(max_length=20, blank=True, null=True)
+    card_type = models.CharField(max_length=12, blank=True, null=True)
+    card_balance = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
+    is_back = models.CharField(max_length=1, blank=True, null=True)
+    back_time = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'order_borrow_info_copy'
+
+
 class OrderChangeCard(models.Model):
     order_sn = models.CharField(max_length=20)
     operator_id = models.SmallIntegerField()
@@ -585,6 +662,7 @@ class Orders(models.Model):
 class Payment(models.Model):
     payment_name = models.CharField(max_length=60)
     flag = models.CharField(max_length=255)
+    dis_rate = models.DecimalField(max_digits=5, decimal_places=3, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -642,3 +720,11 @@ class Shops(models.Model):
     class Meta:
         managed = False
         db_table = 'shops'
+
+
+class Temp(models.Model):
+    card_id = models.CharField(max_length=32, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'temp'

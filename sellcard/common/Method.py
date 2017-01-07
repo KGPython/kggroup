@@ -339,7 +339,7 @@ def orderDetail(request):
                 cardsInNum += 1
             if num['card_attr'] == '0':
                 cardsOutNum += 1
-    return render(request, 'report/orderDetail.html', locals())
+    return render(request, 'report/card/orderDetail.html', locals())
 
 def getCityShops(city=None):
     kwargs = {}
