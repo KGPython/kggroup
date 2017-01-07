@@ -1,9 +1,8 @@
 #-*- coding:utf-8 -*-
+__author__ = 'qixu'
 from django.shortcuts import render
-from django.db.models import Sum,Count
 import datetime
-from array import array
-from sellcard.models import Shops,KfJobsCoupon
+from sellcard.models import Shops
 from sellcard.common import Method as mth
 
 def index(request):

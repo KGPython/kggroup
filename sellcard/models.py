@@ -235,6 +235,8 @@ class KfJobsCoupon(models.Model):
     create_uesr_id = models.IntegerField(blank=True, null=True)
     create_user_name = models.CharField(max_length=255, blank=True, null=True)
     create_date = models.CharField(max_length=8, blank=True, null=True)
+    start_sn = models.CharField(max_length=255, blank=True, null=True)
+    end_sn = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         managed = False

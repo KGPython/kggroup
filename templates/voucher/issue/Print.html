@@ -46,14 +46,13 @@
         margin-bottom: 4mm;
         margin-left: 4mm;
         margin-right: 4mm;
-        padding-top: 4mm;
-        padding-bottom: 4mm;
+        padding-top: 2mm;
+        padding-bottom: 2mm;
         width: 95mm;
         float: left;
     }
 
     .v_print .v_title {
-        height: 15mm;
         font-size: 18px;
     }
 
@@ -70,7 +69,7 @@
     }
 
     .v_print .v_foot {
-        height: 15mm;
+        height: 1mm;
     }
 </style>
 <!--containt-part-->
@@ -82,6 +81,8 @@
                 {% if var_i|multiply:tnop|add:var_j < counts %}
                     <div class="v_print" style="text-align:center">
                         <label class="v_title">宽广超市{{ resList.coupon_name }}</label>
+                    <br/>
+                        <label style=" font-size:10px">NO.{{ resList.start_sn }}--NO.{{ resList.end_sn }}</label>
                         <table class="v_tb">
                             <tr class="v_tr">
                                 <th colspan="2">
@@ -112,7 +113,7 @@
                             </tr>
                         </table>
                         <label class="v_foot"
-                               style=" font-size:10px">本券不找零，不兑换，请于{{ resList.end_date }}前使用
+                               style=" font-size:8px">本券不找零，不兑换，请于{{ resList.end_date }}前使用
                             <br/>逾期作废，丢失不补，盖章有效
                         </label>
                     </div>

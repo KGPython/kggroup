@@ -1,3 +1,4 @@
+__author__ = 'qixu'
 from django.conf.urls import url
 urlpatterns = [
     #代金券销售汇总（财务用）

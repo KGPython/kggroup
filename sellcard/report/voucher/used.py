@@ -1,4 +1,5 @@
 #-*- coding:utf-8 -*-
+__author__ = 'qixu'
 from django.shortcuts import render
 from django.db.models import Sum,Count
 from django.core.paginator import Paginator #分页查询

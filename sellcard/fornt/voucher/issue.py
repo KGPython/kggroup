@@ -172,6 +172,7 @@ def create(request):
                                             range=rangeremark,
                                             payment_type=payment_type,
                                             pay_account=pay_account,
+                                            credit_account=0,
                                             discount=discount,
                                             amount=len_list,
                                             print_amount=0,
@@ -179,7 +180,9 @@ def create(request):
                                             remark='',
                                             create_uesr_id=user,
                                             create_user_name=name,
-                                            create_date=today)
+                                            create_date=today,
+                                            start_sn=sn_start.zfill(6),
+                                            end_sn=sn_end.zfill(6))
 
                 # 插入卡券商品明细表
                 for var_good in chooseList:
@@ -239,7 +242,7 @@ def printed(request):
 
     resList = KfJobsCoupon.objects.values(
             'shop_code', 'coupon_name', 'type', 'start_date', 'end_date', 'range', 'print_amount',
-            'values', 'batch', 'coupon_code').filter(coupon_code=coupon_code)
+            'values', 'batch', 'coupon_code', 'start_sn', 'end_sn').filter(coupon_code=coupon_code)
     resList = resList[0]
     print_amount = resList['print_amount'] + counts
     KfJobsCoupon.objects.filter(coupon_code=coupon_code).update(print_amount=print_amount)

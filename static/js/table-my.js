@@ -746,7 +746,7 @@ function doAjaxSave(url,data){
         success:function(data){
             $("#btn-enter").removeAttr('disabled');
             if(data.msg==1){
-                alert('订单提交成功');
+                alert('提交成功');
                 // $('input[type=text]').not('.payName').val('');
                 // $('input[type=checkbox]').prop('checked',false);
                 window.location.reload(true);
@@ -757,13 +757,13 @@ function doAjaxSave(url,data){
                 if(data.msg_err){
                     alert(data.msg_err);
                 }else{
-                    alert('订单提交失败');
+                    alert('提交失败');
                 }
             }
         },
         error:function(XMLHttpRequest, textStatus, errorThrown){
              $("#btn-enter").removeAttr('disabled');
-            alert('订单提交失败,失败原因：'+errorThrown);
+            alert('提交失败,失败原因：'+errorThrown);
         }
     })
 }

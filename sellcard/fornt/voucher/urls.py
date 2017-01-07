@@ -1,3 +1,4 @@
+__author__ = 'qixu'
 from django.conf.urls import url
 
 urlpatterns = [
@@ -25,5 +26,13 @@ urlpatterns = [
     url(r'^voucher/verifier/create/$', 'sellcard.fornt.voucher.verifier.create.index', name="voucherVerifierCreate"),
     # 检验券真伪
     url(r'^voucher/verifier/verifier/$', 'sellcard.fornt.voucher.verifier.verifier.index', name="voucherVerifier"),
+
+    # 赊销代金券
+    #列表
+    url(r'^voucher/credit/$', 'sellcard.fornt.voucher.credit.index', name="voucherCredit"),
+    #赊销操作Get
+    url(r'^voucher/credit/create/$', 'sellcard.fornt.voucher.credit.create', name="voucherCreditCreate"),
+    #赊销操作Post
+    url(r'^voucher/credit/create/save/$', 'sellcard.fornt.voucher.credit.createSave', name="voucherCreditCreateSave"),
 
 ]

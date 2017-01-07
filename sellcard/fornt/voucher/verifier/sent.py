@@ -1,4 +1,5 @@
 #-*- coding:utf-8 -*-
+__author__ = 'qixu'
 from django.shortcuts import render
 from django.http import HttpResponse
 from sellcard import views as base
@@ -32,15 +33,14 @@ def save(request):
 
         path = request.path
         batch = request.POST.get('batch')
-        start=request.POST.get('start')
-        end=request.POST.get('end')
+        start=request.POST.get('start').zfill(6)
+        end=request.POST.get('end').zfill(6)
         subTotal=int(request.POST.get('subTotal'))
         shop=request.POST.get('shop')
         person=request.POST.get('person')
 
         try:
             with transaction.atomic():
-                l = KfJobsCouponSn.objects.filter(sn__lte=end,sn__gte=start,batch=batch,state=0)
                 updataNum = KfJobsCouponSn.objects.filter(sn__lte=end,sn__gte=start,batch=batch,state=0)\
                     .update(request_name = person,request_shop = shop,request_date=datetime.datetime.now(),state=1)
 

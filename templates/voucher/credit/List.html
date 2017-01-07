@@ -5,7 +5,7 @@
     <meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>代金券库存盘点</title>
+    <title>赊销代金券</title>
     <link rel="stylesheet" href="{{ static }}/css/bootstrap-datetimepicker.min.css">
 </head>
 <body>
@@ -17,37 +17,24 @@
             <a data-original-title="Go to Home" href="#" title="" class="tip-bottom">
                 <span class="glyphicon glyphicon-home" aria-hidden="true"> </span> 首页
             </a>
-            <a href="#" class="">报表管理</a>
-            <a href="#" class="current">代金券库存盘点</a>
+            <a href="#" class="">代金券管理</a>
+            <a href="#" class="current">赊销代金券</a>
         </div>
     </div>
     <div class="widget-box">
         <div class="widget-title"><span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
-            <h5>发行代金券库存盘点列表</h5>
+            <h5>赊销代金券列表</h5>
         </div>
         <div class="widget-content nopadding">
             <div class="collapse in widget-content">
-                <form action="{% url 'voucherStock' %}" method="post" id="form">
+                <form action="{% url 'voucherCredit' %}" method="post" id="form">
                     {% csrf_token %}
                     <div class="row formline">
                         <label for="" class="col-xs-1 formline-label">发行门店：</label>
-                        {% if role == '2' or role == '3' or role == '5' or role == '10' %}
                         <div class="col-xs-2">
                             <input name="shopcode" id="shopcode" type="text" class="form-control"
                                    value="{{ shop | transShopCode }}" readonly>
                         </div>
-                        {% else %}
-                        <div class="col-xs-2">
-                            <select name="shopcode" id="shopcode" class="form-control" required="required">
-                                {% if shops_len > 1 %}
-                                    <option value="">全部</option>
-                                {% endif %}
-                                {% for item in shops %}
-                                    <option value="{{ item.shop_code }}">{{ item.shop_name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        {% endif %}
                         <label for="" class="col-xs-1 formline-label">创建时间：从</label>
                         <div class="col-xs-2">
                             <div data-link-format="yyyy-mm-dd" data-link-field="dtp_input2"
@@ -126,11 +113,10 @@
                                 <th>创建时间</th>
                                 <th>有效期</th>
                                 <th>面值</th>
-                                <th>返点优惠</th>
+                                <th>应收金额</th>
+                                <th>到账金额</th>
                                 <th>使用范围</th>
-                                <th>总数</th>
-                                <th>已使用</th>
-                                <th>余额</th>
+                                <th>操作</th>
                             </tr>
                             </thead>
                             <tbody class="cardIn" id="nopayList">
@@ -143,11 +129,13 @@
                                     <td>{{ row.start_date }}</td>
                                     <td>{{ row.end_date }}</td>
                                     <td>{{ row.values }}</td>
-                                    <td>{{ row.discount }}</td>
+                                    <td>{{ row.pay_account }}</td>
+                                    <td>{{ row.credit_account }}</td>
                                     <td>{{ row.range }}</td>
-                                    <td>{{ row.amount }}</td>
-                                    <td>{{ row.used_amount }}张</td>
-                                    <td>{{ row.surplus_amount }}张</td>
+                                    <td>
+                                        <button type="button" onclick="credit('{{ row.coupon_code }}')"
+                                                class="btn btn-info btn-sm btn_credit">赊销</button>
+                                    </td>
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -161,7 +149,6 @@
 <!--end-containt-part-->
 {% include "common/foot.html" %}
 <script>
-    $("#shopcode").val('{{ shopcode }}');
     $("#couponType").val('{{ couponType }}');
 </script>
 <script src="{{ static }}/js/bootstrap-datetimepicker.js"></script>
@@ -188,6 +175,11 @@
         }
         $('#form').submit();
     });
+</script>
+<script>
+    function credit(coupon_code) {
+        window.location.href="{% url 'voucherCreditCreate' %}?coupon_code="+coupon_code;
+    }
 </script>
 <script>
     //确定按钮

@@ -1,4 +1,5 @@
 #-*- coding:utf-8 -*-
+__author__ = 'qixu'
 from django.shortcuts import render
 from django.db.models import Count,Sum
 from django.core.paginator import Paginator #分页查询
@@ -28,8 +29,6 @@ def index(request):
     shopcode = mth.getReqVal(request, 'shopcode', '')
     today = str(datetime.date.today())
     couponType = mth.getReqVal(request, 'couponType', '')
-    printed = mth.getReqVal(request, 'printed', '')
-    issueSn = mth.getReqVal(request, 'issueSn', '').strip()
     batch = mth.getReqVal(request, 'batch', '').strip()
     start = mth.getReqVal(request, 'start', today)
     end = mth.getReqVal(request, 'end', today)
@@ -54,7 +53,7 @@ def index(request):
 
     List = KfJobsCoupon.objects.values(
         'shop_code', 'create_user_name', 'type', 'batch', 'start_date', 'values', 'coupon_code',
-        'amount', 'end_date', 'discount', 'range').filter(**kwargs).order_by('batch')
+        'amount', 'end_date', 'discount', 'range').filter(**kwargs).order_by('create_date')
 
     snList = KfJobsCouponSn.objects.exclude(coupon_code='').filter(used_flag=1).values('coupon_code','serial_id').annotate(used_amount=Count('voucher'))
 
