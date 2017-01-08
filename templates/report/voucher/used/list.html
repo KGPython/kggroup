@@ -5,7 +5,7 @@
     <meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>代金券库存盘点</title>
+    <title>代金券核销记录</title>
     <link rel="stylesheet" href="{{ static }}/css/bootstrap-datetimepicker.min.css">
 </head>
 <body>
@@ -18,19 +18,19 @@
                 <span class="glyphicon glyphicon-home" aria-hidden="true"> </span> 首页
             </a>
             <a href="#" class="">报表管理</a>
-            <a href="#" class="current">代金券库存盘点</a>
+            <a href="#" class="current">代金券核销记录</a>
         </div>
     </div>
     <div class="widget-box">
         <div class="widget-title"><span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
-            <h5>发行代金券库存盘点列表</h5>
+            <h5>发行代金券核销记录</h5>
         </div>
         <div class="widget-content nopadding">
             <div class="collapse in widget-content">
-                <form action="{% url 'voucherStock' %}" method="post" id="form">
+                <form action="{% url 'voucherUsed' %}" method="post" id="form">
                     {% csrf_token %}
                     <div class="row formline">
-                        <label for="" class="col-xs-1 formline-label">发行门店：</label>
+                        <label for="" class="col-xs-1 formline-label">所查询门店：</label>
                         {% if role == '2' or role == '3' or role == '5' or role == '10' %}
                         <div class="col-xs-2">
                             <input name="shopcode" id="shopcode" type="text" class="form-control"
@@ -48,7 +48,7 @@
                             </select>
                         </div>
                         {% endif %}
-                        <label for="" class="col-xs-1 formline-label">创建时间：从</label>
+                        <label for="" class="col-xs-1 formline-label">查询日期：从</label>
                         <div class="col-xs-2">
                             <div data-link-format="yyyy-mm-dd" data-link-field="dtp_input2"
                                  data-date-format="yyyy-mm-dd" data-date="" class="input-group date form_date">
@@ -59,7 +59,7 @@
                                         class="glyphicon glyphicon-calendar"></span></span>
                             </div>
                         </div>
-                        <label for="" class="col-xs-1 formline-label">创建时间：到</label>
+                        <label for="" class="col-xs-1 formline-label">查询日期：到</label>
                         <div class="col-xs-2">
                             <div data-link-format="yyyy-mm-dd" data-link-field="dtp_input2"
                                  data-date-format="yyyy-mm-dd" data-date="" class="input-group date form_date">
@@ -70,47 +70,9 @@
                                         class="glyphicon glyphicon-calendar"></span></span>
                             </div>
                         </div>
-                    </div>
-                    <div class="row formline">
-                        <label for="" class="col-xs-1 formline-label">类型：</label>
-                        <div class="col-xs-2">
-                            <select name="couponType" id="couponType" class="form-control" required="required">
-                                <option value="">全部</option>
-                                <option value="1">换卡券</option>
-                                <option value="2">换物券</option>
-                                <option value="3">通用券</option>
-                            </select>
-                        </div>
-                        <label for="" class="col-xs-1 formline-label">批次：</label>
-                        <div class="col-xs-2">
-                            <input type="text" class="form-control" name="batch" id="batch" required
-                                   value="{{ batch }}">
-                        </div>
                         <div class="col-xs-1">
                             <button type="button" class="btn btn-info enter-btn pull-right" id="enter">查询</button>
                         </div>
-                    </div>
-
-                    <div class="page">
-                        <span>第<b>{{ page }}</b>页/共<b>{{ List.paginator.num_pages }}</b>页</span>
-                        <a id="page_a_head">首页</a>
-                        {% if List.has_previous %}
-                            <a id="page_a_up">上一页</a>
-                        {% else %}
-                            <a href="javascript:void(0)">上一页</a>
-                        {% endif %}
-                        {% if List.has_next %}
-                            <a id="page_a_down">下一页</a>
-                        {% else %}
-                            <a href="javascript:void(0)">下一页</a>
-                        {% endif %}
-                        <a id="page_a_foot">尾页</a>
-                        <span class="totalPage">到第</span>
-                        <input class="pageTxt" id="page" name="page" value="1" type="text">
-                        <span>页</span>
-                        <button type="button" class="btn btn-info btn-sm"
-                                id="pageEnter">确定
-                        </button>
                     </div>
                 </form>
                 <div class="widget-box">
@@ -119,37 +81,60 @@
                         <table class="table table-striped table-hover table-form-my">
                             <thead>
                             <tr>
-                                <th>发行门店</th>
-                                <th>发行人</th>
-                                <th>类型</th>
-                                <th>批次</th>
-                                <th>创建时间</th>
-                                <th>有效期</th>
-                                <th>面值</th>
-                                <th>返点优惠</th>
-                                <th>使用范围</th>
-                                <th>总数</th>
-                                <th>已使用</th>
-                                <th>余额</th>
+                                <th rowspan="2">发行门店</th>
+                                <th colspan="2">换卡券</th>
+                                <th colspan="2">换物券</th>
+                                <th colspan="2">通用券</th>
+                                <th colspan="2">总计</th>
+                            </tr>
+                             <tr>
+                                <th>数量</th>
+                                <th>金额</th>
+                                <th>数量</th>
+                                <th>金额</th>
+                                <th>数量</th>
+                                <th>金额</th>
+                                <th>总数量</th>
+                                <th>总金额</th>
                             </tr>
                             </thead>
                             <tbody class="cardIn" id="nopayList">
                             {% for row in List %}
                                 <tr>
                                     <td>{{ row.shop_code | transShopCode }}</td>
-                                    <td>{{ row.create_user_name }}</td>
-                                    <td>{{ row.type | transCouponTypeByChinese }}</td>
-                                    <td>{{ row.batch }}</td>
-                                    <td>{{ row.start_date }}</td>
-                                    <td>{{ row.end_date }}</td>
-                                    <td>{{ row.values }}</td>
-                                    <td>{{ row.discount }}</td>
-                                    <td>{{ row.range }}</td>
-                                    <td>{{ row.amount }}</td>
-                                    <td>{{ row.used_amount }}张</td>
-                                    <td>{{ row.surplus_amount }}张</td>
+                                    <td>
+                                        <a href="javascript:show_detail('{{ row.shop_code }}','1')">
+                                            {{ row.card_amount }}
+                                        </a>
+                                    </td>
+                                    <td>{{ row.card_account }}</td>
+                                    <td>
+                                        <a href="javascript:show_detail('{{ row.shop_code }}','2')">
+                                            {{ row.goods_amount }}
+                                        </a>
+                                    </td>
+                                    <td>{{ row.goods_account }}</td>
+                                    <td>
+                                        <a href="javascript:show_detail('{{ row.shop_code }}','3')">
+                                            {{ row.common_amount }}
+                                        </a>
+                                    </td>
+                                    <td>{{ row.common_account }}</td>
+                                    <td>{{ row.total_amount }}</td>
+                                    <td>{{ row.total_account }}</td>
                                 </tr>
                             {% endfor %}
+                                <tr>
+                                    <th>合计</th>
+                                    <td>{{ total.card_amount }}</td>
+                                    <td>{{ total.card_account }}</td>
+                                    <td>{{ total.goods_amount }}</td>
+                                    <td>{{ total.goods_account }}</td>
+                                    <td>{{ total.common_amount }}</td>
+                                    <td>{{ total.common_account }}</td>
+                                    <td>{{ total.total_amount }}</td>
+                                    <td>{{ total.total_account }}</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -158,6 +143,15 @@
         </div>
     </div>
 </div>
+<form action="{% url 'voucherUsedDetail' %}" method="post" id="detail_form">
+    {% csrf_token %}
+    <input type="hidden" name="t_shop_code" id="t_shop_code" value="{{ shopcode }}">
+    <input type="hidden" name="t_start" id="t_start" value="{{ start }}">
+    <input type="hidden" name="t_end" id="t_end" value="{{ end }}">
+    <input type="hidden" name="t_shop" id="t_shop">
+    <input type="hidden" name="t_type" id="t_type">
+</form>
+
 <!--end-containt-part-->
 {% include "common/foot.html" %}
 <script>
@@ -190,30 +184,11 @@
     });
 </script>
 <script>
-    //确定按钮
-    $('#pageEnter').click(function () {
-        $('#form').submit();
-    });
-    //首页
-    $('#page_a_head').click(function () {
-        $('#page').val(1);
-        $('#form').submit();
-    });
-    //上一页
-    $('#page_a_up').click(function () {
-        $('#page').val({{ page_up }});
-        $('#form').submit();
-    });
-    //下一页
-    $('#page_a_down').click(function () {
-        $('#page').val({{ page_down }});
-        $('#form').submit();
-    });
-    //尾页
-    $('#page_a_foot').click(function () {
-        $('#page').val({{ List.paginator.num_pages }});
-        $('#form').submit();
-    });
+    function show_detail(shop,type) {
+        $('#t_shop').val(shop);
+        $('#t_type').val(type);
+        $('#detail_form').submit();
+    }
 </script>
 </body>
 </html>

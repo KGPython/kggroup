@@ -1,9 +1,10 @@
 #-*- coding:utf-8 -*-
 __author__ = 'qixu'
+from django.http import HttpResponse
 from django.shortcuts import render
 from django.db.models import Count,Sum
 from django.core.paginator import Paginator #分页查询
-import datetime, pymssql
+import datetime, json, pymssql
 from sellcard.common import Constants
 from sellcard.common import Method as mth
 from sellcard.models import Shops,KfJobsCoupon,KfJobsCouponSn
@@ -105,7 +106,48 @@ def index(request):
         total['total_amount'] += int(item['total_amount'])
         item['total_account'] = float(item['card_account'])+float(item['goods_account'])+float(item['common_account'])
         total['total_account'] += float(item['total_account'])
-    return render(request, 'report/voucher/UsedList.html', locals())
+    return render(request, 'report/voucher/used/list.html', locals())
+
+
+def detail(request):
+    if request.method == 'POST':
+        shop_code=request.POST.get('t_shop_code')
+        start=request.POST.get('t_start')
+        end=request.POST.get('t_end')
+        shop=request.POST.get('t_shop')
+        type=request.POST.get('t_type')
+
+        List =[]
+        sql_where = " "
+        if shop_code != '':
+            sql_where = " AND cs.used_shop = '{shop_code}' ".format(shop_code=shop_code)
+        if type != '3':
+            sql = u" SELECT c.shop_code, c.`values`, c.coupon_name, " \
+                  u" c.start_date, c.end_date, `range`, amount, jcs.used_amount, " \
+                  u" c.`values` * jcs.used_amount as used_account " \
+                  u" FROM kf_jobs_coupon c, " \
+                  u" (SELECT count(cs.voucher) AS used_amount, cs.coupon_code " \
+                  u" FROM kf_jobs_coupon_sn cs " \
+                  u" WHERE cs.used_flag = 1 {sql_where} " \
+                  u" AND cs.used_date BETWEEN '{start}' AND '{end}' " \
+                  u" GROUP BY cs.coupon_code ) jcs " \
+                  u" WHERE jcs.coupon_code = c.coupon_code " \
+                  u" AND c.type = '{type}'" \
+                  u" AND c.shop_code = '{shop}'".format(shop=shop,
+                                                        start=start,
+                                                        end=end,
+                                                        type=type,
+                                                        sql_where=sql_where)
+
+            conn = mth.getMysqlConn()
+            cur = conn.cursor()
+            cur.execute(sql)
+            snList = cur.fetchall()
+            cur.close()
+            conn.close()
+
+    return render(request, 'report/voucher/used/detail.html', locals())
+
 
 
 def getAmount(start, end, shops):

@@ -1,7 +1,7 @@
 #-*- coding:utf-8 -*-
 __author__ = 'qixu'
 from django.shortcuts import render
-from django.db.models import Count,Sum
+from django.db.models import Count,Max
 from django.core.paginator import Paginator #分页查询
 import datetime, pymssql
 from sellcard.common import Constants
@@ -94,7 +94,45 @@ def index(request):
     except Exception as e:
         print(e)
     # 表单分页结束
-    return render(request, 'report/voucher/StockList.html', locals())
+    return render(request, 'report/voucher/stock/list.html', locals())
+
+
+def detail(request):
+    """
+       代金券库存盘点使用明细controllers
+       :param request:
+       :return:列表view
+    """
+    coupon_code = mth.getReqVal(request, 'coupon_code', '')
+    type = mth.getReqVal(request, 'type', '')
+    page = mth.getReqVal(request, 'page', 1)
+    if type != '3':
+        List = KfJobsCouponSn.objects.values('voucher', 'used_shop', 'used_name',
+            'used_date').filter(coupon_code=coupon_code,used_flag=1).order_by('used_shop','used_date')
+    else:
+        serial = KfJobsCouponSn.objects.filter(coupon_code=coupon_code).values('coupon_code').aggregate(serial_id=Max('serial_id'))
+        List = getDetail(serial['serial_id'])
+
+    # 表单分页开始
+    paginator = Paginator(List, 8)
+
+    try:
+        List = paginator.page(page)
+
+        if List.number > 1:
+            page_up = List.previous_page_number
+        else:
+            page_up = 1
+
+        if List.number < List.paginator.num_pages:
+            page_down = List.next_page_number
+        else:
+            page_down = List.paginator.num_pages
+
+    except Exception as e:
+        print(e)
+    # 表单分页结束
+    return render(request, 'report/voucher/stock/detail.html', locals())
 
 
 def getAmount():
@@ -116,6 +154,34 @@ def getAmount():
           u" where ClearFlag = 1" \
           u"   and CouponTypeID like '8%'" \
           u" group by SerialID"
+    cur.execute(sql)
+    list = cur.fetchall()
+    cur.close()
+    conn.close()
+    return list
+
+def getDetail(serial_id):
+    """
+    获取已使用券数量
+    :param serial_id:批次ID
+    :return: 列表
+    """
+    conn = pymssql.connect(host=Constants.KGGROUP_DB_SERVER,
+                           port=Constants.KGGROUP_DB_PORT,
+                           user=Constants.KGGROUP_DB_USER,
+                           password=Constants.KGGROUP_DB_PASSWORD,
+                           database=Constants.KGGROUP_DB_DATABASE,
+                           charset='utf8',
+                           as_dict=True)
+    cur = conn.cursor()
+    sql = u"select ClearShopID as used_shop, " \
+          u"       ClearSDate as used_date " \
+          u"       ClearPOSID as used_name " \
+          u"       CouponNO as voucher " \
+          u"  from MyShop_Coupon " \
+          u" where ClearFlag = 1" \
+          u"   and SerialID = '{serial_id}'" \
+          u" order by ClearShopID, ClearSDate".format(serial_id=serial_id)
     cur.execute(sql)
     list = cur.fetchall()
     cur.close()

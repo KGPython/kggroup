@@ -119,4 +119,4 @@ def index(request):
             total['pos'] += item['pos']
             total['credit_pos'] += item['credit_pos']
             total['credit'] += item['credit']
-    return render(request, 'report/voucher/PaymentList.html', locals())
+    return render(request, 'report/voucher/payment/list.html', locals())
