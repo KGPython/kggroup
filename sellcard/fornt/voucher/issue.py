@@ -142,7 +142,7 @@ def create(request):
             coupon_code = shopCode+today[2:]+str(batch).zfill(2)
 
             sqlVoucher = u'select jcs.voucher ' \
-                         u'  from KF_Jobs_Coupon_SN jcs ' \
+                         u'  from kf_jobs_coupon_sn jcs ' \
                          u' where jcs.batch = "{batch}" ' \
                          u'   and jcs.request_shop = "{shop}" ' \
                          u'   and jcs.state = 1 ' \

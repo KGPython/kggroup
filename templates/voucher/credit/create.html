@@ -62,7 +62,7 @@
     $('#btn_save').click(function () {
         var receivable = $('#receivable').val();
         var pay_account = $('#pay_account').val();
-        if (pay_account > receivable) {
+        if (parseFloat(pay_account) > parseFloat(receivable)) {
             alert('实收金额不应该大于应收金额');
             return false;
         }
