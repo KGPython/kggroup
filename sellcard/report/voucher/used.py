@@ -11,7 +11,7 @@ from sellcard.models import Shops,KfJobsCoupon,KfJobsCouponSn
 
 def index(request):
     """
-       代金券核销记录controllers
+       购物券核销记录controllers
        :param request:
        :return:列表view
     """
@@ -215,7 +215,7 @@ def getAmount(start, end, shops):
 
 def getDetail(used_shop, start, end, request_shop, serial_id):
     """
-    获取已使用券数量
+    获取已使用券明细
     :param used_shop:使用门店
     :param start:开始时间
     :param end: 结束时间

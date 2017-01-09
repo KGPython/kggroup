@@ -10,7 +10,7 @@ from sellcard.models import Shops,KfJobsCoupon,KfJobsCouponSn
 
 def index(request):
     """
-       代金券库存盘点列表controllers
+       购物券库存盘点列表controllers
        :param request:
        :return:列表view
     """
@@ -99,7 +99,7 @@ def index(request):
 
 def detail(request):
     """
-       代金券库存盘点使用明细controllers
+       购物券库存盘点使用明细controllers
        :param request:
        :return:列表view
     """
@@ -162,7 +162,7 @@ def getAmount():
 
 def getDetail(serial_id):
     """
-    获取已使用券数量
+    获取已使用券明细
     :param serial_id:批次ID
     :return: 列表
     """

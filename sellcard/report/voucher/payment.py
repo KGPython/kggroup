@@ -7,7 +7,7 @@ from sellcard.common import Method as mth
 
 def index(request):
     """
-       代金券销售汇总controllers
+       购物券销售汇总controllers
        :param request:
        :return:列表view
     """
