@@ -117,10 +117,28 @@ def detail(request):
         shop=request.POST.get('t_shop')
         type=request.POST.get('t_type')
 
-        List =[]
-        sql_where = " "
+        shops = Shops.objects.values('shop_code', 'shop_name', 'city').order_by('shop_code')
+        role = request.session.get('s_roleid')
+        if role in ('1', '6', '7'):
+            shops = shops
+        elif role == '8':  # 承德总部财务
+            shops = shops.filter(city='C')
+        elif role == '9':  # 唐山总部财务
+            shops = shops.filter(city='T')
+        else:
+            shops = shops.filter(shop_code=shop)
+
+        code_list = []
         if shop_code != '':
-            sql_where = " AND cs.used_shop = '{shop_code}' ".format(shop_code=shop_code)
+            code_list.append(shops.get(shop_code=shop_code)['shop_code'])
+        else:
+            for item_shop in shops:
+                code_list.append(item_shop['shop_code'])
+        code_list = str(code_list)
+        code_list = code_list.replace('[', '').replace(']', '')
+
+        List =[]
+
         if type != '3':
             sql = u" SELECT c.shop_code, c.`values`, c.coupon_name, " \
                   u" c.start_date, c.end_date, `range`, amount, jcs.used_amount, " \
@@ -128,23 +146,26 @@ def detail(request):
                   u" FROM kf_jobs_coupon c, " \
                   u" (SELECT count(cs.voucher) AS used_amount, cs.coupon_code " \
                   u" FROM kf_jobs_coupon_sn cs " \
-                  u" WHERE cs.used_flag = 1 {sql_where} " \
+                  u" WHERE cs.used_flag = 1" \
+                  u" AND cs.used_shop IN ({code_list}) " \
                   u" AND cs.used_date BETWEEN '{start}' AND '{end}' " \
                   u" GROUP BY cs.coupon_code ) jcs " \
                   u" WHERE jcs.coupon_code = c.coupon_code " \
                   u" AND c.type = '{type}'" \
-                  u" AND c.shop_code = '{shop}'".format(shop=shop,
+                  u" AND c.shop_code = '{shop}'".format(code_list=code_list,
                                                         start=start,
                                                         end=end,
                                                         type=type,
-                                                        sql_where=sql_where)
+                                                        shop=shop)
 
             conn = mth.getMysqlConn()
             cur = conn.cursor()
             cur.execute(sql)
-            snList = cur.fetchall()
+            List = cur.fetchall()
             cur.close()
             conn.close()
+        else:
+            List = getDetail(code_list,start,end,shop)
 
     return render(request, 'report/voucher/used/detail.html', locals())
 
@@ -156,6 +177,41 @@ def getAmount(start, end, shops):
     :param start:开始时间
     :param end: 结束时间
     :param shops: 商店编码数组
+    :return: 列表
+    """
+    conn = pymssql.connect(host=Constants.KGGROUP_DB_SERVER,
+                           port=Constants.KGGROUP_DB_PORT,
+                           user=Constants.KGGROUP_DB_USER,
+                           password=Constants.KGGROUP_DB_PASSWORD,
+                           database=Constants.KGGROUP_DB_DATABASE,
+                           charset='utf8',
+                           as_dict=True)
+    cur = conn.cursor()
+    sql = u"select ShopID as shop_code, " \
+          u"       count(CouponNO) as common_amount, " \
+          u"       sum(ISNULL(ClearValue,0)) as common_account " \
+          u"  from MyShop_Coupon " \
+          u" where ClearFlag = 1" \
+          u"   and CouponTypeID like '8%'" \
+          u"   and ClearSDate BETWEEN '{start}' AND '{end}' "\
+          u"   and ClearShopID in ({shops})  "\
+          u" group by ShopID ".format(start=start,
+                                        end=end,
+                                        shops=shops)
+    cur.execute(sql)
+    list = cur.fetchall()
+    cur.close()
+    conn.close()
+    return list
+
+
+def getDetail(used_shop, start, end, request_shop):
+    """
+    获取已使用券数量
+    :param used_shop:使用门店
+    :param start:开始时间
+    :param end: 结束时间
+    :param request_shop: 发行门店
     :return: 列表
     """
     conn = pymssql.connect(host=Constants.KGGROUP_DB_SERVER,
