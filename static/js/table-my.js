@@ -425,9 +425,13 @@ function getPayList(obj){
         var item = {};
         var checkBox = $(trs[j]).find('td').eq(0).find('input')[0];
         var flag = $(checkBox).is(':checked');
-        if(flag){
+        var payVal= $(trs[j]).find('td').eq(2).find('input').val();
+        if(flag && payVal){
             var payId = $(checkBox).val();
-            var payVal= $(trs[j]).find('td').eq(2).find('input').val();
+            if(!payId){
+                alert('请选择三方支付方式');
+                return false;
+            }
             var payRmarks = $(trs[j]).find('td').eq(3).find('input').val();
             item = {'payId':payId,'payVal':payVal,'payRmarks':payRmarks};
             list.push(item)
@@ -845,80 +849,6 @@ $(document).on('change','#hjsBox .changeCode',function(){
 
 });
 
-
-//支付列表，三方平台切换
-$(document).on('change','.payList #parter',function(){
-    var val = $(this).val();
-    var parentTr = $(this).parent().parent();
-    $(parentTr).find('td').eq(0).find('input').val(val);
-});
-
-//支付方式--银行打款
-var posVal = 0;
-$(document).on('change','.payList #blank',function(){
-    var val = $(this).val();
-    var parentTr = $(this).parent().parent();
-    $(parentTr).find('td').eq(0).find('input').val(val);
-});
-
-
-
-function changeDiscValByPayment(cardSaleTotalVal,discRate) {
-     $('.Total-discInfo').hide();
-    //设置折扣率
-    $('.Total #discount input').val(discRate*100);
-    //设置折扣金额
-    var discountVal = (parseFloat(cardSaleTotalVal)*discRate);
-    $('.Total #discountVal b').text(discountVal);
-    //设置优惠补差
-    $('.Total #totalYBalance b').text(0);
-    //设置应付
-    $('.Total #totalPaid b').text(cardSaleTotalVal);
-
-    //设置优惠返现
-    $('.discountTotal #Ycash').val(discountVal);
-
-    $(".discBox").hide();
-}
-
-function changeDiscValByPayment2(cardSaleTotalVal,discRate) {
-    $('.Total-discInfo').show();
-    //计算折扣金额
-    $('.Total #discount input').val(discRate*100);
-    var discountVal = (parseFloat(cardSaleTotalVal)*discRate);
-    $('.Total #discountVal b').text(discountVal);
-    //优惠补差
-    var discountCardTotalVal = parseFloat($(".discountTotal #totalVal b").text());
-    discountPay  = discountCardTotalVal - discountVal;
-    $('.Total #totalYBalance b').text(discountPay);
-    //6、应付金额
-    $('.Total #totalPaid b').text(cardSaleTotalVal+discountPay);
-    //设置优惠返现
-    $(".discBox").show();
-    $(".discountTotal #Ycash").val(0)
-}
-
-/*
-* 计算返点金额
-* cardSaleTotalVal：cardSaleTotalVal：售卡总金额
-* posVal：pos刷卡金额
-* */
-function changeDiscValByPos(cardSaleTotalVal,posVal) {
-    console.log(cardSaleTotalVal-posVal,DISC_RATES[0].val_min);
-    if(cardSaleTotalVal-posVal>=DISC_RATES[0].val_min){
-        setTotalBycardSaleTotalVal('',cardSaleTotalVal)
-    }else{
-        //4、优惠金额清零
-        $('.Total #discountVal b').text(0);
-        //5、优惠补差清零
-        $('.Total #totalYBalance b').text(0);
-        $('.Total #discount input').val(0);
-        //6、设置订单应付金额 = 售卡列表合计金额 + 优惠补差
-        $('.Total #totalPaid b').text(cardSaleTotalVal);
-        $('.discBox').hide();
-    }
-}
-
 /*
 * 产生“合计”区域相关信息 -- 根据出入库卡列表
 * obj：卡列表的tbody
@@ -965,6 +895,7 @@ function setTotalByCardList(obj){
             }else {
                 $('.payment').hide();
                 $('.Total').hide();
+                $('.payList .payVal').val('')
             }
             $('.Total #totalVal b').text(cardsPayVal);
             //3.2、计算优惠返点
@@ -1007,6 +938,7 @@ function setTotalByCardList(obj){
             }else {
                 $('.payment').hide();
                 $('.Total').hide();
+                $('.payList .payVal').val('')
             }
             $('.Total #totalVal b').text(cardsPayVal);
             //3.2、计算优惠返点
@@ -1025,12 +957,6 @@ function setTotalByCardList(obj){
         // 2、计算卡列表的合计金额和合计张数
         var cardsTotal = getCardListVal(cardList,cardtype,cls);
         var cardsTotalVal = cardsTotal.totalVal;
-        //3、计算销售返点
-        // var rateInput  = $('.'+cls+' #discount input')[0];
-        // var discountVal=0;
-        // if(rateInput){
-        //     discountVal = createDiscount('',cardsTotalVal);
-        // }
         var discountVal = createDiscount('',cardsTotalVal);
         //4、优惠补差
         var discountCardTotalVal = parseFloat($(".discountTotal #totalVal b").text());
@@ -1055,12 +981,6 @@ function setTotalByCardList(obj){
 * */
 function setTotalBycardSaleTotalVal(discRate,cardSaleTotalVal){
     $('.Total-discInfo').show();
-    //1、计算优惠返点及优惠金额
-    // var rateInput  = $('.Total #discount input')[0];
-    // var discountVal=0;
-    // if(rateInput){
-    //     discountVal = createDiscount('',cardSaleTotalVal);
-    // }
     var discountVal = createDiscount(discRate,cardSaleTotalVal);
     //2、计算优惠补差
     var discountCardTotalVal = parseFloat($(".discountTotal #totalVal b").text());
@@ -1071,69 +991,8 @@ function setTotalBycardSaleTotalVal(discRate,cardSaleTotalVal){
 }
 
 
-//计算混合支付的合计金额
-$(document).on('blur','.payList tr',function(){
-    palyList = $('.payList').find('tr');
-    var totalStr = '';
-    var payTotal=0;
-    for(var i=0;i<palyList.length;i++){
-        var checkBox = $(palyList[i]).find('td').eq(0).find('input')[0];
-        var flag = $(checkBox).is(':checked');
-        var payName = '';
-        var payVal= $(palyList[i]).find('td').eq(2).find('input').val();
-        if(flag && payVal){
-            var cardSaleTotalVal = parseFloat($(".Total #totalVal b").text());
-            var payId =0;
-            //下拉菜单
-            if($(palyList[i]).find('td').eq(1).find('select')[0]){
-                payId = $(palyList[i]).find('td').eq(1).find('select option:selected').val();
-                payName = $(palyList[i]).find('td').eq(1).find('select option:selected').text();
-                //pos刷卡
-                if(payId == 5){
-                    //规则1：门店DISC_LEVEL为1，则区分
-                    //规则2：订单超过最小返点金额+1000，则不区分；
-                    //规则3：订单金额在最小返点金额和最小返点金额+1000之间，则区分
-                    if(cardSaleTotalVal<(DISC_RATES[0].val_min+1000) && cardSaleTotalVal>=DISC_RATES[0].val_min && DISC_LEVEL=='1') {
-                        var posVal = parseFloat($(palyList[i]).find('td').eq(2).find('input').val());
-                        changeDiscValByPos(cardSaleTotalVal, posVal)
-                    }
-                }
-                //美团、糯米、慧购
-                else if(payId == 7 || payId == 8 || payId == 10){
-                    changeDiscValByPayment(cardSaleTotalVal,0.02)
-                }
-                else if(payId == 11 ){
-                    changeDiscValByPayment2(cardSaleTotalVal,0.02)
-                }
-                else {
-                    setTotalBycardSaleTotalVal('',cardSaleTotalVal)
-                }
 
-            }else{
-                payId = $(palyList[i]).find('td').eq(0).find('input[type=checkbox]').val();
-                //移动积分
-                if(payId=='6'){
-                    changeDiscValByPayment(cardSaleTotalVal,0.01)
-                }
-                else {
-                    setTotalBycardSaleTotalVal('',cardSaleTotalVal)
-                }
-                payName = $(palyList[i]).find('td').eq(1).find('input').val();
-            }
-            totalStr += payName +' : '+payVal+'元 ';
-            remarks = $(palyList[i]).find('td').eq(3).find('input').val();
-            if(remarks){
-                totalStr += '(备注：'+remarks+'), ';
-            }else{
-                totalStr += ', ';
-            }
-            payTotal +=parseFloat(payVal);
-        }
 
-        $('.Total #payInfo span').html(totalStr);
-        $('.Total #payTotal b').html(payTotal)
-    }
-});
 
 /******************************  支付相关 end   *****************************************/
 

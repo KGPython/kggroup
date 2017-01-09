@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="{{ static }}/css/common.css"  media="screen">
     <link rel="shortcut icon" href="favicon.ico" />
     <link rel="icon" href="favicon.ico" type="image/gif" />
+
     <script>
         var CSRF = '{{ csrf_token }}';
         var DISC_RATES = {{ request.session.s_rates | safe }};
