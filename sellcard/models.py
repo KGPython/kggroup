@@ -240,7 +240,7 @@ class KfJobsCoupon(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'kf_jobs_coupon'
+        db_table = 'kf_jobs_coupon_new'
 
 
 class KfJobsCouponBatch(models.Model):
@@ -274,7 +274,7 @@ class KfJobsCouponGoodsDetail(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'kf_jobs_coupon_goods_detail'
+        db_table = 'KF_Jobs_Coupon_Goods_Detail'
 
 
 class KfJobsCouponOld(models.Model):
@@ -315,7 +315,7 @@ class KfJobsCouponOld(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'kf_jobs_coupon_old'
+        db_table = 'KF_Jobs_Coupon'
 
 
 class KfJobsCouponSn(models.Model):

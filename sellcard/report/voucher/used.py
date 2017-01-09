@@ -2,7 +2,7 @@
 __author__ = 'qixu'
 from django.http import HttpResponse
 from django.shortcuts import render
-from django.db.models import Count,Sum
+from django.db.models import Max
 from django.core.paginator import Paginator #分页查询
 import datetime, json, pymssql
 from sellcard.common import Constants
@@ -140,19 +140,19 @@ def detail(request):
         List =[]
 
         if type != '3':
-            sql = u" SELECT c.shop_code, c.`values`, c.coupon_name, " \
-                  u" c.start_date, c.end_date, `range`, amount, jcs.used_amount, " \
-                  u" c.`values` * jcs.used_amount as used_account " \
+            sql = u" SELECT c.shop_code, c.`values`, c.coupon_name, c.coupon_code, " \
+                  u" c.start_date, c.end_date, c.`range`, jcs.used_amount, " \
+                  u" c.`values` * jcs.used_amount AS used_account, '0' AS serial_id " \
                   u" FROM kf_jobs_coupon c, " \
                   u" (SELECT count(cs.voucher) AS used_amount, cs.coupon_code " \
                   u" FROM kf_jobs_coupon_sn cs " \
-                  u" WHERE cs.used_flag = 1" \
+                  u" WHERE cs.used_flag = 1 " \
                   u" AND cs.used_shop IN ({code_list}) " \
                   u" AND cs.used_date BETWEEN '{start}' AND '{end}' " \
                   u" GROUP BY cs.coupon_code ) jcs " \
                   u" WHERE jcs.coupon_code = c.coupon_code " \
-                  u" AND c.type = '{type}'" \
-                  u" AND c.shop_code = '{shop}'".format(code_list=code_list,
+                  u" AND c.type = '{type}' " \
+                  u" AND c.shop_code = '{shop}' ".format(code_list=code_list,
                                                         start=start,
                                                         end=end,
                                                         type=type,
@@ -165,7 +165,15 @@ def detail(request):
             cur.close()
             conn.close()
         else:
-            List = getDetail(code_list,start,end,shop)
+            serial_id = KfJobsCouponSn.objects.exclude(serial_id='0').filter(request_shop=shop,
+                                                                             used_flag=1,
+                                                                             used_date__lte=start,
+                                                                             used_date__gte=end,
+                                                                             used_shop__in=code_list)\
+                .values('coupon_code').aggregate(serial_id=Max('serial_id'))
+            serial_id = str(serial_id)
+            serial_id = serial_id.replace('[', '').replace(']', '')
+            List = getDetail(code_list,start,end,shop,serial_id)
 
     return render(request, 'report/voucher/used/detail.html', locals())
 
@@ -187,11 +195,11 @@ def getAmount(start, end, shops):
                            charset='utf8',
                            as_dict=True)
     cur = conn.cursor()
-    sql = u"select ShopID as shop_code, " \
-          u"       count(CouponNO) as common_amount, " \
-          u"       sum(ISNULL(ClearValue,0)) as common_account " \
+    sql = u"select ShopID AS shop_code, " \
+          u"       count(CouponNO) AS common_amount, " \
+          u"       sum(ISNULL(ClearValue,0)) AS common_account " \
           u"  from MyShop_Coupon " \
-          u" where ClearFlag = 1" \
+          u" where ClearFlag = 1 " \
           u"   and CouponTypeID like '8%'" \
           u"   and ClearSDate BETWEEN '{start}' AND '{end}' "\
           u"   and ClearShopID in ({shops})  "\
@@ -205,13 +213,14 @@ def getAmount(start, end, shops):
     return list
 
 
-def getDetail(used_shop, start, end, request_shop):
+def getDetail(used_shop, start, end, request_shop, serial_id):
     """
     获取已使用券数量
     :param used_shop:使用门店
     :param start:开始时间
     :param end: 结束时间
     :param request_shop: 发行门店
+    :param serial_id: 批次号
     :return: 列表
     """
     conn = pymssql.connect(host=Constants.KGGROUP_DB_SERVER,
@@ -222,17 +231,36 @@ def getDetail(used_shop, start, end, request_shop):
                            charset='utf8',
                            as_dict=True)
     cur = conn.cursor()
-    sql = u"select ShopID as shop_code, " \
-          u"       count(CouponNO) as common_amount, " \
-          u"       sum(ISNULL(ClearValue,0)) as common_account " \
-          u"  from MyShop_Coupon " \
-          u" where ClearFlag = 1" \
-          u"   and CouponTypeID like '8%'" \
-          u"   and ClearSDate BETWEEN '{start}' AND '{end}' "\
-          u"   and ClearShopID in ({shops})  "\
-          u" group by ShopID ".format(start=start,
-                                        end=end,
-                                        shops=shops)
+    sql = u" SELECT c.ShopID AS shop_code, " \
+          u"         c.`Value` AS `values`, " \
+          u"         ct.CouponTypeName AS coupon_name, " \
+          u"         c.StartDate AS start_date, " \
+          u"         c.EndDate AS end_date, " \
+          u"         CASE WHEN ct.IfCurrShop = 0 THEN '全部店' " \
+          u"          ELSE '发行店' END AS `range`, " \
+          u"         count(c.CouponNO) AS used_amount, " \
+          u"         c.`Value` * count(c.CouponNO) AS used_account," \
+          u"         c.SerialID AS serial_id," \
+          u"         '0' AS coupon_code " \
+          u" FROM MyShop_Coupon c, " \
+          u"       MyShop_CouponType ct " \
+          u" WHERE c.CouponTypeID = ct.CouponTypeID " \
+          u"   AND c.ClearFlag = 1 " \
+          u"   AND c.ClearShopID IN ({code_list}) " \
+          u"   AND c.ClearSDate BETWEEN '{start}' AND '{end}' " \
+          u"   AND c.ShopID = '{shop}' " \
+          u"   AND c.SerialID IN ({serial_id}) " \
+          u" GROUP BY c.ShopID, " \
+          u"           c.`Value`, " \
+          u"           ct.CouponTypeName, " \
+          u"           c.StartDate," \
+          u"           c.EndDate, " \
+          u"           ct.IfCurrShop," \
+          u"           c.SerialID ".format(code_list=used_shop,
+                                            start=start,
+                                            end=end,
+                                            shop=request_shop,
+                                            serial_id=serial_id)
     cur.execute(sql)
     list = cur.fetchall()
     cur.close()
