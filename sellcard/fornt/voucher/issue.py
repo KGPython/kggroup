@@ -138,8 +138,8 @@ def create(request):
                 v_str = '88815' + shopCode[2:] + today[2:]
             else:
                 v_str = '8889999' + datetime.datetime.now().strftime('%y%m%d')
-            serial_id = v_str + batch
             coupon_code = shopCode+today[2:]+str(batch).zfill(2)
+            serial_id = coupon_code
 
             sqlVoucher = u'select jcs.voucher ' \
                          u'  from kf_jobs_coupon_sn jcs ' \
