@@ -1,5 +1,5 @@
 {% extends 'common/baseForJobs.html' %}
-{% block title %}批量换卡{% endblock %}
+{% block title %}换卡-批量换批量{% endblock %}
 {% block content %}
 <style>
 .payment,.Total{display: none}
@@ -10,14 +10,11 @@
             <a data-original-title="Go to Home" href="#" title="" class="tip-bottom">
                 <span class="glyphicon glyphicon-home" aria-hidden="true"> </span> 首页
             </a>
-            <a href="#" class="">售卡</a>
-            <a href="#" class="current">批量换卡</a>
+            <a href="#" class="">换卡</a>
+            <a href="#" class="current">批量换批量</a>
         </div>
     </div>
     <div class="widget-box">
-        <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
-            <h5>批量换卡</h5>
-        </div>
         <div class="widget-content nopadding">
             <div class="container-fluid">
                 <div id="cardInBox">
@@ -275,13 +272,5 @@
         saveCardChangeOrder(url);
     })
 </script>
-{% comment %}<script>
-    //折扣授权码验证
-    $('#disCode input').blur(function(){
-        var disCode = $(this).val();
-        if(disCode){
-            checkDiscode("{% url 'disCodeCheck' %}?discode="+disCode+"&shop={{ shopcode |safe }}");
-        }
-    });
-</script>{% endcomment %}
+
 {% endblock %}

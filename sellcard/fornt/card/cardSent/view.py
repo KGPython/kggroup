@@ -12,18 +12,29 @@ from sellcard.common.model import MyError
 def index(request):
     shops = base.findShop()
     cardTypes = base.findCardType()
-    return render(request, 'cardSent.html', locals())
+    # 在服务端session中添加key认证，避免用户重复提交表单
+    token = 'allow'  # 可以采用随机数
+    request.session['postToken'] = token
+    return render(request, 'card/sent/cardSent.html', locals())
 
 @transaction.atomic
 def sentOrderSave(request):
     orderSn = 'G'+mth.setOrderSn(CardReceive)
+    res = {}
+    # 检测session中Token值，判断用户提交动作是否合法
+    Token = request.session.get('postToken', default=None)
+    # 获取用户表单提交的Token值
+    userToken = request.POST.get('postToken', '')
+    if userToken != Token:
+        res["msg"] = 1
+        return HttpResponse(json.dumps(res))
 
     cardStr = request.POST.get('list','')
     cards = json.loads(cardStr)
     shop = request.POST.get('shop','')
     person = request.POST.get('person','')
 
-    res={}
+
     try:
         with transaction.atomic():
             receive = CardReceive()
@@ -51,20 +62,16 @@ def sentOrderSave(request):
                     item = CardInventory()
                     item.order_sn = orderSn
                     item.card_no = prefix+str(i)
-                    num = CardInventory.objects.filter(card_no=prefix+str(i)).count()
-                    if(num>0):
-                        raise MyError(prefix+str(i))
-                    else:
-                        item.card_value = card['cardType']
-                        item.card_action = '1'
-                        item.card_status = '1'
-                        item.shop_code = shop
-                        item.card_blance='0.00'
-                        item.card_addtime=datetime.datetime.now()
-                        item.save()
+                    item.card_value = card['cardType']
+                    item.card_action = '1'
+                    item.card_status = '1'
+                    item.shop_code = shop
+                    item.card_blance='0.00'
+                    item.card_addtime=datetime.datetime.now()
+                    item.save()
         res['msg']='0'
         ActionLog.objects.create(action='信息部发卡',u_name=request.session.get('s_uname'),cards_out=cardStr,add_time=datetime.datetime.now())
-
+        del request.session['postToken']
     except MyError as e1:
         print('My exception occurred, value:', e1.value)
         res['msg']='2'

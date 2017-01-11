@@ -16,7 +16,7 @@ def index(request):
     token = 'allow'  # 可以采用随机数
     request.session['postToken'] = token
 
-    return render(request, 'cardChange.html', locals())
+    return render(request, 'card/change/cardChange.html', locals())
 
 @transaction.atomic
 def save(request):

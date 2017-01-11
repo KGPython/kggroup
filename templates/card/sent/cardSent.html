@@ -57,6 +57,7 @@
                     </div>
                 </div>
         </div>
+        <input id="post-token" type="hidden" value="{{ token }}">
         <div class="enter-box"><button class="btn btn-success pull-right btn-enter" type="button">提交订单</button></div>
     </div>
 </div>
@@ -233,7 +234,8 @@
                 csrfmiddlewaretoken: CSRF,
                 'list':JSON.stringify(list),
                 'shop':shop,
-                'person':person
+                'person':person,
+                'postToken':$('#post-token').val()
             },
             success:function(data){
                 if(data.msg=='0'){
