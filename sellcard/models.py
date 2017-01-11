@@ -240,7 +240,7 @@ class KfJobsCoupon(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'kf_jobs_coupon_new'
+        db_table = 'kf_jobs_coupon'
 
 
 class KfJobsCouponBatch(models.Model):
@@ -274,7 +274,7 @@ class KfJobsCouponGoodsDetail(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'KF_Jobs_Coupon_Goods_Detail'
+        db_table = 'kf_jobs_coupon_goods_detail'
 
 
 class KfJobsCouponOld(models.Model):
@@ -315,7 +315,7 @@ class KfJobsCouponOld(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'KF_Jobs_Coupon'
+        db_table = 'KF_Jobs_Coupon_old'
 
 
 class KfJobsCouponSn(models.Model):
@@ -632,7 +632,7 @@ class Orders(models.Model):
     buyer_tel = models.CharField(max_length=11, blank=True, null=True)
     buyer_company = models.CharField(max_length=60, blank=True, null=True)
     add_time = models.DateTimeField()
-    y_cash = models.DecimalField(max_digits=11, decimal_places=0, blank=True, null=True)
+    y_cash = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
     diff_price = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
     discount_rate = models.DecimalField(max_digits=6, decimal_places=4, blank=True, null=True)
     remark = models.TextField(blank=True, null=True)

@@ -114,6 +114,7 @@ def detail(request):
         shop_code=request.POST.get('t_shop_code')
         start=request.POST.get('t_start')
         end=request.POST.get('t_end')
+        end = datetime.datetime.strptime(end, '%Y-%m-%d') + datetime.timedelta(1)
         shop=request.POST.get('t_shop')
         type=request.POST.get('t_type')
 
@@ -165,12 +166,16 @@ def detail(request):
             cur.close()
             conn.close()
         else:
-            serial_id = KfJobsCouponSn.objects.exclude(serial_id='0').filter(request_shop=shop,
+            serial = KfJobsCouponSn.objects.exclude(serial_id='0').filter(request_shop=shop,
                                                                              used_flag=1,
-                                                                             used_date__lte=start,
-                                                                             used_date__gte=end,
+                                                                             used_date__lte=end,
+                                                                             used_date__gte=start,
                                                                              used_shop__in=code_list)\
                 .values('coupon_code').aggregate(serial_id=Max('serial_id'))
+            serial_id = []
+            for item_serial in serial:
+                serial_id.append(item_serial['serial_id'])
+
             serial_id = str(serial_id)
             serial_id = serial_id.replace('[', '').replace(']', '')
             List = getDetail(code_list,start,end,shop,serial_id)

@@ -175,8 +175,8 @@ def getDetail(serial_id):
                            as_dict=True)
     cur = conn.cursor()
     sql = u"select ClearShopID as used_shop, " \
-          u"       ClearSDate as used_date " \
-          u"       ClearPOSID as used_name " \
+          u"       ClearSDate as used_date, " \
+          u"       ClearPOSID as used_name, " \
           u"       CouponNO as voucher " \
           u"  from MyShop_Coupon " \
           u" where ClearFlag = 1" \
