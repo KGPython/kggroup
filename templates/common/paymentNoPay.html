@@ -23,12 +23,7 @@
                     <td><input type='text' class='form-control payVal'></td>
                     <td><input type='text' class='form-control'></td>
                 </tr>
-                <tr>
-                    <td><input value="2" type="checkbox"></td>
-                    <td><input type='text' class='form-control payName' value="代金卷" disabled></td>
-                    <td><input type='text' class='form-control payVal'></td>
-                    <td><input type='text' class='form-control'></td>
-                </tr>
+
                 <tr>
                     <td><input value="3" type="checkbox"></td>
                     <td><input type='text' class='form-control payName' value="汇款" disabled></td>
@@ -41,74 +36,8 @@
                     <td><input type='text' class='form-control payVal'></td>
                     <td><input type='text' class='form-control'></td>
                 </tr>
-                <tr>
-                    <td><input value="4" type="checkbox"></td>
-                    <td><input type='text' class='form-control payName' value="赊销" disabled></td>
-                    <td><input type='text' class='form-control payVal'></td>
-                    <td><input type='text' class='form-control'></td>
-                </tr>
-                <tr>
-                    <td><input id="parterId" value="" type="checkbox"></td>
-                    <td>
-                        <select name="" id="parter" class="form-control">
-                            <option value="">请选择三方平台名称</option>
-                            <option value="6">移动积分</option>
-                            <option value="7">美团</option>
-                            <option value="8">糯米</option>
-                            <option value="10">慧购电子支付</option>
-                            <option value="11">慧购店内支付</option>
-                        </select>
-                    </td>
-                    <td><input type='text' class='form-control payVal'></td>
-                    <td><input type='text' class='form-control'></td>
-                </tr>
-                <tr>
-                    <td><input id="hjs" value="9" type="checkbox"></td>
-                    <td><input type='text' class='form-control payName' value="黄金手" disabled></td>
-                    <td>
-                        <input type='text' class='form-control payVal' id="hjsVal" value="0" disabled>
-                        <input type='hidden' id="hjsStr" value="">
-                    </td>
-                    <td><input type='text' class='form-control' id="remark-hjs" disabled></td>
-                </tr>
             </tbody>
         </table>
-
-        <div style="display: none; padding-right: 17px; background: rgba(0,0,0,0.5)" class="modal" id="hjsBox">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title" id="myModalLabel">
-                           兑换码验证
-                        </h4>
-                    </div>
-                    <div class="modal-body widget-content">
-                        <table class="table table-striped table-form-my">
-                            <thead>
-                                <tr>
-                                    <th>卡号</th><th>卡密</th><th>金额</th><th>操作</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><input type="text" class='form-control changeCode'></td>
-                                    <td><input type="text" class='form-control changeCode'></td>
-                                    <td><input type="text" class='form-control hCost' disabled='disabled'></td>
-                                    <td><button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this)">删除</button></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" id="close">关闭
-                        </button>
-                        <button type="button" class="btn btn-primary" id="submit">
-                            提交更改
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
 <script>
@@ -118,12 +47,11 @@ $(document).on('click','.payment #sumPayments',function(){
     var totalStr = '';
     var payTotal=0;
     var payIdList = [];
-    var payCash = 0;//现金、pos、代金券、汇款、赊销
     for(var i=0;i<palyList.length;i++){
         var checkBox = $(palyList[i]).find('td').eq(0).find('input')[0];
         var flag = $(checkBox).is(':checked');
         var payName = '';
-        var payVal= parseFloat($(palyList[i]).find('td').eq(2).find('input').val());
+        var payVal= $(palyList[i]).find('td').eq(2).find('input').val();
         if(flag && payVal){
             var cardSaleTotalVal = parseFloat($(".Total #totalVal b").text());
             var payId =0;
@@ -140,7 +68,7 @@ $(document).on('click','.payment #sumPayments',function(){
                 alert('请选择三方支付方式');
                 break;
             }
-            if(payId == '7' || payId == '8' || payId == '10' || payId == '11'  || payId == '12'){
+            if(payId == '7' || payId == '8' || payId == '10' || payId == '11'  || payId == '12' || payId== '6'){
                 if(payIdList.indexOf('1')>=0 || payIdList.indexOf('2')>=0 || payIdList.indexOf('3')>=0 || payIdList.indexOf('4')>=0 || payIdList.indexOf('5')>=0){
                     alert('混合支付存在异常，请核查');
                     $(palyList[i]).find('td').eq(2).find('input').val('');
@@ -148,37 +76,19 @@ $(document).on('click','.payment #sumPayments',function(){
                 }
             }
             payIdList.push(payId);
-            if(payId == 1 || payId == 2 || payId == 3 || payId == 4){
-                payCash += payVal;
-                setTotalBycardSaleTotalVal('',cardSaleTotalVal)
-            }
-            else if(payId == 5){//pos刷卡
-                payCash += payVal;
+            if(payId == 5){//pos刷卡
                 //规则1：门店DISC_LEVEL为1，则区分
                 //规则2：订单超过最小返点金额+1000，则不区分；
                 //规则3：订单金额在最小返点金额和最小返点金额+1000之间，则区分
                 if(cardSaleTotalVal<(DISC_RATES[0].val_min+1000) && cardSaleTotalVal>=DISC_RATES[0].val_min && DISC_LEVEL=='1') {
-{#                    var posVal = parseFloat($(palyList[i]).find('td').eq(2).find('input').val());#}
-                    changeDiscValByPos(cardSaleTotalVal, payVal);
+
+                    var posVal = parseFloat($(palyList[i]).find('td').eq(2).find('input').val());
+                    changeDiscValByPos(cardSaleTotalVal, posVal)
                 }
             }
-            else if(payId == 6){//移动积分
-                if(payCash>=DISC_RATES[0].val_min){
-                    alert('混合支付存在异常，请核查');
-                    $(palyList[i]).find('td').eq(2).find('input').val('');
-                    break;
-                }else{
-                    changeDiscValByPayment(payVal,0.01)
-                }
+            else {
+                setTotalBycardSaleTotalVal('',cardSaleTotalVal)
             }
-            else if(payId == 7 || payId == 8 || payId == 10){//美团、糯米、慧购
-                changeDiscValByPayment(payVal,0.02)
-            }
-            else if(payId == 11){//慧购
-                changeDiscValByPayment2(payVal,0.02)
-            }
-
-
 
             totalStr += payName +' : '+payVal+'元 ';
             remarks = $(palyList[i]).find('td').eq(3).find('input').val();
@@ -211,17 +121,17 @@ $(document).on('change','.payList #blank',function(){
     $(parentTr).find('td').eq(0).find('input').val(val);
 });*/
 
-function changeDiscValByPayment(Val,discRate) {
+function changeDiscValByPayment(cardSaleTotalVal,discRate) {
      $('.Total-discInfo').hide();
     //设置折扣率
     $('.Total #discount input').val(discRate*100);
     //设置折扣金额
-    var discountVal = parseFloat(Val*discRate).toFixed(2);
+    var discountVal = (parseFloat(cardSaleTotalVal)*discRate);
     $('.Total #discountVal b').text(discountVal);
     //设置优惠补差
     $('.Total #totalYBalance b').text(0);
     //设置应付
-    $('.Total #totalPaid b').text(Val);
+    $('.Total #totalPaid b').text(cardSaleTotalVal);
 
     //设置优惠返现
     $('.discountTotal #Ycash').val(discountVal);
@@ -229,18 +139,18 @@ function changeDiscValByPayment(Val,discRate) {
     $(".discBox").hide();
 }
 
-function changeDiscValByPayment2(Val,discRate) {
+function changeDiscValByPayment2(cardSaleTotalVal,discRate) {
     $('.Total-discInfo').show();
     //计算折扣金额
     $('.Total #discount input').val(discRate*100);
-    var discountVal = parseFloat(Val*discRate).toFixed(2);
+    var discountVal = (parseFloat(cardSaleTotalVal)*discRate);
     $('.Total #discountVal b').text(discountVal);
     //优惠补差
     var discountCardTotalVal = parseFloat($(".discountTotal #totalVal b").text());
     discountPay  = discountCardTotalVal - discountVal;
     $('.Total #totalYBalance b').text(discountPay);
     //6、应付金额
-    $('.Total #totalPaid b').text(Val+discountPay);
+    $('.Total #totalPaid b').text(cardSaleTotalVal+discountPay);
     //设置优惠返现
     $(".discBox").show();
     $(".discountTotal #Ycash").val(0)

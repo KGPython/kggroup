@@ -328,7 +328,6 @@ function getCardListVal(cardList,cardtype,cls){
         Ycash = Ycash=='' ?0:parseFloat(Ycash);
         totalVal +=Ycash;
     }
-
     //展示卡合计金额
     $('.'+cls+' #totalVal b').text(parseFloat(totalVal).toFixed(2));
     $('.'+cls+' #totalNum b').text(totalNum);
