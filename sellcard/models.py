@@ -197,24 +197,6 @@ class CardInventory(models.Model):
         managed = False
         db_table = 'card_inventory'
 
-
-class CardInventoryCopy1(models.Model):
-    card_no = models.CharField(unique=True, max_length=32)
-    card_value = models.CharField(max_length=12)
-    card_status = models.CharField(max_length=1)
-    card_action = models.CharField(max_length=1)
-    card_addtime = models.DateTimeField()
-    shop_code = models.CharField(max_length=16, blank=True, null=True)
-    card_blance = models.DecimalField(max_digits=12, decimal_places=2)
-    charge_time = models.DateTimeField(blank=True, null=True)
-    order_sn = models.CharField(max_length=32, blank=True, null=True)
-    sheetid = models.CharField(max_length=32, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'card_inventory_copy'
-
-
 class CardReceive(models.Model):
     shop_code = models.CharField(max_length=16)
     rec_sn = models.CharField(max_length=20)
@@ -440,25 +422,7 @@ class NavList(models.Model):
         db_table = 'nav_list'
 
 
-class OldCardData(models.Model):
-    card_no = models.CharField(primary_key=True, max_length=32)
-    sheetid = models.CharField(max_length=32, blank=True, null=True)
-    detail = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
 
-    class Meta:
-        managed = False
-        db_table = 'old_card_data'
-
-
-class OldCardData2(models.Model):
-    card_no = models.CharField(primary_key=True, max_length=32)
-    sheetid = models.CharField(max_length=32, blank=True, null=True)
-    detail = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
-    mode = models.IntegerField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'old_card_data2'
 
 
 class OrderBorrow(models.Model):
