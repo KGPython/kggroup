@@ -46,6 +46,8 @@
         margin-bottom: 4mm;
         margin-left: 4mm;
         margin-right: 4mm;
+        padding-top: 2mm;
+        padding-bottom: 2mm;
         width: 95mm;
         float: left;
     }
@@ -58,7 +60,7 @@
         margin-left: 8mm;
         margin-right: 8mm;
         width: 79mm;
-        height: 26mm;
+        height: 30mm;
         font-size: 12px;
     }
 
@@ -67,7 +69,7 @@
     }
 
     .v_print .v_foot {
-        margin-bottom: 1px;
+        height: 1mm;
     }
 </style>
 <!--containt-part-->
@@ -79,6 +81,8 @@
                 {% if var_i|multiply:tnop|add:var_j < counts %}
                     <div class="v_print" style="text-align:center">
                         <label class="v_title">宽广超市{{ resList.coupon_name }}</label>
+                    <br/>
+                        <label style=" font-size:10px">NO.{{ resList.start_sn }}--NO.{{ resList.end_sn }}</label>
                         <table class="v_tb">
                             <tr class="v_tr">
                                 <th colspan="2">

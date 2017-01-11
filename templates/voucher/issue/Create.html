@@ -4,7 +4,7 @@
     <meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>新发行代金券</title>
+    <title>新发行购物券</title>
 </head>
 <body>
 {% include 'common/head.html' %}
@@ -15,13 +15,13 @@
             <a data-original-title="Go to Home" href="#" title="" class="tip-bottom">
                 <span class="glyphicon glyphicon-home" aria-hidden="true"> </span> 首页
             </a>
-            <a href="#" class="">代金券管理-发行</a>
+            <a href="#" class="">购物券管理-发行</a>
             <a href="#" class="current">新建</a>
         </div>
     </div>
     <div class="widget-box">
         <div class="widget-title"><span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
-            <h5>代金券管理-发行</h5>
+            <h5>购物券管理-发行</h5>
         </div>
         <form action="{% url 'voucherIssueCreate' %}" method="post" id="Form">
             {% csrf_token %}
@@ -70,7 +70,7 @@
                         <div class="col-xs-3">
                             <select name="type" id="type" class="form-control" required>
                                 <option value="1">换卡券</option>
-                                <option value="2">换物券</option>
+                                <option value="2">提货券</option>
                                 <option value="3">通用券</option>
                             </select>
                         </div>
@@ -234,7 +234,7 @@
 <script type="text/javascript">
     var msg = "{{ msg }}";
     if (msg == '1') {
-        alert('数据提交成功，共记录了{{ len_list }}张代金券');
+        alert('数据提交成功，共记录了{{ len_list }}张购物券');
         window.location.href = "{% url 'voucherIssueList' %}";
     }
     if (msg == '2') {

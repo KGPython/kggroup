@@ -728,3 +728,6 @@ class Temp(models.Model):
     class Meta:
         managed = False
         db_table = 'temp'
+
+
+# 测试github更新

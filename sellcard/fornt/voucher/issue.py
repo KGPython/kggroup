@@ -142,7 +142,7 @@ def create(request):
             coupon_code = shopCode+today[2:]+str(batch).zfill(2)
 
             sqlVoucher = u'select jcs.voucher ' \
-                         u'  from KF_Jobs_Coupon_SN jcs ' \
+                         u'  from kf_jobs_coupon_sn jcs ' \
                          u' where jcs.batch = "{batch}" ' \
                          u'   and jcs.request_shop = "{shop}" ' \
                          u'   and jcs.state = 1 ' \
@@ -154,6 +154,8 @@ def create(request):
             cur = conn.cursor()
             cur.execute(sqlVoucher)
             List = cur.fetchall()
+            cur.close()
+            conn.close()
 
             len_list = len(List)
 
@@ -170,6 +172,7 @@ def create(request):
                                             range=rangeremark,
                                             payment_type=payment_type,
                                             pay_account=pay_account,
+                                            credit_account=0,
                                             discount=discount,
                                             amount=len_list,
                                             print_amount=0,
@@ -177,7 +180,9 @@ def create(request):
                                             remark='',
                                             create_uesr_id=user,
                                             create_user_name=name,
-                                            create_date=today)
+                                            create_date=today,
+                                            start_sn=sn_start.zfill(6),
+                                            end_sn=sn_end.zfill(6))
 
                 # 插入卡券商品明细表
                 for var_good in chooseList:
@@ -237,7 +242,7 @@ def printed(request):
 
     resList = KfJobsCoupon.objects.values(
             'shop_code', 'coupon_name', 'type', 'start_date', 'end_date', 'range', 'print_amount',
-            'values', 'batch', 'coupon_code').filter(coupon_code=coupon_code)
+            'values', 'batch', 'coupon_code', 'start_sn', 'end_sn').filter(coupon_code=coupon_code)
     resList = resList[0]
     print_amount = resList['print_amount'] + counts
     KfJobsCoupon.objects.filter(coupon_code=coupon_code).update(print_amount=print_amount)
@@ -247,12 +252,12 @@ def printed(request):
 
     good_len = len(GoodList)
     tnop = 1 # The number of pages 每页显示个数
-    if good_len <= 3:
-        tnop = 12
-    elif good_len>3 and good_len<=6:
+    if good_len <= 4:
         tnop = 10
-    else:
+    elif good_len>4 and good_len<=8:
         tnop = 8
+    else:
+        tnop = 6
     range_tnop = range(tnop)
     page_count = range(counts // tnop + (0 if counts % tnop == 0 else 1))
 

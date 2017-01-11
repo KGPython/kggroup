@@ -5,5 +5,5 @@ urlpatterns = [
     #卡
     url('^fornt/',include('sellcard.fornt.card.urls')),
     #卷
-    url('^fornt/',include('sellcard.fornt.voucher.urls'))
+    url('^fornt/voucher/',include('sellcard.fornt.voucher.urls'))
 ]

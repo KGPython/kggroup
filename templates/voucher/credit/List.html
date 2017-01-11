@@ -5,7 +5,7 @@
     <meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>发行购物券</title>
+    <title>赊销购物券</title>
     <link rel="stylesheet" href="{{ static }}/css/bootstrap-datetimepicker.min.css">
 </head>
 <body>
@@ -17,23 +17,23 @@
             <a data-original-title="Go to Home" href="#" title="" class="tip-bottom">
                 <span class="glyphicon glyphicon-home" aria-hidden="true"> </span> 首页
             </a>
-            <a href="#" class="">购物券管理-发行</a>
-            <a href="#" class="current">列表</a>
+            <a href="#" class="">购物券管理</a>
+            <a href="#" class="current">赊销购物券</a>
         </div>
     </div>
     <div class="widget-box">
         <div class="widget-title"><span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
-            <h5>发行购物券列表</h5>
+            <h5>赊销购物券列表</h5>
         </div>
         <div class="widget-content nopadding">
             <div class="collapse in widget-content">
-                <form action="{% url 'voucherIssueList' %}" method="post" id="form">
+                <form action="{% url 'voucherCredit' %}" method="post" id="form">
                     {% csrf_token %}
                     <div class="row formline">
                         <label for="" class="col-xs-1 formline-label">发行门店：</label>
                         <div class="col-xs-2">
-                            <input name="shop" id="shop" type="text" class="form-control"
-                                   value="{{ shopcode | transShopCode }}" readonly>
+                            <input name="shopcode" id="shopcode" type="text" class="form-control"
+                                   value="{{ shop | transShopCode }}" readonly>
                         </div>
                         <label for="" class="col-xs-1 formline-label">创建时间：从</label>
                         <div class="col-xs-2">
@@ -64,7 +64,7 @@
                             <select name="couponType" id="couponType" class="form-control" required="required">
                                 <option value="">全部</option>
                                 <option value="1">换卡券</option>
-                                <option value="2">提货券</option>
+                                <option value="2">换物券</option>
                                 <option value="3">通用券</option>
                             </select>
                         </div>
@@ -75,9 +75,6 @@
                         </div>
                         <div class="col-xs-1">
                             <button type="button" class="btn btn-info enter-btn pull-right" id="enter">查询</button>
-                        </div>
-                        <div class="col-xs-1">
-                            <a href="{% url 'voucherIssueCreate' %}" class="btn btn-success pull-right">新建</a>
                         </div>
                     </div>
 
@@ -105,7 +102,7 @@
                 </form>
                 <div class="widget-box">
                     <div class="widget-content nopadding" style="overflow: hidden">
-                        <h3 class="text-center">发券明细列表</h3>
+                        <h3 class="text-center">明细列表</h3>
                         <table class="table table-striped table-hover table-form-my">
                             <thead>
                             <tr>
@@ -116,11 +113,10 @@
                                 <th>创建时间</th>
                                 <th>有效期</th>
                                 <th>面值</th>
-                                <th>优惠</th>
+                                <th>应收金额</th>
+                                <th>到账金额</th>
                                 <th>使用范围</th>
-                                <th>总数</th>
-                                <th>已打印</th>
-                                <th width="35%">操作</th>
+                                <th>操作</th>
                             </tr>
                             </thead>
                             <tbody class="cardIn" id="nopayList">
@@ -133,23 +129,13 @@
                                     <td>{{ row.start_date }}</td>
                                     <td>{{ row.end_date }}</td>
                                     <td>{{ row.values }}</td>
-                                    <td>{{ row.discount }}</td>
+                                    <td>{{ row.pay_account }}</td>
+                                    <td>{{ row.credit_account }}</td>
                                     <td>{{ row.range }}</td>
-                                    <td>{{ row.amount }}</td>
-                                    <td>{{ row.print_amount }}张</td>
                                     <td>
-                                        <div class="col-xs-3">预印张数：</div>
-                                        <div class="col-xs-3">
-                                            <input type="number" id="{{ row.coupon_code }}"
-                                                   class="btn-default btn-sm">
-                                        </div>
-                                        <div class="col-xs-6">
-                                            <button type="button" onclick="toPrint('{{ row.coupon_code }}','1')"
-                                                    class="btn-success btn-sm" >打印含金额</button>
-                                            <button type="button" onclick="toPrint('{{ row.coupon_code }}','0')"
-                                                    class="btn-success btn-sm" >打印无金额</button>
-                                        </div>
-                                     </td>
+                                        <button type="button" onclick="credit('{{ row.coupon_code }}')"
+                                                class="btn btn-info btn-sm btn_credit">赊销</button>
+                                    </td>
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -160,16 +146,10 @@
         </div>
     </div>
 </div>
-<form action="{% url 'voucherIssuePrint' %}" method="post" id="printForm">
-    {% csrf_token %}
-    <input type="hidden" name="coupon_code" id="coupon_code">
-    <input type="hidden" name="is_show" id="is_show">
-    <input type="hidden" name="counts" id="counts">
-</form>
 <!--end-containt-part-->
 {% include "common/foot.html" %}
 <script>
-    $("#couponType").val({{ couponType }});
+    $("#couponType").val('{{ couponType }}');
 </script>
 <script src="{{ static }}/js/bootstrap-datetimepicker.js"></script>
 <script src="{{ static }}/js/bootstrap-datetimepicker.zh-CN.js"></script>
@@ -197,6 +177,11 @@
     });
 </script>
 <script>
+    function credit(coupon_code) {
+        window.location.href="{% url 'voucherCreditCreate' %}?coupon_code="+coupon_code;
+    }
+</script>
+<script>
     //确定按钮
     $('#pageEnter').click(function () {
         $('#form').submit();
@@ -221,20 +206,6 @@
         $('#page').val({{ List.paginator.num_pages }});
         $('#form').submit();
     });
-</script>
-<script>
-    function toPrint(code,flag) {
-        var amount = $('#'+code).val();
-        if(!amount){
-            alert('请输入预印数量！');
-        }
-        else{
-            $("#printForm #coupon_code").val(code);
-            $("#printForm #is_show").val(flag);
-            $("#printForm #counts").val(amount);
-            $("#printForm").submit();
-        }
-    }
 </script>
 </body>
 </html>

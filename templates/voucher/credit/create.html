@@ -1,0 +1,110 @@
+{% extends 'common/baseForJobs.html' %}
+{% block title %}赊销购物券{% endblock %}
+{% block content %}
+<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb">
+            <a data-original-title="Go to Home" href="#" title="" class="tip-bottom">
+                <span class="glyphicon glyphicon-home" aria-hidden="true"> </span> 首页
+            </a>
+            <a href="#" class="">购物券管理</a>
+            <a href="#" class="current">赊销购物券--赊销</a>
+        </div>
+    </div>
+    <div class="widget-box">
+        <div class="widget-content nopadding">
+            <div class="collapse in widget-content">
+                <form>
+                    {% csrf_token %}
+                    <input id="coupon_code" type="hidden" value="{{ coupon_code }}">
+                    <div class="row formline">
+                        <label for="" class="col-xs-1 formline-label">赊销金额：</label>
+                        <div class="col-xs-3">
+                            <input type="text" class="form-control" value="{{ coupon_info.pay_account }}" readonly>
+                        </div>
+                        <label for="" class="col-xs-1 formline-label">到账金额：</label>
+                        <div class="col-xs-3">
+                            <input type="text" class="form-control" value="{{ coupon_info.credit_account }}" readonly>
+                        </div>
+                        <label for="" class="col-xs-1 formline-label">应收金额：</label>
+                        <div class="col-xs-3">
+                            <input type="text" id="receivable" class="form-control" value="{{ receivable }}" readonly>
+                        </div>
+                    </div>
+                    <div class="row formline">
+                        <label for="payment_type" class="col-xs-1 formline-label">付款方式：</label>
+                        <div class="col-xs-3">
+                            <select name="payment_type" id="payment_type" class="form-control" required>
+                                <option value="1">现金</option>
+                                <option value="3">汇款</option>
+                                <option value="5">POS机消费</option>
+                            </select>
+                        </div>
+                        <label for="pay_account" class="col-xs-1 formline-label">实收金额：</label>
+                        <div class="col-xs-3">
+                            <input type="text" class="form-control" name="pay_account" id="pay_account"
+                                   required value="{{ pay_account }}">
+                        </div>
+                        <div class="col-xs-1">
+                            <input id="post-token" type="hidden" value="{{ token }}">
+                            <button type="button" class="btn btn-success pull-right" id="btn_save">保存</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+    $('#btn_save').click(function () {
+        var receivable = $('#receivable').val();
+        var pay_account = $('#pay_account').val();
+        if (parseFloat(pay_account) > parseFloat(receivable)) {
+            alert('实收金额不应该大于应收金额');
+            return false;
+        }
+        var data = {
+            csrfmiddlewaretoken: CSRF,
+            'coupon_code':$('#coupon_code').val(),
+            'payment_type':$('#payment_type').val(),
+            'pay_account':pay_account,
+            'postToken':$('#post-token').val()
+        };
+        console.log(data);
+        //提交数据
+        doAjaxSave('{% url 'voucherCreditCreateSave' %}',data)
+    });
+ function doAjaxSave(url,data){
+    $("#btn_save").attr('disabled',true);
+    $.ajax({
+        url:url,
+        type:'post',
+        dataType:'json',
+        data:data,
+        success:function(data){
+            $("#btn_save").removeAttr('disabled');
+            if(data.msg==1){
+                alert('赊销成功');
+                window.location.reload(true);
+                if(data.urlRedirect){
+                    window.location.href=data.urlRedirect;
+                }
+            }else if(data.msg==0){
+                if(data.msg_err){
+                    alert(data.msg_err);
+                }else{
+                    alert('赊销失败');
+                }
+            }
+        },
+        error:function(XMLHttpRequest, textStatus, errorThrown){
+             $("#btn_save").removeAttr('disabled');
+            alert('提交失败,失败原因：'+errorThrown);
+        }
+    })
+}
+</script>
+{% endblock %}
