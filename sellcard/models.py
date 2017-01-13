@@ -359,31 +359,45 @@ class KfJobsCouponOld(models.Model):
     usetime = models.IntegerField(db_column='UseTime')  # Field name made lowercase.
     maxusetime = models.IntegerField(db_column='MaxUseTime')  # Field name made lowercase.
     value = models.DecimalField(db_column='Value', max_digits=12, decimal_places=3)  # Field name made lowercase.
-    giftvalue = models.DecimalField(db_column='GiftValue', max_digits=12, decimal_places=3, blank=True, null=True)  # Field name made lowercase.
+    giftvalue = models.DecimalField(db_column='GiftValue', max_digits=12, decimal_places=3, blank=True,
+                                    null=True)  # Field name made lowercase.
     discount = models.IntegerField(db_column='Discount')  # Field name made lowercase.
     flag = models.IntegerField(db_column='Flag')  # Field name made lowercase.
     fromsheettype = models.IntegerField(db_column='FromSheetType', blank=True, null=True)  # Field name made lowercase.
-    rangeremark = models.CharField(db_column='RangeRemark', max_length=400, blank=True, null=True)  # Field name made lowercase.
+    rangeremark = models.CharField(db_column='RangeRemark', max_length=400, blank=True,
+                                   null=True)  # Field name made lowercase.
     createuserid = models.CharField(db_column='CreateUserID', max_length=10)  # Field name made lowercase.
-    updateuserid = models.CharField(db_column='UpdateUserID', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    updateuserid = models.CharField(db_column='UpdateUserID', max_length=10, blank=True,
+                                    null=True)  # Field name made lowercase.
     updatetime = models.DateTimeField(db_column='UpdateTime', blank=True, null=True)  # Field name made lowercase.
-    fromsheetid = models.CharField(db_column='FromSheetID', max_length=20, blank=True, null=True)  # Field name made lowercase.
-    fromsdate = models.CharField(db_column='FromSDate', max_length=1000, blank=True, null=True)  # Field name made lowercase.
-    fromlistno = models.CharField(db_column='FromListNO', max_length=1000, blank=True, null=True)  # Field name made lowercase.
-    fromposid = models.CharField(db_column='FromPOSID', max_length=1000, blank=True, null=True)  # Field name made lowercase.
+    fromsheetid = models.CharField(db_column='FromSheetID', max_length=20, blank=True,
+                                   null=True)  # Field name made lowercase.
+    fromsdate = models.CharField(db_column='FromSDate', max_length=1000, blank=True,
+                                 null=True)  # Field name made lowercase.
+    fromlistno = models.CharField(db_column='FromListNO', max_length=1000, blank=True,
+                                  null=True)  # Field name made lowercase.
+    fromposid = models.CharField(db_column='FromPOSID', max_length=1000, blank=True,
+                                 null=True)  # Field name made lowercase.
     serialid = models.CharField(db_column='SerialID', max_length=20)  # Field name made lowercase.
     clearflag = models.IntegerField(db_column='ClearFlag')  # Field name made lowercase.
-    clearvalue = models.DecimalField(db_column='ClearValue', max_digits=12, decimal_places=3)  # Field name made lowercase.
-    clearshopid = models.CharField(db_column='ClearShopID', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    clearsheettype = models.IntegerField(db_column='ClearSheetType', blank=True, null=True)  # Field name made lowercase.
-    clearsheetid = models.CharField(db_column='ClearSheetID', max_length=16, blank=True, null=True)  # Field name made lowercase.
-    clearsdate = models.CharField(db_column='ClearSDate', max_length=1000, blank=True, null=True)  # Field name made lowercase.
-    clearlistno = models.CharField(db_column='ClearListNO', max_length=1000, blank=True, null=True)  # Field name made lowercase.
-    clearposid = models.CharField(db_column='ClearPOSID', max_length=1000, blank=True, null=True)  # Field name made lowercase.
+    clearvalue = models.DecimalField(db_column='ClearValue', max_digits=12,
+                                     decimal_places=3)  # Field name made lowercase.
+    clearshopid = models.CharField(db_column='ClearShopID', max_length=10, blank=True,
+                                   null=True)  # Field name made lowercase.
+    clearsheettype = models.IntegerField(db_column='ClearSheetType', blank=True,
+                                         null=True)  # Field name made lowercase.
+    clearsheetid = models.CharField(db_column='ClearSheetID', max_length=16, blank=True,
+                                    null=True)  # Field name made lowercase.
+    clearsdate = models.CharField(db_column='ClearSDate', max_length=1000, blank=True,
+                                  null=True)  # Field name made lowercase.
+    clearlistno = models.CharField(db_column='ClearListNO', max_length=1000, blank=True,
+                                   null=True)  # Field name made lowercase.
+    clearposid = models.CharField(db_column='ClearPOSID', max_length=1000, blank=True,
+                                  null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
-        db_table = 'KF_Jobs_Coupon'
+        db_table = 'kf_jobs_coupon_old'
 
 
 class KfJobsCouponSn(models.Model):
@@ -455,6 +469,19 @@ class OrderBorrowInfo(models.Model):
     class Meta:
         managed = False
         db_table = 'order_borrow_info'
+
+
+class OrderBorrowInfoCopy(models.Model):
+    order_sn = models.CharField(max_length=20, blank=True, null=True)
+    card_no = models.CharField(max_length=20, blank=True, null=True)
+    card_type = models.CharField(max_length=12, blank=True, null=True)
+    card_balance = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
+    is_back = models.CharField(max_length=1, blank=True, null=True)
+    back_time = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'order_borrow_info_copy'
 
 
 class OrderChangeCard(models.Model):
@@ -595,6 +622,7 @@ class Payment(models.Model):
     payment_name = models.CharField(max_length=60)
     flag = models.CharField(max_length=255)
     dis_rate = models.DecimalField(max_digits=5, decimal_places=3, blank=True, null=True)
+
     class Meta:
         managed = False
         db_table = 'payment'

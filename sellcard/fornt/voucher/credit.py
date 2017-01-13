@@ -47,9 +47,9 @@ def index(request):
     if end != '':
         kwargs.setdefault('start_date__lte', endTime)
 
-
-    List = KfJobsCoupon.objects.values('shop_code', 'coupon_code', 'create_user_name','type', 'batch', 'start_date', 'end_date', 'values', 'range', 'pay_account',
-          'credit_account').filter(credit_account__lt=F('pay_account'),**kwargs).order_by('create_date')
+    List = KfJobsCoupon.objects.values('shop_code', 'coupon_code', 'create_user_name',
+         'type', 'batch', 'start_date', 'end_date', 'values', 'range', 'pay_account',
+          'credit_account').filter(**kwargs).order_by('create_date')
 
     # 表单分页开始
     paginator = Paginator(List, 8)

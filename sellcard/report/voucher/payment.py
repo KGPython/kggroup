@@ -62,11 +62,11 @@ def index(request):
           u" CASE WHEN c.payment_type = 3 THEN c.pay_account ELSE 0 END AS remit, " \
           u" CASE WHEN c.payment_type = 5 THEN c.pay_account ELSE 0 END AS pos, " \
           u" CASE WHEN c.payment_type = 4 THEN c.pay_account - c.credit_account ELSE 0 END AS credit " \
-          u" FROM kf_jobs_coupon c " \
+          u" FROM kf_jobs_coupon_new c " \
           u" WHERE c.shop_code IN ({shop_one}) " \
           u" AND c.start_date BETWEEN '{start_one}' AND '{end_one}' " \
           u" UNION SELECT c.coupon_code, c.shop_code, 0, 0, 0, 0, 0, 0 " \
-          u" FROM kf_jobs_coupon c " \
+          u" FROM kf_jobs_coupon_new c " \
           u" WHERE c.shop_code IN ({shop_two}) AND c.start_date < '{start_two}' ) jc " \
           u" LEFT JOIN ( SELECT cc.coupon_code, " \
           u" CASE WHEN cc.payment_type = 1 THEN cc.pay_account ELSE 0 END AS credit_cash, " \
