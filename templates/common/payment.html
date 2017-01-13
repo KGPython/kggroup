@@ -1,6 +1,10 @@
 <div class="widget-box payment">
     <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
         <h5>支付管理</h5>
+        <span class="icon-add-btn">
+            <input type="button" class="btn btn-success btn-xs pull-right" id="sumPayments" value="支付合计">
+        </span>
+
     </div>
     <div class="widget-content nopadding">
         <table class="table table-striped table-hover table-form-my">
@@ -14,33 +18,32 @@
             </thead>
             <tbody class="payList">
                 <tr>
-                    <td><input id="" value="1" type="checkbox"></td>
+                    <td><input value="1" type="checkbox"></td>
                     <td><input type='text' class='form-control payName' value="现金" disabled></td>
                     <td><input type='text' class='form-control payVal'></td>
                     <td><input type='text' class='form-control'></td>
                 </tr>
                 <tr>
-                    <td><input id="" value="2" type="checkbox"></td>
+                    <td><input value="2" type="checkbox"></td>
                     <td><input type='text' class='form-control payName' value="代金卷" disabled></td>
                     <td><input type='text' class='form-control payVal'></td>
                     <td><input type='text' class='form-control'></td>
                 </tr>
                 <tr>
-                    <td><input id="blankId" value="" type="checkbox"></td>
-                    <td>
-                        <select name="" id="blank" class="form-control">
-                            <option value="">请选择银行打款方式</option>
-                            <option value="3">汇款</option>
-                            <option value="4">赊销</option>
-                            <option value="5">POS消费</option>
-                        </select>
-                    </td>
+                    <td><input value="3" type="checkbox"></td>
+                    <td><input type='text' class='form-control payName' value="汇款" disabled></td>
                     <td><input type='text' class='form-control payVal'></td>
                     <td><input type='text' class='form-control'></td>
                 </tr>
                 <tr>
-                    <td><input id="" value="6" type="checkbox"></td>
-                    <td><input type='text' class='form-control payName' value="移动积分" disabled></td>
+                    <td><input value="5" type="checkbox"></td>
+                    <td><input type='text' class='form-control payName' value="POS消费" disabled></td>
+                    <td><input type='text' class='form-control payVal'></td>
+                    <td><input type='text' class='form-control'></td>
+                </tr>
+                <tr>
+                    <td><input value="4" type="checkbox"></td>
+                    <td><input type='text' class='form-control payName' value="赊销" disabled></td>
                     <td><input type='text' class='form-control payVal'></td>
                     <td><input type='text' class='form-control'></td>
                 </tr>
@@ -49,6 +52,7 @@
                     <td>
                         <select name="" id="parter" class="form-control">
                             <option value="">请选择三方平台名称</option>
+                            <option value="6">移动积分</option>
                             <option value="7">美团</option>
                             <option value="8">糯米</option>
                             <option value="10">慧购电子支付</option>
@@ -107,3 +111,164 @@
         </div>
     </div>
 </div>
+<script>
+//计算混合支付的合计金额
+/*
+*
+* */
+$(document).on('click','.payment #sumPayments',function(){
+    palyList = $('.payList').find('tr');
+    var totalStr = '';
+    var payTotal=0;
+    var payIdList = [];
+    var payCash = 0;//现金、pos、代金券、汇款、赊销
+    for(var i=0;i<palyList.length;i++){
+        var checkBox = $(palyList[i]).find('td').eq(0).find('input')[0];
+        var flag = $(checkBox).is(':checked');
+        var payName = '';
+        var payVal= parseFloat($(palyList[i]).find('td').eq(2).find('input').val());
+        if(flag && payVal){
+            var cardSaleTotalVal = parseFloat($(".Total #totalVal b").text());
+            var payId =0;
+            //获取支付方式的id和名称
+            if($(palyList[i]).find('td').eq(1).find('select')[0]){
+                payId = $(palyList[i]).find('td').eq(1).find('select option:selected').val();
+                payName = $(palyList[i]).find('td').eq(1).find('select option:selected').text();
+
+            }else{
+                payId = $(palyList[i]).find('td').eq(0).find('input[type=checkbox]').val();
+                payName = $(palyList[i]).find('td').eq(1).find('input').val();
+            }
+            //2、如果checkbox选中，但是没有id，则认为是选择了三方支付，但没有具体选择哪种
+            if(!payId){
+                alert('请选择三方支付方式');
+                break;
+            }
+            //3、判断混合支付是否正确
+            if(payId == '7' || payId == '8' || payId == '10' || payId == '11'  || payId == '12'){
+                if(payIdList.indexOf('1')>=0 || payIdList.indexOf('2')>=0 || payIdList.indexOf('3')>=0 || payIdList.indexOf('4')>=0 || payIdList.indexOf('5')>=0){
+                    alert('混合支付存在异常，请核查');
+                    $(palyList[i]).find('td').eq(2).find('input').val('');
+                    break;
+                }
+            }
+            payIdList.push(payId);
+            //4、按各门店正常返点，计算
+            if(payId == 1 || payId == 2 || payId == 3 || payId == 4){
+                payCash += payVal;
+                setTotalBycardSaleTotalVal('',cardSaleTotalVal)
+            }
+            else if(payId == 5){//pos刷卡
+                payCash += payVal;
+                //规则1：门店DISC_LEVEL为1，则区分
+                //规则2：订单超过最小返点金额+1000，则不区分；
+                //规则3：订单金额在最小返点金额和最小返点金额+1000之间，则区分
+                if(cardSaleTotalVal<(DISC_RATES[0].val_min+1000) && cardSaleTotalVal>=DISC_RATES[0].val_min && DISC_LEVEL=='1') {
+{#                    var posVal = parseFloat($(palyList[i]).find('td').eq(2).find('input').val());#}
+                    changeDiscValByPos(cardSaleTotalVal, payVal);
+                }
+            }
+            else if(payId == 6){//移动积分
+                if(payCash>=DISC_RATES[0].val_min){
+                    alert('混合支付存在异常，请核查');
+                    $(palyList[i]).find('td').eq(2).find('input').val('');
+                    break;
+                }else{
+                    changeDiscValByPayment(payVal,0.01)
+                }
+            }
+            else if(payId == 7 || payId == 8 || payId == 10){//美团、糯米、慧购
+                changeDiscValByPayment(payVal,0.02)
+            }
+            else if(payId == 11){//慧购
+                changeDiscValByPayment2(payVal,0.02)
+            }
+
+
+
+            totalStr += payName +' : '+payVal+'元 ';
+            remarks = $(palyList[i]).find('td').eq(3).find('input').val();
+            if(remarks){
+                totalStr += '(备注：'+remarks+'), ';
+            }else{
+                totalStr += ', ';
+            }
+            payTotal +=parseFloat(payVal);
+        }
+
+        $('.Total #payInfo span').html(totalStr);
+        $('.Total #payTotal b').html(payTotal)
+    }
+});
+
+</script>
+<script>
+//支付列表，三方平台切换
+$(document).on('change','.payList #parter',function(){
+    var val = $(this).val();
+    var parentTr = $(this).parent().parent();
+    $(parentTr).find('td').eq(0).find('input').val(val);
+});
+//支付方式--银行打款
+/*var posVal = 0;
+$(document).on('change','.payList #blank',function(){
+    var val = $(this).val();
+    var parentTr = $(this).parent().parent();
+    $(parentTr).find('td').eq(0).find('input').val(val);
+});*/
+
+function changeDiscValByPayment(Val,discRate) {
+     $('.Total-discInfo').hide();
+    //设置折扣率
+    $('.Total #discount input').val(discRate*100);
+    //设置折扣金额
+    var discountVal = parseFloat(Val*discRate).toFixed(2);
+    $('.Total #discountVal b').text(discountVal);
+    //设置优惠补差
+    $('.Total #totalYBalance b').text(0);
+    //设置应付
+    $('.Total #totalPaid b').text(Val);
+
+    //设置优惠返现
+    $('.discountTotal #Ycash').val(discountVal);
+
+    $(".discBox").hide();
+}
+
+function changeDiscValByPayment2(Val,discRate) {
+    $('.Total-discInfo').show();
+    //计算折扣金额
+    $('.Total #discount input').val(discRate*100);
+    var discountVal = parseFloat(Val*discRate).toFixed(2);
+    $('.Total #discountVal b').text(discountVal);
+    //优惠补差
+    var discountCardTotalVal = parseFloat($(".discountTotal #totalVal b").text());
+    discountPay  = discountCardTotalVal - discountVal;
+    $('.Total #totalYBalance b').text(discountPay);
+    //6、应付金额
+    $('.Total #totalPaid b').text(Val+discountPay);
+    //设置优惠返现
+    $(".discBox").show();
+    $(".discountTotal #Ycash").val(0)
+}
+
+/*
+* 计算返点金额
+* cardSaleTotalVal：cardSaleTotalVal：售卡总金额
+* posVal：pos刷卡金额
+* */
+function changeDiscValByPos(cardSaleTotalVal,posVal) {
+    if(cardSaleTotalVal-posVal>=DISC_RATES[0].val_min){
+        setTotalBycardSaleTotalVal('',cardSaleTotalVal)
+    }else{
+        //4、优惠金额清零
+        $('.Total #discountVal b').text(0);
+        //5、优惠补差清零
+        $('.Total #totalYBalance b').text(0);
+        $('.Total #discount input').val(0);
+        //6、设置订单应付金额 = 售卡列表合计金额 + 优惠补差
+        $('.Total #totalPaid b').text(cardSaleTotalVal);
+        $('.discBox').hide();
+    }
+}
+</script>

@@ -17,7 +17,7 @@ def index(request):
     token = 'allow'  # 可以采用随机数
     request.session['postToken'] = token
 
-    return render(request, 'card/change/cardsChange.html', locals())
+    return render(request, 'card/change/cardsChange2.html', locals())
 
 def query(request):
     cardsStr = request.POST.get('cards','')

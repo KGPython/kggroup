@@ -9,6 +9,7 @@ from sellcard.models import CardInventory, Orders, OrderChangeCard, OrderUpCard,
 from django.conf import settings
 from django.core import serializers
 from django.http import HttpResponse
+from django.db import transaction
 import datetime,json
 import pymysql,_mssql
 import decimal
@@ -212,32 +213,25 @@ def updateCard(list, mode):
         cards += str(obj)
         cards += "','"
     cards = cards[0:len(cards) - 2]
-    sql = "UPDATE guest SET Mode ='" + mode + "' WHERE CardNO in (" + cards + ")"
+    sql = "UPDATE guest SET Mode ='{mode}' WHERE CardNO in ({cards})"\
+          .format(mode=mode,cards=cards)
     conn = getMssqlConn()
-    conn.autocommit(False)
     cur = conn.cursor()
-    cur.execute(sql)
-    res = cur.rowcount
-    conn.commit()
-    cur.close()
-    conn.close()
+    res =0
+    try:
+        conn.autocommit(False)
+        cur.execute(sql)
+        res = cur.rowcount
+        conn.commit()
+    except  Exception as e:
+        print(e)
+        conn.rollback()
+    finally:
+        cur.close()
+        conn.close()
 
     return res
 
-
-# 更新赊销状态
-def upNoPayStatus(request):
-    orderSn = request.POST.get('orderSn')
-    dateStr = request.POST.get('date')
-    date = datetime.datetime.strptime(dateStr, "%Y-%m-%d").date()
-    res = {}
-    try:
-        OrderPaymentInfo.objects.filter(order_id=orderSn, pay_id=4).update(is_pay='1', change_time=date)
-        res['msg'] = '0'
-    except Exception as e:
-        print(e)
-        res['msg'] = '1'
-    return HttpResponse(json.dumps(res))
 
 
 def setOrderSn(mode=None):

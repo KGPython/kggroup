@@ -1,5 +1,5 @@
 {% extends 'common/baseForJobs.html' %}
-{% block title %}单卡换卡{% endblock %}
+{% block title %}换卡-散卡换散卡{% endblock %}
 {% block content %}
 <style>
 .payment,.Total{display: none}
@@ -9,13 +9,12 @@
         <div id="breadcrumb">
             <a data-original-title="Go to Home" href="#" title="" class="tip-bottom">
                 <span class="glyphicon glyphicon-home" aria-hidden="true"> </span> 首页
-            </a> <a href="#" class="current">换卡管理</a>
+            </a>
+            <a href="#">换卡管理</a>
+            <a href="#" class="current">散卡换散卡</a>
         </div>
     </div>
     <div class="widget-box">
-        <div class="widget-title"><span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
-            <h5>换卡管理</h5>
-        </div>
         <div class="widget-content nopadding">
             <div class="container-fluid">
 
@@ -63,7 +62,7 @@
                 </div>
 
                 {% include 'common/discount.html' %}
-                {% include 'common/payment.html' %}
+                {% include 'common/payment1.html' %}
                 {% include 'common/orderTotal.html' %}
 
                 {% include 'common/buyerInfo.html' %}

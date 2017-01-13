@@ -1,5 +1,5 @@
 {% extends 'common/baseForJobs.html' %}
-{% block title %}批量换卡{% endblock %}
+{% block title %}换卡-批量换散卡{% endblock %}
 {% block content %}
 <style>
 .payment,.Total{display: none}
@@ -10,14 +10,11 @@
             <a data-original-title="Go to Home" href="#" title="" class="tip-bottom">
                 <span class="glyphicon glyphicon-home" aria-hidden="true"> </span> 首页
             </a>
-            <a href="#" class="">售卡</a>
-            <a href="#" class="current">批量换卡</a>
+            <a href="#" class="">换卡</a>
+            <a href="#" class="current">批量换散卡</a>
         </div>
     </div>
     <div class="widget-box">
-        <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
-            <h5>批量换卡</h5>
-        </div>
         <div class="widget-content nopadding">
             <div class="container-fluid">
                 <div class="widget-box">
@@ -65,7 +62,7 @@
                 </div>
 
                 {% include 'common/discount.html' %}
-                {% include 'common/payment.html' %}
+                {% include 'common/payment1.html' %}
                 {% include 'common/orderTotal.html' %}
 
                 {% include 'common/buyerInfo.html' %}
@@ -148,9 +145,9 @@
                     tr.append(td);
                 }
                 $('#correct').find('tbody').append(tr);
-                setTotalByCardList($('#correct').find('tbody'));
             }
             else{
+                $('#anomalyBox').show();
                 var cols = $('#anomaly').find('th').length;
                 var tr=$('<tr></tr>');
                 for(var j=0;j<cols;j++){
@@ -195,6 +192,7 @@
 
             }
         }
+        setTotalByCardList($('#correct').find('tbody'));
     }
     $(document).on("change",".cardId",function(){
         var cardIdStr = $(this).val();

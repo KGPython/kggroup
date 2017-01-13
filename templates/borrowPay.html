@@ -2,6 +2,7 @@
 {% load basefilter %}
 {% block title %}借卡管理--结算{% endblock %}
 {% block content %}
+<link rel="stylesheet" href="{{ static }}/css/bootstrap-datetimepicker.min.css">
 <style>
     table a{text-decoration: underline}
 </style>
@@ -148,7 +149,7 @@
                     </div>
                 </div>
                 {% include 'common/discount.html' %}
-                {% include 'common/payment.html' %}
+                {% include 'common/payment1.html' %}
                 {% include 'common/orderTotal.html' %}
                 <div class="enter-box">
                     <input id="post-token" type="hidden" value="{{ token }}">

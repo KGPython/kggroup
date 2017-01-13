@@ -25,7 +25,7 @@ def index(request):
 
     conn = mth.getMysqlConn()
     cur = conn.cursor()
-    if role_id == '1':
+    if role_id == '1' or role_id == '6':
         shops = mth.getCityShops()
         shopsCode = mth.getCityShopsCode()
     if role_id == '9':

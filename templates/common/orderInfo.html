@@ -1,14 +1,7 @@
+{% extends 'common/baseForJobs.html' %}
 {% load basefilter %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>订单详情</title>
-</head>
-<body>
-{% include 'common/head.html' %}
+{% block title %}订单详情{% endblock %}
+{% block content %}
 <link rel="stylesheet" href="{{ static }}/css/orderinfoPrint.css" media="print">
 <style media="print">
     .title h5 {
@@ -173,7 +166,10 @@
         </div>
     </div>
 </div>
-{% include "common/foot.html" %}
+{% endblock %}
+
+{% block js %}
+
 <script>
     function printContent() {
         var orderSn = '{{ orderSn | safe }}';
@@ -223,5 +219,4 @@
         $('#box').hide();
     }
 </script>
-</body>
-</html>
+{% endblock %}
