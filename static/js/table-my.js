@@ -750,8 +750,6 @@ function doAjaxSave(url,data){
             $("#btn-enter").removeAttr('disabled');
             if(data.msg==1){
                 alert('提交成功');
-                // $('input[type=text]').not('.payName').val('');
-                // $('input[type=checkbox]').prop('checked',false);
                 window.location.reload(true);
                 if(data.urlRedirect){
                     window.location.href=data.urlRedirect;
@@ -981,6 +979,16 @@ function setTotalByCardList(obj){
 function setTotalBycardSaleTotalVal(discRate,cardSaleTotalVal){
     $('.Total-discInfo').show();
     var discountVal = createDiscount(discRate,cardSaleTotalVal);
+    //2、计算优惠补差
+    var discountCardTotalVal = parseFloat($(".discountTotal #totalVal b").text());
+    discountPay  = discountCardTotalVal - discountVal;
+    $('.Total #totalYBalance b').text(discountPay);
+    //3、计算应付金额
+    $('.Total #totalPaid b').text(cardSaleTotalVal+discountPay);
+}
+
+
+function setTotalByNoPayVal(discRate,cardSaleTotalVal){
     //2、计算优惠补差
     var discountCardTotalVal = parseFloat($(".discountTotal #totalVal b").text());
     discountPay  = discountCardTotalVal - discountVal;

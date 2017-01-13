@@ -113,6 +113,9 @@
 </div>
 <script>
 //计算混合支付的合计金额
+/*
+*
+* */
 $(document).on('click','.payment #sumPayments',function(){
     palyList = $('.payList').find('tr');
     var totalStr = '';
@@ -127,7 +130,7 @@ $(document).on('click','.payment #sumPayments',function(){
         if(flag && payVal){
             var cardSaleTotalVal = parseFloat($(".Total #totalVal b").text());
             var payId =0;
-            //获取支付ID
+            //获取支付方式的id和名称
             if($(palyList[i]).find('td').eq(1).find('select')[0]){
                 payId = $(palyList[i]).find('td').eq(1).find('select option:selected').val();
                 payName = $(palyList[i]).find('td').eq(1).find('select option:selected').text();
@@ -136,10 +139,12 @@ $(document).on('click','.payment #sumPayments',function(){
                 payId = $(palyList[i]).find('td').eq(0).find('input[type=checkbox]').val();
                 payName = $(palyList[i]).find('td').eq(1).find('input').val();
             }
+            //2、如果checkbox选中，但是没有id，则认为是选择了三方支付，但没有具体选择哪种
             if(!payId){
                 alert('请选择三方支付方式');
                 break;
             }
+            //3、判断混合支付是否正确
             if(payId == '7' || payId == '8' || payId == '10' || payId == '11'  || payId == '12'){
                 if(payIdList.indexOf('1')>=0 || payIdList.indexOf('2')>=0 || payIdList.indexOf('3')>=0 || payIdList.indexOf('4')>=0 || payIdList.indexOf('5')>=0){
                     alert('混合支付存在异常，请核查');
@@ -148,6 +153,7 @@ $(document).on('click','.payment #sumPayments',function(){
                 }
             }
             payIdList.push(payId);
+            //4、按各门店正常返点，计算
             if(payId == 1 || payId == 2 || payId == 3 || payId == 4){
                 payCash += payVal;
                 setTotalBycardSaleTotalVal('',cardSaleTotalVal)

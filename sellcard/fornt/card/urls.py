@@ -20,7 +20,6 @@ urlpatterns = [
     url(r'^cardchange/save', 'sellcard.fornt.card.cardChange.card.save', name='cardchange_save'),
     url(r'^cardschange/$', 'sellcard.fornt.card.cardChange.cards.index', name='cardsChange'),
     url(r'^cardschange/query', 'sellcard.fornt.card.cardChange.cards.query', name='cardsChangeQuery'),
-
     url(r'^cardschange2/$', 'sellcard.fornt.card.cardChange.cards2.index', name='cardsChange2'),
     ################################################# 换卡模块 end ###############################################
 
@@ -86,10 +85,11 @@ urlpatterns = [
     ###########################################  到账管理 start ##############################################
     # 普通赊销到账
     url(r'^nopay/ordinary/$', 'sellcard.fornt.card.noPay.ordinary.index', name='nopay'),
-    url(r'^nopay/ordinary/update/$', 'sellcard.common.Method.upNoPayStatus', name='upNoPayStatus'),
-
+    url(r'^nopay/ordinary/update/$', 'sellcard.fornt.card.noPay.ordinary.save', name='upNoPayStatus'),
+    url(r'^nopay/ordinary/detail/$', 'sellcard.fornt.card.noPay.ordinary.detail', name='noPayOrdinaryDetail'),
     #移动积分到账
     url(r'^nopay/yd/$', 'sellcard.fornt.card.noPay.yidong.index', name='YDNoPay'),
+    url(r'^nopay/yd/update/$', 'sellcard.fornt.card.noPay.yidong.save', name='YDNoPayUpdate'),
 
     ###########################################  到账管理 start ##############################################
 
