@@ -529,6 +529,7 @@ class OrderPaymentInfo(models.Model):
     class Meta:
         managed = False
         db_table = 'order_payment_info'
+        unique_together=(('order_id','pay_id'),)
 
 
 class OrderUpCard(models.Model):
