@@ -21,7 +21,6 @@ def index(request):
     :return:列表view
     """
     shop = request.session.get('s_shopcode')
-    shopcode = mth.getReqVal(request, 'shopcode', '')
     today = str(datetime.date.today())
     couponType = mth.getReqVal(request, 'couponType', '')
     batch = mth.getReqVal(request, 'batch', '').strip()
@@ -32,8 +31,8 @@ def index(request):
 
     kwargs = {}
     kwargs.setdefault('payment_type', 4)
-    if shopcode != '':
-        kwargs.setdefault('shop_code', shopcode)
+
+    kwargs.setdefault('shop_code', shop)
 
     if couponType != '':
         kwargs.setdefault('type', couponType)
