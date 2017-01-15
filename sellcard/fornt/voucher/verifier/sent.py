@@ -49,7 +49,7 @@ def save(request):
                 else:
                     raise MyError('数据更新失败')
 
-                ActionLog.objects.create(url=path, u_name=request.session.get('s_uname'),
+                ActionLog.objects.create(action='代金券验证码发放成功',url=path, u_name=request.session.get('s_uname'),
                                          cards_out=start + '--' + end, add_time=datetime.datetime.now())
                 del request.session['postToken']
 
@@ -57,13 +57,13 @@ def save(request):
             print('My exception occurred, value:', e1.value)
             res['msg'] = 0
             res['cardId'] = e1.value
-            ActionLog.objects.create(action='代金卷验证码领取', u_name=request.session.get('s_uname'), cards_out=start + '--' + end,
+            ActionLog.objects.create(action='代金券验证码发放失败', u_name=request.session.get('s_uname'), cards_out=start + '--' + end,
                                      add_time=datetime.datetime.now(), err_msg=e1.value)
 
         except Exception as e:
             print(e)
             res['msg'] = 0
-            ActionLog.objects.create(action='代金卷验证码领取', u_name=request.session.get('s_uname'), cards_out=start + '--' + end,
+            ActionLog.objects.create(action='代金券验证码发放失败', u_name=request.session.get('s_uname'), cards_out=start + '--' + end,
                                      add_time=datetime.datetime.now(), err_msg=e)
 
     return HttpResponse(json.dumps(res))

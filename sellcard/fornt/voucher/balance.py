@@ -19,7 +19,7 @@ def index(request):
         if mth.getReqVal(request, 'btn_value', '') == 'query':
             data_info = KfJobsCouponSn.objects.values('state','coupon_code','serial_id','used_flag'
                                                    ).filter(voucher=voucherSn)
-            if data_info is None:
+            if data_info is None or len(data_info)==0:
                 msg = 1
             elif data_info[0]['state'] != 2:
                 msg = 1

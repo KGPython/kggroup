@@ -64,16 +64,16 @@ def index(request):
     for item in List:
         item['used_amount'] = 0
         item['surplus_amount'] = item['amount']
-        for sn_item in snList:
-            if item['coupon_code'] == sn_item['coupon_code']:
-                if item['type'] != 3:
+        if int(item['type']) != 3:
+            for sn_item in snList:
+                if item['coupon_code'] == sn_item['coupon_code']:
                     item['used_amount'] = sn_item['used_amount']
                     item['surplus_amount'] = int(item['amount']) - int(sn_item['used_amount'])
-                else:
-                    for erp_item in ErpList:
-                        if sn_item['serial_id'] == erp_item['serial_id']:
-                            item['used_amount'] = erp_item['used_amount']
-                            item['surplus_amount'] = int(item['amount']) - int(erp_item['used_amount'])
+        else:
+            for erp_item in ErpList:
+                if item['coupon_code'] == erp_item['serial_id']:
+                    item['used_amount'] = erp_item['used_amount']
+                    item['surplus_amount'] = int(item['amount']) - int(erp_item['used_amount'])
 
     # 表单分页开始
     paginator = Paginator(List, 8)
@@ -175,8 +175,8 @@ def getDetail(serial_id):
                            as_dict=True)
     cur = conn.cursor()
     sql = u"select ClearShopID as used_shop, " \
-          u"       ClearSDate as used_date " \
-          u"       ClearPOSID as used_name " \
+          u"       ClearSDate as used_date, " \
+          u"       ClearPOSID as used_name, " \
           u"       CouponNO as voucher " \
           u"  from MyShop_Coupon " \
           u" where ClearFlag = 1" \
