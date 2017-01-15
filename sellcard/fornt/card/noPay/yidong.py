@@ -59,9 +59,9 @@ def save(request):
     try:
         with transaction.atomic():
             for orderSn in orderSnList:
-                if orderSn.index('S')==0:
+                if orderSn.find('S')==0:
                     OrderPaymentInfo.objects.filter(order_id=orderSn,pay_id=6,is_pay=0).update(pay_id=3,change_time=date,is_pay=1)
-                elif orderSn.index('C')==0:
+                elif orderSn.find('C')==0:
                     OrderChangeCardPayment.objects.filter(order_id=orderSn,pay_id=6,is_pay=0).update(pay_id=3,change_time=date,is_pay=1)
             res['msg'] = '0'
     except Exception as e:
