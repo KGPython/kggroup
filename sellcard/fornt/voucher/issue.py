@@ -89,6 +89,7 @@ def create(request):
         sn_batch = mth.getReqVal(request, 'sn_batch', '')
         sn_start = mth.getReqVal(request, 'sn_start', '')
         sn_end = mth.getReqVal(request, 'sn_end', '')
+        sn_amount = mth.getReqVal(request, 'sn_amount', '')
         couponname = mth.getReqVal(request, 'couponname', '')
         pay_account = mth.getReqVal(request, 'pay_account', '')
         if (pay_account is None or pay_account == ''):
@@ -138,8 +139,8 @@ def create(request):
                 v_str = '88815' + shopCode[2:] + today[2:]
             else:
                 v_str = '8889999' + datetime.datetime.now().strftime('%y%m%d')
-            serial_id = v_str + batch
             coupon_code = shopCode+today[2:]+str(batch).zfill(2)
+            serial_id = coupon_code
 
             sqlVoucher = u'select jcs.voucher ' \
                          u'  from kf_jobs_coupon_sn jcs ' \
@@ -158,6 +159,9 @@ def create(request):
             conn.close()
 
             len_list = len(List)
+            if int(sn_amount) != len_list:
+                msg = 3
+                return render(request, 'voucher/issue/Create.html', locals())
 
             if len_list != 0:
                 # 插入卡券批次表

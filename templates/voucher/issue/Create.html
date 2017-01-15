@@ -31,18 +31,23 @@
                 <div class="collapse in widget-content">
                     <div class="row formline">
                         <label for="" class="col-xs-1 formline-label">验证码批次：</label>
-                        <div class="col-xs-3">
+                        <div class="col-xs-1">
                             <input type="text" class="form-control" name="sn_batch" id="sn_batch"
                                    required value="{{ sn_batch }}">
                         </div>
+                        <label for="" class="col-xs-1 formline-label">制作数量：</label>
+                        <div class="col-xs-1">
+                            <input type="text" class="form-control" name="sn_amount" id="sn_amount"
+                                   readonly="readonly" value="{{ sn_amount }}">
+                        </div>
                         <label for="" class="col-xs-1 formline-label">验证码号段开始：</label>
                         <div class="col-xs-1">
-                            <input type="text" class="form-control" name="sn_start" id="sn_start"
+                            <input type="text" class="form-control sn_val" name="sn_start" id="sn_start"
                                    required value="{{ sn_start }}">
                         </div>
                         <label for="" class="col-xs-1 formline-label">验证码号段结束：</label>
                         <div class="col-xs-1">
-                            <input type="text" class="form-control" name="sn_end" id="sn_end"
+                            <input type="text" class="form-control sn_val" name="sn_end" id="sn_end"
                                    required value="{{ sn_end }}">
                         </div>
                         <label for="" class="col-xs-1 formline-label">付款方式：</label>
@@ -240,6 +245,9 @@
     if (msg == '2') {
         alert('输入券号区间查无可用券号');
     }
+    if (msg == '3') {
+        alert('输入券号区间存在不可用券号');
+    }
 </script>
 <!--保存按钮点击事件-->
 <script type="text/javascript">
@@ -308,6 +316,26 @@
 <script type="text/javascript">
     $('.clear-btn').click(function () {
         $('.chooseGoodList').html('');
+    });
+</script>
+<!--自动计算数量-->
+<script type="text/javascript">
+        $(document).on('change','.sn_val',function(){
+        //1处理号段起始值
+        var start = $('#sn_start').val();
+
+        //2处理号段截止值
+        var end = $('#sn_end').val();
+
+        if(parseInt(end)<parseInt(start)){
+            alert('起始券号不能大于截至券号');
+            return false;
+        }
+        if(parseInt(end)&&parseInt(start)){
+            //3计算数量
+            $("#sn_amount").val(parseInt(end)-parseInt(start)+1);
+        }
+
     });
 </script>
 </body>
