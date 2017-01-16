@@ -22,12 +22,12 @@
                 {% if type == 'sale' %}
                     <tbody>
                         <tr>
-                            <td class="col-xs-1">订单 I D：</td>
-                            <td class="col-xs-3">{{ order.0.order_sn }}</td>
-                            <td class="col-xs-1">售卖门店：</td>
-                            <td class="col-xs-3">{{ order.0.shop_code | transShopCode }}</td>
-                            <td class="col-xs-1">下单时间：</td>
-                            <td class="col-xs-3">{{ order.0.add_time | date:'Y年m月d日' }}</td>
+                            <td class="col-md-1">订单 I D：</td>
+                            <td class="col-md-3">{{ order.0.order_sn }}</td>
+                            <td class="col-md-1">售卖门店：</td>
+                            <td class="col-md-3">{{ order.0.shop_code | transShopCode }}</td>
+                            <td class="col-md-1">下单时间：</td>
+                            <td class="col-md-3">{{ order.0.add_time | date:'Y年m月d日' }}</td>
                         </tr>
                         <tr>
                             <td>订单总额</td>
@@ -49,12 +49,12 @@
                 {% elif type == 'change' %}
                     <tbody>
                     <tr>
-                        <td class="col-xs-1">订单 I D：</td>
-                        <td class="col-xs-3">{{ order.0.order_sn }}</td>
-                        <td class="col-xs-1">售卖门店：</td>
-                        <td class="col-xs-3">{{ order.0.shop_code | transShopCode }}</td>
-                        <td class="col-xs-1">下单时间：</td>
-                        <td class="col-xs-3">{{ order.0.add_time | date:'Y年m月d日' }}</td>
+                        <td class="col-md-1">订单 I D：</td>
+                        <td class="col-md-3">{{ order.0.order_sn }}</td>
+                        <td class="col-md-1">售卖门店：</td>
+                        <td class="col-md-3">{{ order.0.shop_code | transShopCode }}</td>
+                        <td class="col-md-1">下单时间：</td>
+                        <td class="col-md-3">{{ order.0.add_time | date:'Y年m月d日' }}</td>
                     </tr>
                     <tr>
                         <td>入库金额</td>
@@ -81,16 +81,16 @@
     <div class="widget-box">
         <div class="widget-content nopadding Total">
             <div class="row">
-                <p class="text col-xs-2" id="totalVal">应付金额：<b class="red">{{ totalVal }}</b>元</p>
+                <p class="text col-md-2" id="totalVal">应付金额：<b class="red">{{ totalVal }}</b>元</p>
             </div>
             <div class="row">
-                <p class="text col-xs-12" id="payInfo">
+                <p class="text col-md-12" id="payInfo">
                     <b>支付详细：</b>
                     <span></span>
                 </p>
             </div>
             <div class="row">
-                <p class="text col-xs-12" id="payTotal">
+                <p class="text col-md-12" id="payTotal">
                     支付合计：<b class="red">0.00</b>元
                 </p>
             </div>
@@ -102,8 +102,8 @@
         </div>
         <div class="widget-content">
             <div class="row formline">
-                <label for="" class="col-xs-1 formline-label" style="text-align: left">结束时间：</label>
-                <div class="col-xs-2">
+                <label for="" class="col-md-1 formline-label" style="text-align: left">结束时间：</label>
+                <div class="col-md-2">
                     <div data-link-format="yyyy-mm-dd" data-link-field="dtp_input2" data-date-format="yyyy-mm-dd" data-date="" class="input-group date form_date">
                         <input readonly="" value="" size="16" id="date" class="form-control">
                         <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>

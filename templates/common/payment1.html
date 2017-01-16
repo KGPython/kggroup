@@ -278,4 +278,85 @@ $(document).on('change','.payList #blank',function(){
     var parentTr = $(this).parent().parent();
     $(parentTr).find('td').eq(0).find('input').val(val);
 });*/
+
+$(document).on('blur','.payList .payVal,.payList input:checkbox,.payList .remark,#parter',function(){
+    palyList = $('.payList').find('tr');
+    var totalStr = '';
+    var payTotal=0;
+    var payIdList = [];
+    var payCash = 0;//现金、pos、代金券、汇款、赊销
+    for(var i=0;i<palyList.length;i++){
+        var checkBox = $(palyList[i]).find('td').eq(0).find('input')[0];
+        var flag = $(checkBox).is(':checked');
+        var payName = '';
+        var payVal= parseFloat($(palyList[i]).find('td').eq(2).find('input').val());
+        if(flag && payVal){
+            var cardSaleTotalVal = parseFloat($(".Total #totalVal b").text());
+            var payId =0;
+            //获取支付ID
+            if($(palyList[i]).find('td').eq(1).find('select')[0]){
+                payId = $(palyList[i]).find('td').eq(1).find('select option:selected').val();
+                payName = $(palyList[i]).find('td').eq(1).find('select option:selected').text();
+
+            }else{
+                payId = $(palyList[i]).find('td').eq(0).find('input[type=checkbox]').val();
+                payName = $(palyList[i]).find('td').eq(1).find('input').val();
+            }
+            if(!payId){
+                alert('请选择三方支付方式');
+                break;
+            }
+            if(payId == '7' || payId == '8' || payId == '10' || payId == '11'  || payId == '12'){
+                if(payIdList.indexOf('1')>=0 || payIdList.indexOf('2')>=0 || payIdList.indexOf('3')>=0 || payIdList.indexOf('4')>=0 || payIdList.indexOf('5')>=0){
+                    alert('混合支付存在异常，请核查');
+                    $(palyList[i]).find('td').eq(2).find('input').val('');
+                    break;
+                }
+            }
+            payIdList.push(payId);
+            if(payId == 1 || payId == 2 || payId == 3 || payId == 4){
+                payCash += payVal;
+                setTotalBycardSaleTotalVal('',cardSaleTotalVal)
+            }
+            else if(payId == 5){//pos刷卡
+                payCash += payVal;
+                //规则1：门店DISC_LEVEL为1，则区分
+                //规则2：订单超过最小返点金额+1000，则不区分；
+                //规则3：订单金额在最小返点金额和最小返点金额+1000之间，则区分
+                if(cardSaleTotalVal<(DISC_RATES[0].val_min+1000) && cardSaleTotalVal>=DISC_RATES[0].val_min && DISC_LEVEL=='1') {
+                    changeDiscValByPos(cardSaleTotalVal, payVal);
+                }
+            }
+            else if(payId == 6){//移动积分
+                if(payCash>=DISC_RATES[0].val_min){
+                    alert('混合支付存在异常，请核查');
+                    $(palyList[i]).find('td').eq(2).find('input').val('');
+                    break;
+                }else{
+                    changeDiscValByPayment(payVal,0.01)
+                }
+            }
+            else if(payId == 7 || payId == 8 || payId == 10){//美团、糯米、慧购
+                changeDiscValByPayment(payVal,0.02)
+            }
+            else if(payId == 11){//慧购
+                changeDiscValByPayment2(payVal,0.02)
+            }
+
+            totalStr += payName +' : '+payVal+'元 ';
+            remarks = $(palyList[i]).find('td').eq(3).find('input').val();
+            if(remarks){
+                totalStr += '(备注：'+remarks+'), ';
+            }else{
+                totalStr += ', ';
+            }
+            payTotal +=parseFloat(payVal);
+        }
+
+        $('.Total #payInfo span').html(totalStr);
+        $('.Total #payTotal b').html(payTotal);
+    }
+});
+
+
 </script>

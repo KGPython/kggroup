@@ -26,8 +26,8 @@
                         <form id="form" class="query-list" method="post" action="{% url 'sentCardGroupByOrder' %}">
                             {% csrf_token %}
                             <div class="row formline">
-                                <label for="" class="col-xs-1 formline-label">领取门店：</label>
-                                <div class="col-xs-2">
+                                <label for="" class="col-md-1 formline-label">领取门店：</label>
+                                <div class="col-md-2">
                                     <select name="shop" id="shop" class="form-control" required="required">
                                         <option value="">请选择</option>
                                         {% for shop in shops %}
@@ -35,16 +35,16 @@
                                         {% endfor %}
                                     </select>
                                 </div>
-                                <label for="" class="col-xs-1 formline-label">开始时间：</label>
-                                <div class="col-xs-2">
+                                <label for="" class="col-md-1 formline-label">开始时间：</label>
+                                <div class="col-md-2">
                                     <div data-link-format="yyyy-mm-dd" data-link-field="dtp_input2" data-date-format="yyyy-mm-dd" data-date="" class="input-group date form_date">
                                         <input readonly="" value="{{ start}}" size="16" name="start" id="start" class="form-control">
                                         <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
                                         <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
                                     </div>
                                 </div>
-                                <label for="" class="col-xs-1 formline-label">结束时间：</label>
-                                <div class="col-xs-2">
+                                <label for="" class="col-md-1 formline-label">结束时间：</label>
+                                <div class="col-md-2">
                                     <div data-link-format="yyyy-mm-dd" data-link-field="dtp_input2" data-date-format="yyyy-mm-dd" data-date="" class="input-group date form_date">
                                         <input readonly="" value="{{ end}}" size="16" name="end" id="end" class="form-control">
                                         <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
@@ -52,7 +52,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-xs-1">
+                                <div class="col-md-1">
                                     <button type="button" class="btn btn-success pull-right" id="enter">查询</button>
                                 </div>
                             </div>

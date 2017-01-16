@@ -22,16 +22,16 @@
                 <form action="{% url 'saleGroupByCardType' %}" method="post" id="form">
                     {% csrf_token %}
                     <div class="row formline">
-                        <label for="" class="col-xs-1 formline-label">开始时间：</label>
-                        <div class="col-xs-2">
+                        <label for="" class="col-md-1 formline-label">开始时间：</label>
+                        <div class="col-md-2">
                             <div data-link-format="yyyy-mm-dd" data-link-field="dtp_input2" data-date-format="yyyy-mm-dd" data-date="" class="input-group date form_date">
                                 <input readonly="" value="{{ start }}" size="16" name="start" id="start" class="form-control" required="required">
                                 <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
                                 <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
                             </div>
                         </div>
-                        <label for="" class="col-xs-1 formline-label">结束时间：</label>
-                        <div class="col-xs-2">
+                        <label for="" class="col-md-1 formline-label">结束时间：</label>
+                        <div class="col-md-2">
                             <div data-link-format="yyyy-mm-dd" data-link-field="dtp_input2" data-date-format="yyyy-mm-dd" data-date="" class="input-group date form_date">
                                 <input readonly="" value="{{ end }}" size="16" name="end" id="end" class="form-control" required="required">
                                 <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
@@ -40,8 +40,8 @@
                         </div>
 
                         {% if role == '1' or role == '6' or role == '8' or role == '9'  %}
-                        <label for="" class="col-xs-1 formline-label">门店：</label>
-                        <div class="col-xs-1">
+                        <label for="" class="col-md-1 formline-label">门店：</label>
+                        <div class="col-md-1">
                             <select name="shop" id="shop" class="form-control">
                                 <option value="">全部</option>
                                 {% for shop in shops %}
@@ -51,8 +51,8 @@
                         </div>
                         {% endif %}
 
-                        <label for="" class="col-xs-1 formline-label">售卡人：</label>
-                        <div class="col-xs-1">
+                        <label for="" class="col-md-1 formline-label">售卡人：</label>
+                        <div class="col-md-1">
                             {% if role == '1' or role == '2' or role == '6' or role == '8' or role == '9'  or role == '10' %}
                             <select name="operator" id="operator" class="form-control">
                                 <option value="">全部</option>
@@ -65,7 +65,7 @@
                                 <input value="{{ user | transUserId }}" class="form-control" disabled>
                         {% endif %}
                         </div>
-                        <div class="col-xs-1">
+                        <div class="col-md-1">
                             <button type="submit" class="btn btn-info enter-btn pull-right" id="enter">提交</button>
                         </div>
                     </div>

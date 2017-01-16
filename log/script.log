@@ -124,3 +124,15 @@ Traceback (most recent call last):
     cursor.execute(sql)
   File "pymssql.pyx", line 462, in pymssql.Cursor.execute (pymssql.c:7136)
 pymssql.ProgrammingError: (102, b"Incorrect syntax near 'sn'.DB-Lib error message 20018, severity 15:\nGeneral SQL Server error: Check messages from the SQL Server\n")
+2017-01-15 16:43:44,716 [Thread-12:9424] [django.request:170] [base:get_response] [WARNING]- Not Found: /kg/sellcard/report/card/shopsale/order/favicon.ico
+2017-01-15 16:43:44,840 [Thread-13:8084] [django.request:170] [base:get_response] [WARNING]- Not Found: /kg/sellcard/report/card/shopsale/order/favicon.ico
+2017-01-16 08:45:41,450 [Thread-1:696] [django.request:170] [base:get_response] [WARNING]- Not Found: /
+2017-01-16 08:45:44,292 [Thread-3:5004] [django.request:170] [base:get_response] [WARNING]- Not Found: /favicon.ico
+2017-01-16 08:45:55,398 [Thread-7:10304] [django.request:170] [base:get_response] [WARNING]- Not Found: /kg/sellcard/updatepwd/favicon.ico
+2017-01-16 08:49:25,621 [Thread-29:10352] [django.request:170] [base:get_response] [WARNING]- Not Found: /kg/sellcard/index/favicon.ico
+2017-01-16 08:50:00,610 [Thread-32:8312] [django.request:170] [base:get_response] [WARNING]- Not Found: /kg/sellcard/fornt/cardsale/favicon.ico
+2017-01-16 08:50:00,888 [Thread-33:3936] [django.request:170] [base:get_response] [WARNING]- Not Found: /kg/sellcard/fornt/cardsale/favicon.ico
+2017-01-16 08:50:50,500 [Thread-37:2780] [django.request:170] [base:get_response] [WARNING]- Not Found: /kg/sellcard/fornt/cardsale/orderInfo/favicon.ico
+2017-01-16 08:50:50,554 [Thread-38:10312] [django.request:170] [base:get_response] [WARNING]- Not Found: /kg/sellcard/fornt/cardsale/orderInfo/favicon.ico
+2017-01-16 10:10:39,025 [Thread-138:2748] [django.request:170] [base:get_response] [WARNING]- Not Found: /js/jquery.min.map
+2017-01-16 10:12:34,611 [Thread-158:10620] [django.request:170] [base:get_response] [WARNING]- Not Found: /js/jquery.min.map

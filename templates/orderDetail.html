@@ -35,12 +35,12 @@
                     <table class="table table-hover order-table">
                         <tbody>
                         <tr>
-                            <td class="col-xs-1">订单 I D：</td>
-                            <td class="col-xs-3">{{ order.0.order_sn }}</td>
-                            <td class="col-xs-1">售卖门店：</td>
-                            <td class="col-xs-3">{{ order.0.shop_code | transShopCode }}</td>
-                            <td class="col-xs-1">下单时间：</td>
-                            <td class="col-xs-3">{{ order.0.add_time | date:'Y年m月d日' }}</td>
+                            <td class="col-md-1">订单 I D：</td>
+                            <td class="col-md-3">{{ order.0.order_sn }}</td>
+                            <td class="col-md-1">售卖门店：</td>
+                            <td class="col-md-3">{{ order.0.shop_code | transShopCode }}</td>
+                            <td class="col-md-1">下单时间：</td>
+                            <td class="col-md-3">{{ order.0.add_time | date:'Y年m月d日' }}</td>
                         </tr>
                         <tr>
                             <td>订单总额</td>
@@ -64,7 +64,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-xs-6">
+            <div class="col-md-6">
                 <div class="widget-box">
                     <div class="widget-title"><span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
                         <h5>储值卡列表</h5>
@@ -91,7 +91,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-xs-6">
+            <div class="col-md-6">
                 {% if order.0.action_type != '5' %}
                     <div class="widget-box">
                         <div class="widget-title"><span class="icon"> <span
@@ -144,12 +144,12 @@
                     <table class="table table-hover order-table">
                         <tbody>
                             <tr>
-                                <td class="col-xs-1">订单 I D：</td>
-                                <td class="col-xs-3">{{ order.0.order_sn }}</td>
-                                <td class="col-xs-1">售卖门店：</td>
-                                <td class="col-xs-3">{{ order.0.shop_code | transShopCode }}</td>
-                                <td class="col-xs-1">下单时间：</td>
-                                <td class="col-xs-3">{{ order.0.add_time | date:'Y年m月d日' }}</td>
+                                <td class="col-md-1">订单 I D：</td>
+                                <td class="col-md-3">{{ order.0.order_sn }}</td>
+                                <td class="col-md-1">售卖门店：</td>
+                                <td class="col-md-3">{{ order.0.shop_code | transShopCode }}</td>
+                                <td class="col-md-1">下单时间：</td>
+                                <td class="col-md-3">{{ order.0.add_time | date:'Y年m月d日' }}</td>
                             </tr>
                             <tr>
                                 <td>补卡数量</td>
@@ -174,7 +174,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-xs-6">
+        <div class="col-md-6">
             {% if order.0.action_type != '5' %}
                 <div class="widget-box">
                     <div class="widget-title"><span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
@@ -224,12 +224,12 @@
                     <table class="table table-hover order-table">
                         <tbody>
                         <tr>
-                            <td class="col-xs-1">订单 I D：</td>
-                            <td class="col-xs-3">{{ order.0.order_sn }}</td>
-                            <td class="col-xs-1">售卖门店：</td>
-                            <td class="col-xs-3">{{ order.0.shop_code | transShopCode }}</td>
-                            <td class="col-xs-1">下单时间：</td>
-                            <td class="col-xs-3">{{ order.0.add_time | date:'Y年m月d日' }}</td>
+                            <td class="col-md-1">订单 I D：</td>
+                            <td class="col-md-3">{{ order.0.order_sn }}</td>
+                            <td class="col-md-1">售卖门店：</td>
+                            <td class="col-md-3">{{ order.0.shop_code | transShopCode }}</td>
+                            <td class="col-md-1">下单时间：</td>
+                            <td class="col-md-3">{{ order.0.add_time | date:'Y年m月d日' }}</td>
                         </tr>
                         <tr>
                             <td>入卡总数量</td>
@@ -255,7 +255,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-xs-6">
+            <div class="col-md-6">
                 <div class="widget-box">
                     <div class="widget-title"><span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
                         <h5>入卡列表</h5>
@@ -284,7 +284,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-xs-6">
+            <div class="col-md-6">
                 <div class="widget-box">
                     <div class="widget-title"><span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
                         <h5>出卡列表</h5>
