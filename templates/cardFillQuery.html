@@ -25,19 +25,19 @@
                                 <form id="queryForm" class="query-list" action="{% url "cardfill_query" %}" method="post">
                                     {% csrf_token %}
                                     <div class="row formline">
-                                        <label for="" class="col-xs-1 formline-label">联系电话：</label>
-                                        <div class="col-xs-3">
+                                        <label for="" class="col-md-1 formline-label">联系电话：</label>
+                                        <div class="col-md-3">
                                             <input type="text" class="form-control" id="user_phone" name="user_phone"  value="{{ user_phone }}" >
                                         </div>
-                                        <label for="" class="col-xs-1 formline-label">领卡状态：</label>
-                                        <div class="col-xs-3">
+                                        <label for="" class="col-md-1 formline-label">领卡状态：</label>
+                                        <div class="col-md-3">
                                             <select name="state" id="state" class="form-control">
                                                 <option value="" {% ifequal state "" %}selected="selected" {% endifequal %}>全部</option>
                                                 <option value="0" {% ifequal state "0" %}selected="selected" {% endifequal %}>已领卡</option>
                                                 <option value="1" {% ifequal state "1" %}selected="selected" {% endifequal %}>未领卡</option>
                                             </select>
                                         </div>
-                                        <div class="col-xs-2 pull-right">
+                                        <div class="col-md-2 pull-right">
                                             <button type="submit" class="btn btn-info">查询</button>
                                         </div>
                                     </div>

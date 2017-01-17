@@ -18,9 +18,9 @@ def index(request):
 
 #登录
 def login(request):
-    user_name = mtu.getReqVal(request,"user_name","")
-    password = mtu.getReqVal(request,"password","")
-    vcode = mtu.getReqVal(request,"vcode","")
+    user_name = mtu.getReqVal(request,"user_name","").strip()
+    password = mtu.getReqVal(request,"password","").strip()
+    vcode = mtu.getReqVal(request,"vcode","").strip()
     try:
         vcode2 = request.session["s_vcode"]
     except:

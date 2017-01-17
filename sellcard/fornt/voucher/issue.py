@@ -319,6 +319,12 @@ def InsertCoupon(cardinfo, list):
                            charset='utf8',
                            as_dict=True)
     conn.autocommit(False)
+    a = conn.cursor()
+    # 修改语言环境
+    sql = "set language N'简体中文'"
+    a.execute(sql)
+    conn.commit()
+    a.close()
     # 插入类型表
     typecursor = conn.cursor()
     sql = u" SELECT " \

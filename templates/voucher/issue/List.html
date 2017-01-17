@@ -30,13 +30,13 @@
                 <form action="{% url 'voucherIssueList' %}" method="post" id="form">
                     {% csrf_token %}
                     <div class="row formline">
-                        <label for="" class="col-xs-1 formline-label">发行门店：</label>
-                        <div class="col-xs-2">
+                        <label for="" class="col-md-1 formline-label">发行门店：</label>
+                        <div class="col-md-2">
                             <input name="shop" id="shop" type="text" class="form-control"
                                    value="{{ shopcode | transShopCode }}" readonly>
                         </div>
-                        <label for="" class="col-xs-1 formline-label">创建时间：从</label>
-                        <div class="col-xs-2">
+                        <label for="" class="col-md-1 formline-label">创建时间：从</label>
+                        <div class="col-md-2">
                             <div data-link-format="yyyy-mm-dd" data-link-field="dtp_input2"
                                  data-date-format="yyyy-mm-dd" data-date="" class="input-group date form_date">
                                 <input readonly="" value="{{ start }}" size="16" name="start" id="start"
@@ -46,8 +46,8 @@
                                         class="glyphicon glyphicon-calendar"></span></span>
                             </div>
                         </div>
-                        <label for="" class="col-xs-1 formline-label">创建时间：到</label>
-                        <div class="col-xs-2">
+                        <label for="" class="col-md-1 formline-label">创建时间：到</label>
+                        <div class="col-md-2">
                             <div data-link-format="yyyy-mm-dd" data-link-field="dtp_input2"
                                  data-date-format="yyyy-mm-dd" data-date="" class="input-group date form_date">
                                 <input readonly="" value="{{ end }}" size="16" name="end" id="end" class="form-control"
@@ -59,8 +59,8 @@
                         </div>
                     </div>
                     <div class="row formline">
-                        <label for="" class="col-xs-1 formline-label">类型：</label>
-                        <div class="col-xs-2">
+                        <label for="" class="col-md-1 formline-label">类型：</label>
+                        <div class="col-md-2">
                             <select name="couponType" id="couponType" class="form-control" required="required">
                                 <option value="">全部</option>
                                 <option value="1">换卡券</option>
@@ -68,15 +68,15 @@
                                 <option value="3">通用券</option>
                             </select>
                         </div>
-                        <label for="" class="col-xs-1 formline-label">批次：</label>
-                        <div class="col-xs-2">
+                        <label for="" class="col-md-1 formline-label">批次：</label>
+                        <div class="col-md-2">
                             <input type="text" class="form-control" name="batch" id="batch" required
                                    value="{{ batch }}">
                         </div>
-                        <div class="col-xs-1">
+                        <div class="col-md-1">
                             <button type="button" class="btn btn-info enter-btn pull-right" id="enter">查询</button>
                         </div>
-                        <div class="col-xs-1">
+                        <div class="col-md-1">
                             <a href="{% url 'voucherIssueCreate' %}" class="btn btn-success pull-right">新建</a>
                         </div>
                     </div>
@@ -138,12 +138,12 @@
                                     <td>{{ row.amount }}</td>
                                     <td>{{ row.print_amount }}张</td>
                                     <td>
-                                        <div class="col-xs-3">预印张数：</div>
-                                        <div class="col-xs-3">
+                                        <div class="col-md-3">预印张数：</div>
+                                        <div class="col-md-3">
                                             <input type="number" id="{{ row.coupon_code }}"
                                                    class="btn-default btn-sm">
                                         </div>
-                                        <div class="col-xs-6">
+                                        <div class="col-md-6">
                                             <button type="button" onclick="toPrint('{{ row.coupon_code }}','1')"
                                                     class="btn-success btn-sm" >打印含金额</button>
                                             <button type="button" onclick="toPrint('{{ row.coupon_code }}','0')"

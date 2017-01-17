@@ -29,12 +29,12 @@
                     <form action="{% url 'cardInStore' %}" method="post" id="Form">
                         {% csrf_token %}
                         <div class="row formline">
-                            <label for="" class="col-xs-4 formline-label">入库单号：</label>
-                            <div class="col-xs-4">
+                            <label for="" class="col-md-4 formline-label">入库单号：</label>
+                            <div class="col-md-4">
                                 <input type="text" class="form-control" name="orderSn" id="orderSn" required value="{{ orderSn }}">
                             </div>
 
-                            <div class="col-xs-2">
+                            <div class="col-md-2">
                                 <button type="button" class="btn btn-info enter-btn">提交</button>
                             </div>
                         </div>

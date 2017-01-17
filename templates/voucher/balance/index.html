@@ -27,15 +27,15 @@
                     {% csrf_token %}
                     <input type="hidden" id="btn_value" name="btn_value">
                     <div class="row formline" id="div_query">
-                        <label for="" class="col-xs-1 formline-label">查询券号：</label>
-                        <div class="col-xs-2">
+                        <label for="" class="col-md-1 formline-label">查询券号：</label>
+                        <div class="col-md-2">
                             <input type="text" class="form-control" name="voucherSn" id="voucherSn" required
                                    value="{{ voucherSn }}">
                         </div>
-                        <div class="col-xs-1">
+                        <div class="col-md-1">
                             <button type="button" class="btn btn-success pull-right" id="btn_query">查询</button>
                         </div>
-                        <div class="col-xs-1">
+                        <div class="col-md-1">
                             <button type="button" class="btn btn-success pull-right" id="btn_old">旧券查询</button>
                         </div>
                     </div>
@@ -43,55 +43,55 @@
                         <div class="widget-box">
                             <div class="widget-content nopadding" style="overflow: hidden">
                                 <div class="row formline">
-                                    <label for="" class="col-xs-2 formline-label">发行门店：</label>
-                                    <div class="col-xs-3">
+                                    <label for="" class="col-md-2 formline-label">发行门店：</label>
+                                    <div class="col-md-3">
                                         <input type="text" class="form-control" readonly
                                                value="{{ info.shop_code | transShopCode }}">
                                     </div>
 
-                                    <label for="" class="col-xs-2 formline-label">发行日期：</label>
-                                    <div class="col-xs-3">
+                                    <label for="" class="col-md-2 formline-label">发行日期：</label>
+                                    <div class="col-md-3">
                                         <input type="text" class="form-control" readonly
                                                value="{{ info.start_date }}">
                                     </div>
                                 </div>
                                 <div class="row formline">
-                                    <label for="" class="col-xs-2 formline-label">券类型：</label>
-                                    <div class="col-xs-3">
+                                    <label for="" class="col-md-2 formline-label">券类型：</label>
+                                    <div class="col-md-3">
                                         <input type="text" class="form-control" readonly
                                                id="type" name="type"
                                                value="{{ info.type | transCouponTypeByChinese }}">
                                     </div>
 
-                                    <label for="" class="col-xs-2 formline-label">券号：</label>
-                                    <div class="col-xs-3">
+                                    <label for="" class="col-md-2 formline-label">券号：</label>
+                                    <div class="col-md-3">
                                         <input type="text" class="form-control" readonly
                                                value="{{ voucherSn }}">
                                     </div>
                                 </div>
 
                                 <div class="row formline">
-                                    <label for="" class="col-xs-2 formline-label">截至日期：</label>
-                                    <div class="col-xs-3">
+                                    <label for="" class="col-md-2 formline-label">截至日期：</label>
+                                    <div class="col-md-3">
                                         <input type="text" class="form-control" readonly
                                                value="{{ info.end_date }}">
                                     </div>
 
-                                    <label for="" class="col-xs-2 formline-label">券面值：</label>
-                                    <div class="col-xs-3">
+                                    <label for="" class="col-md-2 formline-label">券面值：</label>
+                                    <div class="col-md-3">
                                         <input type="text" class="form-control" readonly
                                                id="spend" name="spend" value="{{ info.spend }}">
                                     </div>
                                 </div>
                                 <div class="row formline">
-                                    <div class="col-xs-5">
+                                    <div class="col-md-5">
                                     </div>
-                                    <div class="col-xs-1">
+                                    <div class="col-md-1">
                                         <button type="button" class="btn btn-warning pull-right" id="btn_save">
                                             确认使用
                                         </button>
                                     </div>
-                                    <div class="col-xs-1">
+                                    <div class="col-md-1">
                                         <button type="button" class="btn btn-info pull-right" id="btn_close">
                                             取消
                                         </button>

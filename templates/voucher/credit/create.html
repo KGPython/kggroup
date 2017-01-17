@@ -18,34 +18,34 @@
                     {% csrf_token %}
                     <input id="coupon_code" type="hidden" value="{{ coupon_code }}">
                     <div class="row formline">
-                        <label for="" class="col-xs-1 formline-label">赊销金额：</label>
-                        <div class="col-xs-3">
+                        <label for="" class="col-md-1 formline-label">赊销金额：</label>
+                        <div class="col-md-3">
                             <input type="text" class="form-control" value="{{ coupon_info.pay_account }}" readonly>
                         </div>
-                        <label for="" class="col-xs-1 formline-label">到账金额：</label>
-                        <div class="col-xs-3">
+                        <label for="" class="col-md-1 formline-label">到账金额：</label>
+                        <div class="col-md-3">
                             <input type="text" class="form-control" value="{{ coupon_info.credit_account }}" readonly>
                         </div>
-                        <label for="" class="col-xs-1 formline-label">应收金额：</label>
-                        <div class="col-xs-3">
+                        <label for="" class="col-md-1 formline-label">应收金额：</label>
+                        <div class="col-md-3">
                             <input type="text" id="receivable" class="form-control" value="{{ receivable }}" readonly>
                         </div>
                     </div>
                     <div class="row formline">
-                        <label for="payment_type" class="col-xs-1 formline-label">付款方式：</label>
-                        <div class="col-xs-3">
+                        <label for="payment_type" class="col-md-1 formline-label">付款方式：</label>
+                        <div class="col-md-3">
                             <select name="payment_type" id="payment_type" class="form-control" required>
                                 <option value="1">现金</option>
                                 <option value="3">汇款</option>
                                 <option value="5">POS机消费</option>
                             </select>
                         </div>
-                        <label for="pay_account" class="col-xs-1 formline-label">实收金额：</label>
-                        <div class="col-xs-3">
+                        <label for="pay_account" class="col-md-1 formline-label">实收金额：</label>
+                        <div class="col-md-3">
                             <input type="text" class="form-control" name="pay_account" id="pay_account"
                                    required value="{{ pay_account }}">
                         </div>
-                        <div class="col-xs-1">
+                        <div class="col-md-1">
                             <input id="post-token" type="hidden" value="{{ token }}">
                             <button type="button" class="btn btn-success pull-right" id="btn_save">保存</button>
                         </div>

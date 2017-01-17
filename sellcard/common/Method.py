@@ -5,7 +5,7 @@ import pymssql,random,hashlib
 from PIL import Image, ImageDraw, ImageFont
 from sellcard.common import Constants
 from sellcard.models import CardInventory, Orders, OrderChangeCard, OrderUpCard, ExchangeCode, OrderPaymentInfo, \
-    OrderInfo, DisCode, OrderUpCardInfo, OrderChangeCardInfo,Shops, OrderChangeCardPayment
+    OrderInfo, DisCode, OrderUpCardInfo, OrderChangeCardInfo,Shops, OrderChangeCardPayment,ActionLog
 from django.conf import settings
 from django.core import serializers
 from django.http import HttpResponse
@@ -225,6 +225,10 @@ def updateCard(list, mode):
         conn.commit()
     except  Exception as e:
         print(e)
+        if mode=='1':
+            ActionLog.objects.create(cards_in=','.join(list) , add_time=datetime.datetime.now(), err_msg=e)
+        if mode=='9':
+            ActionLog.objects.create(cards_out=','.join(list) , add_time=datetime.datetime.now(), err_msg=e)
         conn.rollback()
     finally:
         cur.close()

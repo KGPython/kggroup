@@ -1,0 +1,138 @@
+2017-01-15 15:53:10,608 [Thread-21:4292] [django.request:170] [base:get_response] [WARNING]- Not Found: /js/table-my..js
+2017-01-15 16:00:19,050 [Thread-8:4496] [django.request:256] [base:handle_uncaught_exception] [ERROR]- Internal Server Error: /kg/sellcard/fornt/cardcheck3/
+Traceback (most recent call last):
+  File "C:\Python34\lib\site-packages\django\core\handlers\base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Python34\lib\contextlib.py", line 30, in inner
+    return func(*args, **kwds)
+  File "D:/python/project/kggroup\sellcard\common\Method.py", line 149, in cardCheck_Change
+    data['New_amount'] = float(data['New_amount'])
+TypeError: 'NoneType' object is not subscriptable
+2017-01-15 16:03:50,878 [Thread-7:7568] [django.request:256] [base:handle_uncaught_exception] [ERROR]- Internal Server Error: /kg/sellcard/fornt/cardchange/save
+Traceback (most recent call last):
+  File "C:\Python34\lib\site-packages\django\core\handlers\base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Python34\lib\contextlib.py", line 30, in inner
+    return func(*args, **kwds)
+  File "C:\Python34\lib\contextlib.py", line 30, in inner
+    return func(*args, **kwds)
+  File "D:/python/project/kggroup\sellcard\fornt\card\cardChange\card.py", line 203, in save
+    return HttpResponse(json.dumps(res))
+  File "C:\Python34\lib\json\__init__.py", line 230, in dumps
+    return _default_encoder.encode(obj)
+  File "C:\Python34\lib\json\encoder.py", line 192, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "C:\Python34\lib\json\encoder.py", line 250, in iterencode
+    return _iterencode(o, 0)
+  File "C:\Python34\lib\json\encoder.py", line 173, in default
+    raise TypeError(repr(o) + " is not JSON serializable")
+TypeError: MyError('ERP数据库卡状态更新失败',) is not JSON serializable
+2017-01-15 16:06:00,103 [Thread-8:6900] [django.request:256] [base:handle_uncaught_exception] [ERROR]- Internal Server Error: /kg/sellcard/fornt/cardchange/save
+Traceback (most recent call last):
+  File "C:\Python34\lib\site-packages\django\core\handlers\base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Python34\lib\contextlib.py", line 30, in inner
+    return func(*args, **kwds)
+  File "C:\Python34\lib\contextlib.py", line 30, in inner
+    return func(*args, **kwds)
+  File "D:/python/project/kggroup\sellcard\fornt\card\cardChange\card.py", line 203, in save
+    return HttpResponse(json.dumps(res))
+  File "C:\Python34\lib\json\__init__.py", line 230, in dumps
+    return _default_encoder.encode(obj)
+  File "C:\Python34\lib\json\encoder.py", line 192, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "C:\Python34\lib\json\encoder.py", line 250, in iterencode
+    return _iterencode(o, 0)
+  File "C:\Python34\lib\json\encoder.py", line 173, in default
+    raise TypeError(repr(o) + " is not JSON serializable")
+TypeError: MyError('ERP数据库卡状态更新失败',) is not JSON serializable
+2017-01-15 16:08:51,679 [Thread-9:10048] [django.request:256] [base:handle_uncaught_exception] [ERROR]- Internal Server Error: /kg/sellcard/fornt/cardchange/save
+Traceback (most recent call last):
+  File "C:\Python34\lib\site-packages\django\core\handlers\base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Python34\lib\contextlib.py", line 30, in inner
+    return func(*args, **kwds)
+  File "C:\Python34\lib\contextlib.py", line 30, in inner
+    return func(*args, **kwds)
+  File "D:/python/project/kggroup\sellcard\fornt\card\cardChange\card.py", line 203, in save
+    return HttpResponse(json.dumps(res))
+  File "C:\Python34\lib\json\__init__.py", line 230, in dumps
+    return _default_encoder.encode(obj)
+  File "C:\Python34\lib\json\encoder.py", line 192, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "C:\Python34\lib\json\encoder.py", line 250, in iterencode
+    return _iterencode(o, 0)
+  File "C:\Python34\lib\json\encoder.py", line 173, in default
+    raise TypeError(repr(o) + " is not JSON serializable")
+TypeError: MyError('ERP数据库卡状态更新失败',) is not JSON serializable
+2017-01-15 16:23:14,615 [Thread-7:404] [django.request:256] [base:handle_uncaught_exception] [ERROR]- Internal Server Error: /kg/sellcard/fornt/cardchange/save
+Traceback (most recent call last):
+  File "C:\Python34\lib\site-packages\django\core\handlers\base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Python34\lib\contextlib.py", line 30, in inner
+    return func(*args, **kwds)
+  File "C:\Python34\lib\contextlib.py", line 30, in inner
+    return func(*args, **kwds)
+  File "D:/python/project/kggroup\sellcard\fornt\card\cardChange\card.py", line 201, in save
+    return HttpResponse(json.dumps(res))
+  File "C:\Python34\lib\json\__init__.py", line 230, in dumps
+    return _default_encoder.encode(obj)
+  File "C:\Python34\lib\json\encoder.py", line 192, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "C:\Python34\lib\json\encoder.py", line 250, in iterencode
+    return _iterencode(o, 0)
+  File "C:\Python34\lib\json\encoder.py", line 173, in default
+    raise TypeError(repr(o) + " is not JSON serializable")
+TypeError: MyError('ERP数据库卡状态更新失败',) is not JSON serializable
+2017-01-15 16:24:17,804 [Thread-7:8984] [django.request:256] [base:handle_uncaught_exception] [ERROR]- Internal Server Error: /kg/sellcard/fornt/cardchange/save
+Traceback (most recent call last):
+  File "C:\Python34\lib\site-packages\django\core\handlers\base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Python34\lib\contextlib.py", line 30, in inner
+    return func(*args, **kwds)
+  File "C:\Python34\lib\contextlib.py", line 30, in inner
+    return func(*args, **kwds)
+  File "D:/python/project/kggroup\sellcard\fornt\card\cardChange\card.py", line 201, in save
+    return HttpResponse(json.dumps(res))
+  File "C:\Python34\lib\json\__init__.py", line 230, in dumps
+    return _default_encoder.encode(obj)
+  File "C:\Python34\lib\json\encoder.py", line 192, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "C:\Python34\lib\json\encoder.py", line 250, in iterencode
+    return _iterencode(o, 0)
+  File "C:\Python34\lib\json\encoder.py", line 173, in default
+    raise TypeError(repr(o) + " is not JSON serializable")
+TypeError: MyError('ERP数据库卡状态更新失败',) is not JSON serializable
+2017-01-15 16:25:59,115 [Thread-27:7484] [django.request:256] [base:handle_uncaught_exception] [ERROR]- Internal Server Error: /kg/sellcard/fornt/cardcheck3/
+Traceback (most recent call last):
+  File "pymssql.pyx", line 445, in pymssql.Cursor.execute (pymssql.c:6810)
+  File "_mssql.pyx", line 998, in _mssql.MSSQLConnection.execute_query (_mssql.c:10765)
+  File "_mssql.pyx", line 1029, in _mssql.MSSQLConnection.execute_query (_mssql.c:10639)
+  File "_mssql.pyx", line 1162, in _mssql.MSSQLConnection.format_and_run_query (_mssql.c:11894)
+  File "_mssql.pyx", line 1568, in _mssql.check_cancel_and_raise (_mssql.c:15788)
+  File "_mssql.pyx", line 1612, in _mssql.maybe_raise_MSSQLDatabaseException (_mssql.c:16426)
+_mssql.MSSQLDatabaseException: (102, b"Incorrect syntax near 'sn'.DB-Lib error message 20018, severity 15:\nGeneral SQL Server error: Check messages from the SQL Server\n")
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python34\lib\site-packages\django\core\handlers\base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Python34\lib\contextlib.py", line 30, in inner
+    return func(*args, **kwds)
+  File "D:/python/project/kggroup\sellcard\common\Method.py", line 147, in cardCheck_Change
+    cursor.execute(sql)
+  File "pymssql.pyx", line 462, in pymssql.Cursor.execute (pymssql.c:7136)
+pymssql.ProgrammingError: (102, b"Incorrect syntax near 'sn'.DB-Lib error message 20018, severity 15:\nGeneral SQL Server error: Check messages from the SQL Server\n")
+2017-01-15 16:43:44,716 [Thread-12:9424] [django.request:170] [base:get_response] [WARNING]- Not Found: /kg/sellcard/report/card/shopsale/order/favicon.ico
+2017-01-15 16:43:44,840 [Thread-13:8084] [django.request:170] [base:get_response] [WARNING]- Not Found: /kg/sellcard/report/card/shopsale/order/favicon.ico
+2017-01-16 08:45:41,450 [Thread-1:696] [django.request:170] [base:get_response] [WARNING]- Not Found: /
+2017-01-16 08:45:44,292 [Thread-3:5004] [django.request:170] [base:get_response] [WARNING]- Not Found: /favicon.ico
+2017-01-16 08:45:55,398 [Thread-7:10304] [django.request:170] [base:get_response] [WARNING]- Not Found: /kg/sellcard/updatepwd/favicon.ico
+2017-01-16 08:49:25,621 [Thread-29:10352] [django.request:170] [base:get_response] [WARNING]- Not Found: /kg/sellcard/index/favicon.ico
+2017-01-16 08:50:00,610 [Thread-32:8312] [django.request:170] [base:get_response] [WARNING]- Not Found: /kg/sellcard/fornt/cardsale/favicon.ico
+2017-01-16 08:50:00,888 [Thread-33:3936] [django.request:170] [base:get_response] [WARNING]- Not Found: /kg/sellcard/fornt/cardsale/favicon.ico
+2017-01-16 08:50:50,500 [Thread-37:2780] [django.request:170] [base:get_response] [WARNING]- Not Found: /kg/sellcard/fornt/cardsale/orderInfo/favicon.ico
+2017-01-16 08:50:50,554 [Thread-38:10312] [django.request:170] [base:get_response] [WARNING]- Not Found: /kg/sellcard/fornt/cardsale/orderInfo/favicon.ico
+2017-01-16 10:10:39,025 [Thread-138:2748] [django.request:170] [base:get_response] [WARNING]- Not Found: /js/jquery.min.map
+2017-01-16 10:12:34,611 [Thread-158:10620] [django.request:170] [base:get_response] [WARNING]- Not Found: /js/jquery.min.map

@@ -113,7 +113,7 @@ def save(request):
                 orderPay = OrderChangeCardPayment()
                 orderPay.order_id = order_sn
                 orderPay.pay_id = pay['payId']
-                if pay['payId'] == '4':
+                if pay['payId'] in ('4','6'):
                     orderPay.is_pay = '0'
                 else:
                     orderPay.is_pay = '1'
@@ -184,7 +184,7 @@ def save(request):
             resErpIn = mth.updateCard(cardIdInList,'9')
             if resErpIn != cardsInNum or resErpOut != cardsOutNum:
                 mth.updateCard(cardIdOutList,'9')
-                mth.updateCard(cardIdOutList,'1')
+                mth.updateCard(cardIdInList,'1')
                 raise MyError('ERP数据库卡状态更新失败')
 
 

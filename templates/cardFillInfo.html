@@ -24,16 +24,16 @@
                         <div class="widget-content nopadding">
                             <div id="buyerInfo" class="collapse in widget-content">
                                 <div class="row formline">
-                                    <label for="" class="col-xs-1 formline-label">补卡原因：</label>
-                                    <div class="col-xs-2">
+                                    <label for="" class="col-md-1 formline-label">补卡原因：</label>
+                                    <div class="col-md-2">
                                         <input type='text' class='form-control' disabled="disabled" value="{% ifequal order.action_type 0 %}卡损坏{% else %}卡挂失{% endifequal %}">
                                     </div>
-                                    <label for="" class="col-xs-1 formline-label">补卡人姓名：</label>
-                                    <div class="col-xs-2">
+                                    <label for="" class="col-md-1 formline-label">补卡人姓名：</label>
+                                    <div class="col-md-2">
                                         <input type='text' class='form-control' disabled="disabled" value="{{ order.user_name }}">
                                     </div>
-                                    <label for="" class="col-xs-1 formline-label">联系电话：</label>
-                                    <div class="col-xs-1">
+                                    <label for="" class="col-md-1 formline-label">联系电话：</label>
+                                    <div class="col-md-1">
                                          <input type='text' class='form-control' disabled="disabled" value="{{ order.user_phone }}">
                                     </div>
                                 </div>
@@ -64,8 +64,8 @@
                                 </tbody>
                             </table>
                               <div class="cardInTotal row formline">
-                                <p class="text col-xs-3" id="totalNum">卡合计数量：<b>{{ order.total_amount }}</b>张</p>
-                                <p class="text col-xs-3" id="totalVal">卡合计金额：<b>{{ order.total_price }}</b>元</p>
+                                <p class="text col-md-3" id="totalNum">卡合计数量：<b>{{ order.total_amount }}</b>张</p>
+                                <p class="text col-md-3" id="totalVal">卡合计金额：<b>{{ order.total_price }}</b>元</p>
                              </div>
                         </div>
                     </div>
@@ -94,10 +94,10 @@
                                     </tbody>
                                 </table>
                                 <div class="cardOutTotal row formline">
-                                    <p class="text col-xs-3" id="totalNum">卡合计数量：<b>{{ order.fill_amount }}</b>张</p>
-                                    <p class="text col-xs-3" id="totalVal">卡合计金额：<b>{{ order.fill_price }}</b>元</p>
-                                    <p class="text col-xs-3" id="balance">应补差额：<b style="color:deepskyblue;">{{ diff_amount }}</b>元</p>
-                                    <p class="text col-xs-3" id="balance">实补差额：<b style="color:red;">{{ order.diff_price }}</b>元</p>
+                                    <p class="text col-md-3" id="totalNum">卡合计数量：<b>{{ order.fill_amount }}</b>张</p>
+                                    <p class="text col-md-3" id="totalVal">卡合计金额：<b>{{ order.fill_price }}</b>元</p>
+                                    <p class="text col-md-3" id="balance">应补差额：<b style="color:deepskyblue;">{{ diff_amount }}</b>元</p>
+                                    <p class="text col-md-3" id="balance">实补差额：<b style="color:red;">{{ order.diff_price }}</b>元</p>
                                 </div>
                             </div>
                         </div>

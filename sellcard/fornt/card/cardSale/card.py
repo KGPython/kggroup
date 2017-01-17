@@ -97,7 +97,7 @@ def saveOrder(request):
                 orderPay = OrderPaymentInfo()
                 orderPay.order_id = order_sn
                 orderPay.pay_id = pay['payId']
-                if pay['payId']=='4':
+                if pay['payId'] in ('4','6'):
                     orderPay.is_pay='0'
                 else:
                     orderPay.is_pay='1'

@@ -30,14 +30,14 @@
                 <form action="{% url 'voucherStock' %}" method="post" id="form">
                     {% csrf_token %}
                     <div class="row formline">
-                        <label for="" class="col-xs-1 formline-label">发行门店：</label>
+                        <label for="" class="col-md-1 formline-label">发行门店：</label>
                         {% if role == '2' or role == '3' or role == '5' or role == '10' %}
-                        <div class="col-xs-2">
+                        <div class="col-md-2">
                             <input name="shopcode" id="shopcode" type="text" class="form-control"
                                    value="{{ shop | transShopCode }}" readonly>
                         </div>
                         {% else %}
-                        <div class="col-xs-2">
+                        <div class="col-md-2">
                             <select name="shopcode" id="shopcode" class="form-control" required="required">
                                 {% if shops_len > 1 %}
                                     <option value="">全部</option>
@@ -48,8 +48,8 @@
                             </select>
                         </div>
                         {% endif %}
-                        <label for="" class="col-xs-1 formline-label">创建时间：从</label>
-                        <div class="col-xs-2">
+                        <label for="" class="col-md-1 formline-label">创建时间：从</label>
+                        <div class="col-md-2">
                             <div data-link-format="yyyy-mm-dd" data-link-field="dtp_input2"
                                  data-date-format="yyyy-mm-dd" data-date="" class="input-group date form_date">
                                 <input readonly="" value="{{ start }}" size="16" name="start" id="start"
@@ -59,8 +59,8 @@
                                         class="glyphicon glyphicon-calendar"></span></span>
                             </div>
                         </div>
-                        <label for="" class="col-xs-1 formline-label">创建时间：到</label>
-                        <div class="col-xs-2">
+                        <label for="" class="col-md-1 formline-label">创建时间：到</label>
+                        <div class="col-md-2">
                             <div data-link-format="yyyy-mm-dd" data-link-field="dtp_input2"
                                  data-date-format="yyyy-mm-dd" data-date="" class="input-group date form_date">
                                 <input readonly="" value="{{ end }}" size="16" name="end" id="end" class="form-control"
@@ -72,8 +72,8 @@
                         </div>
                     </div>
                     <div class="row formline">
-                        <label for="" class="col-xs-1 formline-label">类型：</label>
-                        <div class="col-xs-2">
+                        <label for="" class="col-md-1 formline-label">类型：</label>
+                        <div class="col-md-2">
                             <select name="couponType" id="couponType" class="form-control" required="required">
                                 <option value="">全部</option>
                                 <option value="1">换卡券</option>
@@ -81,12 +81,12 @@
                                 <option value="3">通用券</option>
                             </select>
                         </div>
-                        <label for="" class="col-xs-1 formline-label">批次：</label>
-                        <div class="col-xs-2">
+                        <label for="" class="col-md-1 formline-label">批次：</label>
+                        <div class="col-md-2">
                             <input type="text" class="form-control" name="batch" id="batch" required
                                    value="{{ batch }}">
                         </div>
-                        <div class="col-xs-1">
+                        <div class="col-md-1">
                             <button type="button" class="btn btn-info enter-btn pull-right" id="enter">查询</button>
                         </div>
                     </div>

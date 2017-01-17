@@ -25,23 +25,23 @@
                         <form id="form" class="query-list" method="post" action="{% url 'YDNoPay' %}">
                             {% csrf_token %}
                             <div class="row formline">
-                                <label for="" class="col-xs-1 formline-label">开始时间：</label>
-                                <div class="col-xs-2">
+                                <label for="" class="col-md-1 formline-label">开始时间：</label>
+                                <div class="col-md-2">
                                     <div data-link-format="yyyy-mm-dd" data-link-field="dtp_input2" data-date-format="yyyy-mm-dd" data-date="" class="input-group date form_date">
                                         <input readonly="" value="{{ start}}" size="16" name="start" id="start" class="form-control">
                                         <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
                                         <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
                                     </div>
                                 </div>
-                                <label for="" class="col-xs-1 formline-label">结束时间：</label>
-                                <div class="col-xs-2">
+                                <label for="" class="col-md-1 formline-label">结束时间：</label>
+                                <div class="col-md-2">
                                     <div data-link-format="yyyy-mm-dd" data-link-field="dtp_input2" data-date-format="yyyy-mm-dd" data-date="" class="input-group date form_date">
                                         <input readonly="" value="{{ end}}" size="16" name="end" id="end" class="form-control">
                                         <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
                                         <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
                                     </div>
                                 </div>
-                                <div class="col-xs-1">
+                                <div class="col-md-1">
                                     <button type="button" class="btn btn-success pull-right" id="btn-query">查询</button>
                                 </div>
                             </div>
@@ -95,16 +95,16 @@
                     </div>
                     <div class="widget-content">
                         <div class="row formline">
-                            <label for="" class="col-xs-1 formline-label" style="text-align: left">结束时间：</label>
-                            <div class="col-xs-2">
+                            <label for="" class="col-md-1 formline-label" style="text-align: left">结束时间：</label>
+                            <div class="col-md-2">
                                 <div data-link-format="yyyy-mm-dd" data-link-field="dtp_input2" data-date-format="yyyy-mm-dd" data-date="" class="input-group date form_date">
                                     <input readonly="" value="" size="16" id="date" class="form-control">
                                     <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
                                     <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
                                 </div>
                             </div>
-                            <label for="" class="col-xs-1 formline-label" style="text-align: right">到账合计：</label>
-                            <div class="col-xs-1">
+                            <label for="" class="col-md-1 formline-label" style="text-align: right">到账合计：</label>
+                            <div class="col-md-1">
                                 <input class="form-control"  readonly="readonly" value="{{ totalVal }}" type="text">
                             </div>
                         </div>
@@ -173,7 +173,7 @@
                 success:function(data){
                     if(data.msg=='0'){
                         alert('状态更改成功');
-                        window.location.reload(true);
+                        window.location.reload();
                     }
                     if(data.msg=='1'){
                         alert('状态更改失败')

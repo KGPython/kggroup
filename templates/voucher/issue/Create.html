@@ -8,6 +8,11 @@
 </head>
 <body>
 {% include 'common/head.html' %}
+<style>
+    .must {
+        color: red;
+    }
+</style>
 <!--containt-part-->
 <div id="content">
     <div id="content-header">
@@ -30,28 +35,28 @@
             <div class="widget-content nopadding">
                 <div class="collapse in widget-content">
                     <div class="row formline">
-                        <label for="" class="col-xs-1 formline-label">验证码批次：</label>
-                        <div class="col-xs-1">
+                        <label for="" class="col-md-1 formline-label must">验证码批次：</label>
+                        <div class="col-md-1">
                             <input type="text" class="form-control" name="sn_batch" id="sn_batch"
                                    required value="{{ sn_batch }}">
                         </div>
-                        <label for="" class="col-xs-1 formline-label">制作数量：</label>
-                        <div class="col-xs-1">
+                        <label for="" class="col-md-1 formline-label">制作数量：</label>
+                        <div class="col-md-1">
                             <input type="text" class="form-control" name="sn_amount" id="sn_amount"
                                    readonly="readonly" value="{{ sn_amount }}">
                         </div>
-                        <label for="" class="col-xs-1 formline-label">验证码号段开始：</label>
-                        <div class="col-xs-1">
+                        <label for="" class="col-md-1 formline-label must">验证码号段开始：</label>
+                        <div class="col-md-1">
                             <input type="text" class="form-control sn_val" name="sn_start" id="sn_start"
                                    required value="{{ sn_start }}">
                         </div>
-                        <label for="" class="col-xs-1 formline-label">验证码号段结束：</label>
-                        <div class="col-xs-1">
+                        <label for="" class="col-md-1 formline-label must">验证码号段结束：</label>
+                        <div class="col-md-1">
                             <input type="text" class="form-control sn_val" name="sn_end" id="sn_end"
                                    required value="{{ sn_end }}">
                         </div>
-                        <label for="" class="col-xs-1 formline-label">付款方式：</label>
-                        <div class="col-xs-1">
+                        <label for="" class="col-md-1 formline-label must">付款方式：</label>
+                        <div class="col-md-1">
                             <select name="payment_type" id="payment_type" class="form-control" required>
                                 <option value="1">现金</option>
                                 <option value="3">汇款</option>
@@ -59,28 +64,28 @@
                                 <option value="5">POS机消费</option>
                             </select>
                         </div>
-                        <label for="" class="col-xs-1 formline-label">实收总金额：</label>
-                        <div class="col-xs-1">
+                        <label for="" class="col-xs-1 formline-label must">实收总金额：</label>
+                        <div class="col-md-1">
                             <input type="text" class="form-control" name="pay_account" id="pay_account"
                                    required value="{{ pay_account }}">
                         </div>
                     </div>
                     <div class="row formline">
-                        <label for="" class="col-xs-1 formline-label">券名称：</label>
-                        <div class="col-xs-3">
+                        <label for="" class="col-md-1 formline-label must">券名称：</label>
+                        <div class="col-md-3">
                             <input type="text" class="form-control" name="couponname" id="couponname"
                                    required value="{{ couponname }}">
                         </div>
-                        <label for="" class="col-xs-1 formline-label">类型：</label>
-                        <div class="col-xs-3">
+                        <label for="" class="col-md-1 formline-label must">类型：</label>
+                        <div class="col-md-3">
                             <select name="type" id="type" class="form-control" required>
                                 <option value="1">换卡券</option>
                                 <option value="2">提货券</option>
                                 <option value="3">通用券</option>
                             </select>
                         </div>
-                        <label for="" class="col-xs-1 formline-label">截止日期：</label>
-                        <div class="col-xs-3">
+                        <label for="" class="col-md-1 formline-label must">截止日期：</label>
+                        <div class="col-md-3">
                             <div data-link-format="yyyy-mm-dd" data-link-field="dtp_input2"
                                  data-date-format="yyyy-mm-dd" data-date=""
                                  class="input-group date form_date">
@@ -94,43 +99,43 @@
                         </div>
                     </div>
                     <div class="row formline">
-                        <label for="" class="col-xs-1 formline-label">单张代金面值：</label>
-                        <div class="col-xs-3">
+                        <label for="" class="col-xs-1 formline-label must">单张代金面值：</label>
+                        <div class="col-md-3">
                             <input type="text" class="form-control" name="costValue" id="costValue"
                                    required value="{{ costValue }}">
                         </div>
-                        <label for="" class="col-xs-1 formline-label">单张返点金额：</label>
-                        <div class="col-xs-3">
+                        <label for="" class="col-md-1 formline-label must">单张返点金额：</label>
+                        <div class="col-md-3">
                             <input type="text" class="form-control" name="discount" id="discount"
                                    value="{{ discount }}">
                         </div>
-                        <label for="" class="col-xs-1 formline-label">使用范围</label>
-                        <div class="col-xs-3">
+                        <label for="" class="col-md-1 formline-label">使用范围</label>
+                        <div class="col-md-3">
                             <div class="col-xs-10">
                                 <input type="radio" name="range" value="0" checked>全部
                                 <input type="radio" name="range" value="1">本店
                             </div>
-                            <div class="col-xs-2">
+                            <div class="col-md-2">
                                 <button type="button" class="btn btn-info save-btn">保存</button>
                             </div>
                         </div>
                     </div>
                     <div class="row formline" id="chooseGoods">
-                        <div class="col-xs-5">
+                        <div class="col-md-5">
                             <div class="widget-box">
                                 <div class="widget-content nopadding" style="overflow: hidden">
                                     <div class="row formline">
-                                        <label for="" class="col-xs-2 formline-label">商品名：</label>
-                                        <div class="col-xs-3">
+                                        <label for="" class="col-md-2 formline-label">商品名：</label>
+                                        <div class="col-md-3">
                                             <input type="text" class="form-control"
                                                    value="{{ goodname }}" id="goodname" name="goodname">
                                         </div>
-                                        <label for="" class="col-xs-2 formline-label">商品编号：</label>
-                                        <div class="col-xs-3">
+                                        <label for="" class="col-md-2 formline-label">商品编号：</label>
+                                        <div class="col-md-3">
                                             <input type="text" class="form-control"
                                                    value="{{ goodcode }}" id="goodcode" name="goodcode">
                                         </div>
-                                        <div class="col-xs-2">
+                                        <div class="col-md-2">
                                             <button type="button" class="btn btn-info search-btn">查询
                                             </button>
                                         </div>
@@ -157,27 +162,27 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xs-7">
+                        <div class="col-md-7">
                             <div class="widget-box">
                                 <div class="widget-content nopadding" style="overflow: hidden">
                                     <div class="row formline">
-                                        <h4 for="" class="col-xs-10 formline">允许兑换的商品列表：</h4>
-                                        <div class="col-xs-2">
+                                        <h4 for="" class="col-md-10 formline">允许兑换的商品列表：</h4>
+                                        <div class="col-md-2">
                                             <button type="button" class="btn btn-danger clear-btn">清空</button>
                                         </div>
                                     </div>
                                     <div class="row formline">
-                                        <label for="" class="col-xs-2 formline-label">商品名：</label>
-                                        <div class="col-xs-3">
+                                        <label for="" class="col-md-2 formline-label">商品名：</label>
+                                        <div class="col-md-3">
                                             <input type="text" class="form-control"
                                                    id="v_name" name="v_name">
                                         </div>
-                                        <label for="" class="col-xs-2 formline-label">商品编号：</label>
-                                        <div class="col-xs-3">
+                                        <label for="" class="col-md-2 formline-label">商品编号：</label>
+                                        <div class="col-md-3">
                                             <input type="text" class="form-control"
                                                    id="v_code" name="v_code">
                                         </div>
-                                        <div class="col-xs-2">
+                                        <div class="col-md-2">
                                             <button type="button" class="btn btn-info add-btn">添加
                                             </button>
                                         </div>
