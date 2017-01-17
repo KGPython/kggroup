@@ -229,7 +229,7 @@
                             {% else %}
                                 <a href="javascript:void(0)">下一页</a>
                             {% endif %}
-                            <a href="?pageNum={{ resList.paginator.num_pages }}&shop={{ shop }}&depart={{ depart }}&operator={{ name }}&actionType={{ actionType }}&start={{ start }}&end={{ end }}">尾页</a>
+                            <a href="?page={{ resList.paginator.num_pages }}&shop={{ shop }}&depart={{ depart }}&operator={{ name }}&actionType={{ actionType }}&start={{ start }}&end={{ end }}">尾页</a>
 
                             <form method="post" id="pageForm" style="display: inline-block">
                                 {% csrf_token %}

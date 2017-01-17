@@ -77,7 +77,7 @@ def index(request):
     if actionType=='1':
         resList = Orders.objects.values('shop_code','depart','operator_id','order_sn','action_type','paid_amount','disc_amount','add_time')\
                 .filter(**kwargs)\
-                .order_by('shop_code','depart','operator_id')
+                .order_by('shop_code','depart','operator_id','add_time')
         paidTotal = 0.00
         discTotal = 0.00
         cardCount = 0
@@ -88,11 +88,11 @@ def index(request):
     elif actionType=='2':
         resList = OrderUpCard.objects.values('shop_code','depart','operator_id','order_sn','diff_price','user_name','user_phone','modified_time')\
                 .filter(**kwargs)\
-                .order_by('shop_code','depart','operator_id')
+                .order_by('shop_code','depart','operator_id','modified_time')
     elif actionType=='3':
         resList = OrderChangeCard.objects.values('shop_code','depart','operator_id','order_sn','total_in_price','total_out_price','add_time')\
                 .filter(**kwargs)\
-                .order_by('shop_code','depart','operator_id')
+                .order_by('shop_code','depart','operator_id','add_time')
 
     paginator = Paginator(resList,20)
     try:

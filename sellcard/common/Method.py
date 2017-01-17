@@ -225,7 +225,6 @@ def updateCard(list, mode):
         conn.commit()
     except  Exception as e:
         print(e)
-
         if mode=='1':
             ActionLog.objects.create(cards_in=','.join(list) , add_time=datetime.datetime.now(), err_msg=e)
         if mode=='9':
