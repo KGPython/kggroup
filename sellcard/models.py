@@ -318,7 +318,7 @@ class KfJobsCouponBatch(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'KF_Jobs_Coupon_Batch'
+        db_table = 'kf_jobs_coupon_batch'
 
 
 class KfJobsCouponCredit(models.Model):
