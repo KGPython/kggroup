@@ -11,7 +11,7 @@ from __future__ import unicode_literals
 
 from django.db import models
 
-class KfJobsCouponNew(models.Model):
+class KfJobsCoupon(models.Model):
     coupon_code = models.CharField(max_length=255)
     coupon_name = models.CharField(max_length=255)
     batch = models.IntegerField()
@@ -37,7 +37,7 @@ class KfJobsCouponNew(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'kf_jobs_coupon_new'
+        db_table = 'kf_jobs_coupon'
 
 
 class KfJobsCouponSn(models.Model):
@@ -62,7 +62,7 @@ class KfJobsCouponSn(models.Model):
         db_table = 'kf_jobs_coupon_sn'
 
 
-class KfJobsCoupon(models.Model):
+class KfJobsCouponOld(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     couponname = models.CharField(db_column='CouponName', max_length=255)  # Field name made lowercase.
     batch = models.CharField(max_length=255)
@@ -100,7 +100,7 @@ class KfJobsCoupon(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'KF_Jobs_Coupon'
+        db_table = 'kf_jobs_coupon_old'
 
 
 class KfJobsCouponBatch(models.Model):
@@ -110,7 +110,7 @@ class KfJobsCouponBatch(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'KF_Jobs_Coupon_Batch'
+        db_table = 'kf_jobs_coupon_batch'
 
 
 class KfJobsCouponGoodsDetail(models.Model):
@@ -121,7 +121,7 @@ class KfJobsCouponGoodsDetail(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'KF_Jobs_Coupon_Goods_Detail'
+        db_table = 'kf_jobs_coupon_goods_detail'
 
 
 class ActionLog(models.Model):
