@@ -145,7 +145,11 @@
 </div>
 <form action="{% url 'voucherUsedDetail' %}" method="post" id="detail_form">
     {% csrf_token %}
-    <input type="hidden" name="t_shop_code" id="t_shop_code" value="{{ shopcode }}">
+    {% if role == '2' or role == '3' or role == '5' or role == '10' %}
+        <input type="hidden" name="t_shop_code" id="t_shop_code" value="{{ shop }}">
+    {% else %}
+        <input type="hidden" name="t_shop_code" id="t_shop_code" value="{{ shopcode }}">
+    {% endif %}
     <input type="hidden" name="t_start" id="t_start" value="{{ start }}">
     <input type="hidden" name="t_end" id="t_end" value="{{ end }}">
     <input type="hidden" name="t_shop" id="t_shop">
@@ -155,7 +159,9 @@
 <!--end-containt-part-->
 {% include "common/foot.html" %}
 <script>
-    $("#shopcode").val('{{ shopcode }}');
+    if ('{{ role }}' == '1'||'{{ role }}' =='6'||'{{ role }}' =='7'||'{{ role }}' =='8'||'{{ role }}' =='9') {
+        $("#shopcode").val('{{ shopcode }}');
+    }
     $("#couponType").val('{{ couponType }}');
 </script>
 <script src="{{ static }}/js/bootstrap-datetimepicker.js"></script>

@@ -33,7 +33,7 @@ def index(request):
     elif role == '9':  # 唐山总部财务
         shops = shops.filter(city='T')
     else:
-        shops = shops.get(shop_code=shop)
+        shops = shops.filter(shop_code=shop)
     code_list = []
     for item_shop in shops:
         code_list.append(item_shop['shop_code'])

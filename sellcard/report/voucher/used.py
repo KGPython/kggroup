@@ -30,14 +30,18 @@ def index(request):
         shops = shops.filter(shop_code=shop)
     shops_len = len(shops)
     shopcode = mth.getReqVal(request, 'shopcode', '')
-    start = mth.getReqVal(request, 'start', today)
+    start = mth.getReqVal(request, 'start', str(datetime.date.today().replace(day=1)))
     end = mth.getReqVal(request, 'end', today)
     endTime = datetime.datetime.strptime(end, '%Y-%m-%d') + datetime.timedelta(1)
 
     code_list = []
 
     if shopcode != '':
-        code_list.append(shops.get(shop_code=shopcode)['shop_code'])
+        if role in ('1','6','7','8','9'):
+            code_list.append(shops.get(shop_code=shopcode)['shop_code'])
+        else:
+            code_list.append(shops.get(shop_code=shop)['shop_code'])
+
     else:
         for item_shop in shops:
             code_list.append(item_shop['shop_code'])

@@ -631,3 +631,155 @@ Traceback (most recent call last):
   File "C:\Users\QX\AppData\Local\Programs\Python\Python35-32\lib\site-packages\pymysql\err.py", line 107, in raise_mysql_exception
     raise errorclass(errno, errval)
 django.db.utils.ProgrammingError: (1146, "Table 'kggroup.kf_jobs_coupon_new' doesn't exist")
+2017-01-18 08:50:09,478 [Thread-24:20292] [django.request:256] [base:handle_uncaught_exception] [ERROR]- Internal Server Error: /kg/sellcard/report/voucher/payment/
+Traceback (most recent call last):
+  File "C:\Users\QX\AppData\Local\Programs\Python\Python35-32\lib\site-packages\django\core\handlers\base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\QX\AppData\Local\Programs\Python\Python35-32\lib\contextlib.py", line 30, in inner
+    return func(*args, **kwds)
+  File "E:/PythonWorkSpace/kggroup\sellcard\report\voucher\payment.py", line 39, in index
+    code_list.append(item_shop['shop_code'])
+TypeError: string indices must be integers
+2017-01-18 08:50:14,873 [Thread-28:14476] [django.request:256] [base:handle_uncaught_exception] [ERROR]- Internal Server Error: /kg/sellcard/report/voucher/payment/
+Traceback (most recent call last):
+  File "C:\Users\QX\AppData\Local\Programs\Python\Python35-32\lib\site-packages\django\core\handlers\base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\QX\AppData\Local\Programs\Python\Python35-32\lib\contextlib.py", line 30, in inner
+    return func(*args, **kwds)
+  File "E:/PythonWorkSpace/kggroup\sellcard\report\voucher\payment.py", line 39, in index
+    code_list.append(item_shop['shop_code'])
+TypeError: string indices must be integers
+2017-01-18 11:06:52,112 [Thread-153:12740] [django.request:170] [base:get_response] [WARNING]- Not Found: /js/jquery.min.map
+2017-01-18 11:14:16,679 [Thread-61:5904] [django.request:256] [base:handle_uncaught_exception] [ERROR]- Internal Server Error: /kg/sellcard/report/voucher/payment/
+Traceback (most recent call last):
+  File "C:\Users\QX\AppData\Local\Programs\Python\Python35-32\lib\site-packages\django\core\handlers\base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\QX\AppData\Local\Programs\Python\Python35-32\lib\contextlib.py", line 30, in inner
+    return func(*args, **kwds)
+  File "E:/PythonWorkSpace/kggroup\sellcard\report\voucher\payment.py", line 39, in index
+    code_list.append(item_shop['shop_code'])
+TypeError: string indices must be integers
+2017-01-18 11:33:30,566 [Thread-9:10836] [django.request:256] [base:handle_uncaught_exception] [ERROR]- Internal Server Error: /kg/sellcard/report/voucher/used/
+Traceback (most recent call last):
+  File "C:\Users\QX\AppData\Local\Programs\Python\Python35-32\lib\site-packages\django\core\handlers\base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\QX\AppData\Local\Programs\Python\Python35-32\lib\contextlib.py", line 30, in inner
+    return func(*args, **kwds)
+  File "E:/PythonWorkSpace/kggroup\sellcard\report\voucher\used.py", line 40, in index
+    code_list.append(shops.get(shop_code=shopcode)['shop_code'])
+  File "C:\Users\QX\AppData\Local\Programs\Python\Python35-32\lib\site-packages\django\db\models\query.py", line 334, in get
+    self.model._meta.object_name
+sellcard.models.DoesNotExist: Shops matching query does not exist.
+2017-01-18 11:33:36,340 [Thread-13:1452] [django.request:256] [base:handle_uncaught_exception] [ERROR]- Internal Server Error: /kg/sellcard/report/voucher/used/
+Traceback (most recent call last):
+  File "C:\Users\QX\AppData\Local\Programs\Python\Python35-32\lib\site-packages\django\core\handlers\base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\QX\AppData\Local\Programs\Python\Python35-32\lib\contextlib.py", line 30, in inner
+    return func(*args, **kwds)
+  File "E:/PythonWorkSpace/kggroup\sellcard\report\voucher\used.py", line 40, in index
+    code_list.append(shops.get(shop_code=shopcode)['shop_code'])
+  File "C:\Users\QX\AppData\Local\Programs\Python\Python35-32\lib\site-packages\django\db\models\query.py", line 334, in get
+    self.model._meta.object_name
+sellcard.models.DoesNotExist: Shops matching query does not exist.
+2017-01-18 11:34:21,710 [Thread-17:6728] [django.request:256] [base:handle_uncaught_exception] [ERROR]- Internal Server Error: /kg/sellcard/report/voucher/used/
+Traceback (most recent call last):
+  File "C:\Users\QX\AppData\Local\Programs\Python\Python35-32\lib\site-packages\django\core\handlers\base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\QX\AppData\Local\Programs\Python\Python35-32\lib\contextlib.py", line 30, in inner
+    return func(*args, **kwds)
+  File "E:/PythonWorkSpace/kggroup\sellcard\report\voucher\used.py", line 40, in index
+    code_list.append(shops.get(shop_code=shopcode)['shop_code'])
+  File "C:\Users\QX\AppData\Local\Programs\Python\Python35-32\lib\site-packages\django\db\models\query.py", line 334, in get
+    self.model._meta.object_name
+sellcard.models.DoesNotExist: Shops matching query does not exist.
+2017-01-18 11:36:41,855 [Thread-10:12476] [django.request:256] [base:handle_uncaught_exception] [ERROR]- Internal Server Error: /kg/sellcard/report/voucher/used/detail/
+Traceback (most recent call last):
+  File "C:\Users\QX\AppData\Local\Programs\Python\Python35-32\lib\site-packages\django\core\handlers\base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\QX\AppData\Local\Programs\Python\Python35-32\lib\contextlib.py", line 30, in inner
+    return func(*args, **kwds)
+  File "E:/PythonWorkSpace/kggroup\sellcard\report\voucher\used.py", line 138, in detail
+    code_list.append(shops.get(shop_code=shop_code)['shop_code'])
+  File "C:\Users\QX\AppData\Local\Programs\Python\Python35-32\lib\site-packages\django\db\models\query.py", line 334, in get
+    self.model._meta.object_name
+sellcard.models.DoesNotExist: Shops matching query does not exist.
+2017-01-18 11:39:20,044 [Thread-22:13644] [django.request:256] [base:handle_uncaught_exception] [ERROR]- Internal Server Error: /kg/sellcard/report/voucher/used/detail/
+Traceback (most recent call last):
+  File "C:\Users\QX\AppData\Local\Programs\Python\Python35-32\lib\site-packages\django\core\handlers\base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\QX\AppData\Local\Programs\Python\Python35-32\lib\contextlib.py", line 30, in inner
+    return func(*args, **kwds)
+  File "E:/PythonWorkSpace/kggroup\sellcard\report\voucher\used.py", line 138, in detail
+    code_list.append(shops.get(shop_code=shop_code)['shop_code'])
+  File "C:\Users\QX\AppData\Local\Programs\Python\Python35-32\lib\site-packages\django\db\models\query.py", line 334, in get
+    self.model._meta.object_name
+sellcard.models.DoesNotExist: Shops matching query does not exist.
+2017-01-18 11:40:38,186 [Thread-29:3140] [django.request:256] [base:handle_uncaught_exception] [ERROR]- Internal Server Error: /kg/sellcard/report/voucher/used/detail/
+Traceback (most recent call last):
+  File "C:\Users\QX\AppData\Local\Programs\Python\Python35-32\lib\site-packages\django\core\handlers\base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\QX\AppData\Local\Programs\Python\Python35-32\lib\contextlib.py", line 30, in inner
+    return func(*args, **kwds)
+  File "E:/PythonWorkSpace/kggroup\sellcard\report\voucher\used.py", line 138, in detail
+    code_list.append(shops.get(shop_code=shop_code)['shop_code'])
+  File "C:\Users\QX\AppData\Local\Programs\Python\Python35-32\lib\site-packages\django\db\models\query.py", line 334, in get
+    self.model._meta.object_name
+sellcard.models.DoesNotExist: Shops matching query does not exist.
+2017-01-18 11:41:12,095 [Thread-36:9844] [django.request:256] [base:handle_uncaught_exception] [ERROR]- Internal Server Error: /kg/sellcard/report/voucher/used/detail/
+Traceback (most recent call last):
+  File "C:\Users\QX\AppData\Local\Programs\Python\Python35-32\lib\site-packages\django\core\handlers\base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\QX\AppData\Local\Programs\Python\Python35-32\lib\contextlib.py", line 30, in inner
+    return func(*args, **kwds)
+  File "E:/PythonWorkSpace/kggroup\sellcard\report\voucher\used.py", line 138, in detail
+    code_list.append(shops.get(shop_code=shop_code)['shop_code'])
+  File "C:\Users\QX\AppData\Local\Programs\Python\Python35-32\lib\site-packages\django\db\models\query.py", line 334, in get
+    self.model._meta.object_name
+sellcard.models.DoesNotExist: Shops matching query does not exist.
+2017-01-18 11:58:27,677 [Thread-29:13084] [django.request:256] [base:handle_uncaught_exception] [ERROR]- Internal Server Error: /kg/sellcard/report/voucher/payment/
+Traceback (most recent call last):
+  File "C:\Users\QX\AppData\Local\Programs\Python\Python35-32\lib\site-packages\django\core\handlers\base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\QX\AppData\Local\Programs\Python\Python35-32\lib\contextlib.py", line 30, in inner
+    return func(*args, **kwds)
+  File "E:/PythonWorkSpace/kggroup\sellcard\report\voucher\payment.py", line 39, in index
+    code_list.append(item_shop['shop_code'])
+TypeError: string indices must be integers
+2017-01-18 11:59:51,949 [Thread-34:4140] [django.request:256] [base:handle_uncaught_exception] [ERROR]- Internal Server Error: /kg/sellcard/report/voucher/payment/
+Traceback (most recent call last):
+  File "C:\Users\QX\AppData\Local\Programs\Python\Python35-32\lib\site-packages\django\core\handlers\base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\QX\AppData\Local\Programs\Python\Python35-32\lib\contextlib.py", line 30, in inner
+    return func(*args, **kwds)
+  File "E:/PythonWorkSpace/kggroup\sellcard\report\voucher\payment.py", line 39, in index
+    code_list.append(item_shop['shop_code'])
+TypeError: string indices must be integers
+2017-01-18 12:01:01,266 [Thread-39:17880] [django.request:256] [base:handle_uncaught_exception] [ERROR]- Internal Server Error: /kg/sellcard/report/voucher/payment/
+Traceback (most recent call last):
+  File "C:\Users\QX\AppData\Local\Programs\Python\Python35-32\lib\site-packages\django\core\handlers\base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\QX\AppData\Local\Programs\Python\Python35-32\lib\contextlib.py", line 30, in inner
+    return func(*args, **kwds)
+  File "E:/PythonWorkSpace/kggroup\sellcard\report\voucher\payment.py", line 39, in index
+    code_list.append(item_shop['shop_code'])
+TypeError: string indices must be integers
+2017-01-18 12:01:36,894 [Thread-44:14048] [django.request:256] [base:handle_uncaught_exception] [ERROR]- Internal Server Error: /kg/sellcard/report/voucher/payment/
+Traceback (most recent call last):
+  File "C:\Users\QX\AppData\Local\Programs\Python\Python35-32\lib\site-packages\django\core\handlers\base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\QX\AppData\Local\Programs\Python\Python35-32\lib\contextlib.py", line 30, in inner
+    return func(*args, **kwds)
+  File "E:/PythonWorkSpace/kggroup\sellcard\report\voucher\payment.py", line 39, in index
+    code_list.append(item_shop['shop_code'])
+TypeError: string indices must be integers
+2017-01-18 12:15:13,167 [Thread-9:10028] [django.request:256] [base:handle_uncaught_exception] [ERROR]- Internal Server Error: /kg/sellcard/report/voucher/used/
+Traceback (most recent call last):
+  File "C:\Users\QX\AppData\Local\Programs\Python\Python35-32\lib\site-packages\django\core\handlers\base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\QX\AppData\Local\Programs\Python\Python35-32\lib\contextlib.py", line 30, in inner
+    return func(*args, **kwds)
+  File "E:/PythonWorkSpace/kggroup\sellcard\report\voucher\used.py", line 41, in index
+    code_list.append(shops.get(shop_code=shopcode)['shop_code'])
+  File "C:\Users\QX\AppData\Local\Programs\Python\Python35-32\lib\site-packages\django\db\models\query.py", line 334, in get
+    self.model._meta.object_name
+sellcard.models.DoesNotExist: Shops matching query does not exist.

@@ -256,9 +256,13 @@ def printed(request):
 
     good_len = len(GoodList)
     tnop = 1 # The number of pages 每页显示个数
-    if good_len <= 4:
-        tnop = 10
-    elif good_len>4 and good_len<=8:
+    # if good_len <= 4:
+    #     tnop = 10
+    # elif good_len>4 and good_len<=8:
+    #     tnop = 8
+    # else:
+    #     tnop = 6
+    if good_len <= 6:
         tnop = 8
     else:
         tnop = 6

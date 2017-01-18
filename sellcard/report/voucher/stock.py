@@ -30,14 +30,17 @@ def index(request):
     today = str(datetime.date.today())
     couponType = mth.getReqVal(request, 'couponType', '')
     batch = mth.getReqVal(request, 'batch', '').strip()
-    start = mth.getReqVal(request, 'start', today)
+    start = mth.getReqVal(request, 'start', str(datetime.date.today().replace(day=1)))
     end = mth.getReqVal(request, 'end', today)
     endTime = datetime.datetime.strptime(end, '%Y-%m-%d') + datetime.timedelta(1)
     page = mth.getReqVal(request, 'page', 1)
 
     kwargs = {}
-    if shopcode != '':
-        kwargs.setdefault('shop_code', shopcode)
+    if role in ('1', '6', '7', '8', '9'):
+        if shopcode != '':
+            kwargs.setdefault('shop_code', shopcode)
+    else:
+        kwargs.setdefault('shop_code', shop)
 
     if couponType != '':
         kwargs.setdefault('type', couponType)
