@@ -178,7 +178,7 @@ def info(request):
     else:
         err={}
         err['msg']='此订单不存在'
-        return render(request, 'common/500.html', locals())
+        return render(request, '500.html', locals())
 
 
 def reprint(request):

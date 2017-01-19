@@ -4,7 +4,7 @@ __author__ = 'admin'
 from django.shortcuts import render
 from django.db import transaction
 import json
-from sellcard.models import Orders,OrderInfo,CardInventory,ActionLog
+from sellcard.models import Orders,OrderInfo,CardInventory,ActionLog,OrderPaymentInfo
 import datetime
 from sellcard.common import Method as mtu
 from django.http import HttpResponse
@@ -37,8 +37,8 @@ def saveOrder(request):
     cardList = json.loads(cardStr)
 
     #合计信息
-    totalNum = request.POST.get('totalNum',0)
-    totalVal = request.POST.get('totalVal',0.00)
+    discVal = request.POST.get('discVal',0.00)
+    discPay = request.POST.get('discPay',0.00)
     remark = request.POST.get('remarks','')
     #买卡人信息
     buyerName = request.POST.get('buyerName','')
@@ -49,6 +49,7 @@ def saveOrder(request):
     try:
         with transaction.atomic():
             order_sn = 'S'+mtu.setOrderSn()
+            #order_info表
             for card in cardList:
                 orderInfo = OrderInfo()
                 orderInfo.order_id = order_sn
@@ -57,14 +58,23 @@ def saveOrder(request):
                 orderInfo.card_action = '0'
                 orderInfo.card_attr = '2'
                 orderInfo.save()
+            #order_payment_info表
+            orderPay = OrderPaymentInfo()
+            orderPay.order_id = order_sn
+            orderPay.pay_id = 1
+            orderPay.is_pay = '1'
+            orderPay.pay_value = float(discPay)
+            orderPay.save()
+            #orders表
+            orderPay.save()
             order = Orders()
             order.buyer_name = buyerName
             order.buyer_tel = buyerPhone
             order.buyer_company = buyerCompany
-            order.total_amount = float(totalVal)
-            order.paid_amount = 0
-            order.disc_amount = float(totalVal)
-            order.diff_price = 0
+            order.total_amount = 0
+            order.paid_amount = float(discPay)
+            order.disc_amount = float(discVal)
+            order.diff_price = float(discPay)
             order.y_cash =0
             order.shop_code = shopcode
             order.depart = depart

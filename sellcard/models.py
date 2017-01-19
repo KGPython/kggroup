@@ -311,7 +311,7 @@ class NavList(models.Model):
 
 
 class OrderBorrow(models.Model):
-    order_sn = models.CharField(max_length=20)
+    order_sn = models.CharField(unique=True, max_length=20)
     order_val = models.DecimalField(max_digits=11, decimal_places=2)
     order_num = models.IntegerField()
     shopcode = models.CharField(max_length=16)
@@ -343,7 +343,7 @@ class OrderBorrowInfo(models.Model):
 
 
 class OrderChangeCard(models.Model):
-    order_sn = models.CharField(max_length=20)
+    order_sn = models.CharField(unique=True, max_length=20)
     operator_id = models.SmallIntegerField()
     depart = models.CharField(max_length=10, blank=True, null=True)
     shop_code = models.CharField(max_length=16)
@@ -376,6 +376,7 @@ class OrderChangeCardInfo(models.Model):
     class Meta:
         managed = False
         db_table = 'order_change_card_info'
+        unique_together = (('order_sn', 'card_no'),)
 
 
 class OrderChangeCardPayment(models.Model):
@@ -414,11 +415,11 @@ class OrderPaymentInfo(models.Model):
     class Meta:
         managed = False
         db_table = 'order_payment_info'
-        unique_together=(('order_id','pay_id'),)
+        unique_together = (('order_id', 'pay_id'),)
 
 
 class OrderUpCard(models.Model):
-    order_sn = models.CharField(max_length=20)
+    order_sn = models.CharField(unique=True, max_length=20)
     action_type = models.CharField(max_length=1)
     total_amount = models.IntegerField(blank=True, null=True)
     total_price = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
@@ -451,6 +452,7 @@ class OrderUpCardInfo(models.Model):
     class Meta:
         managed = False
         db_table = 'order_up_card_info'
+        unique_together = (('order_sn', 'card_no'),)
 
 
 class Orders(models.Model):

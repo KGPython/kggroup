@@ -15,8 +15,18 @@
         <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
             <h5>实物团购返点</h5>
         </div>
+
         <div class="widget-content nopadding">
             <div class="container-fluid">
+                <div class="widget-box discBox" style="border: none">
+                    <div class="row formline">
+                        <label class="label-my" style="text-align: left">返点金额：</label>
+                        <div class="col-md-2">
+                            <input class="form-control" type="text" id="discTotal" onblur="discCash()" value="0">
+                        </div>
+                        <span class="label-my">元</span>
+                    </div>
+                </div>
                 <div class="widget-box">
                     <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
                         <h5>单卡查询</h5>
@@ -24,8 +34,9 @@
                     <div class="widget-content nopadding">
                         {% include 'common/cardQueryTable.html' %}
                         <div class="Total row formline">
-                            <p class="text col-md-3" id="totalNum">卡合计数量：<b>0</b>张</p>
-                            <p class="text col-md-3" id="totalVal">卡合计金额：<b>0.00</b>元</p>
+                            <p class="text col-md-3" id="totalNum">合计数量：<b>0</b>张</p>
+                            <p class="text col-md-3" id="totalVal">合计金额：<b>0.00</b>元</p>
+                            <p class="text col-md-2" id="totalYBalance">优惠补差：<b class="red">0.00</b>元</p>
                         </div>
                     </div>
                 </div>
@@ -51,6 +62,19 @@
 
 {% block js %}
 <script>
+    function setBestowedTotal() {
+        cls = 'Total';
+        var cardsTotal = getCardListVal(cardList,1,cls);
+        var cardsTotalVal = cardsTotal.totalVal;
+        //4、优惠补差
+        var discountCardTotalVal = parseFloat($(".discBox #discTotal").val());
+
+        discountPay  = cardsTotalVal - discountCardTotalVal;
+        $('.Total #totalYBalance b').text(discountPay);//设置“合计”区域->优惠补差
+        //5、设置订单应付金额 = 售卡列表合计金额 + 优惠补差
+        $('.Total #totalPaid b').text(cardsTotalVal+discountPay);
+    }
+
     $(document).on("change",".cardId",function(){
         var cardIdStr = $(this).val();
         var cardId = cardIdStr.split("=")[0];
@@ -71,13 +95,14 @@
 
         //卡校验
         var ajaxOpt = {'url':'{% url 'cardcheck' %}?cardId='+cardId,'method':'get'};
-        doAjax(this,ajaxOpt,showCardIfno,setTotalByCardList);
+        doAjax(this,ajaxOpt,showCardIfno,setBestowedTotal);
         addRow(this);
     });
+
     $(document).on('click','#btn-enter',function(){
         var cardList = getCardList($('#cardList'),'1');
-        var totalNum = parseInt($('.Total #totalNum b').text());
-        var totalVal = parseFloat($('.Total #totalVal b').text());//卡合计金额
+        var discVal = parseFloat($('.Total #totalVal b').text());
+        var discPay = parseFloat($('.Total #totalYBalance b').text());
         var remarks =$('.remarks').val().trim();
         if(totalVal==0){
             alert('还未添加赠卡信息，请核对后再尝试提交！');
@@ -91,8 +116,8 @@
         var data ={
             csrfmiddlewaretoken: CSRF,
             'cardsStr':JSON.stringify(cardList),
-            'totalNum':totalNum,
-            'totalVal':totalVal,
+            'discVal':discVal,
+            'discPay':discPay,
             'remarks':remarks,
             'buyerName':buyerName,
             'buyerPhone':buyerPhone,
