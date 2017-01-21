@@ -141,8 +141,11 @@
         var orderSn = '{{ orderSn | safe }}';
         var date = $('#date').val();
         var totalVal = parseFloat($('#totalVal b').text());
-        var totalPay = parseFloat($('#payTotal b').text());
-        var payList = getPayList($('.payList'));
+
+        var payJson = getPayList1($('.payList'));
+        var payList = payJson['payList'];
+        var totalPay = payJson['totalVal'];
+        console.log(totalVal,totalPay);
         if(totalPay!=totalVal){
             alert('实际支付与应付合计不符');
             return false;
@@ -156,6 +159,7 @@
             'orderSn':orderSn,
             'payList':JSON.stringify(payList)
         };
+        console.log(data);
         var r=confirm('确认更改付款状态？');
         if(r){
             $.ajax({

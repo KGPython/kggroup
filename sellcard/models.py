@@ -104,6 +104,69 @@ class CardType(models.Model):
         db_table = 'card_type'
 
 
+class CashierAuthorization(models.Model):
+    license = models.CharField(db_column='License', max_length=19, blank=True, null=True)  # Field name made lowercase.
+    mac = models.CharField(db_column='Mac', max_length=17, blank=True, null=True)  # Field name made lowercase.
+    md5 = models.CharField(db_column='MD5', max_length=32, blank=True, null=True)  # Field name made lowercase.
+    shop = models.CharField(db_column='Shop', max_length=4, blank=True, null=True)  # Field name made lowercase.
+    cashier = models.CharField(db_column='Cashier', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    state = models.CharField(db_column='State', max_length=1, blank=True, null=True)  # Field name made lowercase.
+    effective = models.CharField(max_length=1, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'cashier_authorization'
+
+
+class CashierList(models.Model):
+    username = models.CharField(max_length=32, blank=True, null=True)
+    password = models.CharField(max_length=64, blank=True, null=True)
+    pass_field = models.CharField(db_column='pass', max_length=6, blank=True, null=True)  # Field renamed because it was a Python reserved word.
+    name = models.CharField(max_length=255, blank=True, null=True)
+    shop_code = models.CharField(max_length=4, blank=True, null=True)
+    login_cashier = models.CharField(db_column='login_Cashier', max_length=4, blank=True, null=True)  # Field name made lowercase.
+    satate = models.CharField(max_length=1, blank=True, null=True)
+    effective = models.CharField(max_length=1, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'cashier_list'
+
+
+class CashierLog(models.Model):
+    uid = models.CharField(max_length=10, blank=True, null=True)
+    sid = models.CharField(max_length=10, blank=True, null=True)
+    cid = models.CharField(max_length=10, blank=True, null=True)
+    card_no = models.CharField(max_length=255, blank=True, null=True)
+    card_shop = models.CharField(max_length=10, blank=True, null=True)
+    card_value = models.CharField(max_length=10, blank=True, null=True)
+    card_blance = models.CharField(max_length=10, blank=True, null=True)
+    coutent = models.TextField(blank=True, null=True)
+    time = models.CharField(max_length=255, blank=True, null=True)
+    addtime = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'cashier_log'
+
+
+class CashierOrder(models.Model):
+    uid = models.CharField(max_length=10, blank=True, null=True)
+    sid = models.CharField(max_length=10, blank=True, null=True)
+    cid = models.CharField(max_length=10, blank=True, null=True)
+    card_no = models.CharField(max_length=255, blank=True, null=True)
+    card_shop = models.CharField(max_length=10, blank=True, null=True)
+    card_value = models.CharField(max_length=10, blank=True, null=True)
+    card_blance = models.CharField(max_length=10, blank=True, null=True)
+    coutent = models.TextField(blank=True, null=True)
+    time = models.CharField(max_length=255, blank=True, null=True)
+    addtime = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'cashier_order'
+
+
 class Departs(models.Model):
     depart_id = models.CharField(max_length=10)
     depart_name = models.CharField(max_length=45)
@@ -386,6 +449,9 @@ class OrderChangeCardPayment(models.Model):
     remarks = models.TextField(blank=True, null=True)
     is_pay = models.CharField(max_length=1, blank=True, null=True)
     change_time = models.DateTimeField(blank=True, null=True)
+    bank_name = models.CharField(max_length=12, blank=True, null=True)
+    bank_sn = models.CharField(max_length=25, blank=True, null=True)
+    pay_company = models.CharField(max_length=15, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -411,11 +477,13 @@ class OrderPaymentInfo(models.Model):
     remarks = models.TextField(blank=True, null=True)
     is_pay = models.CharField(max_length=1, blank=True, null=True)
     change_time = models.DateTimeField(blank=True, null=True)
+    bank_name = models.CharField(max_length=12, blank=True, null=True)
+    bank_sn = models.CharField(max_length=25, blank=True, null=True)
+    pay_company = models.CharField(max_length=15, blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'order_payment_info'
-        unique_together = (('order_id', 'pay_id'),)
 
 
 class OrderUpCard(models.Model):
@@ -443,7 +511,7 @@ class OrderUpCard(models.Model):
 
 class OrderUpCardInfo(models.Model):
     order_sn = models.CharField(max_length=20)
-    card_no = models.CharField(unique=True, max_length=32)
+    card_no = models.CharField(max_length=32)
     card_attr = models.CharField(max_length=1)
     card_value = models.CharField(max_length=12, blank=True, null=True)
     card_balance = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
@@ -483,6 +551,7 @@ class Payment(models.Model):
     payment_name = models.CharField(max_length=60)
     flag = models.CharField(max_length=255)
     dis_rate = models.DecimalField(max_digits=5, decimal_places=3, blank=True, null=True)
+
     class Meta:
         managed = False
         db_table = 'payment'

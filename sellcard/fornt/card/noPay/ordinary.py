@@ -91,11 +91,14 @@ def save(request):
             paymentInfo = OrderPaymentInfo.objects.filter(order_id=orderSn)
             paymentInfo.filter(order_id=orderSn, pay_id=4,is_pay=0).delete()
             for pay in payList:
-                payment = paymentInfo.filter(pay_id=pay['payId'])
-                if payment.count():
-                    payment.update(pay_value = F('pay_value')+pay['payVal'])
+                if pay['payId'] == '3':
+                    OrderPaymentInfo.objects.create(order_id=orderSn, pay_id=pay['payId'], pay_value=pay['payVal'],
+                                                    remarks=pay['payRmarks'], is_pay=1, change_time=date,
+                                                    bank_name=pay['bankName'],bank_sn=pay['bankSn'],
+                                                    pay_company=pay['payCompany'])
                 else:
-                    OrderPaymentInfo.objects.create(order_id=orderSn,pay_id=pay['payId'],pay_value=pay['payVal'],remarks=pay['payRmarks'],is_pay=1,change_time=date)
+                    OrderPaymentInfo.objects.create(order_id=orderSn,pay_id=pay['payId'],pay_value=pay['payVal'],
+                                                    remarks=pay['payRmarks'],is_pay=1,change_time=date)
             res['msg'] = '0'
     except Exception as e:
         print(e)
