@@ -43,6 +43,13 @@
                 </tbody>
             </table>
             <div class="row formline" style="margin-top: 15px;">
+                    <label for="" class="col-md-1 formline-label">售卖类型：</label>
+                    <div class="col-md-4">
+                        <select name="" id="saleType" class="form-control" required="required">
+                            <option value=0>门店团购</option>
+                            <option value=1>门店挂售</option>
+                        </select>
+                    </div>
                     <label for="" class="col-md-1 formline-label">领取门店：</label>
                     <div class="col-md-4">
                         <select name="" id="shop" class="form-control" required="required">
@@ -219,6 +226,11 @@
             return false;
         }
         //2、获取领取人信息
+        var saleType = $('#saleType').val();
+        if(!saleType){
+            alert('请选择售卖类型');
+            return false;
+        }
         var shop = $('#shop').val();
         var person = $('#person').val();
         if(!shop || !person){
@@ -235,6 +247,7 @@
                 'list':JSON.stringify(list),
                 'shop':shop,
                 'person':person,
+                'saleType':saleType,
                 'postToken':$('#post-token').val()
             },
             success:function(data){

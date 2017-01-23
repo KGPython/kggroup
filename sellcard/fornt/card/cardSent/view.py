@@ -33,6 +33,7 @@ def sentOrderSave(request):
     cards = json.loads(cardStr)
     shop = request.POST.get('shop','')
     person = request.POST.get('person','')
+    saleType = request.POST.get('saleType','')
 
 
     try:
@@ -61,6 +62,7 @@ def sentOrderSave(request):
                        prefix +='0'
                     item = CardInventory()
                     item.order_sn = orderSn
+                    item.is_store = saleType
                     item.card_no = prefix+str(i)
                     item.card_value = card['cardType']
                     item.card_action = '1'
