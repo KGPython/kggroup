@@ -9,7 +9,6 @@ from sellcard.common import Method as mth
 from sellcard import views as base
 
 
-
 def index(request):
     shop = request.session.get('s_shopcode','')
     role_id = request.session.get('s_roleid')
@@ -50,7 +49,7 @@ def index(request):
 
     salePayGroupByShop = 'select ord.shop_code,info.pay_id ,SUM(info.pay_value) as pay_value ' \
                 'from orders as ord , order_payment_info as info ' \
-                'where ord.add_time>="{start}" and ord.add_time<="{end}" and shop_code in ({shopsCodeStr}) and ord.order_sn = info.order_id ' \
+                'where ord.add_time>="{start}" and ord.add_time<="{end}" and ord.shop_code in ({shopsCodeStr}) and ord.order_sn = info.order_id ' \
                 'group by ord.shop_code,info.pay_id' \
                 .format(start=start, end=endTime,shopsCodeStr=shopsCodeStr)
     cur.execute(salePayGroupByShop)
@@ -90,11 +89,11 @@ def index(request):
         if shops[i]['shop_code'] != 'ZBTG':
             item = {'shop_code':'',
                     'disc':0,'disc_6':0,'disc_7':0,'disc_8':0,'disc_10':0,'disc_11':0,'disc_cash':0,'disc_card':0,
-                    'inSub':0,'pay_1':0,'pay_2':0,'pay_3':0, 'pay_4':0,'pay_5':0,'pay_6':0,'pay_7':0,'pay_8':0,'pay_9':0,'pay_10':0,'pay_11':0,}
+                    'inSub':0,'pay_1':0,'pay_2':0,'pay_3':0, 'pay_4':0,'pay_5':0,'pay_6':0,'pay_7':0,'pay_8':0,
+                    'pay_9':0,'pay_10':0,'pay_11':0,}
             item['shop_code'] = shops[i]['shop_code']
             for sale in salePayList:
                 if sale['shop_code']==item['shop_code']:
-
                     #横向各门店售卡汇总赋值
                     pay_id = sale['pay_id']
                     if sale['pay_id'] == 1:
@@ -215,10 +214,72 @@ def index(request):
     return render(request, 'report/card/saleGroupByShop/saleGroupByShop.html', locals())
 
 
+def noPay(request):
+    shop = request.GET.get('shop')
+    today = datetime.date.today()
+    start = request.GET.get('start', today)
+    end = request.GET.get('end', today)
+    endTime = str(datetime.datetime.strptime(end, '%Y-%m-%d').date() + datetime.timedelta(1))
+    conn = mth.getMysqlConn()
+    cur = conn.cursor()
+
+    #售卡数据
+    saleSql = 'select a.order_sn,b.pay_id ,b.pay_value,b.change_time,b.bank_name,b.bank_sn,b.pay_company,b.is_pay ' \
+              'from orders as a , order_payment_info as b ' \
+              'where a.add_time>="{start}" and a.add_time<="{end}" and a.shop_code ="{shop}" and a.order_sn = b.order_id and (ISNULL(b.change_time) is FALSE or b.pay_id=4) ' \
+              'order by b.is_pay,a.order_sn' \
+              .format(start=start, end=endTime, shop=shop)
+    cur.execute(saleSql)
+    saleList = cur.fetchall()
+    saleData = formatData(saleList)
+
+    #换卡数据
+    changeSql = 'select a.order_sn,b.pay_id,b.pay_value,b.change_time,b.bank_name,b.bank_sn,b.pay_company,b.is_pay ' \
+                'from order_change_card as a , order_change_card_payment as b ' \
+                'where a.add_time>="{start}" and a.add_time<="{end}" and a.shop_code ="{shop}" and a.order_sn = b.order_id and (ISNULL(b.change_time) is FALSE or b.pay_id=4) ' \
+                'order by b.is_pay,a.order_sn' \
+                .format(start=start, end=endTime, shop=shop)
+    cur.execute(changeSql)
+    changeList = cur.fetchall()
+    changeData = formatData(changeList)
+
+    data = saleData+changeData
+    return render(request,'report/card/saleGroupByShop/noPay.html', locals())
+
+def formatData(List):
+    OrderSnList = [item['order_sn'] for item in List]
+    OrderSnSet = list(set(OrderSnList))
+    data = []
+    for sn in OrderSnSet:
+        item = {}
+        item['noPay'] = 0
+        item['order_sn'] = sn
+        for sale in List:
+            if sale['order_sn'] == sn:
+                item['is_pay'] = sale['is_pay']
+                if sale['is_pay'] == '1':
+                    if sale['pay_id'] == 1:
+                        item['cash'] = float(sale['pay_value'])
+                        item['noPay'] += float(sale['pay_value'])
+                    if sale['pay_id'] == 3:
+                        item['bank'] = float(sale['pay_value'])
+                        item['noPay'] += float(sale['pay_value'])
+                        item['bank_name'] = sale['bank_name']
+                        item['bank_sn'] = sale['bank_sn']
+                        item['pay_company'] = sale['pay_company']
+                    if sale['pay_id'] == 5:
+                        item['pos'] = float(sale['pay_value'])
+                        item['noPay'] += float(sale['pay_value'])
+                else:
+                    item['noPay'] += float(sale['pay_value'])
+
+        data.append(item)
+    return data
+
 def detail(request):
     today = datetime.date.today()
     page = mth.getReqVal(request, 'page', 1)
-    shop_code = request.GET.get('shop_code')
+    shop_code = request.GET.get('shop')
     pay_id = request.GET.get('pay_id')
 
     shop = request.session.get('s_shopcode', '')

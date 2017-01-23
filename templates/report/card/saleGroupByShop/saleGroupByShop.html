@@ -136,52 +136,55 @@
 
                                     <td class="saleCol">{{ row.pay_1 | floatformat:2 | default:0 }}</td>
                                     <td class="saleCol">
-                                        <a href="{% url 'saleGroupByShopDet' %}?shop_code={{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=2">
+                                        <a href="{% url 'saleGroupByShopDet' %}?shop={{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=2">
                                             {{ row.pay_2 | floatformat:2 | default:0 }}
                                         </a>
                                     </td>
                                     <td class="saleCol">
-                                        <a href="{% url 'saleGroupByShopDet' %}?shop_code={{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=3">
+                                        <a href="{% url 'saleGroupByShopDet' %}?shop={{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=3">
                                             {{ row.pay_3 | floatformat:2 | default:0 }}
                                         </a>
                                     </td>
                                     <td class="saleCol">
-                                        <a href="{% url 'saleGroupByShopDet' %}?shop_code={{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=4">
+                                        {% comment %}<a href="{% url 'saleGroupByShopDet' %}?shop_code={{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=4">
+                                            {{ row.pay_4 | floatformat:2 | default:0 }}
+                                        </a>{% endcomment %}
+                                        <a href="{% url 'saleGroupByShopNoPay' %}?shop={{ row.shop_code }}&start={{ start }}&end={{ end }}">
                                             {{ row.pay_4 | floatformat:2 | default:0 }}
                                         </a>
                                     </td>
                                     <td class="saleCol">
-                                        <a href="{% url 'saleGroupByShopDet' %}?shop_code={{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=5">
+                                        <a href="{% url 'saleGroupByShopDet' %}?shop={{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=5">
                                             {{ row.pay_5 | floatformat:2 | default:0 }}
                                         </a>
                                     </td>
                                     <td class="saleCol">
-                                        <a href="{% url 'saleGroupByShopDet' %}?shop_code={{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=6">
+                                        <a href="{% url 'saleGroupByShopDet' %}?shop={{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=6">
                                             {{ row.pay_6 | floatformat:2 | default:0 }}
                                         </a>
                                     </td>
                                     <td class="saleCol">
-                                        <a href="{% url 'saleGroupByShopDet' %}?shop_code={{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=7">
+                                        <a href="{% url 'saleGroupByShopDet' %}?shop={{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=7">
                                             {{ row.pay_7 | floatformat:2 | default:0 }}
                                         </a>
                                     </td>
                                     <td class="saleCol">
-                                        <a href="{% url 'saleGroupByShopDet' %}?shop_code={{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=8">
+                                        <a href="{% url 'saleGroupByShopDet' %}?shop{{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=8">
                                             {{ row.pay_8 | floatformat:2 | default:0 }}
                                         </a>
                                     </td>
                                     <td class="saleCol">
-                                        <a href="{% url 'saleGroupByShopDet' %}?shop_code={{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=9">
+                                        <a href="{% url 'saleGroupByShopDet' %}?shop{{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=9">
                                             {{ row.pay_9 | floatformat:2 | default:0 }}
                                         </a>
                                     </td>
                                     <td class="saleCol">
-                                        <a href="{% url 'saleGroupByShopDet' %}?shop_code={{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=10">
+                                        <a href="{% url 'saleGroupByShopDet' %}?shop{{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=10">
                                             {{ row.pay_10 | floatformat:2 | default:0 }}
                                         </a>
                                     </td>
                                     <td class="saleCol">
-                                        <a href="{% url 'saleGroupByShopDet' %}?shop_code={{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=11">
+                                        <a href="{% url 'saleGroupByShopDet' %}?shop{{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=11">
                                             {{ row.pay_11 | floatformat:2 | default:0 }}
                                         </a>
                                     </td>
