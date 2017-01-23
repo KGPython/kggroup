@@ -771,7 +771,7 @@ function saveCardChangeOrder(url){
         'postToken':$('#post-token').val()
     };
 
-    // doAjaxSave(url,data);
+    doAjaxSave(url,data);
 }
 
 //ajax传输保存订单操作的数据
