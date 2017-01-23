@@ -82,7 +82,7 @@ def save(request):
         with transaction.atomic():
             order_sn = 'C'+mth.setOrderSn(OrderChangeCard)
             created_time=datetime.datetime.today()
-            # 保存
+            # orderInfo
             for cardIn in cardListIn:
                 orderInfo = OrderChangeCardInfo()
                 orderInfo.order_sn = order_sn
@@ -108,7 +108,7 @@ def save(request):
                 YorderInfo.card_attr = '0'
                 YorderInfo.is_disc = '1'
                 YorderInfo.save()
-
+            #orderPayment
             for pay in payList:
                 orderPay = OrderChangeCardPayment()
                 orderPay.order_id = order_sn
@@ -123,7 +123,7 @@ def save(request):
                 orderPay.pay_value = pay['payVal']
                 orderPay.remarks = pay['payRmarks']
                 orderPay.save()
-
+            #orders
             order = OrderChangeCard()
             order.order_sn = order_sn
             order.operator_id = operator
