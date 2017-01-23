@@ -33,6 +33,7 @@ def sentOrderSave(request):
     cards = json.loads(cardStr)
     shop = request.POST.get('shop','')
     person = request.POST.get('person','')
+    saleType = request.POST.get('saleType','')
 
 
     try:
@@ -61,6 +62,7 @@ def sentOrderSave(request):
                        prefix +='0'
                     item = CardInventory()
                     item.order_sn = orderSn
+                    item.is_store = saleType
                     item.card_no = prefix+str(i)
                     item.card_value = card['cardType']
                     item.card_action = '1'
@@ -71,6 +73,7 @@ def sentOrderSave(request):
                     item.save()
         res['msg']='0'
         ActionLog.objects.create(action='信息部发卡',u_name=request.session.get('s_uname'),cards_out=cardStr,add_time=datetime.datetime.now())
+
         del request.session['postToken']
     except MyError as e1:
         print('My exception occurred, value:', e1.value)
@@ -82,6 +85,5 @@ def sentOrderSave(request):
         print(e)
         res['msg']='1'
         ActionLog.objects.create(action='信息部发卡',u_name=request.session.get('s_uname'),cards_out=cardStr,add_time=datetime.datetime.now(),err_msg=e)
-
     return HttpResponse(json.dumps(res))
 

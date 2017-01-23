@@ -165,6 +165,7 @@ def save(request):
                     obj.card_action = '1'
                     obj.card_addtime = datetime.datetime.now()
                     obj.shop_code = shopCode
+                    obj.is_store = 0
                     obj.card_blance = card['cardVal']
                     obj.save()
                     resSave =obj.id

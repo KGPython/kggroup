@@ -109,24 +109,10 @@
         addRow(this);
     });
 
-    $(document).on('click', '#btn-enter', function () {
-        var orderVal = parseFloat($(".Total #totalPaid b").text());
-        var payVal = parseFloat($('.Total #payTotal b').text());
-        if(orderVal!=payVal){
-            alert('付款金额与应付金额不符！');
-            return false
-        }
+    $(document).on('click','#btn-enter',function(){
         var url = "{% url 'cardchange_save' %}";
         saveCardChangeOrder(url);
     });
 </script>
-{% comment %}<script>
-    //折扣授权码验证
-    $('#disCode input').blur(function(){
-        var disCode = $(this).val();
-        if(disCode){
-            checkDiscode("{% url 'disCodeCheck' %}?discode="+disCode+"&shop={{ shopcode |safe }}");
-        }
-    });
-</script>{% endcomment %}
+
 {% endblock %}

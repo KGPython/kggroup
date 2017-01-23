@@ -150,8 +150,6 @@ def cardCheck_Change(request):
     data['detail'] = float(data['detail'])
 
     #查询mysql内部卡信息
-
-
     return HttpResponse(json.dumps(data), content_type="application/json")
 def cardCheck_Mssql(request):
     cardId = request.GET.get('cardId', '')

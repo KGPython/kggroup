@@ -80,6 +80,7 @@ class CardInventory(models.Model):
     charge_time = models.DateTimeField(blank=True, null=True)
     order_sn = models.CharField(max_length=32, blank=True, null=True)
     sheetid = models.CharField(max_length=32, blank=True, null=True)
+    is_store = models.SmallIntegerField()
 
     class Meta:
         managed = False

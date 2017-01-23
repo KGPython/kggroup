@@ -703,6 +703,7 @@ function saveCardChangeOrder(url){
     var totalValOut =parseFloat($('.cardOutTotal #totalVal b').text());
 
     //订单支付信息
+    var payVal = parseFloat($('.Total #payTotal b').text());
     var orderVal = parseFloat($('.Total #totalPaid b').text());
     var discVal = parseFloat($('.Total #discountVal b').text());
     var discPay = parseFloat($('.Total #totalYBalance b').text());
@@ -733,8 +734,9 @@ function saveCardChangeOrder(url){
         alert('还未添加出卡信息，请核对后再尝试提交！');
         return false;
     }
-    if((cardsOutVal+discPay)!=orderVal){
-        alert('支付金额与应付金额不等，请核对后提交！');
+
+    if(payVal!=orderVal){
+        alert('出入库金额不相等！');
         return false;
     }
 
@@ -769,7 +771,7 @@ function saveCardChangeOrder(url){
         'postToken':$('#post-token').val()
     };
 
-    doAjaxSave(url,data);
+    // doAjaxSave(url,data);
 }
 
 //ajax传输保存订单操作的数据
