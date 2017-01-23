@@ -207,7 +207,7 @@ def create(request):
                     #   7：name：操作人姓名
                     #   8：range：是否限定使用范围：0）不限定，1）本店
                     tuple_info = (
-                        shop, couponname, datetime.datetime.now(), endDate, int(costValue), serial_id, coupon_code, name, range)
+                        shop, couponname, datetime.datetime.now(), endDate, float(costValue), serial_id, coupon_code, name, range)
                     # 插入SQL-sevser数据库调用方法
                     InsertCoupon(tuple_info, List)
                 else:
