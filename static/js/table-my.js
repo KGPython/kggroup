@@ -8,7 +8,7 @@ $(document).ready(function(){
 * 删除卡列表的一行，同时计算卡列表合计
 * dom：删除按钮自身节点；action:操作类型（1：出卡，2：入卡）
 * */
-function delRow(dom,action) {
+function delRow(dom) {
     var parnetTbody = $(dom).parent().parent().parent()[0];
     $(dom).parents('tr').remove();
     setTotalByCardList(parnetTbody);
@@ -321,12 +321,13 @@ function getCardListVal(cardList,cardtype,cls){
             }
         }
     }
-
     //如果合计区域存在处理"优惠返现"，则：优惠金额合计=优惠卡金额合计+优惠返现，
     if(cls=="discountTotal"){
         var Ycash=$('#Ycash').val();
-        Ycash = Ycash=='' ?0:parseFloat(Ycash);
-        totalVal +=Ycash;
+        if(!Ycash){
+            Ycash=0;
+        }
+        totalVal += parseFloat(Ycash);
     }
     //展示卡合计金额
     $('.'+cls+' #totalVal b').text(parseFloat(totalVal).toFixed(2));
@@ -622,7 +623,6 @@ function saveCardSaleOrder(action_type,url,cardList,orderSns){
         'buyerCompany':buyerCompany,
         'postToken':postToken
     };
-    // console.log(data);
     doAjaxSave(url,data);
 }
 
@@ -908,6 +908,16 @@ function setTotalByCardList(obj){
         var orderVal = cardsSaleVal + discountPay;
         $('.Total #totalPaid b').text(orderVal)
 
+    }
+    else if($(cardList).hasClass('discount2')){
+        cls = 'discountTotal';
+        var cardsTotal = getCardListVal(cardList,1,cls);
+        var cardsTotalVal = cardsTotal.totalVal;
+        var discVal = parseFloat($("#discTotal").val());
+        if(!discVal){discVal=0}
+        //补差
+        discPay = parseFloat(cardsTotalVal) - parseFloat(discVal);
+        $('#totalYBalance b').text(discPay);
     }
     else if($(cardList).hasClass('cardIn')){
         //换卡入库、补卡入库

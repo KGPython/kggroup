@@ -21,8 +21,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'ognxg1tv@%3z7%^0#c0#81tcymq4j)$%j_)gk@*luvg3w2#fd^'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG =True
-TEMPLATE_DEBUG = True
+DEBUG = False
+TEMPLATE_DEBUG = False
 ALLOWED_HOSTS = ['192.168.250.18','127.0.0.1','localhost']
 
 # Application definition
@@ -125,7 +125,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 from datetime import datetime
-STATIC_VERSION = 'v'+datetime.today().strftime("%y%m%d")
+STATIC_VERSION = 'v'+datetime.today().strftime("%y%m%d%H")
 
 KGGROUP_LOGIN_URL ="/kg/sellcard/loginpage/"
 KGGROUP_LOGIN_EXEMPT_URLS=["kg/sellcard/login/","kg/sellcard/logout/","kg/sellcard/vcode/","favicon.ico"]

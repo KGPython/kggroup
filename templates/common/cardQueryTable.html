@@ -18,3 +18,27 @@
         </tr>
     </tbody>
 </table>
+<script>
+    $(document).on("change",".cardId",function(){
+        var cardIdStr = $(this).val();
+        var cardId = cardIdStr.split("=")[0];
+        $(this).val(cardId);
+        //检查是否有重复卡号
+        var cardList = $('#cardList');
+        var arr1 = getCardIds(cardList);
+        var YcardList =$('#YcardList');
+        var arr2 = getCardIds(YcardList);
+        arr1 = arr1.concat(arr2);
+        arr1.remove(cardId);
+        if(arr1.indexOf(cardId)>-1){
+            alert('卡号：'+cardId+',已经存在于售卡或赠卡列表中,请更换');
+            $(this).val('');
+            return false;
+        }
+        //卡校验
+        var ajaxOpt = {'url':'{% url 'cardcheck' %}?cardId='+cardId,'method':'get'};
+        doAjax(this,ajaxOpt,showCardIfno,setTotalByCardList);
+        addRow(this);
+    });
+
+</script>

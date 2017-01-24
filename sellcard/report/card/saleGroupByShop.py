@@ -3,7 +3,7 @@ from django.core.paginator import Paginator
 from django.shortcuts import render
 from django.db.models import Sum
 import datetime
-
+from operator import itemgetter,attrgetter
 from sellcard.models import OrderUpCard,Payment
 from sellcard.common import Method as mth
 from sellcard import views as base
@@ -38,6 +38,7 @@ def index(request):
         shopsCode = [shop]
 
     shopsCodeStr = "'" + "','".join(shopsCode) + "'"
+    # shopsCodeStr = "('C003')"
 
     saleDiscGroupByShop = 'select shop_code,SUM(disc_amount) as disc,SUM(y_cash) as disc_cash, SUM(disc_amount-y_cash) as disc_card ' \
                           'from orders ' \
@@ -47,14 +48,13 @@ def index(request):
     cur.execute(saleDiscGroupByShop)
     saleDiscList = cur.fetchall()
 
-    salePayGroupByShop = 'select ord.shop_code,info.pay_id ,SUM(info.pay_value) as pay_value ' \
+    salePayGroupByShop = 'select ord.shop_code,info.pay_id,info.change_time,SUM(info.pay_value) as pay_value ' \
                 'from orders as ord , order_payment_info as info ' \
                 'where ord.add_time>="{start}" and ord.add_time<="{end}" and ord.shop_code in ({shopsCodeStr}) and ord.order_sn = info.order_id ' \
-                'group by ord.shop_code,info.pay_id' \
+                'group by ord.shop_code,info.pay_id,info.change_time' \
                 .format(start=start, end=endTime,shopsCodeStr=shopsCodeStr)
     cur.execute(salePayGroupByShop)
     salePayList = cur.fetchall()
-
 
     fillList = OrderUpCard.objects\
             .values('shop_code')\
@@ -69,10 +69,10 @@ def index(request):
                   .format(start=start, end=endTime,shopsCodeStr=shopsCodeStr)
     cur.execute(changeDiscGroupByShop)
     changeDiscList = cur.fetchall()
-    changePayGroupByShop = 'select ord.shop_code ,info.pay_id ,SUM(info.pay_value) as pay_value ' \
+    changePayGroupByShop = 'select ord.shop_code ,info.pay_id,info.change_time,SUM(info.pay_value) as pay_value ' \
                            'from order_change_card as ord , order_change_card_payment as info ' \
                            'where ord.add_time>="{start}" and ord.add_time<="{end}" and shop_code in ({shopsCodeStr}) and ord.order_sn = info.order_id ' \
-                           'group by ord.shop_code,info.pay_id' \
+                           'group by ord.shop_code,info.pay_id,info.change_time' \
                            .format(start=start, end=endTime,shopsCodeStr=shopsCodeStr)
     cur.execute(changePayGroupByShop)
     changePayList = cur.fetchall()
@@ -82,14 +82,15 @@ def index(request):
     totalDict  = {'discTotal':0,
                   'discCashTotal':0,'total_disc_6':0,'total_disc_7':0,'total_disc_8':0,'total_disc_10':0,'total_disc_11':0,'total_disc_qita':0,'discCardTotal':0,
                   'inSubTotal':0,'total_1':0,'total_2':0,'total_3':0,
-                  'total_4':0,'total_5':0,'total_6':0,'total_7':0,'total_8':0,'total_9':0,'total_10':0,'total_11':0,}
+                  'total_4_0':0,'total_4_1':0,'total_5':0,'total_6':0,'total_7':0,'total_8':0,'total_9':0,'total_10':0,'total_11':0,}
 
     dataList = []
+    # shops=[{'shop_code':'C003'}]
     for i in range(0,len(shops)):
         if shops[i]['shop_code'] != 'ZBTG':
             item = {'shop_code':'',
                     'disc':0,'disc_6':0,'disc_7':0,'disc_8':0,'disc_10':0,'disc_11':0,'disc_cash':0,'disc_card':0,
-                    'inSub':0,'pay_1':0,'pay_2':0,'pay_3':0, 'pay_4':0,'pay_5':0,'pay_6':0,'pay_7':0,'pay_8':0,
+                    'inSub':0,'pay_1':0,'pay_2':0,'pay_3':0,'pay_4_1':0,'pay_4_0':0,'pay_5':0,'pay_6':0,'pay_7':0,'pay_8':0,
                     'pay_9':0,'pay_10':0,'pay_11':0,}
             item['shop_code'] = shops[i]['shop_code']
             for sale in salePayList:
@@ -103,7 +104,9 @@ def index(request):
                     if sale['pay_id'] == 3:
                         item['pay_3'] += float(sale['pay_value'])
                     if sale['pay_id'] == 4:
-                        item['pay_4'] += float(sale['pay_value'])
+                        item['pay_4_0'] += float(sale['pay_value'])
+                    if sale['change_time']:
+                        item['pay_4_1'] += float(sale['pay_value'])
                     if sale['pay_id'] == 5:
                         item['pay_5'] += float(sale['pay_value'])
                     if sale['pay_id'] == 6:
@@ -155,8 +158,10 @@ def index(request):
                         item['pay_2'] += float(change['pay_value'])
                     if change['pay_id'] == 3:
                         item['pay_3'] += float(change['pay_value'])
-                    if change['pay_id'] == 4:
-                        item['pay_4'] += float(change['pay_value'])
+                    if change['pay_id'] == 4 :
+                        item['pay_4_0'] += float(change['pay_value'])
+                    if change['change_time'] :
+                        item['pay_4_1'] += float(change['pay_value'])
                     if change['pay_id'] == 5:
                         item['pay_5'] += float(change['pay_value'])
                     if change['pay_id'] == 6:
@@ -198,7 +203,8 @@ def index(request):
             totalDict['total_1'] += item['pay_1']
             totalDict['total_2'] += item['pay_2']
             totalDict['total_3'] += item['pay_3']
-            totalDict['total_4'] += item['pay_4']
+            totalDict['total_4_0'] += item['pay_4_0']
+            totalDict['total_4_1'] += item['pay_4_1']
             totalDict['total_5'] += item['pay_5']
             totalDict['total_6'] += item['pay_6']
             totalDict['total_7'] += item['pay_7']
@@ -231,7 +237,7 @@ def noPay(request):
               .format(start=start, end=endTime, shop=shop)
     cur.execute(saleSql)
     saleList = cur.fetchall()
-    saleData = formatData(saleList)
+    saleData,saleTotalPay,saleTotalNoPay= formatData(saleList)
 
     #换卡数据
     changeSql = 'select a.order_sn,b.pay_id,b.pay_value,b.change_time,b.bank_name,b.bank_sn,b.pay_company,b.is_pay ' \
@@ -241,40 +247,47 @@ def noPay(request):
                 .format(start=start, end=endTime, shop=shop)
     cur.execute(changeSql)
     changeList = cur.fetchall()
-    changeData = formatData(changeList)
+    changeData,changeTotalPay,changeTotalNoPay = formatData(changeList)
 
     data = saleData+changeData
+    totalPay = saleTotalPay + changeTotalPay
+    totalNoPay = saleTotalNoPay + changeTotalNoPay
+    data = sorted(data,key=itemgetter('is_pay','order_sn'),reverse=False)
     return render(request,'report/card/saleGroupByShop/noPay.html', locals())
 
+#列转行
 def formatData(List):
     OrderSnList = [item['order_sn'] for item in List]
     OrderSnSet = list(set(OrderSnList))
+    totalPay = 0
+    totalNoPay = 0
     data = []
     for sn in OrderSnSet:
         item = {}
-        item['noPay'] = 0
+        item['orderNoPay'] = 0
         item['order_sn'] = sn
         for sale in List:
             if sale['order_sn'] == sn:
                 item['is_pay'] = sale['is_pay']
+                item['orderNoPay'] += float(sale['pay_value'])
                 if sale['is_pay'] == '1':
+                    totalPay += float(sale['pay_value'])
                     if sale['pay_id'] == 1:
                         item['cash'] = float(sale['pay_value'])
-                        item['noPay'] += float(sale['pay_value'])
                     if sale['pay_id'] == 3:
                         item['bank'] = float(sale['pay_value'])
-                        item['noPay'] += float(sale['pay_value'])
                         item['bank_name'] = sale['bank_name']
                         item['bank_sn'] = sale['bank_sn']
                         item['pay_company'] = sale['pay_company']
                     if sale['pay_id'] == 5:
                         item['pos'] = float(sale['pay_value'])
-                        item['noPay'] += float(sale['pay_value'])
                 else:
-                    item['noPay'] += float(sale['pay_value'])
+                    totalNoPay += float(sale['pay_value'])
+                    item['orderNoPay'] += float(sale['pay_value'])
+
 
         data.append(item)
-    return data
+    return data,totalPay,totalNoPay
 
 def detail(request):
     today = datetime.date.today()

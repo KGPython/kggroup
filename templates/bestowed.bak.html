@@ -1,0 +1,136 @@
+{% extends 'common/baseForJobs.html' %}
+{% block title %}团购实物返点{% endblock %}
+{% block content %}
+<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb">
+            <a data-original-title="Go to Home" href="#" title="" class="tip-bottom">
+                <span class="glyphicon glyphicon-home" aria-hidden="true"> </span> 首页
+            </a>
+            <a href="#" class="">售卡</a>
+            <a href="#" class="current">实物团购返点</a>
+        </div>
+    </div>
+    <div class="widget-box">
+        <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+            <h5>实物团购返点</h5>
+        </div>
+
+        <div class="widget-content nopadding">
+            <div class="container-fluid">
+                <div class="widget-box" style="border: none">
+                    <div class="row formline">
+                        <label class="label-my" style="text-align: left">返点金额：</label>
+                        <div class="col-md-2">
+                            <input class="form-control" type="text" id="discTotal" onblur="discCash()" value="0">
+                        </div>
+                        <span class="label-my">元</span>
+                    </div>
+                </div>
+                <div class="widget-box">
+                    <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+                        <h5>单卡查询</h5>
+                    </div>
+                    <div class="widget-content nopadding">
+                        {% include 'common/cardQueryTable.html' %}
+                        <div class="Total row formline">
+                            <p class="text col-md-3" id="totalNum">合计数量：<b>0</b>张</p>
+                            <p class="text col-md-3" id="totalVal">合计金额：<b>0.00</b>元</p>
+                            <p class="text col-md-2" id="totalYBalance">补差：<b class="red">0.00</b>元</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="widget-box">
+                    <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+                        <h5>备注信息</h5>
+                    </div>
+                    <div class="widget-content nopadding check-operat">
+                        <textarea name="" id="" rows="10" style="width: 100%" class="remarks"></textarea>
+                    </div>
+                </div>
+                {% include 'common/buyerInfo.html' %}
+                <div class="enter-box">
+                    <input id="post-token" type="hidden" value="{{ token }}">
+                    <button class="btn btn-success pull-right" id="btn-enter" type="button">提交订单</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+    function setBestowedTotal() {
+        cls = 'Total';
+        var cardsTotal = getCardListVal(cardList,1,cls);
+        var cardsTotalVal = cardsTotal.totalVal;
+        //4、优惠补差
+        var discountCardTotalVal = parseFloat($(".discBox #discTotal").val());
+
+        discountPay  = cardsTotalVal - discountCardTotalVal;
+        $('.Total #totalYBalance b').text(discountPay);//设置“合计”区域->优惠补差
+        //5、设置订单应付金额 = 售卡列表合计金额 + 优惠补差
+        $('.Total #totalPaid b').text(cardsTotalVal+discountPay);
+    }
+
+    $(document).on("change",".cardId",function(){
+        var cardIdStr = $(this).val();
+        var cardId = cardIdStr.split("=")[0];
+        $(this).val(cardId);
+
+        //检查是否有重复卡号
+        var cardList = $('#cardList');
+        var arr1 = getCardIds(cardList);
+        var YcardList =$('#YcardList');
+        var arr2 = getCardIds(YcardList);
+        arr1 = arr1.concat(arr2);
+        arr1.remove(cardId);
+        if(arr1.indexOf(cardId)>-1){
+            alert('卡号：'+cardId+',已经存在于售卡或赠卡列表中,请更换');
+            $(this).val('');
+            return false;
+        }
+
+        //卡校验
+        var ajaxOpt = {'url':'{% url 'cardcheck' %}?cardId='+cardId,'method':'get'};
+        doAjax(this,ajaxOpt,showCardIfno,setBestowedTotal);
+        addRow(this);
+    });
+
+    $(document).on('click','#btn-enter',function(){
+        var disclVal = parseFloat($(".discBox #discTotal").val());
+        if(!disclVal){
+            alert('请填写实物团购返点金额');
+            return false;
+        }
+        var cardList = getCardList($('#cardList'),'1');
+        var discVal = parseFloat($('.Total #totalVal b').text());
+        var discPay = parseFloat($('.Total #totalYBalance b').text());
+        var remarks =$('.remarks').val().trim();
+        if(totalVal==0){
+            alert('还未添加赠卡信息，请核对后再尝试提交！');
+            return false;
+        }
+        //赠送对象信息
+        var buyerName = $('#buyerName').val();
+        var buyerPhone = $('#buyerPhone').val();
+        var buyerCompany = $('#buyerCompany').val();
+        var postToken = $('#post-token').val();
+        var data ={
+            csrfmiddlewaretoken: CSRF,
+            'cardsStr':JSON.stringify(cardList),
+            'discVal':discVal,
+            'discPay':discPay,
+            'remarks':remarks,
+            'buyerName':buyerName,
+            'buyerPhone':buyerPhone,
+            'buyerCompany':buyerCompany,
+            'postToken':postToken
+        };
+        var url = "{% url 'bestowedSave' %}";
+        doAjaxSave(url,data)
+    })
+</script>
+{% endblock %}

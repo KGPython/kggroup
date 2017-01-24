@@ -116,12 +116,16 @@ $(document).on('blur','.payList .payVal,.payList input:checkbox,.payList .remark
     var payIdList = [];
     var payCash = 0;//现金、pos、代金券、汇款、赊销
     for(var i=0;i<palyList.length;i++){
+        var cardSaleTotalVal = parseFloat($(".Total #totalVal b").text());
+        if(!cardSaleTotalVal){
+            alert('请完善售卡列表');
+            return false;
+        }
         var checkBox = $(palyList[i]).find('td').eq(0).find('input')[0];
         var flag = $(checkBox).is(':checked');
         var payName = '';
         var payVal= parseFloat($(palyList[i]).find('td').eq(2).find('input').val());
         if(flag && payVal){
-            var cardSaleTotalVal = parseFloat($(".Total #totalVal b").text());
             var payId =0;
             //获取支付ID
             if($(palyList[i]).find('td').eq(1).find('select')[0]){

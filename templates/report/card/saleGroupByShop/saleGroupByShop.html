@@ -150,7 +150,7 @@
                                             {{ row.pay_4 | floatformat:2 | default:0 }}
                                         </a>{% endcomment %}
                                         <a href="{% url 'saleGroupByShopNoPay' %}?shop={{ row.shop_code }}&start={{ start }}&end={{ end }}">
-                                            {{ row.pay_4 | floatformat:2 | default:0 }}
+                                            {{ row.pay_4_1 | floatformat:2 | default:0 }}|<span class="red">{{ row.pay_4_0 | floatformat:2 | default:0 }}</span>
                                         </a>
                                     </td>
                                     <td class="saleCol">
@@ -207,7 +207,10 @@
                                 <td>{{ totalDict.total_1 | floatformat:2 }}</td>
                                 <td>{{ totalDict.total_2 | floatformat:2 }}</td>
                                 <td>{{ totalDict.total_3 | floatformat:2 }}</td>
-                                <td>{{ totalDict.total_4 | floatformat:2 }}</td>
+                                <td>
+                                    {{ totalDict.total_4_1 | floatformat:2 }} |
+                                    <span class="red">{{ totalDict.total_4_0 | floatformat:2 }}</span>
+                                </td>
                                 <td>{{ totalDict.total_5 | floatformat:2 }}</td>
                                 <td>{{ totalDict.total_6 | floatformat:2 }}</td>
                                 <td>{{ totalDict.total_7 | floatformat:2 }}</td>

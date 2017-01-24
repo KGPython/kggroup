@@ -184,7 +184,6 @@ def o_column(v_o,v_s):
 # 转百分比
 @register.filter
 def add(v1, v2):
-    print(v1)
     return float(v1) + float(v2)
 
 

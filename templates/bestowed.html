@@ -18,28 +18,18 @@
 
         <div class="widget-content nopadding">
             <div class="container-fluid">
-                <div class="widget-box discBox" style="border: none">
-                    <div class="row formline">
-                        <label class="label-my" style="text-align: left">返点金额：</label>
-                        <div class="col-md-2">
-                            <input class="form-control" type="text" id="discTotal" onblur="discCash()" value="0">
-                        </div>
-                        <span class="label-my">元</span>
-                    </div>
-                </div>
-                <div class="widget-box">
-                    <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
-                        <h5>单卡查询</h5>
-                    </div>
-                    <div class="widget-content nopadding">
-                        {% include 'common/cardQueryTable.html' %}
-                        <div class="Total row formline">
-                            <p class="text col-md-3" id="totalNum">合计数量：<b>0</b>张</p>
-                            <p class="text col-md-3" id="totalVal">合计金额：<b>0.00</b>元</p>
-                            <p class="text col-md-2" id="totalYBalance">优惠补差：<b class="red">0.00</b>元</p>
+                <div class="widget-box" style="border: none">
+                    <div class="widget-content nopadding Total" style="border: none">
+                        <div class="row formline">
+                            <label for="" class="col-md-1 formline-label" style="text-align: left">返点金额：</label>
+                            <div class="col-md-2">
+                                <input class="form-control" id="discTotal" type="text" onblur="createDiscPay(this)">
+                            </div>
+
                         </div>
                     </div>
                 </div>
+                {% include 'common/discount2.html' %}
 
                 <div class="widget-box">
                     <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
@@ -62,47 +52,28 @@
 
 {% block js %}
 <script>
-    function setBestowedTotal() {
-        cls = 'Total';
-        var cardsTotal = getCardListVal(cardList,1,cls);
-        var cardsTotalVal = cardsTotal.totalVal;
-        //4、优惠补差
-        var discountCardTotalVal = parseFloat($(".discBox #discTotal").val());
-
-        discountPay  = cardsTotalVal - discountCardTotalVal;
-        $('.Total #totalYBalance b').text(discountPay);//设置“合计”区域->优惠补差
-        //5、设置订单应付金额 = 售卡列表合计金额 + 优惠补差
-        $('.Total #totalPaid b').text(cardsTotalVal+discountPay);
+    function createDiscPay(obj) {
+        var discVal = $(obj).val();
+        if(!discVal){discVal=0}
+        var cardsVal = $('#totalVal b').text();
+        var discPay = parseFloat(cardsVal) - parseFloat(discVal);
+        $('#totalYBalance b').text(discPay);
     }
 
-    $(document).on("change",".cardId",function(){
-        var cardIdStr = $(this).val();
-        var cardId = cardIdStr.split("=")[0];
-        $(this).val(cardId);
-
-        //检查是否有重复卡号
-        var cardList = $('#cardList');
-        var arr1 = getCardIds(cardList);
-        var YcardList =$('#YcardList');
-        var arr2 = getCardIds(YcardList);
-        arr1 = arr1.concat(arr2);
-        arr1.remove(cardId);
-        if(arr1.indexOf(cardId)>-1){
-            alert('卡号：'+cardId+',已经存在于售卡或赠卡列表中,请更换');
-            $(this).val('');
+    $(document).on('click','#btn-enter',function(){
+        var disclVal = parseFloat($("#discTotal").val());
+        if(!disclVal){
+            alert('请填写实物团购返点金额');
             return false;
         }
 
-        //卡校验
-        var ajaxOpt = {'url':'{% url 'cardcheck' %}?cardId='+cardId,'method':'get'};
-        doAjax(this,ajaxOpt,showCardIfno,setBestowedTotal);
-        addRow(this);
-    });
-
-    $(document).on('click','#btn-enter',function(){
-        var cardList = getCardList($('#cardList'),'1');
-        var discVal = parseFloat($('.Total #totalVal b').text());
-        var discPay = parseFloat($('.Total #totalYBalance b').text());
+        var cardList = getCardList($('#YcardList'),'1');
+        var discVal = parseFloat($('#totalVal b').text());
+        var discPay = parseFloat($('#totalYBalance b').text());
+        if(discPay<0){
+            alert('补差金额不能为负数');
+            return false;
+        }
         var remarks =$('.remarks').val().trim();
         if(totalVal==0){
             alert('还未添加赠卡信息，请核对后再尝试提交！');
