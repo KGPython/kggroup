@@ -315,7 +315,7 @@ function getCardListVal(cardList,cardtype,cls){
                 totalVal += parseFloat(val);
             }
         }else if(cardtype==2){
-            if(status=='已激活' && parseFloat(val)<=parseFloat(type)){
+            if(status=='已激活' && parseFloat(val)==parseFloat(type)){
                 totalNum++;
                 totalVal += parseFloat(val);
             }
