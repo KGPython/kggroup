@@ -116,9 +116,10 @@ def create(request):
         if mth.getReqVal(request, 'buttonvalue', '') == '1':
             today = datetime.datetime.now().strftime('%Y%m%d')
             if (endDate is not None and endDate != ''):
-                endDate = datetime.datetime.strptime(endDate, "%Y-%m-%d").date()
+                endDate = endDate + " 23:59:59"
+                endDate = datetime.datetime.strptime(endDate, "%Y-%m-%d %H:%M:%S")
             else:
-                endDate = datetime.datetime.strptime("9999-12-31", "%Y-%m-%d").date()
+                endDate = datetime.datetime.strptime("9999-12-31 23:59:59", "%Y-%m-%d %H:%M:%S")
             name = request.session.get("s_unameChinese")
 
             # 获取本次批次号：本次批号为历史最大批号加1，若不存在历史批号则为1
