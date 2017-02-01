@@ -111,7 +111,8 @@
         $('#anomaly').find('tbody').empty();
         $('#correct').find('tbody').empty();
         for(var i=0;i<data.length;i++){
-            if(data[i].mode=='1' && data[i].detail==data[i].new_amount && data[i].is_borrow == '1' ){
+            if(data[i].mode=='1' && data[i].detail==data[i].new_amount && data[i].is_borrow == '1' )
+            {
                 //正常数据
                 var cols = $('#correct').find('th').length;
                 var tr=$('<tr></tr>');
@@ -136,9 +137,9 @@
                     tr.append(td);
                 }
                 $('#correct').find('tbody').append(tr);
-
             }
-            else{
+            else
+            {
                 var cols = $('#anomaly').find('th').length;
                 var tr=$('<tr></tr>');
                 for(var j=0;j<cols;j++){
@@ -183,9 +184,10 @@
                     tr.append(td);
                 }
                 $('#anomaly').find('tbody').append(tr);
+                $('#anomalyBox').show();
             }
-            setTotalByCardList($('#correct').find('tbody'));
         }
+        setTotalByCardList($('#correct').find('tbody'));
     }
 
     $(document).on('click','#btn-enter',function(){

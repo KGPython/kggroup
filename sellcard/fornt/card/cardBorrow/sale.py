@@ -12,7 +12,7 @@ def index(request):
     # 在服务端session中添加key认证，避免用户重复提交表单
     token = 'allow'  # 可以采用随机数
     request.session['postToken'] = token
-    return render(request, 'borrowSale.html', locals())
+    return render(request, 'card/borrow/borrowSale.html', locals())
 
 def save(request):
     operator = request.session.get('s_uid','')
@@ -69,9 +69,8 @@ def save(request):
             order.save()
 
             #更新卡状态
-            cardListTotal = cardList
             cardIdList = []
-            for card in cardListTotal:
+            for card in cardList:
                 cardIdList.append(card['cardId'])
             cardNum = len(cardIdList)
 
@@ -111,5 +110,5 @@ def info(request):
     totalNum = 0
     for info in infoList:
         totalNum += int(info['subNum'])
-    return render(request, 'borrowOrderInfo.html', locals())
+    return render(request, 'card/borrow/borrowOrderInfo.html', locals())
 

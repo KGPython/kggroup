@@ -185,7 +185,6 @@
 
             }
         }
-        console.log(boxID+' #correct');
         setTotalByCardList($(boxID+' #correct').find('tbody'));
     }
     function showData2(boxID,data) {
@@ -193,7 +192,8 @@
         $(boxID+' #anomaly').find('tbody').empty();
         $(boxID+' #correct').find('tbody').empty();
         for(var i=0;i<data.length;i++){
-            if(data[i].mode=='1' || data[i].detail!=data[i].new_amount){
+            if(data[i].mode=='1' || data[i].detail!=data[i].new_amount)
+            {
                 $(boxID+' #anomalyBox').show();
                 var cols = $(boxID+' #anomaly').find('th').length;
                 var tr=$('<tr></tr>');
@@ -237,7 +237,8 @@
                 }
                 $(boxID+' #anomaly').find('tbody').append(tr);
             }
-            else{
+            else
+            {
                 var cols = $('#correct').find('th').length;
                 var tr=$('<tr></tr>');
                 for(var j=0;j<cols;j++){

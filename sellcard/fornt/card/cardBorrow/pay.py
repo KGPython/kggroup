@@ -92,7 +92,7 @@ def index(request):
 
         cur.close()
         conn.close()
-    return render(request, 'borrowPay.html', locals())
+    return render(request, 'card/borrow/borrowPay.html', locals())
 
 @transaction.atomic
 def save(request):

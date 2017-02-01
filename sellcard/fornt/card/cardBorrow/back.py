@@ -17,7 +17,7 @@ def index(request):
     token = 'allow'  # 可以采用随机数
     request.session['postToken'] = token
 
-    return render(request, 'borrowBack.html', locals())
+    return render(request, 'card/borrow/borrowBack.html', locals())
 
 def query(request):
     shopcode = request.session.get('s_shopcode','')
