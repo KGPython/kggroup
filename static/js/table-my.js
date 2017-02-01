@@ -299,7 +299,7 @@ function checkCardStu(obj,cardId,shopCode,url){
 /*
 *  求卡列表总金额
 *  cardList：卡列表所在的tbody节点
-*  cardtype：出卡为1，入卡为2
+*  cardtype：（1：出卡，2：入卡,3：补卡入库），
 * */
 function getCardListVal(cardList,cardtype,cls){
     var trs = $(cardList).find('tr');
@@ -309,13 +309,23 @@ function getCardListVal(cardList,cardtype,cls){
         var status = $(trs[i]).find('td').eq(3).find('input').val();
         var val = $(trs[i]).find('td').eq(2).find('input').val();
         var type = $(trs[i]).find('td').eq(1).find('input').val();
-        if(cardtype==1){
+        if(cardtype==1)
+        {
             if(status=='未激活'&& parseFloat(val)==parseFloat(type)){
                 totalNum++;
                 totalVal += parseFloat(val);
             }
-        }else if(cardtype==2){
+        }
+        else if(cardtype==2)
+        {
             if(status=='已激活' && parseFloat(val)==parseFloat(type)){
+                totalNum++;
+                totalVal += parseFloat(val);
+            }
+        }
+        else if(cardtype==3)
+        {
+            if(status=='已激活' && parseFloat(val)<=parseFloat(type)){
                 totalNum++;
                 totalVal += parseFloat(val);
             }
@@ -629,9 +639,9 @@ function saveCardSaleOrder(action_type,url,cardList,orderSns){
 //保存补卡订单
 function saveCardFillOrder(url){
     //入卡列表
-    var cardInList = getCardFillList($('#cardInList'),"2");
-    var cardInTotalNum = parseInt($('.cardInTotal #totalNum b').text());
-    var cardInTotalVal = parseFloat($('.cardInTotal #totalVal b').text());
+    var cardInList = getCardFillList($('#cardFillInList'),"2");
+    var cardInTotalNum = parseInt($('.cardFillInTotal #totalNum b').text());
+    var cardInTotalVal = parseFloat($('.cardFillInTotal #totalVal b').text());
 
     //补卡人信息
     var action_type = $('#action_type').val();
@@ -657,11 +667,11 @@ function saveCardFillOrder(url){
 //更新补卡订单
 function updateCardFillOrder(url){
     //入卡列表
-    var cardOutList = getCardFillList($('#cardOutList'),"1");
+    var cardOutList = getCardFillList($('#cardFillOutList'),"1");
    
-    var cardOutTotalNum = parseInt($('.cardOutTotal #totalNum b').text());
-    var cardOutTotalVal = parseFloat($('.cardOutTotal #totalVal b').text());
-    var cardOutBalance = parseFloat($('.cardOutTotal #balance span').text());
+    var cardOutTotalNum = parseInt($('.cardFillOutTotal #totalNum b').text());
+    var cardOutTotalVal = parseFloat($('.cardFillOutTotal #totalVal b').text());
+    var cardOutBalance = parseFloat($('.cardFillOutTotal #balance span').text());
 
     //订单信息
     var order_sn = $('#order_sn').val();
@@ -890,10 +900,11 @@ $(document).on('change','#hjsBox .changeCode',function(){
 function setTotalByCardList(obj){
     var cardList = obj;
     var cls = '';
-    var cardtype = 1;//默认为卡出库
+    var cardtype = '';
     // 1、判断合计展示的位置
-    if($(cardList).hasClass('discount')){
-        //优惠管理区域
+    if($(cardList).hasClass('discount'))//优惠管理区域
+    {
+        cardtype = 1;
         cls = 'discountTotal';
         // 2、计算卡列表的合计金额和合计张数
         var data = getCardListVal(cardList,cardtype,cls);
@@ -909,7 +920,9 @@ function setTotalByCardList(obj){
         $('.Total #totalPaid b').text(orderVal)
 
     }
-    else if($(cardList).hasClass('discount2')){
+    else if($(cardList).hasClass('discount2'))//实物团购返点
+    {
+        cardtype = 1;
         cls = 'discountTotal';
         var cardsTotal = getCardListVal(cardList,1,cls);
         var cardsTotalVal = cardsTotal.totalVal;
@@ -919,86 +932,38 @@ function setTotalByCardList(obj){
         discPay = parseFloat(cardsTotalVal) - parseFloat(discVal);
         $('#totalYBalance b').text(discPay);
     }
-    else if($(cardList).hasClass('cardIn')){
-        //换卡入库、补卡入库
+    else if($(cardList).hasClass('cardIn'))//换卡入库
+    {
         cls = 'cardInTotal';
         cardtype = 2;
-        // 2、计算卡列表的合计金额和合计张数
-        var data = getCardListVal(cardList,cardtype,cls);
-        var cardsInTotalVal = data.totalVal;
-
-        //3、如果是换卡模块，则计算换卡补差
-        var Paybox = $(".Total");
-        if(Paybox.length>0){
-            //3.1、计算补差金额
-            var cardChangeOutTotalVal = $(".cardOutTotal #totalVal b").text();
-            var cardsPayVal = parseFloat(cardChangeOutTotalVal)-parseFloat(cardsInTotalVal);
-            if(cardsPayVal>0){
-                $('.payment').show();
-                $('.Total').show();
-            }else {
-                $('.payment').hide();
-                $('.Total').hide();
-                $('.payList .payVal').val('')
-            }
-            $('.Total #totalVal b').text(cardsPayVal);
-            //3.2、计算优惠返点
-            var discountVal = createDiscount('',cardsPayVal);
-            //3.3、计算订单总额
-            var discBoxVal = parseFloat($('.discountTotal #totalVal b').text());
-            var discPay = discBoxVal - discountVal;
-            $(".Total #totalYBalance b").text(discPay);
-            var orderVal = cardsPayVal + discPay;
-            $(".Total #totalPaid b").text(orderVal);
-        }
-
+        setOrderInfoByCardChange(cardList,cls,cardtype);
     }
-    else if($(cardList).hasClass('cardOut')){
-        //换卡出库、补卡出库
+    else if($(cardList).hasClass('cardOut'))//换卡出库
+    {
+        cardtype=1;
         cls = 'cardOutTotal';
+        setOrderInfoByCardChange(cardList,cls,cardtype);
+    }
+    else if($(cardList).hasClass('cardFillIn'))//补卡入库
+    {
+        cls = 'cardFillInTotal';
+        cardtype = 3;
+        setOrderInfoByCardFill(cardList,cls,cardtype);
+    }
+    else if($(cardList).hasClass('cardFillOut'))//补卡出库
+    {
+        cardtype=1;
+        cls = 'cardFillOutTotal';
         // 2、计算卡列表的合计金额和合计张数
         var cardsTotal = getCardListVal(cardList,cardtype,cls);
-        var cardsTotalVal = cardsTotal.totalVal;
-
-        //3、如果是补卡模块，则计算补卡补差
-        var fillCardPayInput  = $('.cardOutTotal #balance span');
-        if(fillCardPayInput.length>0){
-            var cardsOutVal = parseFloat($('.cardOutTotal #totalVal b').text()).toFixed(2);
-            if(cardsOutVal!=undefined){
-                var cardsInVal = parseFloat($('.cardInTotal #totalVal b').text()).toFixed(2);
-                cardsInVal = isNaN(cardsInVal) ? 0:cardsInVal;
-                fillCardPay = parseFloat(cardsOutVal - cardsInVal).toFixed(1);
-                $('.cardOutTotal #balance span').text(fillCardPay);
-            }
-        }
-        //3、如果是换卡模块，则计算换卡补差
-        var Paybox = $(".Total");
-        if(Paybox.length>0){
-            //3.1、计算补差金额
-            var cardChangeInTotalVal = $(".cardInTotal #totalVal b").text();
-            var cardsPayVal = parseFloat(cardsTotalVal)-parseFloat(cardChangeInTotalVal);
-            if(cardsPayVal>0){
-                $('.payment').show();
-                $('.Total').show();
-            }else {
-                $('.payment').hide();
-                $('.Total').hide();
-                $('.payList .payVal').val('')
-            }
-            $('.Total #totalVal b').text(cardsPayVal);
-            //3.2、计算优惠返点
-            var discountVal = createDiscount('',cardsPayVal);
-
-            //3.3、计算订单总额
-            var discBoxVal = parseFloat($('.discountTotal #totalVal b').text());
-            var discPay = discBoxVal - discountVal;
-            $(".Total #totalYBalance b").text(discPay);
-            var orderVal = cardsPayVal + discPay;
-            $(".Total #totalPaid b").text(orderVal);
-
-        }
+        var totalVal = parseFloat(cardsTotal.totalVal).toFixed(2);
+        //3、计算补卡补差
+        var cardsInVal = parseFloat($('.cardFillInTotal #totalVal b').text()).toFixed(2);
+        var fillCardPay = parseFloat(totalVal - cardsInVal).toFixed(1);
+        $('.cardFillOutTotal #balance span').text(fillCardPay);
     }
     else{
+        cardtype=1;
         cls = 'Total';
         // 2、计算卡列表的合计金额和合计张数
         var cardsTotal = getCardListVal(cardList,cardtype,cls);
@@ -1020,7 +985,54 @@ function setTotalByCardList(obj){
         $('.cardOutTotal #balance b').text(Ybalance);
     }
 }
-
+function setOrderInfoByCardChange(cardList,cls,cardtype) {
+    // 2、计算卡列表的合计金额和合计张数
+    var data = getCardListVal(cardList,cardtype,cls);
+    var totalVal = data.totalVal;
+    if(cardtype==1){
+        var cardChangeInTotalVal = $(".cardInTotal #totalVal b").text();
+        var cardsPayVal = parseFloat(totalVal)-parseFloat(cardChangeInTotalVal);
+    }
+    else
+    {
+        var cardChangeOutTotalVal = $(".cardOutTotal #totalVal b").text();
+        var cardsPayVal = parseFloat(cardChangeOutTotalVal)-parseFloat(totalVal);
+    }
+    //3.1、计算补差金额
+    if(cardsPayVal>0){
+        $('.payment').show();
+        $('.Total').show();
+    }
+    else {
+        $('.payment').hide();
+        $('.Total').hide();
+        $('.payList .payVal').val('')
+    }
+    $('.Total #totalVal b').text(cardsPayVal);
+    //3.2、计算优惠返点
+    var discountVal = createDiscount('',cardsPayVal);
+    //3.3、计算订单总额
+    var discBoxVal = parseFloat($('.discountTotal #totalVal b').text());
+    var discPay = discBoxVal - discountVal;
+    $(".Total #totalYBalance b").text(discPay);
+    var orderVal = cardsPayVal + discPay;
+    $(".Total #totalPaid b").text(orderVal);
+}
+function setOrderInfoByCardFill(cardList,cls,cardtype) {
+    // 2、计算卡列表的合计金额和合计张数
+    var data = getCardListVal(cardList,cardtype,cls);
+    var totalVal = data.totalVal;
+    var cardChangeOutTotalVal = $(".cardOutTotal #totalVal b").text();
+    var cardsPayVal = parseFloat(cardChangeOutTotalVal)-parseFloat(totalVal);
+    //3.1、计算补差金额
+    $('.Total #totalVal b').text(cardsPayVal);
+    //3.2、计算订单总额
+    var discBoxVal = parseFloat($('.discountTotal #totalVal b').text());
+    var discPay = discBoxVal - discountVal;
+    $(".Total #totalYBalance b").text(discPay);
+    var orderVal = cardsPayVal + discPay;
+    $(".Total #totalPaid b").text(orderVal);
+}
 /*
 * 产生“合计”区域相关信息 -- 根据当前“售卡合计”
 * cardSaleTotalVal：售卡合计

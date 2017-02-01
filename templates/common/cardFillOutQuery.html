@@ -1,0 +1,37 @@
+<div class="widget-box">
+    <div class="widget-title"><span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+        <h5>出卡查询</h5>
+    </div>
+    <div class="widget-content nopadding">
+        <table class="table table-striped table-hover table-form-my">
+            <thead>
+            <tr>
+                <th>卡号</th>
+                <th>面值</th>
+                <th>余额</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody class="cardFillOut" id="cardFillOutList">
+            <tr>
+                <td><input class="form-control cardId" type="text" id="cardno"></td>
+                <td><input type='text' class='form-control' disabled="disabled"></td>
+                <td><input type='text' class='form-control' disabled="disabled"></td>
+                <td><input type='text' class='form-control' disabled="disabled"></td>
+                <td>
+                    <button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this)">删除</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="cardFillOutTotal row formline">
+            <p class="text col-md-3" id="totalNum">卡合计数量：<b>0</b>张</p>
+            <p class="text col-md-3" id="totalVal">卡合计金额：<b>0.00</b>元</p>
+            <p class="text col-md-3" id="balance">应补差额：<span style="color:red;">0.00</span>元</p>
+        </div>
+        <div class="cardFillOutTotal row formline">
+            <p class="text col-md-3">实补差额：<b><input type="text" id="paymoney" name="paymoney" size="10px"></b>元</p>
+        </div>
+    </div>
+</div>

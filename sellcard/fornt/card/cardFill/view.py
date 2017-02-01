@@ -12,7 +12,7 @@ __EACH_PAGE_SHOW_NUMBER=10
 
 def index(request):
 
-    return render(request, 'cardFill.html', locals())
+    return render(request, 'card/fill/cardFill.html', locals())
 
 def query(request):
     shopCode = request.session.get('s_shopcode')
@@ -39,7 +39,7 @@ def query(request):
     result = {"page": page, "pageNum": str(pageNum)}
     result.setdefault("user_phone", user_phone)
     result.setdefault("state", state)
-    return render(request, 'cardFillQuery.html', result)
+    return render(request, 'card/fill/cardFillQuery.html', result)
 
 @transaction.atomic
 def save(request):
@@ -94,6 +94,7 @@ def save(request):
             CardInventory.objects.filter(card_no__in=cardIdInList).update(card_status=4)
             ActionLog.objects.create(action='补卡-补卡',u_name=request.session.get('s_uname'),cards_in=cardInStr,add_time=datetime.datetime.now())
             res["msg"] = 1
+            res["urlRedirect"] = '/kg/sellcard/fornt/cardfill/query/'
     except Exception as e:
         print(e)
         res["msg"] = 0
@@ -125,7 +126,7 @@ def gotcard(request):
             orderInfoList = OrderUpCardInfo.objects.values("card_no","card_value","card_balance",).filter(order_sn=order_sn,card_attr=1)
         except Exception as e:
             print(e)
-    return render(request, 'cardFillModify.html', locals())
+    return render(request, 'card/fill/cardFillModify.html', locals())
 
 def update(request):
     operator_id = request.session.get('s_uid', '')
@@ -192,5 +193,5 @@ def info(request):
             diff_amount = order["fill_price"] - order["total_price"]
         except Exception as e:
             print(e)
-    return render(request, 'cardFillInfo.html', locals())
+    return render(request, 'card/fill/cardFillInfo.html', locals())
 
