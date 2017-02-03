@@ -166,16 +166,21 @@ def index(request):
                         item['pay_5'] += float(change['pay_value'])
                     if change['pay_id'] == 6:
                         item['pay_6'] += float(change['pay_value'])
+                        item['disc_6'] += float(change['pay_value']) * paymentsRateDict[6]
                     if change['pay_id'] == 7:
                         item['pay_7'] += float(change['pay_value'])
+                        item['disc_7'] += float(change['pay_value']) * paymentsRateDict[7]
                     if change['pay_id'] == 8:
                         item['pay_8'] += float(change['pay_value'])
+                        item['disc_8'] += float(change['pay_value']) * paymentsRateDict[8]
                     if change['pay_id'] == 9:
                         item['pay_9'] += float(change['pay_value'])
                     if change['pay_id'] == 10:
                         item['pay_10'] += float(change['pay_value'])
+                        item['disc_10'] += float(change['pay_value']) * paymentsRateDict[10]
                     if change['pay_id'] == 11:
                         item['pay_11'] += float(change['pay_value'])
+                        item['disc_11'] += float(change['pay_value']) * paymentsRateDict[11]
 
                     item['inSub'] += float(change['pay_value'])
 

@@ -976,14 +976,6 @@ function setTotalByCardList(obj){
         //5、设置订单应付金额 = 售卡列表合计金额 + 优惠补差
         $('.Total #totalPaid b').text(cardsTotalVal+discountPay);
     }
-
-   //补卡补差
-    var Ybalance = 0;
-    var YtotalVal = parseFloat($('.cardOutTotal #totalVal b').text());
-    if(YtotalVal!=undefined){
-        Ybalance = YtotalVal - discountVal;
-        $('.cardOutTotal #balance b').text(Ybalance);
-    }
 }
 function setOrderInfoByCardChange(cardList,cls,cardtype) {
     // 2、计算卡列表的合计金额和合计张数
@@ -1049,14 +1041,6 @@ function setTotalBycardSaleTotalVal(discRate,cardSaleTotalVal){
 }
 
 
-/*function setTotalByNoPayVal(discRate,cardSaleTotalVal){
-    //2、计算优惠补差
-    var discountCardTotalVal = parseFloat($(".discountTotal #totalVal b").text());
-    discountPay  = discountCardTotalVal - discountVal;
-    $('.Total #totalYBalance b').text(discountPay);
-    //3、计算应付金额
-    $('.Total #totalPaid b').text(cardSaleTotalVal+discountPay);
-}*/
 
 
 
