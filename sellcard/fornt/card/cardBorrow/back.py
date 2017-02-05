@@ -47,9 +47,11 @@ def query(request):
             item['detail']=float(item['detail'])
             item['new_amount']=float(item['new_amount'])
             listTotalNew.append(item)
+
     #判断是否属于借卡
+    orderSnTuple = []
     for cardNo in cardNoList:
-        sql2 = "select b.card_no from order_borrow as a,order_borrow_info as b " \
+        sql2 = "select b.card_no,a.order_sn from order_borrow as a,order_borrow_info as b " \
                "where a.shopcode='"+shopcode+"' and a.order_sn=b.order_sn and a.is_paid='0' and a.borrow_depart_code='"+borrowDepartCode+"' and b.card_no='"+cardNo+"'"
         connSql = mth.getMysqlConn()
         curSql = connSql.cursor()
@@ -64,14 +66,24 @@ def query(request):
             for card in listTotalNew:
                 if card['cardno'] == cardNo:
                     card['is_borrow']='1'
+                    orderSn = record['order_sn']
+                    if orderSn not in orderSnTuple:
+                        orderSnTuple.append(orderSn)
         curSql.close()
         connSql.close()
-    return HttpResponse(json.dumps(listTotalNew))
+
+    data = {}
+
+    data['listTotalNew'] = listTotalNew
+    data['orderSnTuple'] = orderSnTuple
+    return HttpResponse(json.dumps(data))
 
 
 def save(request):
     cardsStr = request.POST.get('cardStr','')
     cardList = json.loads(cardsStr)
+    orderSnStr = request.POST.get('orderSnList','')
+    orderSnList = orderSnStr.split(',')
     cardnoList = []
     for card in cardList:
         cardnoList.append(card['cardId'])
@@ -93,9 +105,9 @@ def save(request):
             if resCard != cardsNum:
                 raise MyError('系统数据库卡状态更新失败')
 
-            resBorrow = OrderBorrowInfo.objects.filter(card_no__in=cardnoList,is_back=None).update(is_back='1',back_time=now)
+            resBorrow = OrderBorrowInfo.objects.filter(card_no__in=cardnoList,order_sn__in=orderSnList,is_back=None).update(is_back='1',back_time=now)
             if resBorrow != cardsNum:
-                raise MyError('退还卡状态更新失败')
+                raise MyError('退卡状态更新失败')
 
             resErp = mth.updateCard(cardnoList, '9')
             if resErp != cardsNum:

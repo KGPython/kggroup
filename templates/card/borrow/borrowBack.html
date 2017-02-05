@@ -50,6 +50,7 @@
                 <!--  退卡 号段查询结果 start  -->
                 <div class="enter-box">
                     <input id="post-token" type="hidden" value="{{ token }}">
+                    <input type="hidden" id="orderSnList">
                     <button class="btn btn-success pull-right" type="button" id="btn-enter">提交订单</button>
                 </div>
             </div>
@@ -99,7 +100,11 @@
                 if(data.length==0){
                     alert('此卡断不存在，请核查!')
                 }
-                showData(data);
+                var list = data.listTotalNew;
+                var sn = (data.orderSnTuple).join(',');
+                $('#orderSnList').val(sn);
+                console.log(sn);
+                showData(list);
             },
             error:function(){
 
@@ -203,7 +208,12 @@
             alert('退卡列表为空，请核对后再尝试提交！');
             return false;
         }
-        var data = { csrfmiddlewaretoken: CSRF,'cardStr':JSON.stringify(cardList),'postToken':$('#post-token').val()};
+        var data = {
+            csrfmiddlewaretoken: CSRF,
+            'cardStr':JSON.stringify(cardList),
+            'postToken':$('#post-token').val(),
+            'orderSnList':$('#orderSnList').val()
+        };
         doAjaxSave(url,data);
     }
 </script>
