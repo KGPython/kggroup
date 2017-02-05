@@ -83,6 +83,7 @@ def save(request):
             order_sn = 'C'+mth.setOrderSn(OrderChangeCard)
             created_time=datetime.datetime.today()
             # orderInfo
+            changeCardInfoList = []
             for cardIn in cardListIn:
                 orderInfo = OrderChangeCardInfo()
                 orderInfo.order_sn = order_sn
@@ -90,7 +91,7 @@ def save(request):
                 orderInfo.card_attr = '1'
                 orderInfo.card_value = cardIn['cardVal']
                 orderInfo.card_balance = cardIn['cardVal']
-                orderInfo.save()
+                changeCardInfoList.append(orderInfo)
             for cardOut in cardListOut:
                 orderInfo = OrderChangeCardInfo()
                 orderInfo.order_sn = order_sn
@@ -98,7 +99,7 @@ def save(request):
                 orderInfo.card_attr = '0'
                 orderInfo.card_value = cardOut['cardVal']
                 orderInfo.card_balance = cardOut['cardVal']
-                orderInfo.save()
+                changeCardInfoList.append(orderInfo)
             for Ycard in discList:
                 YorderInfo = OrderChangeCardInfo()
                 YorderInfo.order_sn = order_sn
@@ -107,8 +108,11 @@ def save(request):
                 YorderInfo.card_balance = Ycard['cardVal']
                 YorderInfo.card_attr = '0'
                 YorderInfo.is_disc = '1'
-                YorderInfo.save()
+                changeCardInfoList.append(YorderInfo)
+            OrderChangeCardInfo.objects.bulk_create(changeCardInfoList)
+
             #orderPayment
+            ChangePaymentList = []
             for pay in payList:
                 orderPay = OrderChangeCardPayment()
                 orderPay.order_id = order_sn
@@ -122,7 +126,9 @@ def save(request):
 
                 orderPay.pay_value = pay['payVal']
                 orderPay.remarks = pay['payRmarks']
-                orderPay.save()
+                ChangePaymentList.append(orderPay)
+            OrderChangeCardPayment.objects.bulk_create(ChangePaymentList)
+
             #orders
             order = OrderChangeCard()
             order.order_sn = order_sn

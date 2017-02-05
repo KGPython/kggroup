@@ -77,6 +77,8 @@ def saveOrder(request):
     try:
         with transaction.atomic():
             order_sn = 'S'+mth.setOrderSn()
+            #保存OrderInfo
+            orderInfoList = []
             for card in cardList:
                 orderInfo = OrderInfo()
                 orderInfo.order_id = order_sn
@@ -84,7 +86,7 @@ def saveOrder(request):
                 orderInfo.card_balance = float(card['cardVal'])
                 orderInfo.card_action = '0'
                 orderInfo.card_attr = '1'
-                orderInfo.save()
+                orderInfoList.append(orderInfo)
             for Ycard in YcardList:
                 YorderInfo = OrderInfo()
                 YorderInfo.order_id = order_sn
@@ -92,7 +94,10 @@ def saveOrder(request):
                 YorderInfo.card_balance = float(Ycard['cardVal'])
                 YorderInfo.card_action = '0'
                 YorderInfo.card_attr = '2'
-                YorderInfo.save()
+                orderInfoList.append(YorderInfo)
+            OrderInfo.objects.bulk_create(orderInfoList)
+            #保存OrderPaymentInfo
+            oderPaymentList = []
             for pay in payList:
                 orderPay = OrderPaymentInfo()
                 orderPay.order_id = order_sn
@@ -106,7 +111,8 @@ def saveOrder(request):
 
                 orderPay.pay_value = pay['payVal']
                 orderPay.remarks = pay['payRmarks']
-                orderPay.save()
+                oderPaymentList.append(orderPay)
+            OrderPaymentInfo.objects.bulk_create(oderPaymentList)
 
             order = Orders()
             order.buyer_name = buyerName

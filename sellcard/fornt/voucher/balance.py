@@ -81,13 +81,7 @@ def getInfo(voucherSn):
     :param voucherSn: 核销券号
     :return:券信息
     """
-    conn = pymssql.connect(host=Constants.KGGROUP_DB_SERVER,
-                           port=Constants.KGGROUP_DB_PORT,
-                           user=Constants.KGGROUP_DB_USER,
-                           password=Constants.KGGROUP_DB_PASSWORD,
-                           database=Constants.KGGROUP_DB_DATABASE,
-                           charset='utf8',
-                           as_dict=True)
+    conn = mth.getMssqlConn()
     cur = conn.cursor()
     sql = u"select ShopID as shop_code," \
           u"        CouponNO," \

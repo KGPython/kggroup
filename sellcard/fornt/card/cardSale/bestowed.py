@@ -50,6 +50,7 @@ def saveOrder(request):
         with transaction.atomic():
             order_sn = 'S'+mtu.setOrderSn()
             #order_info表
+            orderInfoList = []
             for card in cardList:
                 orderInfo = OrderInfo()
                 orderInfo.order_id = order_sn
@@ -57,7 +58,9 @@ def saveOrder(request):
                 orderInfo.card_balance = float(card['cardVal'])
                 orderInfo.card_action = '0'
                 orderInfo.card_attr = '2'
-                orderInfo.save()
+                orderInfoList.append(orderInfo)
+            OrderInfo.objects.bulk_create(orderInfoList)
+
             #order_payment_info表
             orderPay = OrderPaymentInfo()
             orderPay.order_id = order_sn
@@ -65,8 +68,8 @@ def saveOrder(request):
             orderPay.is_pay = '1'
             orderPay.pay_value = float(discPay)
             orderPay.save()
+
             #orders表
-            orderPay.save()
             order = Orders()
             order.buyer_name = buyerName
             order.buyer_tel = buyerPhone

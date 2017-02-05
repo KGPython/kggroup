@@ -37,40 +37,40 @@
     </div>
 </div>
 <div style="display: none; padding-right: 17px; background: rgba(0,0,0,0.5)" class="modal" id="bankBox">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title" id="myModalLabel">
-                           汇款到帐信息
-                        </h4>
-                    </div>
-                    <div class="modal-body widget-content">
-                        <table class="table table-striped table-form-my">
-                            <tbody>
-                                <tr>
-                                    <td>银行名称</td>
-                                    <td><input type="text" class='form-control' id="bankName"></td>
-                                </tr>
-                                <tr>
-                                    <td>到帐账户</td>
-                                    <td><input type="text" class='form-control' id="bankSn"></td>
-                                </tr>
-                                <tr>
-                                    <td>汇款单位</td>
-                                    <td><input type="text" class='form-control' id="payCompany"></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" id="close">取消</button>
-                        <button type="button" class="btn btn-primary" id="submit">提交</button>
-                    </div>
-                </div>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">
+                   汇款到帐信息
+                </h4>
+            </div>
+            <div class="modal-body widget-content">
+                <table class="table table-striped table-form-my">
+                    <tbody>
+                        <tr>
+                            <td>银行名称</td>
+                            <td><input type="text" class='form-control' id="bankName"></td>
+                        </tr>
+                        <tr>
+                            <td>到帐账户</td>
+                            <td><input type="text" class='form-control' id="bankSn"></td>
+                        </tr>
+                        <tr>
+                            <td>汇款单位</td>
+                            <td><input type="text" class='form-control' id="payCompany"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" id="close">取消</button>
+                <button type="button" class="btn btn-primary" id="submit">提交</button>
             </div>
         </div>
-<script>
+    </div>
+</div>
 
+<script>
 $('.payList #bank').click(function(){
     var flag = $(this).is(':checked');
     if(flag){

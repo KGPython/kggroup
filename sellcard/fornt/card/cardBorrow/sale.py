@@ -46,13 +46,15 @@ def save(request):
     try:
         with transaction.atomic():
             order_sn = 'B'+mth.setOrderSn(OrderBorrow)
+            infoList = []
             for card in cardList:
                 orderInfo = OrderBorrowInfo()
                 orderInfo.order_sn = order_sn
                 orderInfo.card_no = card['cardId']
                 orderInfo.card_type = card['cardVal']
                 orderInfo.card_balance = card['cardVal']
-                orderInfo.save()
+                infoList.append(orderInfo)
+            OrderBorrowInfo.objects.bulk_create(infoList)
 
             order = OrderBorrow()
             order.borrow_name = borrowName

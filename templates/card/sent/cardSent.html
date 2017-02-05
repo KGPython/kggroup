@@ -131,6 +131,7 @@
     }
 </script>
 <script>
+
     function checkCardSent(obj) {
         var _this = obj;
         //1、重复校验
@@ -225,6 +226,11 @@
             return false;
         }
         //2、获取领取人信息
+        var saleType = $('#saleType').val();
+        if(!saleType){
+            alert('请选择售卖类型');
+            return false;
+        }
         var shop = $('#shop').val();
         var person = $('#person').val();
         if(!shop || !person){
@@ -241,11 +247,13 @@
                 'list':JSON.stringify(list),
                 'shop':shop,
                 'person':person,
+                'saleType':saleType,
                 'postToken':$('#post-token').val()
             },
             success:function(data){
                 if(data.msg=='0'){
                     alert('数据提交成功');
+                    window.location.reload(true);
                     $('input[type=text]').val('')
                 }else if(data.msg=='1'){
                     alert('数据提交失败')

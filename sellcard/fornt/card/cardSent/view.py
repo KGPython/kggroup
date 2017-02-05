@@ -44,6 +44,8 @@ def sentOrderSave(request):
             receive.rec_name = person
             receive.add_time = datetime.datetime.now()
             receive.save()
+
+            cardList = []
             for card in cards:
                 if card['cardType']=='无面值':
                     card['cardType'] = ''
@@ -55,6 +57,8 @@ def sentOrderSave(request):
                 obj.card_value = card['cardType']
                 obj.save()
                 #CardInventory写入卡信息
+
+
                 for i in range(int(card['start']),int(card['end'])+1):
                     diff = len(card['start'])-len(str(int(card['start'])))
                     prefix = ''
@@ -70,7 +74,9 @@ def sentOrderSave(request):
                     item.shop_code = shop
                     item.card_blance='0.00'
                     item.card_addtime=datetime.datetime.now()
-                    item.save()
+
+                    cardList.append(item)
+            CardInventory.objects.bulk_create(cardList)
         res['msg']='0'
         ActionLog.objects.create(action='信息部发卡',u_name=request.session.get('s_uname'),cards_out=cardStr,add_time=datetime.datetime.now())
 
