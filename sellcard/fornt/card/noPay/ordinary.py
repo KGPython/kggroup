@@ -1,7 +1,6 @@
 __author__ = 'admin'
 from django.shortcuts import render
 from django.http import HttpResponse
-from django.db.models import F
 from django.db import transaction
 from sellcard.common import Method as mth
 

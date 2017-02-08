@@ -210,7 +210,7 @@ def updateCard(list, mode):
         cards += str(obj)
         cards += "','"
     cards = cards[0:len(cards) - 2]
-    sql = "UPDATE guest SET Mode ='{mode}' WHERE CardNO in ({cards})"\
+    sql = "UPDATE guest SET Mode ='{mode}' WHERE CardNO IN ({cards}) AND detail=new_amount"\
           .format(mode=mode,cards=cards)
     conn = getMssqlConn()
     cur = conn.cursor()

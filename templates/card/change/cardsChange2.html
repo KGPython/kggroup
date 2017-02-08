@@ -79,10 +79,17 @@
             }
         }
         var btnID = $(this).attr('id');
-        var data={
-                csrfmiddlewaretoken: CSRF,
-                cards:JSON.stringify(cards)
-            };
+        var type = '';
+        if(btnID=='cardsInQuery'){
+            type = 'in';
+        }else{
+            type = 'out';
+        }
+        var data = {
+            csrfmiddlewaretoken: CSRF,
+            cards: JSON.stringify(cards),
+            type: type
+        };
         query(data,btnID)
 
     });
@@ -101,11 +108,8 @@
                 }else{
                     showData2('#cardOutBox',data);
                 }
-
             },
-            error:function(){
-
-            }
+            error:function(){ }
         })
     }
     function showData(boxID,data) {
@@ -192,52 +196,7 @@
         $(boxID+' #anomaly').find('tbody').empty();
         $(boxID+' #correct').find('tbody').empty();
         for(var i=0;i<data.length;i++){
-            if(data[i].mode=='1' || data[i].detail!=data[i].new_amount)
-            {
-                $(boxID+' #anomalyBox').show();
-                var cols = $(boxID+' #anomaly').find('th').length;
-                var tr=$('<tr></tr>');
-                for(var j=0;j<cols;j++){
-                    var td = $('<td></td>');
-                    if(j==0){
-                        var obj = $('<input class="form-control" disabled></input>');
-                        obj.val(data[i].cardno)
-                    }else if(j==1){
-                        var obj = $('<input class="form-control" disabled></input>');
-                        obj.val(data[i].new_amount)
-                    }else if(j==2){
-                        var obj = $('<input class="form-control" disabled></input>');
-                        obj.val(data[i].detail)
-                    }else if(j==3){
-                        var obj = $('<input class="form-control red" disabled ></input>');
-                        if(data[i].mode=='9'){
-                            obj.val('未激活');
-                        }else if(data[i].mode=='2'){
-                            obj.val('未到账款');
-                        }else if(data[i].mode=='r'){
-                            obj.val('已回收');
-                        }else if(data[i].mode=='m'){
-                            obj.val('一般挂失');
-                        }else if(data[i].mode=='l'){
-                            obj.val('严重挂失');
-                        }else if(data[i].mode=='f'){
-                            obj.val('已冻结');
-                        }else if(data[i].mode=='e'){
-                            obj.val('已换卡');
-                        }else if(data[i].mode=='q'){
-                            obj.val('退卡');
-                        }else if(data[i].mode=='-1'){
-                            obj.val('不存在');
-                        }
-                    }else if(j==4){
-                        var obj = $('<button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this);">删除</button>');
-                    }
-                    td.append(obj);
-                    tr.append(td);
-                }
-                $(boxID+' #anomaly').find('tbody').append(tr);
-            }
-            else
+            if(data[i].card_status=='1' || data[i].card_value!=data[i].card_balance)
             {
                 var cols = $('#correct').find('th').length;
                 var tr=$('<tr></tr>');
@@ -245,13 +204,13 @@
                     var td = $('<td></td>');
                     if(j==0){
                         var obj = $('<input class="form-control" disabled></input>');
-                        obj.val(data[i].cardno)
+                        obj.val(data[i].card_no)
                     }else if(j==1){
                         var obj = $('<input class="form-control" disabled></input>');
-                        obj.val(data[i].new_amount)
+                        obj.val(data[i].card_value)
                     }else if(j==2){
                         var obj = $('<input class="form-control" disabled></input>');
-                        obj.val(data[i].detail)
+                        obj.val(data[i].card_balance)
                     }else if(j==3){
                         var obj = $('<input class="form-control" disabled></input>');
                         obj.val('未激活');
@@ -262,6 +221,43 @@
                     tr.append(td);
                 }
                 $(boxID+' #correct').find('tbody').append(tr);
+            }
+            else
+            {
+                $(boxID+' #anomalyBox').show();
+                var cols = $(boxID+' #anomaly').find('th').length;
+                var tr=$('<tr></tr>');
+                for(var j=0;j<cols;j++){
+                    var td = $('<td></td>');
+                    if(j==0){
+                        var obj = $('<input class="form-control" disabled></input>');
+                        obj.val(data[i].card_no)
+                    }else if(j==1){
+                        var obj = $('<input class="form-control" disabled></input>');
+                        obj.val(data[i].card_value)
+                    }else if(j==2){
+                        var obj = $('<input class="form-control" disabled></input>');
+                        obj.val(data[i].card_balance)
+                    }else if(j==3){
+                        var obj = $('<input class="form-control red" disabled ></input>');
+                        if(data[i].card_status=='1'){
+                            obj.val('未激活');
+                        }else if(data[i].card_status=='2'){
+                            obj.val('已激活');
+                        }else if(data[i].card_status=='3'){
+                            obj.val('已冻结');
+                        }else if(data[i].card_status=='4'){
+                            obj.val('已作废');
+                        }else{
+                            obj.val('异常卡');
+                        }
+                    }else if(j==4){
+                        var obj = $('<button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this);">删除</button>');
+                    }
+                    td.append(obj);
+                    tr.append(td);
+                }
+                $(boxID+' #anomaly').find('tbody').append(tr);
             }
         }
         setTotalByCardList($(boxID+' #correct').find('tbody'));

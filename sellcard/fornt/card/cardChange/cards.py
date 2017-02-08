@@ -22,21 +22,28 @@ def index(request):
 def query(request):
     cardsStr = request.POST.get('cards','')
     cards = json.loads(cardsStr)
+    cardType = request.POST.get('type','')
+
+    if cardType == 'in':
+        listTotalNew = getCardsIn(cards)
+    else:
+        listTotalNew = getCardsOut(cards)
+    return HttpResponse(json.dumps(listTotalNew))
+
+def getCardsIn(cards):
     listTotal = []
     conn = mth.getMssqlConn()
     cur = conn.cursor()
     for obj in cards:
-        if obj['end']:
-            sql = "select cardno,new_amount,sheetid,mode,detail,memo " \
-                  "from guest where cardno>='{cardStart}' and cardno<='{cardEnd}'"\
-                  .format(cardStart=obj['start'],cardEnd=obj['end'])
-        else:
-            sql = "select cardno,new_amount,sheetid,mode,detail,memo " \
-                  "from guest where cardno='{cardStart}'"\
-                  .format(cardStart=obj['start'],cardEnd=obj['end'])
+        sql = "select cardno,new_amount,sheetid,mode,detail,memo " \
+              "from guest where cardno>='{cardStart}' and cardno<='{cardEnd}'"\
+              .format(cardStart=obj['start'],cardEnd=obj['end'])
         cur.execute(sql)
         list = cur.fetchall()
         listTotal.extend(list)
+
+    cur.close()
+    conn.close()
 
     cardNoList = []
     listTotalNew = []
@@ -48,4 +55,25 @@ def query(request):
             item['detail']=float(item['detail'])
             item['new_amount']=float(item['new_amount'])
             listTotalNew.append(item)
-    return HttpResponse(json.dumps(listTotalNew))
+    return listTotalNew
+
+def getCardsOut(cards):
+    listTotal = []
+    for obj in cards:
+        list = CardInventory\
+               .objects\
+               .values('card_no','card_value','card_blance','card_status')\
+               .filter(card_no__gte=obj['start'],card_no__lte=obj['end'])
+        listTotal.extend(list)
+
+    cardNoList = []
+    listTotalNew = []
+    for item in listTotal:
+        if(item['card_no'] in cardNoList):
+            pass
+        else:
+            cardNoList.append(item['card_no'])
+            item['card_blance']=float(item['card_blance'])
+            item['card_value']=float(item['card_value'])
+            listTotalNew.append(item)
+    return listTotalNew

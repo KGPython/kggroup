@@ -2,7 +2,7 @@
 __author__ = 'admin'
 from django.shortcuts import render
 from sellcard.models import CardInventory, OrderChangeCard, OrderChangeCardInfo,ActionLog, OrderChangeCardPayment
-from django.db.models import Sum,Count
+from django.db.models import F
 from django.http import HttpResponse
 import json
 import datetime
@@ -161,7 +161,9 @@ def save(request):
 
 
             for card in cardListIn:
-                resUpdate = CardInventory.objects.filter(card_no=card['cardId']).update(card_status='1', card_action='1',shop_code=shopCode)
+                resUpdate = CardInventory.objects\
+                            .filter(card_no=card['cardId'],card_value=F('card_balance'))\
+                            .update(card_status='1', card_action='1',shop_code=shopCode)
                 resSave = 0
                 if resUpdate==0:
                     obj = CardInventory()
@@ -178,7 +180,7 @@ def save(request):
                 if (resUpdate==0 and resSave==0):
                         raise MyError(card['cardId']+'状态更新失败')
 
-            resCardOut = CardInventory.objects.filter(card_no__in=cardIdOutList).update(card_status='2',card_action='0')
+            resCardOut = CardInventory.objects.filter(card_no__in=cardIdOutList,card_value=F('card_balance')).update(card_status='2',card_action='0')
             if resCardOut != cardsOutNum:
                 raise MyError('系统数据库卡状态更新失败')
 

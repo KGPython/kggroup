@@ -26,40 +26,7 @@
 
                 {% include 'common/cardsInQueryResult.html' %}
 
-                <div class="widget-box">
-                    <div class="widget-title"><span class="icon"> <span
-                            class="glyphicon glyphicon-th"> </span></span>
-                        <h5>出卡查询</h5>
-                    </div>
-                    <div class="widget-content nopadding">
-                        <table class="table table-striped table-hover table-form-my">
-                            <thead>
-                            <tr>
-                                <th>卡号</th>
-                                <th>面值</th>
-                                <th>余额</th>
-                                <th>状态</th>
-                                <th>操作</th>
-                            </tr>
-                            </thead>
-                            <tbody class="cardOut" id="ListOut">
-                            <tr>
-                                <td><input class="form-control cardId" type="text"></td>
-                                <td><input type='text' class='form-control' disabled="disabled"></td>
-                                <td><input type='text' class='form-control' disabled="disabled"></td>
-                                <td><input type='text' class='form-control' disabled="disabled"></td>
-                                <td>
-                                    <button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this);">删除</button>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                        <div class="widget-content nopadding cardOutTotal" style="overflow: hidden">
-                            <p class="text col-md-3" id="totalNum">出卡合计数量：<b>0</b>张</p>
-                            <p class="text col-md-3" id="totalVal">出卡合计金额：<b>0.00</b>元</p>
-                        </div>
-                    </div>
-                </div>
+                {% include 'common/cardChangeOut.html' %}
 
                 {% include 'common/discount.html' %}
                 {% include 'common/payment.html' %}
@@ -194,6 +161,7 @@
         }
         setTotalByCardList($('#correct').find('tbody'));
     }
+
     $(document).on("change",".cardId",function(){
         var cardIdStr = $(this).val();
         var cardId = cardIdStr.split("=")[0];
@@ -233,13 +201,4 @@
     })
 
 </script>
-{% comment %}<script>
-    //折扣授权码验证
-    $('#disCode input').blur(function(){
-        var disCode = $(this).val();
-        if(disCode){
-            checkDiscode("{% url 'disCodeCheck' %}?discode="+disCode+"&shop={{ shopcode |safe }}");
-        }
-    });
-</script>{% endcomment %}
 {% endblock %}

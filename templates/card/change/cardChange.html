@@ -26,40 +26,7 @@
                     {% include 'common/cardInQuery.html' %}
                 </div>
 
-                <div class="widget-box">
-                    <div class="widget-title"><span class="icon"> <span
-                            class="glyphicon glyphicon-th"> </span></span>
-                        <h5>出卡查询</h5>
-                    </div>
-                    <div class="widget-content nopadding">
-                        <table class="table table-striped table-hover table-form-my">
-                            <thead>
-                            <tr>
-                                <th>卡号</th>
-                                <th>面值(单位：元)</th>
-                                <th>余额(单位：元)</th>
-                                <th>状态</th>
-                                <th>操作</th>
-                            </tr>
-                            </thead>
-                            <tbody class="cardOut" id="ListOut">
-                            <tr>
-                                <td><input class="form-control cardId" type="text"></td>
-                                <td><input type='text' class='form-control' disabled="disabled"></td>
-                                <td><input type='text' class='form-control' disabled="disabled"></td>
-                                <td><input type='text' class='form-control' disabled="disabled"></td>
-                                <td>
-                                    <button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this);">删除</button>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                        <div class="cardOutTotal">
-                            <p class="text col-md-3" id="totalNum">出卡合计数量：<b>0</b>张</p>
-                            <p class="text col-md-3" id="totalVal">出卡合计金额：<b>0.00</b>元</p>
-                        </div>
-                    </div>
-                </div>
+                {% include 'common/cardChangeOut.html' %}
 
                 {% include 'common/discount.html' %}
                 {% include 'common/payment.html' %}
@@ -83,10 +50,20 @@
 
 <script>
     // 卡校验
-    $(document).on("change", ".cardId", function () {
-        var cardIdStr = $(this).val();
+    $(document).on("change", ".cardIn .cardId", function () {
+        type = 'in';
+        checkCardInfo(type,$(this))
+
+    });
+    $(document).on("change", ".cardOut .cardId", function () {
+        type = 'out';
+        checkCardInfo(type,$(this))
+
+    });
+    function  checkCardInfo(type,obj) {
+        var cardIdStr = obj.val();
         var cardId = cardIdStr.split("=")[0];
-        $(this).val(cardId);
+        obj.val(cardId);
         //检查是否有重复卡号
         var cardInList = $('#cardInList');
         var arr1 = getCardIds(cardInList);
@@ -99,15 +76,21 @@
         arr.remove(cardId);
         if (arr.indexOf(cardId) > -1) {
             alert('卡号：' + cardId + ',已经存卡列表中,请更换');
-            $(this).val('');
+            obj.val('');
             return false;
         }
 
         //卡校验
-        var ajaxOpt = {'url': '{% url 'cardcheck_change' %}?cardId=' + cardId, 'method': 'get'};
-        doAjax2(this, ajaxOpt, showCardIfno3, setTotalByCardList);
-        addRow(this);
-    });
+        if(type=='in'){
+            var ajaxOpt = {'url': '{% url 'cardcheck_change' %}?cardId=' + cardId, 'method': 'get'};
+            doAjax2(obj, ajaxOpt, showCardIfno3, setTotalByCardList);
+        }else{
+             var ajaxOpt = {'url': '{% url 'cardcheck' %}?cardId=' + cardId, 'method': 'get'};
+            doAjax(obj,ajaxOpt,showCardIfno,setTotalByCardList);
+        }
+
+        addRow(obj);
+    }
 
     $(document).on('click','#btn-enter',function(){
         var url = "{% url 'cardchange_save' %}";
