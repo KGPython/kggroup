@@ -428,3 +428,98 @@ def detail(request):
     except Exception as e:
         print(e)
     return render(request, 'report/card/saleGroupByShop/Detail.html', locals())
+
+def date_detail(request):
+    shopcode = mth.getReqVal(request, 'shopcode','')
+    start = mth.getReqVal(request, 'start','')
+    end = mth.getReqVal(request, 'end','')
+    endTime = str(datetime.datetime.strptime(end,'%Y-%m-%d').date() + datetime.timedelta(1))
+    page = mth.getReqVal(request, 'page', 1)
+
+    conn = mth.getMysqlConn()
+    cur = conn.cursor()
+
+    sql = u" select d.date_time, sum(d.disc) as disc, sum(d.disc_cash) as disc_cash, sum(d.disc_card) as disc_card, " \
+          u" sum(d.pay_1) as pay_1, sum(d.pay_2) as pay_2, sum(d.pay_3) as pay_3, sum(d.pay_4) as pay_4, " \
+          u" sum(d.pay_5) as pay_5, sum(d.pay_6) as pay_6, sum(d.pay_7) as pay_7, sum(d.pay_8) as pay_8, " \
+          u" sum(d.pay_9) as pay_9, sum(d.pay_10) as pay_10, sum(d.pay_11) as pay_11, sum(d.disc_6) as disc_6, " \
+          u" sum(d.disc_7) as disc_7, sum(d.disc_8) as disc_8, sum(d.disc_10) as disc_10, sum(d.disc_11) as disc_11,  " \
+          u" sum(d.inSub) as inSub FROM (select DATE_FORMAT( o.add_time, '%Y-%m-%d') as date_time, " \
+          u" o.disc_amount as disc, o.y_cash as disc_cash, o.disc_amount - o.y_cash as disc_card, " \
+          u" a.pay_1, a.pay_2, a.pay_3, a.pay_4, a.pay_5, a.pay_6, a.pay_7, a.pay_8, a.pay_9, a.pay_10, a.pay_11, " \
+          u" a.disc_6, a.disc_7, a.disc_8, a.disc_10, a.disc_11, a.inSub FROM orders o, ( select opi.order_id, " \
+          u" sum(case when opi.pay_id = 1 then opi.pay_value else 0 end) as pay_1, " \
+          u" sum(case when opi.pay_id = 2 then opi.pay_value else 0 end) as pay_2, " \
+          u" sum(case when opi.pay_id = 3 then opi.pay_value else 0 end) as pay_3, " \
+          u" sum(case when opi.pay_id = 4 then opi.pay_value else 0 end) as pay_4, " \
+          u" sum(case when opi.pay_id = 5 then opi.pay_value else 0 end) as pay_5, " \
+          u" sum(case when opi.pay_id = 6 then opi.pay_value else 0 end) as pay_6, " \
+          u" sum(case when opi.pay_id = 6 then opi.pay_value * case when p.dis_rate is not null then p.dis_rate else 0 end else 0 end) as disc_6, " \
+          u" sum(case when opi.pay_id = 7 then opi.pay_value else 0 end) as pay_7, " \
+          u" sum(case when opi.pay_id = 7 then opi.pay_value * case when p.dis_rate is not null then p.dis_rate else 0 end else 0 end) as disc_7, " \
+          u" sum(case when opi.pay_id = 8 then opi.pay_value else 0 end) as pay_8, " \
+          u" sum(case when opi.pay_id = 8 then opi.pay_value * case when p.dis_rate is not null then p.dis_rate else 0 end else 0 end) as disc_8, " \
+          u" sum(case when opi.pay_id = 9 then opi.pay_value else 0 end) as pay_9, " \
+          u" sum(case when opi.pay_id = 10 then opi.pay_value else 0 end) as pay_10, " \
+          u" sum(case when opi.pay_id = 10 then opi.pay_value * case when p.dis_rate is not null then p.dis_rate else 0 end else 0 end) as disc_10, " \
+          u" sum(case when opi.pay_id = 11 then opi.pay_value else 0 end) as pay_11, " \
+          u" sum(case when opi.pay_id = 11 then opi.pay_value * case when p.dis_rate is not null then p.dis_rate else 0 end else 0 end) as disc_11, " \
+          u" sum(opi.pay_value) as inSub from order_payment_info opi, payment p where opi.pay_id = p.id group by opi.order_id ) as a  " \
+          u" WHERE o.order_sn = a.order_id  " \
+          u" and o.add_time>='{start_a}' " \
+          u" and o.add_time<='{end_a}' " \
+          u" and o.shop_code ='{shopcode_a}' " \
+          u" UNION all SELECT DATE_FORMAT( occ.add_time, '%Y-%m-%d'), occ.disc, occ.disc_cash, " \
+          u" occ.disc - occ.disc_cash, b.pay_1, b.pay_2, b.pay_3, b.pay_4, b.pay_5, b.pay_6, " \
+          u" b.pay_7, b.pay_8, b.pay_9, b.pay_10, b.pay_11, b.disc_6, b.disc_7, b.disc_8, b.disc_10, b.disc_11, " \
+          u" b.inSub FROM order_change_card occ, (select occp.order_id, " \
+          u" sum(case when occp.pay_id = 1 then occp.pay_value else 0 end) as pay_1, " \
+          u" sum(case when occp.pay_id = 2 then occp.pay_value else 0 end) as pay_2, " \
+          u" sum(case when occp.pay_id = 3 then occp.pay_value else 0 end) as pay_3, " \
+          u" sum(case when occp.pay_id = 4 then occp.pay_value else 0 end) as pay_4, " \
+          u" sum(case when occp.pay_id = 5 then occp.pay_value else 0 end) as pay_5, " \
+          u" sum(case when occp.pay_id = 6 then occp.pay_value else 0 end) as pay_6, " \
+          u" sum(case when occp.pay_id = 6 then occp.pay_value * case when p.dis_rate is not null then p.dis_rate else 0 end else 0 end) as disc_6, " \
+          u" sum(case when occp.pay_id = 7 then occp.pay_value else 0 end) as pay_7, " \
+          u" sum(case when occp.pay_id = 7 then occp.pay_value * case when p.dis_rate is not null then p.dis_rate else 0 end else 0 end) as disc_7, " \
+          u" sum(case when occp.pay_id = 8 then occp.pay_value else 0 end) as pay_8, " \
+          u" sum(case when occp.pay_id = 8 then occp.pay_value * case when p.dis_rate is not null then p.dis_rate else 0 end else 0 end) as disc_8, " \
+          u" sum(case when occp.pay_id = 9 then occp.pay_value else 0 end) as pay_9, " \
+          u" sum(case when occp.pay_id = 10 then occp.pay_value else 0 end) as pay_10, " \
+          u" sum(case when occp.pay_id = 10 then occp.pay_value * case when p.dis_rate is not null then p.dis_rate else 0 end else 0 end) as disc_10, " \
+          u" sum(case when occp.pay_id = 11 then occp.pay_value else 0 end) as pay_11, " \
+          u" sum(case when occp.pay_id = 11 then occp.pay_value * case when p.dis_rate is not null then p.dis_rate else 0 end else 0 end) as disc_11, " \
+          u" sum(occp.pay_value) as inSub from order_change_card_payment occp, payment p  " \
+          u" where occp.pay_id = p.id group by occp.order_id ) as b " \
+          u" WHERE occ.order_sn = b.order_id " \
+          u" and occ.add_time>='{start_b}' " \
+          u" and occ.add_time<='{end_b}' " \
+          u" and occ.shop_code ='{shopcode_b}' ) d group by  d.date_time ".format(start_a=start,
+                                                                                  end_a=endTime,
+                                                                                  shopcode_a=shopcode,
+                                                                                  start_b=start,
+                                                                                  end_b=endTime,
+                                                                                  shopcode_b=shopcode)
+    cur.execute(sql)
+    List = cur.fetchall()
+
+    # 表单分页开始
+    paginator = Paginator(List, 31)
+
+    try:
+        List = paginator.page(page)
+
+        if List.number > 1:
+            page_up = List.previous_page_number
+        else:
+            page_up = 1
+
+        if List.number < List.paginator.num_pages:
+            page_down = List.next_page_number
+        else:
+            page_down = List.paginator.num_pages
+
+    except Exception as e:
+        print(e)
+    # 表单分页结束
+    return render(request, 'report/card/saleGroupByShop/DateDetail.html', locals())
