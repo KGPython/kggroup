@@ -8,7 +8,7 @@ html, body{height:100%}
 body {
 	overflow-x: hidden;
 	margin-top: -20px; *margin-top:0;
-    font-family: '微软雅黑', sans-serif;
+    font-family: '微软雅黑', verdana,arial,sans-serif;
     font-size:1.2em;
     color:#666;
 }

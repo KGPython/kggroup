@@ -51,4 +51,4 @@ def cardInStore(request):
                         res['msg']='3'
                         ActionLog.objects.create(action='门店卡入库',u_name=request.session.get('s_uname'),add_time=datetime.datetime.now(),err_msg=e)
 
-    return render(request, 'cardInStore.html', locals())
+    return render(request, 'card/manage/cardInStore.html', locals())

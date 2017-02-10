@@ -14,7 +14,7 @@ def index(request):
     cardTypes = base.findCardType()
     shopCode = request.session.get('s_shopcode','')
     roleid = request.session.get('s_roleid','')
-    return render(request, 'cardAllocation.html', locals())
+    return render(request, 'card/manage/cardAllocation.html', locals())
 
 
 @transaction.atomic
