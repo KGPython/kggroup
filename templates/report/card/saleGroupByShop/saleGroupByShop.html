@@ -11,16 +11,7 @@
 <body>
 {% include 'common/head.html' %}
 <style>
-    table a {
-        text-decoration: underline;
-        color: #000;
-    }
-    table a:hover,table a:hover span{color: #fff}
-
-    table th, table td {
-        text-align: center;
-        color: #000
-    }
+    .shop{background-color: #da9628}
     .saleCol{background-color: #46b8da;}
     .totalRow td{background-color: #d58512;}
     .discCol{background-color:#c1e2b3}
@@ -49,7 +40,7 @@
                             {% csrf_token %}
                             <div class="row formline">
                                 <label for="" class="col-md-1 formline-label">开始时间：</label>
-                                <div class="col-md-2">
+                                <div class="col-md-3 col-lg-2">
                                     <div data-link-format="yyyy-mm-dd" data-link-field="dtp_input2"
                                          data-date-format="yyyy-mm-dd" data-date="" class="input-group date form_date">
                                         <input readonly="" value="{{ start }}" size="16" name="start" id="start"
@@ -60,7 +51,7 @@
                                     </div>
                                 </div>
                                 <label for="" class="col-md-1 formline-label">结束时间：</label>
-                                <div class="col-md-2">
+                                <div class="col-md-3 col-lg-2">
                                     <div data-link-format="yyyy-mm-dd" data-link-field="dtp_input2"
                                          data-date-format="yyyy-mm-dd" data-date="" class="input-group date form_date">
                                         <input readonly="" value="{{ end }}" size="16" name="end" id="end"
@@ -79,13 +70,13 @@
                     </div>
                 </div>
                 <div class="widget-box">
-                    <h3 class="text-center">集团售卡销售汇总</h3>
+                    <h4 class="text-center">集团售卡销售汇总</h4>
                     <h5 class="text-right">
                         <span style="margin-right: 30px" class="red">赊销：（到帐|未到帐）</span>
                         <span style="margin-right: 30px" class="red">金额单位：元</span>
                     </h5>
-                    <div class="widget-content nopadding">
-                        <table class="table table-striped table-hover table-form-my">
+                    <div class="widget-content nopadding" style="overflow-x: auto">
+                        <table class="table table-striped table-hover table-form-my  ">
                             <thead>
                             <tr>
                                 <th rowspan="3">门店名称</th>
@@ -102,7 +93,7 @@
                                 <th rowspan="2">现金</th>
                                 <th rowspan="2">代金券</th>
                                 <th rowspan="2">汇款</th>
-                                <th rowspan="2">赊账</th>
+                                <th rowspan="2" class="nopay">赊账</th>
                                 <th rowspan="2">Pos</th>
                                 <th rowspan="2">移动</th>
                                 <th rowspan="2">美团</th>
@@ -125,7 +116,7 @@
                             <tbody class="cardIn" id="nopayList">
                             {% for row in dataList %}
                                 <tr>
-                                    <td>{{ row.shop_code | transShopCode }}</td>
+                                    <td class="shop">{{ row.shop_code | transShopCode }}</td>
                                     <td class="discCol">{{ row.disc_6 | floatformat:2 }}</td>
                                     <td class="discCol">{{ row.disc_7 | floatformat:2 }}</td>
                                     <td class="discCol">{{ row.disc_8 | floatformat:2 }}</td>

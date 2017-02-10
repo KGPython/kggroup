@@ -410,21 +410,23 @@ def detail(request):
     cur.execute(sqlstr)
     List = cur.fetchall()
 
-    paginator = Paginator(List, 20)
+    for item in List:
+        item['pay_value'] = float(item['pay_value'])
+    # paginator = Paginator(List, 20)
+    #
+    # try:
+    #     List = paginator.page(page)
+    #
+    #     if List.number > 1:
+    #         page_up = List.previous_page_number
+    #     else:
+    #         page_up = 1
+    #
+    #     if List.number < List.paginator.num_pages:
+    #         page_down = List.next_page_number
+    #     else:
+    #         page_down = List.paginator.num_pages
 
-    try:
-        List = paginator.page(page)
-
-        if List.number > 1:
-            page_up = List.previous_page_number
-        else:
-            page_up = 1
-
-        if List.number < List.paginator.num_pages:
-            page_down = List.next_page_number
-        else:
-            page_down = List.paginator.num_pages
-
-    except Exception as e:
-        print(e)
+    # except Exception as e:
+    #     print(e)
     return render(request, 'report/card/saleGroupByShop/Detail.html', locals())

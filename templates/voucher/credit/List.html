@@ -35,30 +35,6 @@
                             <input name="shopcode" id="shopcode" type="text" class="form-control"
                                    value="{{ shop | transShopCode }}" readonly>
                         </div>
-                        <label for="" class="col-md-1 formline-label">创建时间：从</label>
-                        <div class="col-md-2">
-                            <div data-link-format="yyyy-mm-dd" data-link-field="dtp_input2"
-                                 data-date-format="yyyy-mm-dd" data-date="" class="input-group date form_date">
-                                <input readonly="" value="{{ start }}" size="16" name="start" id="start"
-                                       class="form-control" required="required">
-                                <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
-                                <span class="input-group-addon"><span
-                                        class="glyphicon glyphicon-calendar"></span></span>
-                            </div>
-                        </div>
-                        <label for="" class="col-md-1 formline-label">创建时间：到</label>
-                        <div class="col-md-2">
-                            <div data-link-format="yyyy-mm-dd" data-link-field="dtp_input2"
-                                 data-date-format="yyyy-mm-dd" data-date="" class="input-group date form_date">
-                                <input readonly="" value="{{ end }}" size="16" name="end" id="end" class="form-control"
-                                       required="required">
-                                <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
-                                <span class="input-group-addon"><span
-                                        class="glyphicon glyphicon-calendar"></span></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row formline">
                         <label for="" class="col-md-1 formline-label">类型：</label>
                         <div class="col-md-2">
                             <select name="couponType" id="couponType" class="form-control" required="required">
@@ -73,36 +49,39 @@
                             <input type="text" class="form-control" name="batch" id="batch" required
                                    value="{{ batch }}">
                         </div>
+                    </div>
+                    <div class="row formline">
+                        <label for="" class="col-md-1 formline-label">起始日期：</label>
+                        <div class="col-md-3 col-lg-2">
+                            <div data-link-format="yyyy-mm-dd" data-link-field="dtp_input2"
+                                 data-date-format="yyyy-mm-dd" data-date="" class="input-group date form_date">
+                                <input readonly="" value="{{ start }}" size="16" name="start" id="start"
+                                       class="form-control" required="required">
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                                <span class="input-group-addon"><span
+                                        class="glyphicon glyphicon-calendar"></span></span>
+                            </div>
+                        </div>
+                        <label for="" class="col-md-1 formline-label">截至日期：</label>
+                        <div class="col-md-3 col-lg-2">
+                            <div data-link-format="yyyy-mm-dd" data-link-field="dtp_input2"
+                                 data-date-format="yyyy-mm-dd" data-date="" class="input-group date form_date">
+                                <input readonly="" value="{{ end }}" size="16" name="end" id="end" class="form-control"
+                                       required="required">
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                                <span class="input-group-addon"><span
+                                        class="glyphicon glyphicon-calendar"></span></span>
+                            </div>
+                        </div>
+
                         <div class="col-md-1">
                             <button type="button" class="btn btn-info enter-btn pull-right" id="enter">查询</button>
                         </div>
                     </div>
-
-                    <div class="page">
-                        <span>第<b>{{ page }}</b>页/共<b>{{ List.paginator.num_pages }}</b>页</span>
-                        <a id="page_a_head">首页</a>
-                        {% if List.has_previous %}
-                            <a id="page_a_up">上一页</a>
-                        {% else %}
-                            <a href="javascript:void(0)">上一页</a>
-                        {% endif %}
-                        {% if List.has_next %}
-                            <a id="page_a_down">下一页</a>
-                        {% else %}
-                            <a href="javascript:void(0)">下一页</a>
-                        {% endif %}
-                        <a id="page_a_foot">尾页</a>
-                        <span class="totalPage">到第</span>
-                        <input class="pageTxt" id="page" name="page" value="1" type="text">
-                        <span>页</span>
-                        <button type="button" class="btn btn-info btn-sm"
-                                id="pageEnter">确定
-                        </button>
-                    </div>
                 </form>
                 <div class="widget-box">
                     <div class="widget-content nopadding" style="overflow: hidden">
-                        <h3 class="text-center">明细列表</h3>
+                        <h4 class="text-center">明细列表</h4>
                         <table class="table table-striped table-hover table-form-my">
                             <thead>
                             <tr>
@@ -126,21 +105,42 @@
                                     <td>{{ row.create_user_name }}</td>
                                     <td>{{ row.type | transCouponTypeByChinese }}</td>
                                     <td>{{ row.batch }}</td>
-                                    <td>{{ row.start_date }}</td>
-                                    <td>{{ row.end_date }}</td>
+                                    <td>{{ row.start_date | date:'Y-m-d'}}</td>
+                                    <td>{{ row.end_date | date:'Y-m-d'}}</td>
                                     <td>{{ row.values }}</td>
                                     <td>{{ row.pay_account }}</td>
                                     <td>{{ row.credit_account }}</td>
                                     <td>{{ row.range }}</td>
                                     <td>
                                         <button type="button" onclick="credit('{{ row.coupon_code }}')"
-                                                class="btn btn-info btn-sm btn_credit">赊销</button>
+                                                class="btn btn-info btn-xs btn_credit">赊销</button>
                                     </td>
                                 </tr>
                             {% endfor %}
                             </tbody>
                         </table>
                     </div>
+                </div>
+                <div class="page">
+                    <span>第<b>{{ page }}</b>页/共<b>{{ List.paginator.num_pages }}</b>页</span>
+                    <a id="page_a_head">首页</a>
+                    {% if List.has_previous %}
+                        <a id="page_a_up">上一页</a>
+                    {% else %}
+                        <a href="javascript:void(0)">上一页</a>
+                    {% endif %}
+                    {% if List.has_next %}
+                        <a id="page_a_down">下一页</a>
+                    {% else %}
+                        <a href="javascript:void(0)">下一页</a>
+                    {% endif %}
+                    <a id="page_a_foot">尾页</a>
+                    <span class="totalPage">到第</span>
+                    <input class="pageTxt" id="page" name="page" value="1" type="text">
+                    <span>页</span>
+                    <button type="button" class="btn btn-info btn-sm"
+                            id="pageEnter">确定
+                    </button>
                 </div>
             </div>
         </div>

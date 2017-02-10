@@ -204,17 +204,9 @@ def getAmount(start, end, shops):
                            charset='utf8',
                            as_dict=True)
     cur = conn.cursor()
-    sql = u"select ShopID AS shop_code, " \
-          u"       count(CouponNO) AS common_amount, " \
-          u"       sum(ISNULL(ClearValue,0)) AS common_account " \
-          u"  from MyShop_Coupon " \
-          u" where ClearFlag = 1 " \
-          u"   and CouponTypeID like '8%'" \
-          u"   and ClearSDate BETWEEN '{start}' AND '{end}' "\
-          u"   and ClearShopID in ({shops})  "\
-          u" group by ShopID ".format(start=start,
-                                        end=end,
-                                        shops=shops)
+    date = conn.Date()
+    sql = "SELECT * FROM tet WHERE DATE_FORMAT( code, '%Y-%m-%d')>'2010-08-01' AND DATE_FORMAT( code, '%Y-%m-%d')<'2010-08-03'"
+
     cur.execute(sql)
     list = cur.fetchall()
     cur.close()

@@ -7,7 +7,10 @@ html, body{height:100%}
 
 body {
 	overflow-x: hidden;
-	margin-top: -20px; *margin-top:0; font-family: '微软雅黑', sans-serif; font-size:12px; color:#666;
+	margin-top: -20px; *margin-top:0;
+    font-family: '微软雅黑', sans-serif;
+    font-size:1.2em;
+    color:#666;
 }
 a{color:#666; outline:0 none;}
 a:hover, a:focus {
@@ -51,7 +54,7 @@ hr{ border-top-color:#dadada;}
 
 /* Header */
 #header {
-	height: 77px;
+	height: 70px;
 	position: relative;
 	width: 100%;
 	z-index: -9;
@@ -63,7 +66,8 @@ hr{ border-top-color:#dadada;}
 	line-height: 600px;
 	overflow: hidden;
 	position: relative;
-	top: 26px; *top:0px; left:12px;
+	top: 5px; *top:0px;
+    left:12px;
 	width: 191px;
 	
 	
@@ -100,8 +104,8 @@ hr{ border-top-color:#dadada;}
 /* Top user navigation */
 #user-nav {
 	position: absolute;
-	left: 220px;
-	top:0px;
+    right:0;
+	top:0;
 	z-index: 20;
 	margin: 0;
 }
@@ -120,7 +124,7 @@ hr{ border-top-color:#dadada;}
 #user-nav > ul > li > a {
 	padding:10px;
 	display: block;
-	font-size: 11px;
+	font-size: 1em;
 }
 #user-nav > ul > li > a:hover,#user-nav > ul > li > a:focus,#user-nav > ul > li.open > a {
 	color: #ffffff;  background:#000;
@@ -164,7 +168,7 @@ hr{ border-top-color:#dadada;}
 	position: relative;
 }
 #sidebar > ul > li > a {
-	padding: 10px 0 10px 15px;
+	padding: 10px 0 10px 10px;
 	display: block;
 	color: #939da8;
 }
@@ -188,7 +192,7 @@ hr{ border-top-color:#dadada;}
 	display: block;
 }
 #sidebar > ul li ul li a {
-	padding: 10px 0 10px 25px;
+	padding: 10px 0 10px 15px;
 	display: block;
 	color: #777777;
 }
@@ -209,9 +213,7 @@ hr{ border-top-color:#dadada;}
 	width: auto;
 }
 #content-header {
-	position: absolute;
 	width: 100%;
-	margin-top: -40px;
 	z-index: 20;
 }
 #content-header h1 {
@@ -252,7 +254,7 @@ hr{ border-top-color:#dadada;}
 	background-image: url('../images/breadcrumb.png');
 	background-position: center right;
 	background-repeat: no-repeat;
-	font-size: 11px;
+	font-size: 1em;
 	color: #666666;
 }
 #breadcrumb a:hover {
@@ -587,9 +589,10 @@ hr{ border-top-color:#dadada;}
 .widget-title h5 {
 	color: #666;
 	float: left;
-	font-size: 15px;
+	font-size: 1.1em;
 	font-weight: 700;
-	padding: 12px; padding-left:1px;
+	padding: 12px;
+	padding-left:1px;
 	line-height: 12px;
 	margin: 0;
 }

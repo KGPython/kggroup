@@ -231,7 +231,7 @@ def save(request):
             if orderSnNum != resBorrow:
                 raise MyError('借卡单状态更新失败')
 
-            resBorrow2 = OrderBorrowInfo.objects.filter(card_no__in=cardIdBorrowList, is_back=None).update(is_back='0')
+            resBorrow2 = OrderBorrowInfo.objects.filter(order_sn__in=orderSnList,card_no__in=cardIdBorrowList, is_back=None).update(is_back='0')
             if resBorrow2 != len(cardIdBorrowList):
                 raise MyError('OrderBorrowInfo数据更新失败')
 

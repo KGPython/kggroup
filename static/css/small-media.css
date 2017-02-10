@@ -1,0 +1,79 @@
+@media screen and (min-width: 992px) and ( max-width: 1199px){
+    body{font-size: 1.1em}
+    .col-md-1 {
+        min-width: 9em;
+    }
+    #form .formline div.col-md-4,
+    #buyerInfo .formline div.col-md-4{
+        margin-bottom: 5px;
+    }
+    .col-md-12{margin-top: 5px;}
+    .form-control{height: 29px;line-height: 29px;}
+    .table>thead>tr>td{
+        min-width: 6.5em;
+    }
+    .table > thead > tr > th{
+        min-width: 6.5em;
+        padding: 6px;
+        vertical-align: middle;
+    }
+    .table > thead:first-child > tr:first-child > th {
+        font-weight: normal;
+    }
+    .btn{padding: 4px 10px;}
+    .widget-content .table > tbody > tr > td .btn,
+    .widget-content .table > tbody > tr > td button,
+    .widget-content .table > tbody > tr > td input{
+        font-size: 1em;
+        padding: 2px 8px;
+    }
+    table th, .widget-content .table > tbody > tr > td,
+    .table-form-my > tbody > tr > td {
+        height: 2.4em;
+        line-height: 2.4em;
+    }
+    .h4,h4{font-size: 1.4em;}
+    label{font-weight: normal}
+    #sidebar{width: 125px;}
+    #sidebar>ul{
+        width: 125px;
+    }
+    #content{margin-left: 125px}
+     .form-control,
+     .table th,
+     .widget-box p.text,
+     .btn{
+         font-size: 1em;
+     }
+
+     #logo,#loginbox{max-width: 260px;}
+     img{max-width: 60%;}
+     .form-control{padding: 4px 6px;}
+     .Total #discount input{width: 50px;}
+     .widget-box p.text{padding: 5px;}
+
+     .glyphicon {padding-right: 0px;}
+     .input-group-addon{padding: 6px;}
+     .dropdown-menu{font-size: 1.1em}
+}
+ @media screen and (min-width: 1200px) and ( max-width: 1399px){
+     body{font-size: 1.2em}
+    #sidebar{width: 100px;}
+    #sidebar>ul{
+        width: 160px;
+    }
+    #content{margin-left: 160px}
+    #content{
+        margin-top: 35px;
+    }
+     .form-control{font-size: 11px;}
+     .table th{font-size: 11px;}
+     .widget-box p.text{font-size: 12px;}
+     .btn{font-size: 12px;}
+     .form-group{}
+     #logo,#loginbox{max-width: 280px;}
+     img{max-width: 60%;}
+     .form-control{padding: 4px 6px;}
+     .Total #discount input{width: 80px;}
+     .widget-box p.text{padding: 5px;}
+}

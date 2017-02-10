@@ -31,12 +31,12 @@
                     {% csrf_token %}
                     <div class="row formline">
                         <label for="" class="col-md-1 formline-label">发行门店：</label>
-                        <div class="col-md-2">
+                        <div class="col-md-1">
                             <input name="shop" id="shop" type="text" class="form-control"
                                    value="{{ shopcode | transShopCode }}" readonly>
                         </div>
-                        <label for="" class="col-md-1 formline-label">创建时间：从</label>
-                        <div class="col-md-2">
+                        <label for="" class="col-md-1 formline-label">起始日期：</label>
+                        <div class="col-md-3">
                             <div data-link-format="yyyy-mm-dd" data-link-field="dtp_input2"
                                  data-date-format="yyyy-mm-dd" data-date="" class="input-group date form_date">
                                 <input readonly="" value="{{ start }}" size="16" name="start" id="start"
@@ -46,8 +46,8 @@
                                         class="glyphicon glyphicon-calendar"></span></span>
                             </div>
                         </div>
-                        <label for="" class="col-md-1 formline-label">创建时间：到</label>
-                        <div class="col-md-2">
+                        <label for="" class="col-md-1 formline-label">截至日期：</label>
+                        <div class="col-md-3">
                             <div data-link-format="yyyy-mm-dd" data-link-field="dtp_input2"
                                  data-date-format="yyyy-mm-dd" data-date="" class="input-group date form_date">
                                 <input readonly="" value="{{ end }}" size="16" name="end" id="end" class="form-control"
@@ -60,7 +60,7 @@
                     </div>
                     <div class="row formline">
                         <label for="" class="col-md-1 formline-label">类型：</label>
-                        <div class="col-md-2">
+                        <div class="col-md-1">
                             <select name="couponType" id="couponType" class="form-control" required="required">
                                 <option value="">全部</option>
                                 <option value="1">换卡券</option>
@@ -69,7 +69,7 @@
                             </select>
                         </div>
                         <label for="" class="col-md-1 formline-label">批次：</label>
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             <input type="text" class="form-control" name="batch" id="batch" required
                                    value="{{ batch }}">
                         </div>
@@ -80,31 +80,9 @@
                             <a href="{% url 'voucherIssueCreate' %}" class="btn btn-success pull-right">新建</a>
                         </div>
                     </div>
-
-                    <div class="page">
-                        <span>第<b>{{ page }}</b>页/共<b>{{ List.paginator.num_pages }}</b>页</span>
-                        <a id="page_a_head">首页</a>
-                        {% if List.has_previous %}
-                            <a id="page_a_up">上一页</a>
-                        {% else %}
-                            <a href="javascript:void(0)">上一页</a>
-                        {% endif %}
-                        {% if List.has_next %}
-                            <a id="page_a_down">下一页</a>
-                        {% else %}
-                            <a href="javascript:void(0)">下一页</a>
-                        {% endif %}
-                        <a id="page_a_foot">尾页</a>
-                        <span class="totalPage">到第</span>
-                        <input class="pageTxt" id="page" name="page" value="1" type="text">
-                        <span>页</span>
-                        <button type="button" class="btn btn-info btn-sm"
-                                id="pageEnter">确定
-                        </button>
-                    </div>
                 </form>
                 <div class="widget-box">
-                    <div class="widget-content nopadding" style="overflow: hidden">
+                    <div class="widget-content nopadding" style="overflow-x:auto; ">
                         <h3 class="text-center">发券明细列表</h3>
                         <table class="table table-striped table-hover table-form-my">
                             <thead>
@@ -120,7 +98,7 @@
                                 <th>使用范围</th>
                                 <th>总数</th>
                                 <th>已打印</th>
-                                <th width="35%">操作</th>
+                                <th style="min-width: 400px">操作</th>
                             </tr>
                             </thead>
                             <tbody class="cardIn" id="nopayList">
@@ -130,31 +108,52 @@
                                     <td>{{ row.create_user_name }}</td>
                                     <td>{{ row.type | transCouponTypeByChinese }}</td>
                                     <td>{{ row.batch }}</td>
-                                    <td>{{ row.start_date }}</td>
-                                    <td>{{ row.end_date }}</td>
+                                    <td>{{ row.start_date | date:'Y-m-d'}}</td>
+                                    <td>{{ row.end_date | date:'Y-m-d' }}</td>
                                     <td>{{ row.values }}</td>
                                     <td>{{ row.discount }}</td>
                                     <td>{{ row.range }}</td>
                                     <td>{{ row.amount }}</td>
                                     <td>{{ row.print_amount }}张</td>
                                     <td>
-                                        <div class="col-md-3">预印张数：</div>
-                                        <div class="col-md-3">
-                                            <input type="number" id="{{ row.coupon_code }}"
-                                                   class="btn-default btn-sm">
-                                        </div>
-                                        <div class="col-md-6">
-                                            <button type="button" onclick="toPrint('{{ row.coupon_code }}','1')"
-                                                    class="btn-success btn-sm" >打印含金额</button>
-                                            <button type="button" onclick="toPrint('{{ row.coupon_code }}','0')"
-                                                    class="btn-success btn-sm" >打印无金额</button>
-                                        </div>
+                                            <div class="pull-left">预印张数：</div>
+                                            <div class="pull-left">
+                                                <input type="number" id="{{ row.coupon_code }}"
+                                                       class="btn-default btn-sm">
+                                            </div>
+                                            <div class="pull-left">
+                                                <button type="button" onclick="toPrint('{{ row.coupon_code }}','1')"
+                                                        class="btn-success btn-sm" >打印含金额</button>
+                                                <button type="button" onclick="toPrint('{{ row.coupon_code }}','0')"
+                                                        class="btn-success btn-sm" >打印无金额</button>
+                                            </div>
                                      </td>
                                 </tr>
                             {% endfor %}
                             </tbody>
                         </table>
                     </div>
+                </div>
+                <div class="page">
+                    <span>第<b>{{ page }}</b>页/共<b>{{ List.paginator.num_pages }}</b>页</span>
+                    <a id="page_a_head">首页</a>
+                    {% if List.has_previous %}
+                        <a id="page_a_up">上一页</a>
+                    {% else %}
+                        <a href="javascript:void(0)">上一页</a>
+                    {% endif %}
+                    {% if List.has_next %}
+                        <a id="page_a_down">下一页</a>
+                    {% else %}
+                        <a href="javascript:void(0)">下一页</a>
+                    {% endif %}
+                    <a id="page_a_foot">尾页</a>
+                    <span class="totalPage">到第</span>
+                    <input class="pageTxt" id="page" name="page" value="1" type="text">
+                    <span>页</span>
+                    <button type="button" class="btn btn-info btn-sm"
+                            id="pageEnter">确定
+                    </button>
                 </div>
             </div>
         </div>

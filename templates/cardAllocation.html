@@ -18,7 +18,7 @@
         <div class="widget-content nopadding">
             <div class="container-fluid">
                 <div class="row formline" style="margin-top: 20px;">
-                    <label for="" class="col-md-3 formline-label">调出门店：</label>
+                    <label for="" class="col-md-1 formline-label">调出门店：</label>
                     <div class="col-md-2">
                         {% if roleid == '2' %}
                             <select name="shopOut" id="shopOut" class="form-control" required="required" disabled>
@@ -33,7 +33,7 @@
                         {% endif %}
 
                     </div>
-                    <label for="" class="col-md-2 formline-label">调入门店：</label>
+                    <label for="" class="col-md-1 formline-label">调入门店：</label>
                     <div class="col-md-2">
                         {% if roleid == '2' %}
                             <select name="shopIn" id="shopIn" class="form-control" required="required">
@@ -192,19 +192,26 @@
     }
     function checkRepeat(obj){
         var key = $(obj).val();
-        var cardInputs = $(".cardSent").find('.cardno');
+        var trs = $(".cardSent").find('tr');
         var list =[];
-        for(var j=0;j<cardInputs.length;j++){
-            var cardid = $(cardInputs[j]).val();
-            if(cardid){
-                list.push(cardid);
+        for(var j=0;j<trs.length;j++){
+            var start = $(trs[j]).find('.start').val();
+            var end = $(trs[j]).find('.end').val();
+            if(start && end && start==end ){
+                list.push(start);
+            }else {
+                list.push(start);
+                list.push(end);
             }
         }
-        list.remove(key);
 
+        list.remove(key);
+        console.log(list)
         if(list.indexOf(key)>-1){
             alert('卡号：'+key+',已经存在于上面的卡段中，请检查');
             $(obj).val('').focus();
+            $(obj).parent().find('.type').val('');
+            $(obj).parent().find('.type2').val('');
             return false;
         }
     }

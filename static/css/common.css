@@ -7,12 +7,32 @@
 .table > thead:first-child > tr:first-child > th {
     border-top: 1px solid #ccc;
 }
-.widget-content .table > tbody > tr > td,.table-form-my > tbody > tr > td{
-    padding: 0;
+.table-form-my > tbody > tr > td{
+    padding: 0!important;
     text-align: left;
     text-indent: 8px;
-    line-height: 34px;
+    /*line-height: 34px;*/
     border: 1px solid #ccc;
+    vertical-align: middle;
+}
+table th,
+.widget-content .table > tbody > tr > td,
+.table-form-my > tbody > tr > td {
+    text-align: center;
+    color: #000;
+    vertical-align: middle;
+    height: 2.7em;
+    line-height: 2.7em;
+}
+
+table a {
+    text-decoration: underline;
+    color: #000;
+}
+table a:hover,table a:hover span{color: #f00}
+
+table input[type="checkbox"]{
+	margin-top: 10px;
 }
 .table-form-my .form-control{box-shadow: none;border: none;background-color: #f9f9f9;}
 .widget-box p.text{
@@ -37,7 +57,7 @@
 	text-align: center;
 	margin-bottom: 20px;
 	margin-top: 20px;
-    font-size: 14px;
+    font-size: 1.1em;
     float:right;
     padding-right: 50px;
 }

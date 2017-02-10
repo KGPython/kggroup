@@ -30,7 +30,7 @@
                 <form action="{% url 'voucherUsed' %}" method="post" id="form">
                     {% csrf_token %}
                     <div class="row formline">
-                        <label for="" class="col-md-1 formline-label">所查询门店：</label>
+                        <label for="" class="col-md-1 formline-label" style="min-width: 0">门店：</label>
                         {% if role == '2' or role == '3' or role == '5' or role == '10' %}
                         <div class="col-md-2">
                             <input name="shopcode" id="shopcode" type="text" class="form-control"
@@ -48,8 +48,8 @@
                             </select>
                         </div>
                         {% endif %}
-                        <label for="" class="col-md-1 formline-label">查询日期：从</label>
-                        <div class="col-md-2">
+                        <label for="" class="col-md-1 formline-label">起始日期：</label>
+                        <div class="col-md-3 col-lg-2">
                             <div data-link-format="yyyy-mm-dd" data-link-field="dtp_input2"
                                  data-date-format="yyyy-mm-dd" data-date="" class="input-group date form_date">
                                 <input readonly="" value="{{ start }}" size="16" name="start" id="start"
@@ -59,8 +59,8 @@
                                         class="glyphicon glyphicon-calendar"></span></span>
                             </div>
                         </div>
-                        <label for="" class="col-md-1 formline-label">查询日期：到</label>
-                        <div class="col-md-2">
+                        <label for="" class="col-md-1 formline-label">截至日期：</label>
+                        <div class="col-md-3 col-lg-2">
                             <div data-link-format="yyyy-mm-dd" data-link-field="dtp_input2"
                                  data-date-format="yyyy-mm-dd" data-date="" class="input-group date form_date">
                                 <input readonly="" value="{{ end }}" size="16" name="end" id="end" class="form-control"
@@ -70,14 +70,14 @@
                                         class="glyphicon glyphicon-calendar"></span></span>
                             </div>
                         </div>
-                        <div class="col-md-1">
+                        <div class="col-md-12  col-lg-2">
                             <button type="button" class="btn btn-info enter-btn pull-right" id="enter">查询</button>
                         </div>
                     </div>
                 </form>
                 <div class="widget-box">
                     <div class="widget-content nopadding" style="overflow: hidden">
-                        <h3 class="text-center">明细列表</h3>
+                        <h4 class="text-center">明细列表</h4>
                         <table class="table table-striped table-hover table-form-my">
                             <thead>
                             <tr>

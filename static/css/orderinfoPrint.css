@@ -15,6 +15,15 @@
     .glyphicon {
         display: none
     }
+    .title h5 {
+        width: 100%;
+        text-align: center;
+        font-weight: normal;
+        margin-bottom: 10px;
+        padding-bottom: 5px;
+        border-bottom: 1px dashed black;
+        font-size: 12px;
+    }
     .info-order{width: 100%;min-width: 145px;}
     .info-order p,.info-tel p{font-size: 12px;line-height: 16px;}
     .info-total{margin-top: 5px;}

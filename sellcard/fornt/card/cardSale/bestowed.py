@@ -14,7 +14,7 @@ def index(request):
     # 在服务端session中添加key认证，避免用户重复提交表单
     token = 'allow'  # 可以采用随机数
     request.session['postToken'] = token
-    return render(request, 'bestowed.html', locals())
+    return render(request, 'card/sale/bestowed.html', locals())
 
 @transaction.atomic
 def saveOrder(request):
