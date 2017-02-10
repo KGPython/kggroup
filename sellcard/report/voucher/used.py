@@ -95,21 +95,25 @@ def index(request):
                 item['card_amount'] = item_sn['card_amount']
                 total['card_amount'] += int(item_sn['card_amount'])
                 item['card_account'] = item_sn['card_account']
-                total['card_account'] += float(item_sn['card_account'])
+                total['card_account'] += float('%.2f' % item_sn['card_account'])
                 item['goods_amount'] = item_sn['goods_amount']
                 total['goods_amount'] += int(item_sn['goods_amount'])
                 item['goods_account'] = item_sn['goods_account']
-                total['goods_account'] += float(item_sn['goods_account'])
+                total['goods_account'] += float('%.2f' % item_sn['goods_account'])
         for item_erp in ErpList:
             if item['shop_code'] == item_erp['shop_code']:
                 item['common_amount'] = item_erp['common_amount']
                 total['common_amount'] += int(item_erp['common_amount'])
                 item['common_account'] = item_erp['common_account']
-                total['common_account'] += float(item_erp['common_account'])
+                total['common_account'] += float('%.2f' % item_erp['common_account'])
         item['total_amount'] = int(item['card_amount'])+int(item['goods_amount'])+int(item['common_amount'])
         total['total_amount'] += int(item['total_amount'])
-        item['total_account'] = float(item['card_account'])+float(item['goods_account'])+float(item['common_account'])
-        total['total_account'] += float(item['total_account'])
+        item['total_account'] = float('%.2f' % item['card_account'])+float('%.2f' % item['goods_account'])+float('%.2f' % item['common_account'])
+        total['total_account'] += float('%.2f' % item['total_account'])
+    total['card_account'] = '%.2f' % total['card_account']
+    total['goods_account'] = '%.2f' % total['goods_account']
+    total['common_account'] = '%.2f' % total['common_account']
+    total['total_account'] = '%.2f' % total['total_account']
     return render(request, 'report/voucher/used/list.html', locals())
 
 
