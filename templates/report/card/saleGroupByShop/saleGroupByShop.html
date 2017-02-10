@@ -116,7 +116,11 @@
                             <tbody class="cardIn" id="nopayList">
                             {% for row in dataList %}
                                 <tr>
-                                    <td class="shop">{{ row.shop_code | transShopCode }}</td>
+                                    <td>
+                                        <a href="{% url 'saleGroupByShopDateDetail' %}?shopcode={{ row.shop_code }}&start={{ start }}&end={{ end }}">
+                                            {{ row.shop_code | transShopCode }}
+                                        </a>
+                                    </td>
                                     <td class="discCol">{{ row.disc_6 | floatformat:2 }}</td>
                                     <td class="discCol">{{ row.disc_7 | floatformat:2 }}</td>
                                     <td class="discCol">{{ row.disc_8 | floatformat:2 }}</td>
