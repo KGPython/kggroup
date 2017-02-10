@@ -115,12 +115,13 @@ def index(request):
 
 def detail(request):
     if request.method == 'POST':
+        page = mth.getReqVal(request, 'page', 1)
         shop_code=request.POST.get('t_shop_code')
-        start=request.POST.get('t_start')
-        end=request.POST.get('t_end')
-        end = datetime.datetime.strptime(end, '%Y-%m-%d') + datetime.timedelta(1)
         shop=request.POST.get('t_shop')
         type=request.POST.get('t_type')
+        start=request.POST.get('t_start')
+        end=request.POST.get('t_end')
+        endTime = datetime.datetime.strptime(end, '%Y-%m-%d') + datetime.timedelta(1)
 
         shops = Shops.objects.values('shop_code', 'shop_name', 'city').order_by('shop_code')
         role = request.session.get('s_roleid')
@@ -145,8 +146,8 @@ def detail(request):
         List =[]
 
         if type != '3':
-            sql = u" SELECT c.shop_code, c.`values`, c.coupon_name, c.coupon_code, " \
-                  u" c.start_date, c.end_date, c.`range`, jcs.used_amount, " \
+            sql = u" SELECT c.shop_code, c.`values` AS values_list, c.coupon_name, c.coupon_code, " \
+                  u" c.start_date, c.end_date, c.`range` as range_list, jcs.used_amount, " \
                   u" c.`values` * jcs.used_amount AS used_account, '0' AS serial_id " \
                   u" FROM kf_jobs_coupon c, " \
                   u" (SELECT count(cs.voucher) AS used_amount, cs.coupon_code " \
@@ -159,7 +160,7 @@ def detail(request):
                   u" AND c.type = '{type}' " \
                   u" AND c.shop_code = '{shop}' ".format(code_list=code_list,
                                                         start=start,
-                                                        end=end,
+                                                        end=endTime,
                                                         type=type,
                                                         shop=shop)
 
@@ -170,20 +171,40 @@ def detail(request):
             cur.close()
             conn.close()
         else:
-            serial = KfJobsCouponSn.objects.exclude(serial_id='0').filter(request_shop=shop,
-                                                                             used_flag=1,
-                                                                             used_date__lte=end,
-                                                                             used_date__gte=start,
-                                                                             used_shop__in=code_list)\
-                .values('coupon_code').aggregate(serial_id=Max('serial_id'))
-            serial_id = []
-            for item_serial in serial:
-                serial_id.append(item_serial['serial_id'])
+            List = getDetail(code_list,start,endTime,shop)
+            # serial = KfJobsCouponSn.objects.exclude(serial_id='0').filter(request_shop=shop,
+            #                                                                  used_flag=1,
+            #                                                                  used_date__lte=endTime,
+            #                                                                  used_date__gte=start,
+            #                                                                  used_shop__in=code_list)\
+            #     .values('coupon_code').aggregate(serial_id=Max('serial_id'))
+            # serial_id = []
+            #for item_serial in serial:
+                #serial_id.append(item_serial['serial_id'])
 
-            serial_id = str(serial_id)
-            serial_id = serial_id.replace('[', '').replace(']', '')
-            List = getDetail(code_list,start,end,shop,serial_id)
+            # serial_id = str(serial_id)
+            # serial_id = serial_id.replace('[', '').replace(']', '')
+            # List = getDetail(code_list,start,endTime,shop,serial_id)
 
+    # 表单分页开始
+    paginator = Paginator(List, 8)
+
+    try:
+        List = paginator.page(page)
+
+        if List.number > 1:
+            page_up = List.previous_page_number
+        else:
+            page_up = 1
+
+        if List.number < List.paginator.num_pages:
+            page_down = List.next_page_number
+        else:
+            page_down = List.paginator.num_pages
+
+    except Exception as e:
+        print(e)
+    # 表单分页结束
     return render(request, 'report/voucher/used/detail.html', locals())
 
 
@@ -204,9 +225,11 @@ def getAmount(start, end, shops):
                            charset='utf8',
                            as_dict=True)
     cur = conn.cursor()
-    sql = "select c.ShopID AS shop_code, count(c.CouponNO) AS common_amount, sum(ISNULL(ct.`Value`,0)) AS common_account " \
-          "from MyShop_Coupon_view c,MyShop_CouponType ct " \
-          " where c.ClearFlag = 1 and c.CouponTypeID like '8%' and c.clearsdateview  BETWEEN '{start}' AND  '{end}' " \
+    sql = "select c.ShopID AS shop_code, count(c.CouponNO) AS common_amount, sum(ISNULL(ct.Value,0)) AS common_account " \
+          "from MyShop_Coupon c,MyShop_CouponType ct " \
+          " where c.ClearFlag = 1 and c.CouponTypeID like '8%' "\
+          " and SUBSTRING(c.ClearSDate, 7,4)+'-'+LEFT(c.ClearSDate, 2)+'-'+replace(SUBSTRING(c.ClearSDate, 4,2),' ','0') "\
+          "  BETWEEN '{start}' AND  '{end}' " \
           "   and c.CouponTypeID = ct.CouponTypeID and c.ClearShopID in ({shops})  "\
           " group by c.ShopID ".format(start=start,end=end,shops=shops)
     cur.execute(sql)
@@ -215,8 +238,8 @@ def getAmount(start, end, shops):
     conn.close()
     return list
 
-
-def getDetail(used_shop, start, end, request_shop, serial_id):
+#def getDetail(used_shop, start, end, request_shop, serial_id):
+def getDetail(used_shop, start, end, request_shop):
     """
     获取已使用券明细
     :param used_shop:使用门店
@@ -234,27 +257,27 @@ def getDetail(used_shop, start, end, request_shop, serial_id):
                            charset='utf8',
                            as_dict=True)
     cur = conn.cursor()
+    # u"   AND c.SerialID IN ({serial_id}) " \,serial_id=serial_id
     sql = u" SELECT c.ShopID AS shop_code, " \
-          u"         ct.`Value` AS `values`, " \
+          u"         ct.Value AS values_list, " \
           u"         ct.CouponTypeName AS coupon_name, " \
           u"         c.StartDate AS start_date, " \
           u"         c.EndDate AS end_date, " \
           u"         CASE WHEN ct.IfCurrShop = 0 THEN '全部店' " \
-          u"          ELSE '发行店' END AS `range`, " \
+          u"          ELSE '发行店' END AS range_list, " \
           u"         count(c.CouponNO) AS used_amount, " \
-          u"         ct.`Value` * count(c.CouponNO) AS used_account," \
+          u"         ct.Value * count(c.CouponNO) AS used_account," \
           u"         c.SerialID AS serial_id," \
           u"         '0' AS coupon_code " \
-          u" FROM MyShop_Coupon_view c, " \
+          u" FROM MyShop_Coupon c, " \
           u"       MyShop_CouponType ct " \
           u" WHERE c.CouponTypeID = ct.CouponTypeID " \
-          u"   AND c.ClearFlag = 1 " \
+          u"   AND c.ClearFlag = 1  and c.CouponTypeID like '8%' " \
           u"   AND c.ClearShopID IN ({code_list}) " \
-          u"   AND c.ClearSDateview BETWEEN '{start}' AND '{end}' " \
+          u"   AND SUBSTRING(c.ClearSDate, 7,4)+'-'+LEFT(c.ClearSDate, 2)+'-'+replace(SUBSTRING(c.ClearSDate, 4,2),' ','0') BETWEEN '{start}' AND '{end}' " \
           u"   AND c.ShopID = '{shop}' " \
-          u"   AND c.SerialID IN ({serial_id}) " \
           u" GROUP BY c.ShopID, " \
-          u"           c.`Value`, " \
+          u"           ct.Value, " \
           u"           ct.CouponTypeName, " \
           u"           c.StartDate," \
           u"           c.EndDate, " \
@@ -262,8 +285,7 @@ def getDetail(used_shop, start, end, request_shop, serial_id):
           u"           c.SerialID ".format(code_list=used_shop,
                                             start=start,
                                             end=end,
-                                            shop=request_shop,
-                                            serial_id=serial_id)
+                                            shop=request_shop)
     cur.execute(sql)
     list = cur.fetchall()
     cur.close()

@@ -48,10 +48,10 @@
                                 <tr>
                                     <td>{{ row.shop_code | transShopCode }}</td>
                                     <td>{{ row.coupon_name }}</td>
-                                    <td>{{ row.values }}</td>
+                                    <td>{{ row.values_list }}</td>
                                     <td>{{ row.start_date | date:'Y-m-d' }}</td>
                                     <td>{{ row.end_date | date:'Y-m-d' }}</td>
-                                    <td>{{ row.range }}</td>
+                                    <td>{{ row.range_list }}</td>
                                     <td>{{ row.used_amount }}</td>
                                     <td>{{ row.used_account }}</td>
                                 </tr>
@@ -60,10 +60,13 @@
                         </table>
                     </div>
                 </div>
-                <form action="{% url 'voucherStockDetail' %}" method="post" id="form">
+                <form action="{% url 'voucherUsedDetail' %}" method="post" id="form">
                     {% csrf_token %}
-                    <input type="hidden" name="coupon_code" id="coupon_code" value="{{ coupon_code }}">
-                    <input type="hidden" name="type" id="type" value="{{ type }}">
+                    <input type="hidden" name="t_shop_code" id="t_shop_code" value="{{ shop_code }}">
+                    <input type="hidden" name="t_start" id="t_start" value="{{ start }}">
+                    <input type="hidden" name="t_end" id="t_end" value="{{ end }}">
+                    <input type="hidden" name="t_shop" id="t_shop" value="{{ shop }}">
+                    <input type="hidden" name="t_type" id="t_type" value="{{ type }}">
                     <div class="page">
                         <span>第<b>{{ page }}</b>页/共<b>{{ List.paginator.num_pages }}</b>页</span>
                         <a id="page_a_head">首页</a>
