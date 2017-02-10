@@ -80,42 +80,41 @@
                             <a href="{% url 'voucherIssueCreate' %}" class="btn btn-success pull-right">新建</a>
                         </div>
                     </div>
-                </form>
-                <div class="widget-box">
-                    <div class="widget-content nopadding" style="overflow-x:auto; ">
-                        <h3 class="text-center">发券明细列表</h3>
-                        <table class="table table-striped table-hover table-form-my">
-                            <thead>
-                            <tr>
-                                <th>发行门店</th>
-                                <th>发行人</th>
-                                <th>类型</th>
-                                <th>批次</th>
-                                <th>创建时间</th>
-                                <th>有效期</th>
-                                <th>面值</th>
-                                <th>优惠</th>
-                                <th>使用范围</th>
-                                <th>总数</th>
-                                <th>已打印</th>
-                                <th style="min-width: 400px">操作</th>
-                            </tr>
-                            </thead>
-                            <tbody class="cardIn" id="nopayList">
-                            {% for row in List %}
+                    <div class="widget-box">
+                        <div class="widget-content nopadding" style="overflow-x:auto; ">
+                            <h3 class="text-center">发券明细列表</h3>
+                            <table class="table table-striped table-hover table-form-my">
+                                <thead>
                                 <tr>
-                                    <td>{{ row.shop_code | transShopCode }}</td>
-                                    <td>{{ row.create_user_name }}</td>
-                                    <td>{{ row.type | transCouponTypeByChinese }}</td>
-                                    <td>{{ row.batch }}</td>
-                                    <td>{{ row.start_date | date:'Y-m-d'}}</td>
-                                    <td>{{ row.end_date | date:'Y-m-d' }}</td>
-                                    <td>{{ row.values }}</td>
-                                    <td>{{ row.discount }}</td>
-                                    <td>{{ row.range }}</td>
-                                    <td>{{ row.amount }}</td>
-                                    <td>{{ row.print_amount }}张</td>
-                                    <td>
+                                    <th>发行门店</th>
+                                    <th>发行人</th>
+                                    <th>类型</th>
+                                    <th>批次</th>
+                                    <th>创建时间</th>
+                                    <th>有效期</th>
+                                    <th>面值</th>
+                                    <th>优惠</th>
+                                    <th>使用范围</th>
+                                    <th>总数</th>
+                                    <th>已打印</th>
+                                    <th style="min-width: 400px">操作</th>
+                                </tr>
+                                </thead>
+                                <tbody class="cardIn" id="nopayList">
+                                {% for row in List %}
+                                    <tr>
+                                        <td>{{ row.shop_code | transShopCode }}</td>
+                                        <td>{{ row.create_user_name }}</td>
+                                        <td>{{ row.type | transCouponTypeByChinese }}</td>
+                                        <td>{{ row.batch }}</td>
+                                        <td>{{ row.start_date | date:'Y-m-d' }}</td>
+                                        <td>{{ row.end_date | date:'Y-m-d' }}</td>
+                                        <td>{{ row.values }}</td>
+                                        <td>{{ row.discount }}</td>
+                                        <td>{{ row.range }}</td>
+                                        <td>{{ row.amount }}</td>
+                                        <td>{{ row.print_amount }}张</td>
+                                        <td>
                                             <div class="pull-left">预印张数：</div>
                                             <div class="pull-left">
                                                 <input type="number" id="{{ row.coupon_code }}"
@@ -123,38 +122,41 @@
                                             </div>
                                             <div class="pull-left">
                                                 <button type="button" onclick="toPrint('{{ row.coupon_code }}','1')"
-                                                        class="btn-success btn-sm" >打印含金额</button>
+                                                        class="btn-success btn-sm">打印含金额
+                                                </button>
                                                 <button type="button" onclick="toPrint('{{ row.coupon_code }}','0')"
-                                                        class="btn-success btn-sm" >打印无金额</button>
+                                                        class="btn-success btn-sm">打印无金额
+                                                </button>
                                             </div>
-                                     </td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
-                <div class="page">
-                    <span>第<b>{{ page }}</b>页/共<b>{{ List.paginator.num_pages }}</b>页</span>
-                    <a id="page_a_head">首页</a>
-                    {% if List.has_previous %}
-                        <a id="page_a_up">上一页</a>
-                    {% else %}
-                        <a href="javascript:void(0)">上一页</a>
-                    {% endif %}
-                    {% if List.has_next %}
-                        <a id="page_a_down">下一页</a>
-                    {% else %}
-                        <a href="javascript:void(0)">下一页</a>
-                    {% endif %}
-                    <a id="page_a_foot">尾页</a>
-                    <span class="totalPage">到第</span>
-                    <input class="pageTxt" id="page" name="page" value="1" type="text">
-                    <span>页</span>
-                    <button type="button" class="btn btn-info btn-sm"
-                            id="pageEnter">确定
-                    </button>
-                </div>
+                    <div class="page">
+                        <span>第<b>{{ page }}</b>页/共<b>{{ List.paginator.num_pages }}</b>页</span>
+                        <a id="page_a_head">首页</a>
+                        {% if List.has_previous %}
+                            <a id="page_a_up">上一页</a>
+                        {% else %}
+                            <a href="javascript:void(0)">上一页</a>
+                        {% endif %}
+                        {% if List.has_next %}
+                            <a id="page_a_down">下一页</a>
+                        {% else %}
+                            <a href="javascript:void(0)">下一页</a>
+                        {% endif %}
+                        <a id="page_a_foot">尾页</a>
+                        <span class="totalPage">到第</span>
+                        <input class="pageTxt" id="page" name="page" type="text">
+                        <span>页</span>
+                        <button type="button" class="btn btn-info btn-sm"
+                                id="pageEnter">确定
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -222,12 +224,12 @@
     });
 </script>
 <script>
-    function toPrint(code,flag) {
-        var amount = $('#'+code).val();
-        if(!amount){
+    function toPrint(code, flag) {
+        var amount = $('#' + code).val();
+        if (!amount) {
             alert('请输入预印数量！');
         }
-        else{
+        else {
             $("#printForm #coupon_code").val(code);
             $("#printForm #is_show").val(flag);
             $("#printForm #counts").val(amount);

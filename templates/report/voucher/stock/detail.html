@@ -29,11 +29,6 @@
         </div>
         <div class="widget-content nopadding">
             <div class="collapse in widget-content">
-                <form action="{% url 'voucherStockDetail' %}" method="post" id="form">
-                    {% csrf_token %}
-                    <input type="hidden" name="coupon_code" id="coupon_code" value="{{ coupon_code }}">
-                    <input type="hidden" name="type" id="type" value="{{ type }}">
-                </form>
                 <div class="widget-box">
                     <div class="widget-content nopadding" style="overflow: hidden">
                         <h3 class="text-center">明细列表</h3>
@@ -51,7 +46,7 @@
                                 <tr>
                                     <td>{{ row.used_shop | transShopCode }}</td>
                                     <td>{{ row.used_name }}</td>
-                                    <td>{{ row.used_date | date:'Y-m-d'}}</td>
+                                    <td>{{ row.used_date | date:'Y-m-d' }}</td>
                                     <td>{{ row.voucher }}</td>
                                 </tr>
                             {% endfor %}
@@ -59,27 +54,32 @@
                         </table>
                     </div>
                 </div>
-                <div class="page">
-                    <span>第<b>{{ page }}</b>页/共<b>{{ List.paginator.num_pages }}</b>页</span>
-                    <a id="page_a_head">首页</a>
-                    {% if List.has_previous %}
-                        <a id="page_a_up">上一页</a>
-                    {% else %}
-                        <a href="javascript:void(0)">上一页</a>
-                    {% endif %}
-                    {% if List.has_next %}
-                        <a id="page_a_down">下一页</a>
-                    {% else %}
-                        <a href="javascript:void(0)">下一页</a>
-                    {% endif %}
-                    <a id="page_a_foot">尾页</a>
-                    <span class="totalPage">到第</span>
-                    <input class="pageTxt" id="page" name="page" value="1" type="text">
-                    <span>页</span>
-                    <button type="button" class="btn btn-info btn-sm"
-                            id="pageEnter">确定
-                    </button>
-                </div>
+                <form action="{% url 'voucherStockDetail' %}" method="post" id="form">
+                    {% csrf_token %}
+                    <input type="hidden" name="coupon_code" id="coupon_code" value="{{ coupon_code }}">
+                    <input type="hidden" name="type" id="type" value="{{ type }}">
+                    <div class="page">
+                        <span>第<b>{{ page }}</b>页/共<b>{{ List.paginator.num_pages }}</b>页</span>
+                        <a id="page_a_head">首页</a>
+                        {% if List.has_previous %}
+                            <a id="page_a_up">上一页</a>
+                        {% else %}
+                            <a href="javascript:void(0)">上一页</a>
+                        {% endif %}
+                        {% if List.has_next %}
+                            <a id="page_a_down">下一页</a>
+                        {% else %}
+                            <a href="javascript:void(0)">下一页</a>
+                        {% endif %}
+                        <a id="page_a_foot">尾页</a>
+                        <span class="totalPage">到第</span>
+                        <input class="pageTxt" id="page" name="page" type="text">
+                        <span>页</span>
+                        <button type="button" class="btn btn-info btn-sm"
+                                id="pageEnter">确定
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

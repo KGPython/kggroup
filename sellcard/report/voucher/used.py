@@ -204,9 +204,11 @@ def getAmount(start, end, shops):
                            charset='utf8',
                            as_dict=True)
     cur = conn.cursor()
-    date = conn.Date()
-    sql = "SELECT * FROM tet WHERE DATE_FORMAT( code, '%Y-%m-%d')>'2010-08-01' AND DATE_FORMAT( code, '%Y-%m-%d')<'2010-08-03'"
-
+    sql = "select c.ShopID AS shop_code, count(c.CouponNO) AS common_amount, sum(ISNULL(ct.`Value`,0)) AS common_account " \
+          "from MyShop_Coupon_view c,MyShop_CouponType ct " \
+          " where c.ClearFlag = 1 and c.CouponTypeID like '8%' and c.clearsdateview  BETWEEN '{start}' AND  '{end}' " \
+          "   and c.CouponTypeID = ct.CouponTypeID and c.ClearShopID in ({shops})  "\
+          " group by c.ShopID ".format(start=start,end=end,shops=shops)
     cur.execute(sql)
     list = cur.fetchall()
     cur.close()
@@ -233,22 +235,22 @@ def getDetail(used_shop, start, end, request_shop, serial_id):
                            as_dict=True)
     cur = conn.cursor()
     sql = u" SELECT c.ShopID AS shop_code, " \
-          u"         c.`Value` AS `values`, " \
+          u"         ct.`Value` AS `values`, " \
           u"         ct.CouponTypeName AS coupon_name, " \
           u"         c.StartDate AS start_date, " \
           u"         c.EndDate AS end_date, " \
           u"         CASE WHEN ct.IfCurrShop = 0 THEN '全部店' " \
           u"          ELSE '发行店' END AS `range`, " \
           u"         count(c.CouponNO) AS used_amount, " \
-          u"         c.`Value` * count(c.CouponNO) AS used_account," \
+          u"         ct.`Value` * count(c.CouponNO) AS used_account," \
           u"         c.SerialID AS serial_id," \
           u"         '0' AS coupon_code " \
-          u" FROM MyShop_Coupon c, " \
+          u" FROM MyShop_Coupon_view c, " \
           u"       MyShop_CouponType ct " \
           u" WHERE c.CouponTypeID = ct.CouponTypeID " \
           u"   AND c.ClearFlag = 1 " \
           u"   AND c.ClearShopID IN ({code_list}) " \
-          u"   AND c.ClearSDate BETWEEN '{start}' AND '{end}' " \
+          u"   AND c.ClearSDateview BETWEEN '{start}' AND '{end}' " \
           u"   AND c.ShopID = '{shop}' " \
           u"   AND c.SerialID IN ({serial_id}) " \
           u" GROUP BY c.ShopID, " \
