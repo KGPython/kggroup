@@ -261,7 +261,7 @@ def getDetail(used_shop, start, end, request_shop):
     sql = u" SELECT c.ShopID AS shop_code, " \
           u"         ct.Value AS values_list, " \
           u"         ct.CouponTypeName AS coupon_name, " \
-          u"         c.StartDate AS start_date, " \
+          u"         CONVERT(varchar(10), c.StartDate, 120) AS start_date, " \
           u"         c.EndDate AS end_date, " \
           u"         CASE WHEN ct.IfCurrShop = 0 THEN '全部店' " \
           u"          ELSE '发行店' END AS range_list, " \
@@ -279,7 +279,7 @@ def getDetail(used_shop, start, end, request_shop):
           u" GROUP BY c.ShopID, " \
           u"           ct.Value, " \
           u"           ct.CouponTypeName, " \
-          u"           c.StartDate," \
+          u"           CONVERT(varchar(10), c.StartDate, 120)," \
           u"           c.EndDate, " \
           u"           ct.IfCurrShop," \
           u"           c.SerialID ".format(code_list=used_shop,
