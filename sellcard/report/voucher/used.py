@@ -136,7 +136,7 @@ def detail(request):
         elif role == '9':  # 唐山总部财务
             shops = shops.filter(city='T')
         else:
-            shops = shops.filter(shop_code=shop)
+            shops = shops.filter(shop_code=shop_code)
 
         code_list = []
         if shop_code != '':
