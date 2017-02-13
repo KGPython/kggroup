@@ -84,7 +84,9 @@
                                 <th rowspan="2">发行门店</th>
                                 <th colspan="2">换卡券</th>
                                 <th colspan="2">提货券</th>
-                                <th colspan="2">通用券</th>
+                                <th colspan="6">通用券</th>
+                                <th colspan="2">团购总计</th>
+                                <th colspan="2">款台总计</th>
                                 <th colspan="2">总计</th>
                             </tr>
                              <tr>
@@ -92,8 +94,16 @@
                                 <th>金额</th>
                                 <th>数量</th>
                                 <th>金额</th>
-                                <th>数量</th>
-                                <th>金额</th>
+                                <th>团购数量</th>
+                                <th>团购金额</th>
+                                <th>款台数量</th>
+                                <th>款台金额</th>
+                                <th>合计数量</th>
+                                <th>合计金额</th>
+                                <th>总数量</th>
+                                <th>总金额</th>
+                                <th>总数量</th>
+                                <th>总金额</th>
                                 <th>总数量</th>
                                 <th>总金额</th>
                             </tr>
@@ -114,12 +124,20 @@
                                         </a>
                                     </td>
                                     <td>{{ row.goods_account }}</td>
+                                    <td>{{ row.back_amount }}</td>
+                                    <td>{{ row.back_account }}</td>
+                                    <td>{{ row.front_amount }}</td>
+                                    <td>{{ row.front_account }}</td>
                                     <td>
                                         <a href="javascript:show_detail('{{ row.shop_code }}','3')">
                                             {{ row.common_amount }}
                                         </a>
                                     </td>
                                     <td>{{ row.common_account }}</td>
+                                    <td>{{ row.total_b_amount }}</td>
+                                    <td>{{ row.total_b_account }}</td>
+                                    <td>{{ row.total_f_amount }}</td>
+                                    <td>{{ row.total_f_account }}</td>
                                     <td>{{ row.total_amount }}</td>
                                     <td>{{ row.total_account }}</td>
                                 </tr>
@@ -130,8 +148,16 @@
                                     <td>{{ total.card_account }}</td>
                                     <td>{{ total.goods_amount }}</td>
                                     <td>{{ total.goods_account }}</td>
+                                    <td>{{ total.back_amount }}</td>
+                                    <td>{{ total.back_account }}</td>
+                                    <td>{{ total.front_amount }}</td>
+                                    <td>{{ total.front_account }}</td>
                                     <td>{{ total.common_amount }}</td>
                                     <td>{{ total.common_account }}</td>
+                                    <td>{{ total.total_b_amount }}</td>
+                                    <td>{{ total.total_b_account }}</td>
+                                    <td>{{ total.total_f_amount }}</td>
+                                    <td>{{ total.total_f_account }}</td>
                                     <td>{{ total.total_amount }}</td>
                                     <td>{{ total.total_account }}</td>
                                 </tr>

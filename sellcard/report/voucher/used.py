@@ -52,7 +52,9 @@ def index(request):
           u" sum(CASE WHEN c.type = 1 THEN IFNULL(jcs.used_amount, 0) ELSE 0 END ) AS card_amount, " \
           u" sum(CASE WHEN c.type = 1 THEN c.`values` * IFNULL(jcs.used_amount, 0) ELSE 0 END ) AS card_account, " \
           u" sum(CASE WHEN c.type = 2 THEN IFNULL(jcs.used_amount, 0) ELSE 0 END ) AS goods_amount, " \
-          u" sum(CASE WHEN c.type = 2 THEN c.`values` * IFNULL(jcs.used_amount, 0) ELSE 0 END ) AS goods_account " \
+          u" sum(CASE WHEN c.type = 2 THEN c.`values` * IFNULL(jcs.used_amount, 0) ELSE 0 END ) AS goods_account, " \
+          u" sum(CASE WHEN c.type = 3 THEN IFNULL(jcs.used_amount, 0) ELSE 0 END ) AS back_amount, " \
+          u" sum(CASE WHEN c.type = 3 THEN c.`values` * IFNULL(jcs.used_amount, 0) ELSE 0 END ) AS back_account " \
           u" FROM kf_jobs_coupon c, " \
           u" (SELECT count(cs.voucher) AS used_amount, cs.coupon_code " \
           u" FROM kf_jobs_coupon_sn cs " \
@@ -76,8 +78,16 @@ def index(request):
     total['card_account'] = 0
     total['goods_amount'] = 0
     total['goods_account'] = 0
+    total['back_amount'] = 0
+    total['back_account'] = 0
+    total['front_amount'] = 0
+    total['front_account'] = 0
     total['common_amount'] = 0
     total['common_account'] = 0
+    total['total_b_amount'] = 0
+    total['total_b_account'] = 0
+    total['total_f_amount'] = 0
+    total['total_f_account'] = 0
     total['total_amount'] = 0
     total['total_account'] = 0
 
@@ -86,8 +96,16 @@ def index(request):
         item['card_account'] = 0
         item['goods_amount'] = 0
         item['goods_account'] = 0
+        item['back_amount'] = 0
+        item['back_account'] = 0
+        item['front_amount'] = 0
+        item['front_account'] = 0
         item['common_amount'] = 0
         item['common_account'] = 0
+        item['total_b_amount'] = 0
+        item['total_b_account'] = 0
+        item['total_f_amount'] = 0
+        item['total_f_account'] = 0
         item['total_amount'] = 0
         item['total_account'] = 0
         for item_sn in snList:
@@ -100,19 +118,39 @@ def index(request):
                 total['goods_amount'] += int(item_sn['goods_amount'])
                 item['goods_account'] = item_sn['goods_account']
                 total['goods_account'] += float('%.2f' % item_sn['goods_account'])
+                item['back_amount'] = item_sn['back_amount']
+                total['back_amount'] += int(item_sn['back_amount'])
+                item['back_account'] = item_sn['back_account']
+                total['back_account'] += float('%.2f' % item_sn['back_account'])
         for item_erp in ErpList:
             if item['shop_code'] == item_erp['shop_code']:
                 item['common_amount'] = item_erp['common_amount']
                 total['common_amount'] += int(item_erp['common_amount'])
                 item['common_account'] = item_erp['common_account']
                 total['common_account'] += float('%.2f' % item_erp['common_account'])
+        item['front_amount'] = int(item['common_amount'])-int(item['back_amount'])
+        total['front_amount'] += int(item['front_amount'])
+        item['front_account'] = float('%.2f' % item['common_account'])-float('%.2f' % item['back_account'])
+        total['front_account'] += float('%.2f' % item['front_account'])
+        item['total_b_amount'] = int(item['card_amount'])+int(item['back_amount'])
+        total['total_b_amount'] += int(item['total_b_amount'])
+        item['total_b_account'] = float('%.2f' % item['card_account'])+float('%.2f' % item['back_account'])
+        total['total_b_account'] += float('%.2f' % item['total_b_account'])
+        item['total_f_amount'] = int(item['goods_amount'])+int(item['front_amount'])
+        total['total_f_amount'] += int(item['total_f_amount'])
+        item['total_f_account'] = float('%.2f' % item['goods_account'])+float('%.2f' % item['front_account'])
+        total['total_f_account'] += float('%.2f' % item['total_f_account'])
         item['total_amount'] = int(item['card_amount'])+int(item['goods_amount'])+int(item['common_amount'])
         total['total_amount'] += int(item['total_amount'])
         item['total_account'] = float('%.2f' % item['card_account'])+float('%.2f' % item['goods_account'])+float('%.2f' % item['common_account'])
         total['total_account'] += float('%.2f' % item['total_account'])
     total['card_account'] = '%.2f' % total['card_account']
     total['goods_account'] = '%.2f' % total['goods_account']
+    total['back_account'] = '%.2f' % total['back_account']
+    total['front_account'] = '%.2f' % total['front_account']
     total['common_account'] = '%.2f' % total['common_account']
+    total['total_b_account'] = '%.2f' % total['total_b_account']
+    total['total_f_account'] = '%.2f' % total['total_f_account']
     total['total_account'] = '%.2f' % total['total_account']
     return render(request, 'report/voucher/used/list.html', locals())
 
