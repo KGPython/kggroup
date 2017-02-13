@@ -196,7 +196,7 @@
         $(boxID+' #anomaly').find('tbody').empty();
         $(boxID+' #correct').find('tbody').empty();
         for(var i=0;i<data.length;i++){
-            if(data[i].card_status=='1' || data[i].card_value!=data[i].card_balance)
+            if(data[i].card_status=='1' || data[i].card_value!=data[i].card_blance)
             {
                 var cols = $('#correct').find('th').length;
                 var tr=$('<tr></tr>');
@@ -210,7 +210,7 @@
                         obj.val(data[i].card_value)
                     }else if(j==2){
                         var obj = $('<input class="form-control" disabled></input>');
-                        obj.val(data[i].card_balance)
+                        obj.val(data[i].card_blance)
                     }else if(j==3){
                         var obj = $('<input class="form-control" disabled></input>');
                         obj.val('未激活');
@@ -237,7 +237,7 @@
                         obj.val(data[i].card_value)
                     }else if(j==2){
                         var obj = $('<input class="form-control" disabled></input>');
-                        obj.val(data[i].card_balance)
+                        obj.val(data[i].card_blance)
                     }else if(j==3){
                         var obj = $('<input class="form-control red" disabled ></input>');
                         if(data[i].card_status=='1'){
