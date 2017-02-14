@@ -33,11 +33,15 @@
                             <div class="row formline">
                                 <label for="" class="col-md-1 formline-label">门店：</label>
                                 <div class="col-md-2 col-lg-2">
-                                    <select name="shop" id="shop" class="form-control">
-                                        {% for shop in shops %}
-                                            <option value="{{ shop.shop_code }}">{{ shop.shop_name }}</option>
-                                        {% endfor %}
-                                    </select>
+                                    {% if u_role == '2' %}
+                                        <input class="form-control" name="shop" id="shop" type="text" readonly="readonly" value="{{ u_shop }}">
+                                    {% else %}
+                                        <select name="shop" id="shop" class="form-control">
+                                            {% for shop in shops %}
+                                                <option value="{{ shop.shop_code }}">{{ shop.shop_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    {% endif %}
                                 </div>
 
                                 <label for="" class="col-md-1 formline-label">开始时间：</label>

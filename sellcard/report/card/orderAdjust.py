@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from sellcard.models import OrderErr
 import json,datetime
 import sellcard.views as base
-
+from sellcard.common import Method as mth
 def create(request):
     u_id = request.session.get('s_uid')
     shop = request.session.get('s_shopcode')
@@ -64,7 +64,17 @@ def index2(request):
     return render(request,'report/card/orderAdjust/index.html',locals())
 
 def index(request):
-    shops = base.findShop()
+    u_role = request.session.get('s_roleid')
+
+    if u_role == '1' or u_role == '6':
+        shops = mth.getCityShops()
+    if u_role == '9':
+        shops = mth.getCityShops('T')
+    if u_role == '8':
+        shops = mth.getCityShops('C')
+    if u_role == '10' or u_role == '2':
+        u_shop = request.session.get('s_shopcode')
+
     monthFirst = str(datetime.date.today().replace(day=1))
     now = str(datetime.date.today()+datetime.timedelta(1))
     if request.method == 'GET':
