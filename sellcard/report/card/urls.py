@@ -23,8 +23,7 @@ urlpatterns = [
     url(r'^shopsale/order/info/$', 'sellcard.report.card.saleGroupByOrder.orderDetail',name='orderDetail'),
 
     url(r'^order/adjust/create$', 'sellcard.report.card.orderAdjust.create',name='orderAdjustCreate'),
-    # url(r'^order/adjust/$', 'sellcard.report.card.orderAdjust.index',name='orderAdjust'),
-    url(r'^order/adjust/$', 'sellcard.report.card.orderAdjust.index2',name='orderAdjust'),
+    url(r'^order/adjust/$', 'sellcard.report.card.orderAdjust.index',name='orderAdjust'),
 
     #領卡单据盘点
     url('^cardSent/order/$', 'sellcard.report.card.cardSentGroupByOrder.index', name='sentCardGroupByOrder'),

@@ -22,9 +22,11 @@
             <div class="widget-box">
                 <div class="widget-title"><span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
                     <h5>订单基础信息</h5>
+                    {% if role == '1' or role == '6' %}
                     <span class="icon-add-btn">
                         <button type="button" class="btn btn-success btn-xs" id="payErr">支付调整</button>
                     </span>
+                    {% endif %}
                 </div>
                 <div class="widget-content nopadding">
                     <div class="widget-content">

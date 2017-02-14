@@ -105,6 +105,7 @@ def index(request):
 
 
 def orderDetail(request):
+    role = request.session.get('s_roleid')
     orderSn = request.GET.get('orderSn', '')
     actionType = request.GET.get('actionType', '1')
     total_in_price = total_out_price = 0.00
@@ -153,7 +154,7 @@ def orderDetail(request):
                 cardsInNum += 1
             if num['card_attr'] == '0':
                 cardsOutNum += 1
-    return render(request, 'report/card/orderDetail.html', locals())
+    return render(request, 'report/card/saleGroupByOrder/orderDetail.html', locals())
 
 
 

@@ -21,7 +21,7 @@ def create(request):
     return HttpResponse(json.dumps(res))
 
 
-def index(request):
+def index2(request):
     shops = base.findShop()
     monthFirst = str(datetime.date.today().replace(day=1))
     now = str(datetime.date.today()+datetime.timedelta(1))
@@ -63,7 +63,7 @@ def index(request):
             data.append(row)
     return render(request,'report/card/orderAdjust/index.html',locals())
 
-def index2(request):
+def index(request):
     shops = base.findShop()
     monthFirst = str(datetime.date.today().replace(day=1))
     now = str(datetime.date.today()+datetime.timedelta(1))
