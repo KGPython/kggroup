@@ -1,9 +1,4 @@
-$(document).ready(function(){
-    var parterVal = $('#parter').val();
-    $('#parterId').val(parterVal);
-    var blankVal = $('#blank').val();
-    $('#blankId').val(blankVal);
-});
+
 /*
 * 删除卡列表的一行，同时计算卡列表合计
 * dom：删除按钮自身节点；action:操作类型（1：出卡，2：入卡）
@@ -18,7 +13,6 @@ $(document).on('click','.formline .btn-add',function(){
     var formLine = $(this).parent().parent().clone();
     formBox.append(formLine);
     formLine.find('input').val('');
-
 });
 
 //增加table的tr，根据不同场景，产生不同的tr
@@ -1040,12 +1034,6 @@ function setTotalBycardSaleTotalVal(discRate,cardSaleTotalVal){
     $('.Total #totalPaid b').text(cardSaleTotalVal+discountPay);
 }
 
-
-
-
-
-
-
 /******************************  支付相关 end   *****************************************/
 
 function closeFun() {
@@ -1057,3 +1045,21 @@ Array.prototype.remove = function(val) {
     this.splice(index, 1);
     }
 };
+function checkAll(obj) {
+    var _this = obj;
+    $(_this).click(function(){
+        var check_status=$(_this).prop('checked');
+        var tbody = $(_this).parents('table').find('tbody');
+        if(check_status){
+            $("tbody :checkbox").prop('checked',true);
+        }else{
+            $("tbody :checkbox").prop('checked',false);
+        }
+    });
+}
+$(document).ready(function(){
+    var parterVal = $('#parter').val();
+    $('#parterId').val(parterVal);
+    var blankVal = $('#blank').val();
+    $('#blankId').val(blankVal);
+});

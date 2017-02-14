@@ -1,21 +1,23 @@
-
-.table > thead> tr > th {
+.table > thead > tr > th {
     border-left: 1px solid #ccc;
     border-right: 1px solid #ccc;
     border-top: 1px solid #ccc;
-	vertical-align:middle;
+    vertical-align: middle;
 }
+
 .table > thead:first-child > tr:first-child > th {
     border-top: 1px solid #ccc;
 }
-.table-form-my > tbody > tr > td{
-    padding: 0!important;
+
+.table-form-my > tbody > tr > td {
+    padding: 0 !important;
     text-align: left;
     text-indent: 8px;
     /*line-height: 34px;*/
     border: 1px solid #ccc;
     vertical-align: middle;
 }
+
 table th,
 .widget-content .table > tbody > tr > td,
 .table-form-my > tbody > tr > td {
@@ -30,60 +32,116 @@ table a {
     text-decoration: underline;
     color: #000;
 }
-table a:hover,table a:hover span{color: #f00}
 
-table input[type="checkbox"]{
-	margin-top: 10px;
+table a:hover, table a:hover span {
+    color: #f00
 }
-.table-form-my .form-control{box-shadow: none;border: none;background-color: #f9f9f9;}
-.widget-box p.text{
+
+table input[type="checkbox"] {
+    margin-top: 10px;
+}
+td.first-col ,
+.row-total td {
+    background-color: #d58512;
+    color: #90111A !important;
+}
+
+.table-form-my .form-control {
+    box-shadow: none;
+    border: none;
+    background-color: #f9f9f9;
+}
+
+.widget-box p.text {
     color: #666;
     font-size: 15px;
     padding: 8px;
     line-height: 22px;
-	margin-bottom: 0;
+    margin-bottom: 0;
 }
-.label-my{float: left;text-align: left;line-height: 34px;font-weight: normal;padding-left:15px;font-size: 15px; }
-.enter-box{margin-top: 15px;margin-bottom: 15px;overflow: hidden;padding-right: 20px;line-height: 25px;}
-.enter-box label{margin-right: 15px;color: #a94442;line-height: 25px;}
-.enter-box input{border: 1px solid #ccc;outline: none}
-.Total .row{margin: 0;}
-.Total #discount input{border: 1px solid #eee;outline: none;background:#F9F9F9;width: 80px;}
-.Total #disCode input{border: 1px solid #eee;outline: none;background:#FFF;width: 150px;}
+
+.label-my {
+    float: left;
+    text-align: left;
+    line-height: 34px;
+    font-weight: normal;
+    padding-left: 15px;
+    font-size: 15px;
+}
+
+.enter-box {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    overflow: hidden;
+    padding-right: 20px;
+    line-height: 25px;
+}
+
+.enter-box label {
+    margin-right: 15px;
+    color: #a94442;
+    line-height: 25px;
+}
+
+.enter-box input {
+    border: 1px solid #ccc;
+    outline: none
+}
+
+.Total .row {
+    margin: 0;
+}
+
+.Total #discount input {
+    border: 1px solid #eee;
+    outline: none;
+    background: #F9F9F9;
+    width: 80px;
+}
+
+.Total #disCode input {
+    border: 1px solid #eee;
+    outline: none;
+    background: #FFF;
+    width: 150px;
+}
 
 /*
 ***************************************分页按钮****************************************
 */
-.page{
-	text-align: center;
-	margin-bottom: 20px;
-	margin-top: 20px;
+.page {
+    text-align: center;
+    margin-bottom: 20px;
+    margin-top: 20px;
     font-size: 1.1em;
-    float:right;
+    float: right;
     padding-right: 50px;
 }
-.page a{
-	display: inline-block;
-	height: 24px;
-	line-height: 24px;
-	padding:0 12px;
-	margin:0 2px;
+
+.page a {
+    display: inline-block;
+    height: 24px;
+    line-height: 24px;
+    padding: 0 12px;
+    margin: 0 2px;
 }
-.page span{
-	display: inline-block;
-	height: 24px;
-	line-height: 24px;
-	_line-height: 20px;
-	padding:0 12px;
-	margin:0 2px;
+
+.page span {
+    display: inline-block;
+    height: 24px;
+    line-height: 24px;
+    _line-height: 20px;
+    padding: 0 12px;
+    margin: 0 2px;
 }
-.page .pageTxt{
-	width:29px;
-	padding:0 3px;
-	height: 24px;
-	line-height: 24px\9;
-	_line-height: 28px\9;
-	color:#333;
-	text-align: center;
+
+.page .pageTxt {
+    width: 29px;
+    padding: 0 3px;
+    height: 24px;
+    line-height: 24px \9;
+    _line-height: 28px \9;
+    color: #333;
+    text-align: center;
 }
 

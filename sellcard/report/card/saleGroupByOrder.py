@@ -1,14 +1,13 @@
 #-*- coding:utf-8 -*-
-import json
-
 from django.shortcuts import render
+from django.http import HttpResponse
 from django.core.paginator import Paginator
 import datetime
 
 from sellcard.common import Method as mth
 from sellcard import views as base
 from sellcard.models import Orders,AdminUser,OrderUpCard,OrderChangeCard, OrderInfo, OrderPaymentInfo, OrderUpCardInfo, \
-    OrderChangeCardInfo, OrderChangeCardPayment
+    OrderChangeCardInfo, OrderChangeCardPayment,OrderErr
 
 
 def index(request):
@@ -39,7 +38,7 @@ def index(request):
         if name:
             user = AdminUser.objects.values('id').filter(name=name)
             if not user:
-                return render(request, 'report/card/saleGroupByOrder.html', locals())
+                return render(request, 'report/card/saleGroupByOrder/index.html', locals())
             else:
                 operator = user[0]['id']
 
@@ -50,7 +49,7 @@ def index(request):
         if name:
             user = AdminUser.objects.values('id').filter(name=name)
             if not user:
-                return render(request, 'report/card/saleGroupByOrder.html', locals())
+                return render(request, 'report/card/saleGroupByOrder/index.html', locals())
             else:
                 operator = user[0]['id']
 
@@ -102,13 +101,14 @@ def index(request):
         resList = paginator.page(page)
     except Exception as e:
         print(e)
-    return  render(request, 'report/card/saleGroupByOrder.html', locals())
+    return  render(request, 'report/card/saleGroupByOrder/index.html', locals())
 
 
 def orderDetail(request):
     orderSn = request.GET.get('orderSn', '')
     actionType = request.GET.get('actionType', '1')
     total_in_price = total_out_price = 0.00
+    payments = base.findPays()
 
     if actionType == '1':
         order = Orders.objects \
@@ -155,10 +155,5 @@ def orderDetail(request):
                 cardsOutNum += 1
     return render(request, 'report/card/orderDetail.html', locals())
 
-def payErr(request):
-    operator = request.session.get('s_uid')
-    remark = request.POST.get('remark')
 
-    res = {}
-    return json.dumps(res)
 
