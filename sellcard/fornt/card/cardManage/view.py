@@ -30,7 +30,7 @@ def cardInStore(request):
                 if(len(list)>0):
                     res['msg']='1'
                 else:
-                    sql="SELECT CardNO,detail FROM guest WHERE SheetID ='"+sheetid+"' and cardtype in (select cardtype from cardtype where flag=1)"
+                    sql="SELECT CardNO,detail FROM guest WHERE SheetID ='"+sheetid+"' and cardtype and detail=New_amount in (select cardtype from cardtype where flag=1)"
 
                     cur.execute(sql)
                     cardList = cur.fetchall()
