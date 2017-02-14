@@ -38,7 +38,8 @@ def cardInStore(request):
                     try:
                         with transaction.atomic():
                             for card in cardList:
-                                updateNum = CardInventory.objects.filter(card_no=card['CardNO'],card_status='1',card_action='1',card_blance=0)\
+                                updateNum = CardInventory.objects\
+                                        .filter(card_no=card['CardNO'],card_status='1',card_action='1',card_blance=0,shop_code=shop)\
                                         .update(card_blance =card['detail'],card_value =card['detail'],charge_time=datetime.datetime.now(),sheetid=sheetid)
                                 card['detail'] = float(card['detail'])
                                 if not updateNum:
