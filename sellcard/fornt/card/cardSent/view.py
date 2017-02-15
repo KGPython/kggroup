@@ -26,8 +26,7 @@ def sentOrderSave(request):
     # 获取用户表单提交的Token值
     userToken = request.POST.get('postToken', '')
     if userToken != Token:
-        res["msg"] = 1
-        return HttpResponse(json.dumps(res))
+        raise MyError('表单重复提交，CTRL+F5刷新页面后，重试！')
 
     cardStr = request.POST.get('list','')
     cards = json.loads(cardStr)
@@ -56,9 +55,8 @@ def sentOrderSave(request):
                 obj.card_nums = card['subTotal']
                 obj.card_value = card['cardType']
                 obj.save()
+
                 #CardInventory写入卡信息
-
-
                 for i in range(int(card['start']),int(card['end'])+1):
                     diff = len(card['start'])-len(str(int(card['start'])))
                     prefix = ''
@@ -74,22 +72,16 @@ def sentOrderSave(request):
                     item.shop_code = shop
                     item.card_blance='0.00'
                     item.card_addtime=datetime.datetime.now()
-
                     cardList.append(item)
             CardInventory.objects.bulk_create(cardList)
-        res['msg']='0'
+        res['status']='1'
         ActionLog.objects.create(action='信息部发卡',u_name=request.session.get('s_uname'),cards_out=cardStr,add_time=datetime.datetime.now())
-
         del request.session['postToken']
-    except MyError as e1:
-        print('My exception occurred, value:', e1.value)
-        res['msg']='2'
-        res['cardId']=e1.value
-        ActionLog.objects.create(action='信息部发卡',u_name=request.session.get('s_uname'),cards_out=cardStr,add_time=datetime.datetime.now(),err_msg=e1.value)
-
     except Exception as e:
         print(e)
-        res['msg']='1'
+        if hasattr(e,'value'):
+            res['msg'] = e.value
+        res['status']='0'
         ActionLog.objects.create(action='信息部发卡',u_name=request.session.get('s_uname'),cards_out=cardStr,add_time=datetime.datetime.now(),err_msg=e)
     return HttpResponse(json.dumps(res))
 

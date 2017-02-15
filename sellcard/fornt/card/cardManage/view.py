@@ -21,14 +21,14 @@ def cardInStore(request):
         cur.execute(findSheetCode)
         shopDict  = cur.fetchone()
         if not shopDict:
-            res['msg']='5'
+            raise MyError('此入库单号不存在')
         else:
             if shopDict['note'].strip() != shop:
-                res['msg']='4'
+                raise MyError('此单号不属于此门店，权限受限')
             else:
                 list = CardInventory.objects.values('order_sn').filter(sheetid=sheetid)
                 if(len(list)>0):
-                    res['msg']='1'
+                    raise MyError('此单号已经存在')
                 else:
                     sql="SELECT CardNO,detail FROM guest WHERE SheetID ='"+sheetid+"' " \
                         "and cardtype in (select cardtype from cardtype where flag=1) and detail=New_amount"
@@ -45,12 +45,13 @@ def cardInStore(request):
                                 card['detail'] = float(card['detail'])
                                 if not updateNum:
                                     raise MyError(card['CardNO']+'状态更新失败')
-                            res['msg']='2'
+                            res['status']='1'
                             ActionLog.objects.create(action='门店卡入库',u_name=request.session.get('s_uname'),cards_in=json.dumps(cardList),add_time=datetime.datetime.now())
 
                     except Exception as e:
-                        print(e)
-                        res['msg']='3'
+                        if hasattr(e, 'value'):
+                            res['msg'] = e.value
+                        res["status"] = 0
                         ActionLog.objects.create(action='门店卡入库',u_name=request.session.get('s_uname'),add_time=datetime.datetime.now(),err_msg=e)
 
     return render(request, 'card/manage/cardInStore.html', locals())
