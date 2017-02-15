@@ -251,12 +251,17 @@
                 'postToken':$('#post-token').val()
             },
             success:function(data){
-                if(data.status=='0'){
+                if(data.status=='1'){
                     alert('数据提交成功');
                     window.location.reload(true);
                     $('input[type=text]').val('')
-                }else if(data.status=='1'){
-                    alert(data.msg)
+                }else if(data.status=='0'){
+                    if(data.msg){
+                        alert(data.msg);
+                    }else{
+                        alert('提交失败');
+                    }
+
                 }
             }
         })
