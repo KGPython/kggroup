@@ -20,22 +20,21 @@ def index(request):
 @transaction.atomic
 def sentOrderSave(request):
     orderSn = 'G'+mth.setOrderSn(CardReceive)
-    res = {}
-    # 检测session中Token值，判断用户提交动作是否合法
-    Token = request.session.get('postToken', default=None)
-    # 获取用户表单提交的Token值
-    userToken = request.POST.get('postToken', '')
-    if userToken != Token:
-        raise MyError('表单重复提交，CTRL+F5刷新页面后，重试！')
-
     cardStr = request.POST.get('list','')
     cards = json.loads(cardStr)
     shop = request.POST.get('shop','')
     person = request.POST.get('person','')
     saleType = request.POST.get('saleType','')
 
-
+    res = {}
     try:
+        # 检测session中Token值，判断用户提交动作是否合法
+        Token = request.session.get('postToken', default=None)
+        # 获取用户表单提交的Token值
+        userToken = request.POST.get('postToken', '')
+        if userToken != Token:
+            raise MyError('表单重复提交，刷新页面后，重试！')
+
         with transaction.atomic():
             receive = CardReceive()
             receive.rec_sn = orderSn

@@ -88,16 +88,16 @@ def save(request):
     for card in cardList:
         cardnoList.append(card['cardId'])
     now = datetime.datetime.now()
+
     res = {}
-
-    # 检测session中Token值，判断用户提交动作是否合法
-    Token = request.session.get('postToken', default=None)
-    # 获取用户表单提交的Token值
-    userToken = request.POST.get('postToken','')
-    if userToken != Token:
-        raise MyError('表单重复提交，CTRL+F5刷新页面后，重试！')
-
     try:
+        # 检测session中Token值，判断用户提交动作是否合法
+        Token = request.session.get('postToken', default=None)
+        # 获取用户表单提交的Token值
+        userToken = request.POST.get('postToken', '')
+        if userToken != Token:
+            raise MyError('表单重复提交，刷新页面后，重试！')
+
         with transaction.atomic():
             cardsNum = len(cardnoList)
             resCard = CardInventory.objects.filter(card_no__in=cardnoList).update(card_status='1',card_action='1')
