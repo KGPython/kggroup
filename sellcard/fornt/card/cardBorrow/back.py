@@ -88,37 +88,36 @@ def save(request):
     for card in cardList:
         cardnoList.append(card['cardId'])
     now = datetime.datetime.now()
+
     res = {}
-
-    # 检测session中Token值，判断用户提交动作是否合法
-    Token = request.session.get('postToken', default=None)
-    # 获取用户表单提交的Token值
-    userToken = request.POST.get('postToken','')
-    if userToken != Token:
-        res["msg"] = 0
-        return HttpResponse(json.dumps(res))
-
     try:
+        # 检测session中Token值，判断用户提交动作是否合法
+        Token = request.session.get('postToken', default=None)
+        # 获取用户表单提交的Token值
+        userToken = request.POST.get('postToken', '')
+        if userToken != Token:
+            raise MyError('表单重复提交，刷新页面后，重试！')
+
         with transaction.atomic():
             cardsNum = len(cardnoList)
             resCard = CardInventory.objects.filter(card_no__in=cardnoList).update(card_status='1',card_action='1')
             if resCard != cardsNum:
-                raise MyError('系统数据库卡状态更新失败')
+                raise MyError('CardInventory状态更新失败')
 
             resBorrow = OrderBorrowInfo.objects.filter(card_no__in=cardnoList,order_sn__in=orderSnList,is_back=None).update(is_back='1',back_time=now)
             if resBorrow != cardsNum:
-                raise MyError('退卡状态更新失败')
+                raise MyError('OrderBorrowInfo更新失败')
 
-            resErp = mth.updateCard(cardnoList, '9')
-            if resErp != cardsNum:
-                mth.updateCard(cardnoList, '1')
-                raise MyError('ERP数据库卡状态更新失败')
+            resGuest = mth.updateCard(cardnoList, '9',cardsNum)
+            if not resGuest:
+                raise MyError('Guest更新失败')
 
-            res['msg'] = 1
+            res['status'] = 1
             ActionLog.objects.create(action='借卡-还卡',u_name=request.session.get('s_uname'),cards_in=cardsStr,add_time=datetime.datetime.now())
             del request.session['postToken']
     except Exception as e:
-        res['msg'] = 0
-        res["msg_err"] = e
+        res['status'] = 0
+        if hasattr(e,'value'):
+            res['msg'] = e.value
         ActionLog.objects.create(action='借卡-还卡',u_name=request.session.get('s_uname'),cards_in=cardsStr,add_time=datetime.datetime.now(),err_msg=e)
     return HttpResponse(json.dumps(res))

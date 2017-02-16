@@ -145,7 +145,6 @@
         var payJson = getPayList1($('.payList'));
         var payList = payJson['payList'];
         var totalPay = payJson['totalVal'];
-        console.log(totalVal,totalPay);
         if(totalPay!=totalVal){
             alert('实际支付与应付合计不符');
             return false;

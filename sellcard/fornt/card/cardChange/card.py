@@ -24,16 +24,6 @@ def save(request):
     shopCode = request.session.get('s_shopcode','')
     depart = request.session.get('s_depart','')
 
-    res = {}
-
-    # 检测session中Token值，判断用户提交动作是否合法
-    Token = request.session.get('postToken', default=None)
-    # 获取用户表单提交的Token值
-    userToken = request.POST.get('postToken','')
-    if userToken != Token:
-        res["msg"] = 0
-        return HttpResponse(json.dumps(res))
-
     #入卡列表
     cardListInStr = request.POST.get('cardListIn','')
     cardListIn = json.loads(cardListInStr)
@@ -78,7 +68,15 @@ def save(request):
     buyerPhone = (request.POST.get('buyerPhone','')).strip()
 
     order_sn = ''
+    res = {}
     try:
+        # 检测session中Token值，判断用户提交动作是否合法
+        Token = request.session.get('postToken', default=None)
+        # 获取用户表单提交的Token值
+        userToken = request.POST.get('postToken', '')
+        if userToken != Token:
+            raise MyError('表单重复提交，刷新页面后，重试！')
+
         with transaction.atomic():
             order_sn = 'C'+mth.setOrderSn(OrderChangeCard)
             created_time=datetime.datetime.today()
@@ -162,7 +160,7 @@ def save(request):
 
             for card in cardListIn:
                 resUpdate = CardInventory.objects\
-                            .filter(card_no=card['cardId'],card_value=F('card_balance'))\
+                            .filter(card_no=card['cardId'],card_value=F('card_blance'))\
                             .update(card_status='1', card_action='1',shop_code=shopCode)
                 resSave = 0
                 if resUpdate==0:
@@ -180,31 +178,31 @@ def save(request):
                 if (resUpdate==0 and resSave==0):
                         raise MyError(card['cardId']+'状态更新失败')
 
-            resCardOut = CardInventory.objects.filter(card_no__in=cardIdOutList,card_value=F('card_balance')).update(card_status='2',card_action='0')
+            resCardOut = CardInventory.objects.filter(card_no__in=cardIdOutList,card_value=F('card_blance')).update(card_status='2',card_action='0')
             if resCardOut != cardsOutNum:
-                raise MyError('系统数据库卡状态更新失败')
+                raise MyError('CardInventory状态更新失败')
 
             if discCode:
                 resCode = mth.updateDisCode(discCode,shopCode,order_sn)
                 if resCode == 0:
                     raise MyError('折扣授权码状态更新失败')
 
-            resErpOut = mth.updateCard(cardIdOutList,'1')
-            resErpIn = mth.updateCard(cardIdInList,'9')
-            if resErpIn != cardsInNum or resErpOut != cardsOutNum:
-                mth.updateCard(cardIdOutList,'9')
-                mth.updateCard(cardIdInList,'1')
-                raise MyError('ERP数据库卡状态更新失败')
+            resGuestOut = mth.updateCard(cardIdOutList,'1',cardsOutNum)
+            if not resGuestOut:
+                raise ('Guest出卡更新失败')
+            resGuestIn = mth.updateCard(cardIdInList,'9',cardsInNum)
+            if not resGuestIn:
+                raise ('Guest入卡更新失败')
 
-
-
-            res["msg"] = 1
-            # res["urlRedirect"] ='/kg/sellcard/fornt/cardsale/orderInfo/?orderSn=' + order_sn
+            res["status"] = 1
             ActionLog.objects.create(action='换卡-单卡',u_name=request.session.get('s_uname'),cards_in=cardListInStr,cards_out=cardListOutStr,add_time=datetime.datetime.now())
             del request.session['postToken']
     except Exception as e:
-        res["msg"] = 0
-        res["msg_err"] = e
+        res["status"] = 0
+        if e.value:
+            res['msg'] = e.value
+        else:
+            res["msg"] = e
         ActionLog.objects.create(action='换卡-单卡',u_name=request.session.get('s_uname'),cards_in=cardListInStr,cards_out=cardListOutStr,add_time=datetime.datetime.now(),err_msg=e)
 
     return HttpResponse(json.dumps(res))

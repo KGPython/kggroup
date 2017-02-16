@@ -20,8 +20,10 @@ urlpatterns = [
 
     #门店销售明细查询
     url(r'^shopsale/order/$', 'sellcard.report.card.saleGroupByOrder.index', name="saleGroupByOrder"),
-    #订单明细
     url(r'^shopsale/order/info/$', 'sellcard.report.card.saleGroupByOrder.orderDetail',name='orderDetail'),
+
+    url(r'^order/adjust/create$', 'sellcard.report.card.orderAdjust.create',name='orderAdjustCreate'),
+    url(r'^order/adjust/$', 'sellcard.report.card.orderAdjust.index',name='orderAdjust'),
 
     #領卡单据盘点
     url('^cardSent/order/$', 'sellcard.report.card.cardSentGroupByOrder.index', name='sentCardGroupByOrder'),

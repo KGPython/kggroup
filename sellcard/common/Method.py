@@ -8,12 +8,10 @@ from sellcard.models import CardInventory, Orders, ExchangeCode,DisCode,Shops,Ac
 from django.conf import settings
 from django.core import serializers
 from django.http import HttpResponse
-from django.db import transaction
 import datetime,json
 import pymysql,_mssql
 import decimal
-from django.db.models import Count
-
+from sellcard.common.model import MyError
 
 def getMssqlConn(as_dict=True):
     conn = pymssql.connect(host=Constants.KGGROUP_DB_SERVER,
@@ -204,7 +202,8 @@ def changeCodeCheck(request):
 
 
 # 跟新ERP内部卡状态
-def updateCard(list, mode):
+
+def updateCard(list, mode, num):
     cards = "'"
     for obj in list:
         cards += str(obj)
@@ -214,25 +213,22 @@ def updateCard(list, mode):
           .format(mode=mode,cards=cards)
     conn = getMssqlConn()
     cur = conn.cursor()
-    res =0
     try:
         conn.autocommit(False)
         cur.execute(sql)
         res = cur.rowcount
-        conn.commit()
-    except  Exception as e:
-        print(e)
-        if mode=='1':
-            ActionLog.objects.create(cards_in=','.join(list) , add_time=datetime.datetime.now(), err_msg=e)
-        if mode=='9':
-            ActionLog.objects.create(cards_out=','.join(list) , add_time=datetime.datetime.now(), err_msg=e)
+        if res != num :
+            raise MyError('卡库数据更新失败')
+        else:
+            conn.commit()
+            return type
+    except Exception as e:
         conn.rollback()
+        print(e)
+        return False
     finally:
         cur.close()
         conn.close()
-
-    return res
-
 
 
 def setOrderSn(mode=None):

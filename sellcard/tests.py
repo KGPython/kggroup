@@ -13,23 +13,4 @@ def executeTest():
     print(res)
 executeTest()
 
-def updateCard(list,mode):
-    cards = "'"
-    for obj in list:
-        cards += str(obj)
-        cards += "','"
-    cards = cards[0:len(cards)-2]
-    sql = "UPDATE guest SET Mode ='"+mode+"' WHERE CardNO in ("+cards+")"
-    conn = mth.getMssqlConn()
 
-    conn.autocommit(False)
-    cur = conn.cursor()
-    cur.execute(sql)
-    res = cur.fetchall()
-    conn.commit()
-    cur.close()
-    conn.close()
-    if res is None:
-        return 0
-    else:
-        return len(res)

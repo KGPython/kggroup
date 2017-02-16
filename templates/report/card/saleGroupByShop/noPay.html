@@ -21,11 +21,7 @@
         text-align: center;
         color: #000
     }
-    .saleCol{background-color: #46b8da;}
     .totalRow td{background-color: #d58512;}
-    .discCol{background-color:#c1e2b3}
-    .discTypeTotal{background-color: #8a6d3b;}
-    .discTotal,.saleTotal{background-color: #23527c;}
     .table > thead > tr > th{
         padding: 3px;
     }
@@ -63,6 +59,7 @@
                                     <th rowspan="3">赊销单位</th>
                                     <th colspan="6" style="text-align:center;vertical-align:middle;">到帐金额</th>
                                     <th rowspan="3">到帐状态</th>
+                                    <th rowspan="3">到帐日期</th>
                                 </tr>
                                 <tr>
                                     <th rowspan="2">现金</th>
@@ -89,6 +86,7 @@
                                         <td class="bank">{{ row.bank_sn |default:'无'}}</td>
                                         <td class="bank">{{ row.pay_company |default:'无'}}</td>
                                         <td>{% if row.is_pay == '1' %}<span class="red">已到账</span>{% else %}未到账{% endif %}</td>
+                                        <td>{{ row.change_time | date:'y-m-d' | default:'无'}}</td>
                                     </tr>
                                 {% endfor %}
                             </tbody>

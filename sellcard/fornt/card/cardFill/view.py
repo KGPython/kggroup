@@ -93,11 +93,12 @@ def save(request):
             #冻结旧卡
             CardInventory.objects.filter(card_no__in=cardIdInList).update(card_status=4)
             ActionLog.objects.create(action='补卡-补卡',u_name=request.session.get('s_uname'),cards_in=cardInStr,add_time=datetime.datetime.now())
-            res["msg"] = 1
+            res["status"] = 1
             res["urlRedirect"] = '/kg/sellcard/fornt/cardfill/query/'
     except Exception as e:
         print(e)
-        res["msg"] = 0
+        res["status"] = 0
+        res["msg"] = e
         ActionLog.objects.create(action='补卡-补卡',u_name=request.session.get('s_uname'),cards_in=cardInStr,add_time=datetime.datetime.now(),err_msg=e)
 
     return HttpResponse(json.dumps(res))
@@ -165,18 +166,20 @@ def update(request):
             cardOutNum = len(cardIdOutList)
             resCardOut = CardInventory.objects.filter(card_no__in=cardIdOutList).update(card_status=2)
             if resCardOut != cardOutNum:
-                raise MyError('系统数据库卡状态更新失败')
+                raise MyError('CardInventory状态更新失败')
             #回写卡库
-            resErp = mtu.updateCard(cardIdOutList,"1")
-            if resErp != cardOutNum:
-                mtu.updateCard(cardIdOutList,"9")
-                raise MyError('ERP数据库卡状态更新失败！')
-            res["msg"] = 1
+            resGuest = mtu.updateCard(cardIdOutList,"1",cardOutNum)
+            if not resGuest:
+                raise MyError('Guest更新失败')
+
+            res["status"] = 1
             res['urlRedirect'] = '/kg/sellcard/fornt/cardfill/query/'
             ActionLog.objects.create(action='补卡-领卡',u_name=request.session.get('s_uname'),cards_out=cardOutStr,add_time=datetime.datetime.now())
 
     except Exception as e:
-        res["msg"] = 0
+        res["status"] = 0
+        if hasattr(e,'value'):
+            res['msg'] = e.value
         ActionLog.objects.create(action='补卡-领卡',u_name=request.session.get('s_uname'),cards_out=cardOutStr,add_time=datetime.datetime.now(),err_msg=e)
 
     return HttpResponse(json.dumps(res))

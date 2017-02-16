@@ -235,7 +235,7 @@ def noPay(request):
     cur = conn.cursor()
 
     #售卡数据
-    saleSql = 'select a.order_sn,b.pay_id ,b.pay_value,b.change_time,b.bank_name,b.bank_sn,b.pay_company,b.is_pay ' \
+    saleSql = 'select a.order_sn,a.buyer_company,b.pay_id ,b.pay_value,b.change_time,b.bank_name,b.bank_sn,b.pay_company,b.is_pay ' \
               'from orders as a , order_payment_info as b ' \
               'where a.add_time>="{start}" and a.add_time<="{end}" and a.shop_code ="{shop}" and a.order_sn = b.order_id and (ISNULL(b.change_time) is FALSE or b.pay_id=4) ' \
               'order by b.is_pay,a.order_sn' \
@@ -257,7 +257,7 @@ def noPay(request):
     data = saleData+changeData
     totalPay = saleTotalPay + changeTotalPay
     totalNoPay = saleTotalNoPay + changeTotalNoPay
-    data = sorted(data,key=itemgetter('is_pay','order_sn'),reverse=False)
+    data = sorted(data,key=itemgetter('is_pay','order_sn'),reverse=True)
     return render(request,'report/card/saleGroupByShop/noPay.html', locals())
 
 #列转行
@@ -271,26 +271,25 @@ def formatData(List):
         item = {}
         item['orderNoPay'] = 0
         item['order_sn'] = sn
-        for sale in List:
-            if sale['order_sn'] == sn:
-                item['is_pay'] = sale['is_pay']
-                item['orderNoPay'] += float(sale['pay_value'])
-                if sale['is_pay'] == '1':
-                    totalPay += float(sale['pay_value'])
-                    if sale['pay_id'] == 1:
-                        item['cash'] = float(sale['pay_value'])
-                    if sale['pay_id'] == 3:
-                        item['bank'] = float(sale['pay_value'])
-                        item['bank_name'] = sale['bank_name']
-                        item['bank_sn'] = sale['bank_sn']
-                        item['pay_company'] = sale['pay_company']
-                    if sale['pay_id'] == 5:
-                        item['pos'] = float(sale['pay_value'])
+        for obj in List:
+            if obj['order_sn'] == sn:
+                item['is_pay'] = obj['is_pay']
+                item['depart'] = obj['buyer_company']
+                item['change_time'] = obj['change_time']
+                if obj['is_pay'] == '1':
+                    totalPay += float(obj['pay_value'])
+                    if obj['pay_id'] == 1:
+                        item['cash'] = float(obj['pay_value'])
+                    if obj['pay_id'] == 3:
+                        item['bank'] = float(obj['pay_value'])
+                        item['bank_name'] = obj['bank_name']
+                        item['bank_sn'] = obj['bank_sn']
+                        item['pay_company'] = obj['pay_company']
+                    if obj['pay_id'] == 5:
+                        item['pos'] = float(obj['pay_value'])
                 else:
-                    totalNoPay += float(sale['pay_value'])
-                    item['orderNoPay'] += float(sale['pay_value'])
-
-
+                    totalNoPay += float(obj['pay_value'])
+                    item['orderNoPay'] += float(obj['pay_value'])
         data.append(item)
     return data,totalPay,totalNoPay
 
@@ -496,12 +495,8 @@ def date_detail(request):
           u" WHERE occ.order_sn = b.order_id " \
           u" and occ.add_time>='{start_b}' " \
           u" and occ.add_time<='{end_b}' " \
-          u" and occ.shop_code ='{shopcode_b}' ) d group by  d.date_time ".format(start_a=start,
-                                                                                  end_a=endTime,
-                                                                                  shopcode_a=shopcode,
-                                                                                  start_b=start,
-                                                                                  end_b=endTime,
-                                                                                  shopcode_b=shopcode)
+          u" and occ.shop_code ='{shopcode_b}' ) d group by  d.date_time "\
+         .format(start_a=start, end_a=endTime, shopcode_a=shopcode, start_b=start, end_b=endTime,shopcode_b=shopcode)
     cur.execute(sql)
     List = cur.fetchall()
 

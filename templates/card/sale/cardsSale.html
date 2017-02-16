@@ -180,12 +180,5 @@
         saveCardSaleOrder(action_type,url,cardList);
     })
 </script>
-{% comment %}<script>
-    $('#disCode input').blur(function(){
-        var disCode = $(this).val();
-        if(disCode){
-            checkDiscode("{% url 'disCodeCheck' %}?discode="+disCode+"&shop={{ shopcode |safe }}");
-        }
-    });
-</script>{% endcomment %}
+
 {% endblock %}

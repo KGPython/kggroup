@@ -547,6 +547,17 @@ class Orders(models.Model):
         managed = False
         db_table = 'orders'
 
+class OrderErr(models.Model):
+    order_sn = models.CharField(max_length=20)
+    record = models.CharField(max_length=255)
+    u_id = models.IntegerField()
+    shop = models.CharField(max_length=16)
+    c_time = models.DateField()
+    type = models.CharField(max_length=1)
+
+    class Meta:
+        managed = False
+        db_table = 'order_err'
 
 class Payment(models.Model):
     payment_name = models.CharField(max_length=60)

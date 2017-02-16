@@ -47,6 +47,17 @@
 
                 <!--  退卡 号段查询结果 start  -->
                 {% include 'common/cardsQueryResult.html' %}
+                <div class="widget-box">
+                    <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+                        <h5>合计</h5>
+                    </div>
+                    <div class="widget-content nopadding Total">
+                        <div class="row">
+                            <p class="text col-md-2" id="totalNum">卡合计数量：<b class="red"></b>张</p>
+                            <p class="text col-md-2" id="totalVal">卡合计金额：<b class="red"></b>元</p>
+                        </div>
+                    </div>
+                </div>
                 <!--  退卡 号段查询结果 start  -->
                 <div class="enter-box">
                     <input id="post-token" type="hidden" value="{{ token }}">
@@ -103,22 +114,24 @@
                 var list = data.listTotalNew;
                 var sn = (data.orderSnTuple).join(',');
                 $('#orderSnList').val(sn);
-                console.log(sn);
                 showData(list);
             },
-            error:function(){
-
-            }
+            error:function(){}
         })
     });
 
     function showData(data) {
         $('#anomaly').find('tbody').empty();
         $('#correct').find('tbody').empty();
+        var cardTotalNum = 0;
+        var cardTotalVal = 0;
         for(var i=0;i<data.length;i++){
             if(data[i].mode=='1' && data[i].detail==data[i].new_amount && data[i].is_borrow == '1' )
             {
                 //正常数据
+                cardTotalNum ++;
+                cardTotalVal += parseFloat(data[i].detail);
+
                 var cols = $('#correct').find('th').length;
                 var tr=$('<tr></tr>');
                 for(var j=0;j<cols;j++){
@@ -192,7 +205,9 @@
                 $('#anomalyBox').show();
             }
         }
-        setTotalByCardList($('#correct').find('tbody'));
+        console.log(cardTotalNum,cardTotalVal);
+        $('#totalNum b').text(cardTotalNum);
+        $('#totalVal b').text(cardTotalVal);
     }
 
     $(document).on('click','#btn-enter',function(){

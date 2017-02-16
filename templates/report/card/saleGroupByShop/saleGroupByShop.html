@@ -11,9 +11,7 @@
 <body>
 {% include 'common/head.html' %}
 <style>
-    .shop{background-color: #da9628}
     .saleCol{background-color: #46b8da;}
-    .totalRow td{background-color: #d58512;}
     .discCol{background-color:#c1e2b3}
     .discTypeTotal{background-color: #8a6d3b;}
     .discTotal,.saleTotal{background-color: #23527c;}
@@ -116,7 +114,7 @@
                             <tbody class="cardIn" id="nopayList">
                             {% for row in dataList %}
                                 <tr>
-                                    <td class="shop">
+                                    <td class="first-col">
                                         <a href="{% url 'saleGroupByShopDateDetail' %}?shopcode={{ row.shop_code }}&start={{ start }}&end={{ end }}">
                                             {{ row.shop_code | transShopCode }}
                                         </a>
@@ -189,7 +187,7 @@
                                     <td>{% if inSubTotal != '0' %}{{ row.inSub | divide:totalDict.inSubTotal }}{% endif %}</td>
                                 </tr>
                             {% endfor %}
-                            <tr class="totalRow">
+                            <tr class="row-total">
                                 <td>合计</td>
                                 <td>{{ totalDict.total_disc_6  | floatformat:2 }}</td>
                                 <td>{{ totalDict.total_disc_7  | floatformat:2 }}</td>

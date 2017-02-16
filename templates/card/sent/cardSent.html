@@ -251,15 +251,17 @@
                 'postToken':$('#post-token').val()
             },
             success:function(data){
-                if(data.msg=='0'){
+                if(data.status=='1'){
                     alert('数据提交成功');
                     window.location.reload(true);
                     $('input[type=text]').val('')
-                }else if(data.msg=='1'){
-                    alert('数据提交失败')
-                }else if(data.msg=='2'){
-                    var cardNo =data.cardId;
-                    alert('卡号：'+cardNo+', 在数据库中已经存在，无法重复提交，请核查')
+                }else if(data.status=='0'){
+                    if(data.msg){
+                        alert(data.msg);
+                    }else{
+                        alert('提交失败');
+                    }
+
                 }
             }
         })

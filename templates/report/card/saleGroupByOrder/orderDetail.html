@@ -22,9 +22,11 @@
             <div class="widget-box">
                 <div class="widget-title"><span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
                     <h5>订单基础信息</h5>
+                    {% if role == '1' or role == '6' %}
                     <span class="icon-add-btn">
                         <button type="button" class="btn btn-success btn-xs" id="payErr">支付调整</button>
                     </span>
+                    {% endif %}
                 </div>
                 <div class="widget-content nopadding">
                     <div class="widget-content">
@@ -349,15 +351,35 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title" id="myModalLabel">
-                       支付错误信息备注
+                       支付方式调整
                     </h4>
                 </div>
                 <div class="modal-body widget-content">
-                    <table class="table table-striped  ">
-                        <tbody>
+                    <table class="table table-hover order-table table-form-my">
+                        <thead>
+                        <tr>
+                            <th><input type="checkbox" id="all" onclick="checkAll(this)"></th>
+                            <th>订单支付方式</th>
+                            <th>支付金额</th>
+                            <th>实际支付方式</th>
+                        </tr>
+                        </thead>
+                        <tbody id="payAdjust">
+                        {% for pay in orderPayInfo %}
                             <tr>
-                                <td><input type="text" class='form-control' id="remark"></td>
+                                <td><input type="checkbox" value="{{ pay.pay_id }}"></td>
+                                <td>{{ pay.pay_id | transPayCode }}</td>
+                                <td id="payVal">{{ pay.pay_value }}</td>
+                                <td>
+                                    <select class="form-control" id="paySelect">
+                                        <option value="">请选择</option>
+                                        {% for pay in payments %}
+                                            <option value="{{ pay.id }}" id="">{{ pay.payment_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
                             </tr>
+                        {% endfor %}
                         </tbody>
                     </table>
                 </div>
@@ -372,32 +394,59 @@
 {% endblock %}
 {% block js %}
     <script>
-        {% comment %}$('#payErr').click(function(){
+        $('#payErr').click(function(){
             $('#payErrBox').show()
         });
+
+        function getList() {
+            var data = [];
+            $('#payAdjust tr').each(function () {
+                var checkBox = $(this).find('input:checkbox');
+                var checked = checkBox.is(':checked');
+                var payNew = $(this).find('select').val();
+                if(checked &&payNew){
+                    var payOld = checkBox.val();
+                    var payVal = $(this).find('#payVal').text();
+                    data.push({'payOld':payOld,'payNew':payNew,'payVal':payVal})
+                }
+            });
+            return data;
+        }
         $('.modal-footer #submit').click(function(){
-            var remark = $('#remark').val();
+            var list = getList();
             var orderSn = $('#orderSn').val();
-            if(!remark){
-                alert('请填写备注后，再尝试提交');
+            var dataPost = {
+                payJsonStr: JSON.stringify(list),
+                orderSn: orderSn,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            };
+            if(!list.length){
+                alert('提交列表不能为空');
             }else{
                 $.post(
-                    "{% url 'payErr' %}",
-                    {
-                        remark:remark,
-                        orderSn:orderSn,
-                        csrf:'{{ csrf_token }}'
-                    },
+                    "{% url 'orderAdjustCreate' %}",
+                    dataPost,
                     function (data, status) {
-                        alert("Data: " + data + "\nStatus: " + status);
-                    }
+                        if(status=='success'){
+                            if(data.msg==0){
+                                alert('数据提交成功');
+                                $('#payErrBox').hide();
+                                $('#paySelect').val('');
+                                $("#payAdjust :checkbox").prop('checked',false);
+                            }else{
+                                alert('数据提交失败');
+                            }
+                        }else{
+                            alert(status)
+                        }
+                    },'json'
                 );
 
-{#                $('#payErrBox').hide()#}
+
             }
         });
         $('.modal-footer #close').click(function(){
             $('#payErrBox').hide()
-        });{% endcomment %}
+        });
     </script>
 {% endblock %}
