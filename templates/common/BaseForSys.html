@@ -1,0 +1,29 @@
+{% load basefilter %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Title{% endblock %}</title>
+    <link rel="stylesheet" href="{{ static }}/css/bootstrap.min.css"  media="screen">
+    <link rel="stylesheet" href="{{ static }}/css/matrix-style.css"  media="screen">
+    <link rel="stylesheet" href="{{ static }}/css/matrix-media.css"  media="screen">
+    <link rel="stylesheet" href="{{ static }}/css/common.css"  media="screen">
+    <link rel="stylesheet" href="{{ static }}/css/small-media.css"  media="screen">
+    <link rel="shortcut icon" href="favicon.ico" />
+    <link rel="icon" href="favicon.ico" type="image/gif" />
+
+    <script>
+        var CSRF = '{{ csrf_token }}';
+        var DISC_RATES = {{ request.session.s_rates | safe }};
+        var DISC_LEVEL = {{ request.session.disc_level | default:0 | safe}};
+        var SHOP = '{{ request.session.s_shopcode | safe }}';
+    </script>
+</head>
+<body>
+    {% include 'common/nav.html' %}
+    {% block content %}  {% endblock %}
+
+    {% include 'common/foot.html' %}
+    {% block js  %} {% endblock %}
+</body>
+</html>
