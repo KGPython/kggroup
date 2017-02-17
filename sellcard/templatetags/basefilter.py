@@ -2,11 +2,39 @@
 __author__ = 'liubf'
 from django import template
 from sellcard import views as base
-from sellcard.models import AdminUser,Shops
+from sellcard.models import AdminUser, Shops, Departs, Role
 
 register = template.Library()
 
 
+# =============系统管理begin==================
+# 部门编码转文字
+@register.filter
+def transDepart(key):
+    depart = ''
+    if (key):
+        departs = Departs.objects.values("depart_name").filter(depart_id=key)
+        if departs:
+            depart = departs[0]['depart_name']
+        else:
+            depart = '查无ID为:' + key + '角色'
+    return depart
+
+
+# 角色id转名称
+@register.filter
+def transRole(key):
+    role = ''
+    if (key):
+        roles = Role.objects.values("role_name").filter(id=key)
+        if roles:
+            role = roles[0]['role_name']
+        else:
+            role = '查无ID为:' + key + '角色'
+    return role
+
+
+# =============系统管理end==================
 # 门店编号转名称
 @register.filter
 def transShopCode(key):
@@ -36,6 +64,7 @@ def transShopId(key):
         shopname = shop['shop_name']
     return shopname
 
+
 @register.filter
 def transShopIdByName(key):
     """
@@ -47,7 +76,7 @@ def transShopIdByName(key):
     """
     shopname = ''
 
-    if key=='9999':
+    if key == '9999':
         shopname = '总店'
     elif key:
         shop = Shops.objects.values("shop_name").filter(id=key)
@@ -79,6 +108,7 @@ def transCouponTypeByChinese(key):
 
     return chinese
 
+
 @register.filter
 def transCouponTypeByEnglish(key):
     """
@@ -98,6 +128,7 @@ def transCouponTypeByEnglish(key):
         english = 'C'
 
     return english
+
 
 # 部门编号转名称
 @register.filter
@@ -172,12 +203,14 @@ def divide(v1, v2):
 
     return str(round(res, 2)) + '%'
 
-@register.filter
-def o_index(v_i,v_o):
-    return v_o[int(v_i)]
 
 @register.filter
-def o_column(v_o,v_s):
+def o_index(v_i, v_o):
+    return v_o[int(v_i)]
+
+
+@register.filter
+def o_column(v_o, v_s):
     return v_o[str(v_s)]
 
 

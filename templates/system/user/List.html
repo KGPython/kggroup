@@ -1,0 +1,189 @@
+{% load basefilter %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>用户管理</title>
+    <link rel="stylesheet" href="{{ static }}/css/bootstrap-datetimepicker.min.css">
+</head>
+<body>
+{% include 'common/head.html' %}
+<!--containt-part-->
+<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb">
+            <a data-original-title="Go to Home" href="#" title="" class="tip-bottom">
+                <span class="glyphicon glyphicon-home" aria-hidden="true"> </span> 首页
+            </a>
+            <a href="#" class="">系统管理</a>
+            <a href="#" class="current">用户管理</a>
+        </div>
+    </div>
+    <div class="widget-box">
+        <div class="widget-title"><span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+            <h5>用户列表</h5>
+        </div>
+        <div class="widget-content nopadding">
+            <div class="collapse in widget-content">
+                <form action="{% url 'userManageList' %}" method="post" id="form">
+                    {% csrf_token %}
+                    <div class="row formline">
+                        <label for="" class="col-md-1 formline-label">所属门店：</label>
+                        <div class="col-md-2">
+                            <select name="shop_code" id="shop_code" class="form-control" required="required">
+                                <option value="">全部</option>
+                                {% for item in shopList %}
+                                    <option value="{{ item.shop_code }}">{{ item.shop_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <label for="" class="col-md-1 formline-label">所属部门：</label>
+                        <div class="col-md-2">
+                            <select name="depart" id="depart" class="form-control" required="required">
+                                <option value="">全部</option>
+                                <option value="001">总部团购</option>
+                                <option value="002">门店团购</option>
+                                <option value="003">门店总收</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row formline">
+                        <label for="" class="col-md-1 formline-label">当前角色：</label>
+                        <div class="col-md-2">
+                            <select name="role" id="role" class="form-control" required="required">
+                                <option value="">全部</option>
+                                {% for item in roleList %}
+                                    <option value="{{ item.id }}">{{ item.role_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <label for="" class="col-md-1 formline-label">关键字：</label>
+                        <div class="col-md-2">
+                            <input name="user_name" id="user_name" type="text" class="form-control"
+                                   value="{{ user_name }}">
+                        </div>
+
+                        <div class="col-md-1">
+                            <button type="button" class="btn btn-info enter-btn pull-right" id="enter">查询</button>
+                        </div>
+
+                        <div class="col-md-1">
+                            <button type="button" class="btn btn-info enter-btn pull-right" onclick="detail('')">新建</button>
+                        </div>
+                    </div>
+                    <div class="widget-box">
+                        <div class="widget-content nopadding" style="overflow: hidden">
+                            <table class="table table-striped table-hover table-form-my">
+                                <thead>
+                                <tr>
+                                    <th>登录名</th>
+                                    <th>姓名</th>
+                                    <th>所属商店</th>
+                                    <th>所属部门</th>
+                                    <th>当前角色</th>
+                                    <th>最后登录时间</th>
+                                    <th>最后登录ip</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for row in List %}
+                                    <tr>
+                                        <td>{{ row.user_name }}</td>
+                                        <td>{{ row.name }}</td>
+                                        <td>{{ row.shop_code | transShopCode }}</td>
+                                        <td>{{ row.depart | transDepart }}</td>
+                                        <td>{{ row.role_id | transRole }}</td>
+                                        <td>{{ row.last_login }}</td>
+                                        <td>{{ row.last_ip }}</td>
+                                        <td>
+                                            <button type="button" onclick="detail('{{ row.id }}')"
+                                                    class="btn btn-info btn-xs btn_credit">修改
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="page">
+                        <span>每页显示：</span>
+                        <span><select name="show_num" id="show_num" class="form-control" required="required">
+                            <option value="8">8</option>
+                            <option value="20">20</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select></span>
+                        <span>第<b>{{ page }}</b>页/共<b>{{ List.paginator.num_pages }}</b>页</span>
+                        <a id="page_a_head">首页</a>
+                        {% if List.has_previous %}
+                            <a id="page_a_up">上一页</a>
+                        {% else %}
+                            <a href="javascript:void(0)">上一页</a>
+                        {% endif %}
+                        {% if List.has_next %}
+                            <a id="page_a_down">下一页</a>
+                        {% else %}
+                            <a href="javascript:void(0)">下一页</a>
+                        {% endif %}
+                        <a id="page_a_foot">尾页</a>
+                        <span class="totalPage">到第</span>
+                        <input class="pageTxt" id="page" name="page" value="1" type="text">
+                        <span>页</span>
+                        <button type="button" class="btn btn-info btn-sm"
+                                id="pageEnter">确定
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!--end-containt-part-->
+{% include "common/foot.html" %}
+<script>
+    $("#shop_code").val('{{ shop_code }}');
+    $("#depart").val('{{ depart }}');
+    $("#role").val('{{ role }}');
+    $('#form #enter').click(function () {
+        $('#form').submit();
+    });
+</script>
+<script>
+    function detail(user_id) {
+        window.location.href = "{% url 'userManageDetail' %}?user_id=" + user_id;
+    }
+</script>
+<script>
+    //每页显示数
+    $("#show_num").val('{{ show_num }}');
+    //确定按钮
+    $('#pageEnter').click(function () {
+        $('#form').submit();
+    });
+    //首页
+    $('#page_a_head').click(function () {
+        $('#page').val(1);
+        $('#form').submit();
+    });
+    //上一页
+    $('#page_a_up').click(function () {
+        $('#page').val({{ page_up }});
+        $('#form').submit();
+    });
+    //下一页
+    $('#page_a_down').click(function () {
+        $('#page').val({{ page_down }});
+        $('#form').submit();
+    });
+    //尾页
+    $('#page_a_foot').click(function () {
+        $('#page').val({{ List.paginator.num_pages }});
+        $('#form').submit();
+    });
+</script>
+</body>
+</html>

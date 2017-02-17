@@ -35,8 +35,8 @@ class AdminUser(models.Model):
     shop_code = models.CharField(max_length=11, blank=True, null=True)
     depart = models.CharField(max_length=45, blank=True, null=True)
     salt = models.CharField(max_length=10, blank=True, null=True)
-    last_login = models.DateTimeField()
-    last_ip = models.CharField(max_length=15)
+    last_login = models.DateTimeField(blank=True, null=True)
+    last_ip = models.CharField(max_length=15,blank=True, null=True)
     role_id = models.CharField(max_length=11)
 
     class Meta:
