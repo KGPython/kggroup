@@ -48,7 +48,7 @@ def index(request):
     cur.execute(saleDiscGroupByShop)
     saleDiscList = cur.fetchall()
 
-    salePayGroupByShop = 'select ord.shop_code,info.pay_id,info.change_time,SUM(info.pay_value) as pay_value ' \
+    salePayGroupByShop = 'select ord.shop_code,info.pay_id,info.change_time,info.is_pay,SUM(info.pay_value) as pay_value ' \
                 'from orders as ord , order_payment_info as info ' \
                 'where ord.add_time>="{start}" and ord.add_time<="{end}" and ord.shop_code in ({shopsCodeStr}) and ord.order_sn = info.order_id ' \
                 'group by ord.shop_code,info.pay_id,info.change_time' \
@@ -103,7 +103,7 @@ def index(request):
                         item['pay_2'] += float(sale['pay_value'])
                     if sale['pay_id'] == 3:
                         item['pay_3'] += float(sale['pay_value'])
-                    if sale['pay_id'] == 4:
+                    if sale['pay_id'] == 4 and sale['is_pay'] == '0':
                         item['pay_4_0'] += float(sale['pay_value'])
                     if sale['change_time']:
                         item['pay_4_1'] += float(sale['pay_value'])
