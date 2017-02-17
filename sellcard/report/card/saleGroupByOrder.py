@@ -154,6 +154,8 @@ def orderDetail(request):
                 cardsInNum += 1
             if num['card_attr'] == '0':
                 cardsOutNum += 1
+    if order:
+        shop = order[0]['shop_code']
     return render(request, 'report/card/saleGroupByOrder/orderDetail.html', locals())
 
 

@@ -143,7 +143,7 @@
                                         {% comment %}<a href="{% url 'saleGroupByShopDet' %}?shop_code={{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=4">
                                             {{ row.pay_4 | floatformat:2 | default:0 }}
                                         </a>{% endcomment %}
-                                        <a href="{% url 'saleGroupByShopNoPay' %}?shop={{ row.shop_code }}&start={{ start }}&end={{ end }}">
+                                        <a href="{% url 'report_card_noPay_order' %}?shop={{ row.shop_code }}&start={{ start }}&end={{ end }}">
                                             {{ row.pay_4_1 | floatformat:2 | default:0 }}|<span class="red">{{ row.pay_4_0 | floatformat:2 | default:0 }}</span>
                                         </a>
                                     </td>

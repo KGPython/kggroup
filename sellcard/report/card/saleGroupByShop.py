@@ -3,7 +3,7 @@ from django.core.paginator import Paginator
 from django.shortcuts import render
 from django.db.models import Sum
 import datetime
-from operator import itemgetter,attrgetter
+
 from sellcard.models import OrderUpCard,Payment
 from sellcard.common import Method as mth
 from sellcard import views as base
@@ -225,73 +225,7 @@ def index(request):
     return render(request, 'report/card/saleGroupByShop/saleGroupByShop.html', locals())
 
 
-def noPay(request):
-    shop = request.GET.get('shop')
-    today = datetime.date.today()
-    start = request.GET.get('start', today)
-    end = request.GET.get('end', today)
-    endTime = str(datetime.datetime.strptime(end, '%Y-%m-%d').date() + datetime.timedelta(1))
-    conn = mth.getMysqlConn()
-    cur = conn.cursor()
 
-    #售卡数据
-    saleSql = 'select a.order_sn,a.buyer_company,b.pay_id ,b.pay_value,b.change_time,b.bank_name,b.bank_sn,b.pay_company,b.is_pay ' \
-              'from orders as a , order_payment_info as b ' \
-              'where a.add_time>="{start}" and a.add_time<="{end}" and a.shop_code ="{shop}" and a.order_sn = b.order_id and (ISNULL(b.change_time) is FALSE or b.pay_id=4) ' \
-              'order by b.is_pay,a.order_sn' \
-              .format(start=start, end=endTime, shop=shop)
-    cur.execute(saleSql)
-    saleList = cur.fetchall()
-    saleData,saleTotalPay,saleTotalNoPay= formatData(saleList)
-
-    #换卡数据
-    changeSql = 'select a.order_sn,b.pay_id,b.pay_value,b.change_time,b.bank_name,b.bank_sn,b.pay_company,b.is_pay ' \
-                'from order_change_card as a , order_change_card_payment as b ' \
-                'where a.add_time>="{start}" and a.add_time<="{end}" and a.shop_code ="{shop}" and a.order_sn = b.order_id and (ISNULL(b.change_time) is FALSE or b.pay_id=4) ' \
-                'order by b.is_pay,a.order_sn' \
-                .format(start=start, end=endTime, shop=shop)
-    cur.execute(changeSql)
-    changeList = cur.fetchall()
-    changeData,changeTotalPay,changeTotalNoPay = formatData(changeList)
-
-    data = saleData+changeData
-    totalPay = saleTotalPay + changeTotalPay
-    totalNoPay = saleTotalNoPay + changeTotalNoPay
-    data = sorted(data,key=itemgetter('is_pay','order_sn'),reverse=True)
-    return render(request,'report/card/saleGroupByShop/noPay.html', locals())
-
-#列转行
-def formatData(List):
-    OrderSnList = [item['order_sn'] for item in List]
-    OrderSnSet = list(set(OrderSnList))
-    totalPay = 0
-    totalNoPay = 0
-    data = []
-    for sn in OrderSnSet:
-        item = {}
-        item['orderNoPay'] = 0
-        item['order_sn'] = sn
-        for obj in List:
-            if obj['order_sn'] == sn:
-                item['is_pay'] = obj['is_pay']
-                item['depart'] = obj['buyer_company']
-                item['change_time'] = obj['change_time']
-                if obj['is_pay'] == '1':
-                    totalPay += float(obj['pay_value'])
-                    if obj['pay_id'] == 1:
-                        item['cash'] = float(obj['pay_value'])
-                    if obj['pay_id'] == 3:
-                        item['bank'] = float(obj['pay_value'])
-                        item['bank_name'] = obj['bank_name']
-                        item['bank_sn'] = obj['bank_sn']
-                        item['pay_company'] = obj['pay_company']
-                    if obj['pay_id'] == 5:
-                        item['pos'] = float(obj['pay_value'])
-                else:
-                    totalNoPay += float(obj['pay_value'])
-                    item['orderNoPay'] += float(obj['pay_value'])
-        data.append(item)
-    return data,totalPay,totalNoPay
 
 def detail(request):
     today = datetime.date.today()
