@@ -1,6 +1,6 @@
 from django.conf.urls import url
 urlpatterns = [
-    #库存盘点--卡类型
+    #库存盘点
     url(r'^stock/$', 'sellcard.report.card.stock.index', name="stock"),
     url(r'^stock/cardtype/$', 'sellcard.report.card.stock.cardType', name="stockGroupByCardType"),
     url(r'^stock/cardinfo/$', 'sellcard.report.card.stock.cardInfo', name="stockGroupByCardNo"),
@@ -8,9 +8,12 @@ urlpatterns = [
     #集团销售汇总--按门店分类汇总
     url(r'^kgsale/shop/$', 'sellcard.report.card.saleGroupByShop.index', name="saleGroupByShop"),
     url(r'^kgsale/shop/d/$', 'sellcard.report.card.saleGroupByShop.detail', name="saleGroupByShopDet"),
-    url(r'^kgsale/shop/nopay/$', 'sellcard.report.card.saleGroupByShop.noPay', name="saleGroupByShopNoPay"),
-    #日期明细
     url(r'^kgsale/shop/date/$', 'sellcard.report.card.saleGroupByShop.date_detail', name="saleGroupByShopDateDetail"),
+
+    #赊销
+    url(r'^nopay/order$', 'sellcard.report.card.noPay.order', name="report_card_noPay_order"),
+    url(r'^nopay/month$', 'sellcard.report.card.noPay.month', name="report_card_noPay_month"),
+
 
     #集团销售汇总--按支付分类汇总
     url(r'^kgsale/payment/$', 'sellcard.report.card.saleGroupByPay.index', name="saleGroupByPay"),

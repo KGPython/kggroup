@@ -86,19 +86,6 @@
                                     </td>
                                 </tr>
                             {% endfor %}
-                            {% for row in listChange %}
-                                <tr>
-                                    <td>{{ row.order_sn }}</td>
-                                    <td><input class='form-control' disabled="disabled" value="{{ row.add_time | date:"Y-m-d"}}"></td>
-                                    <td><input class="form-control" disabled="disabled" value="{{ row.paid_amount }}"></td>
-                                    <td><input class="form-control" disabled="disabled" value="{{ row.pay_value }}"></td>
-                                    <td><input class='form-control' disabled="disabled" value="{{ row.user_name }}"></td>
-                                    <td><input class='form-control' disabled="disabled" value="{{ row.user_phone }}"></td>
-                                    <td>
-                                        <a href="{% url 'noPayOrdinaryDetail' %}?orderSn={{ row.order_sn }}&type=change" class="btn btn-danger btn-xs btn-enter">标记到账</a>
-                                    </td>
-                                </tr>
-                            {% endfor %}
                             </tbody>
                         </table>
                     </div>

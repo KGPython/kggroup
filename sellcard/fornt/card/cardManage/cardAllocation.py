@@ -7,6 +7,7 @@ import json,datetime
 from sellcard import views as base
 from sellcard.common import Method as mth
 from sellcard.models import Allocation,AllocationInfo,CardInventory,ActionLog
+from sellcard.common.model import MyError
 
 # 门店间卡调拨
 def index(request):
@@ -48,14 +49,17 @@ def allocationSave(request):
                 info.cardno_end = card['end'].strip()
                 info.save()
 
-                CardInventory.objects.filter(card_no__gte=card['start'],card_no__lte=card['end']).update(shop_code=shopIn)
+                subNum = int(card['end'])-int(card['start'])+1
+                updateNum = CardInventory.objects.filter(card_no__gte=card['start'],card_no__lte=card['end']).update(shop_code=shopIn)
+                if subNum != updateNum :
+                    raise MyError(card['start'].strip()+'-'+card['end'].strip()+'状态更新失败')
 
-        res['msg']='1'
+        res['status']='1'
         ActionLog.objects.create(action='门店卡调拨',u_name=request.session.get('s_uname'),cards_out=cardStr+',shopIn:'+shopIn+',shopOut:'+shopOut,add_time=datetime.datetime.now())
 
     except Exception as e:
         print(e)
-        res['msg']='0'
+        res['status']='0'
         ActionLog.objects.create(action='门店卡调拨',u_name=request.session.get('s_uname'),cards_out=cardStr+',shopIn:'+shopIn+',shopOut:'+shopOut,add_time=datetime.datetime.now(),err_msg=e)
 
     return HttpResponse(json.dumps(res))

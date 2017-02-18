@@ -32,16 +32,6 @@ def index(request):
         cur.execute(sqlSale)
         listSale = cur.fetchall()
 
-
-        #换卡数据
-        queryWhereChange1 = " and b.user_name='" + buyerName + "'" if buyerName else ''
-        queryWhereChange2 = " and b.add_time >='{start}' and b.add_time <='{end}' ".format(start=start, end=end)
-        sqlChange = "select a.pay_value,b.order_sn,b.operator_id,b.add_time,b.user_name,b.user_phone,(b.total_in_price-b.total_out_price) as paid_amount " \
-            "from order_change_card_payment as a ,order_change_card as b " \
-            "where a.order_id=b.order_sn  and a.pay_id=4 and a.is_pay='0' and b.shop_code ='"+shopcode+"'"+queryWhereChange1+queryWhereChange2
-        cur.execute(sqlChange)
-        listChange = cur.fetchall()
-
         cur.close()
         conn.close()
 

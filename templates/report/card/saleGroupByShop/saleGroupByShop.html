@@ -69,9 +69,10 @@
                 </div>
                 <div class="widget-box">
                     <h4 class="text-center">集团售卡销售汇总</h4>
-                    <h5 class="text-right">
-                        <span style="margin-right: 30px" class="red">赊销：（到帐|未到帐）</span>
-                        <span style="margin-right: 30px" class="red">金额单位：元</span>
+                    <h5 class="text-right" style="overflow: hidden">
+                        <span class="red pull-left">金额单位：元</span>
+                        <span class="red pull-left" style="margin-left: 30px" >赊销：（到帐|未到帐）</span>
+                        <span class="pull-right">销售合计=现金+代金券+汇款+赊账未到账+Pos+移动+美团+糯米+黄金手+慧购线上+慧购线下</span>
                     </h5>
                     <div class="widget-content nopadding" style="overflow-x: auto">
                         <table class="table table-striped table-hover table-form-my  ">
@@ -143,7 +144,7 @@
                                         {% comment %}<a href="{% url 'saleGroupByShopDet' %}?shop_code={{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=4">
                                             {{ row.pay_4 | floatformat:2 | default:0 }}
                                         </a>{% endcomment %}
-                                        <a href="{% url 'saleGroupByShopNoPay' %}?shop={{ row.shop_code }}&start={{ start }}&end={{ end }}">
+                                        <a href="{% url 'report_card_noPay_order' %}?shop={{ row.shop_code }}&start={{ start }}&end={{ end }}">
                                             {{ row.pay_4_1 | floatformat:2 | default:0 }}|<span class="red">{{ row.pay_4_0 | floatformat:2 | default:0 }}</span>
                                         </a>
                                     </td>

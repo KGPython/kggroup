@@ -385,6 +385,8 @@
                 </div>
                 <div class="modal-footer">
                     <input type="hidden" value="{{ orderSn }}" id="orderSn">
+                    <input type="hidden" value="{{ shop }}" id="shop">
+
                     <button type="button" class="btn btn-default" id="close">取消</button>
                     <button type="button" class="btn btn-primary" id="submit">提交</button>
                 </div>
@@ -415,9 +417,11 @@
         $('.modal-footer #submit').click(function(){
             var list = getList();
             var orderSn = $('#orderSn').val();
+            var shop = $('#shop').val();
             var dataPost = {
                 payJsonStr: JSON.stringify(list),
                 orderSn: orderSn,
+                shop: shop,
                 csrfmiddlewaretoken: '{{ csrf_token }}'
             };
             if(!list.length){

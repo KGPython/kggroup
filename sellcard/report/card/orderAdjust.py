@@ -6,8 +6,13 @@ import json,datetime
 import sellcard.views as base
 from sellcard.common import Method as mth
 def create(request):
+    role = request.session.get('s_roleid')
     u_id = request.session.get('s_uid')
-    shop = request.session.get('s_shopcode')
+
+    if role not in ('1','6'):
+        shop = request.session.get('s_shopcode')
+    else:
+        shop = request.POST.get('shop')
     sn = request.POST.get('orderSn')
     record = request.POST.get('payJsonStr')
     today = datetime.date.today()
