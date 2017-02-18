@@ -18,18 +18,18 @@
                 <span class="glyphicon glyphicon-home" aria-hidden="true"> </span> 首页
             </a>
             <a href="#" class="">报表管理</a>
-            <a href="#" class="current">购物券核销记录--使用明细</a>
+            <a href="#" class="current">购物券核销记录--使用明细--详细</a>
         </div>
     </div>
     <div class="widget-box">
         <div class="widget-title"><span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
-            <h5>购物券核销记录明细列表</h5>
+            <h5>购物券核销记录详细列表</h5>
         </div>
         <div class="widget-content nopadding">
             <div class="collapse in widget-content">
                 <div class="widget-box">
                     <div class="widget-content nopadding" style="overflow: hidden">
-                        <h3 class="text-center">明细列表</h3>
+                        <h3 class="text-center">详细列表</h3>
                         <table class="table table-striped table-hover table-form-my  ">
                             <thead>
                             <tr>
@@ -39,17 +39,9 @@
                                 <th>制作时间</th>
                                 <th>有效期</th>
                                 <th>使用范围</th>
-                                {% if type == '3' %}
-                                    <th>售卡数量</th>
-                                    <th>售卡金额</th>
-                                    <th>运营数量</th>
-                                    <th>运营金额</th>
-                                    <th>总数量</th>
-                                    <th>总金额</th>
-                                {% else %}
-                                    <th>使用数量</th>
-                                    <th>使用金额</th>
-                                {% endif %}
+                                <th>使用门店</th>
+                                <th>使用日期</th>
+                                <th>使用人</th>
                             </tr>
                             </thead>
                             <tbody class="cardIn" id="nopayList">
@@ -61,42 +53,23 @@
                                     <td>{{ row.start_date }}</td>
                                     <td>{{ row.end_date | date:'Y-m-d' }}</td>
                                     <td>{{ row.range_list }}</td>
-                                    {% if type == '3' %}
-                                        <td>
-                                            <a href="javascript:show_detail('{{ row.serial_id }}','220')">
-                                                {{ row.back_amount }}
-                                            </a>
-                                        </td>
-                                        <td>{{ row.back_account }}</td>
-                                        <td>
-                                            <a href="javascript:show_detail('{{ row.serial_id }}','110')">
-                                                {{ row.front_amount }}
-                                            </a>
-                                        </td>
-                                        <td>{{ row.front_account }}</td>
-                                        <td>{{ row.used_amount }}</td>
-                                        <td>{{ row.used_account }}</td>
-                                    {% else %}
-                                        <td>
-                                            <a href="javascript:show_detail('{{ row.coupon_code }}','0')">
-                                                {{ row.used_amount }}
-                                            </a>
-                                        </td>
-                                        <td>{{ row.used_account }}</td>
-                                    {% endif %}
+                                    <td>{{ row.used_shop | transShopCode }}</td>
+                                    <td>{{ row.used_date }}</td>
+                                    <td>{{ row.used_name }}</td>
                                 </tr>
                             {% endfor %}
                             </tbody>
                         </table>
                     </div>
                 </div>
-                <form action="{% url 'voucherUsedDetail' %}" method="post" id="form">
+                <form action="{% url 'voucherUsedDetailDate' %}" method="post" id="form">
                     {% csrf_token %}
                     <input type="hidden" name="t_shop_code" id="t_shop_code" value="{{ shop_code }}">
                     <input type="hidden" name="t_start" id="t_start" value="{{ start }}">
                     <input type="hidden" name="t_end" id="t_end" value="{{ end }}">
-                    <input type="hidden" name="t_shop" id="t_shop" value="{{ shop }}">
                     <input type="hidden" name="t_type" id="t_type" value="{{ type }}">
+                    <input type="hidden" name="coupon_code" id="coupon_code" value="{{ coupon_code }}">
+                    <input type="hidden" name="clear_type" id="clear_type" value="{{ clear_type }}">
                     <div class="page">
                         <span>第<b>{{ page }}</b>页/共<b>{{ List.paginator.num_pages }}</b>页</span>
                         <a id="page_a_head">首页</a>
@@ -122,43 +95,9 @@
             </div>
         </div>
     </div>
-    <form action="{% url 'voucherUsedDetailDate' %}" method="post" id="detail_form">
-        {% csrf_token %}
-        <input type="hidden" name="t_shop_code" id="t_shop_code" value="{{ shop_code }}">
-        <input type="hidden" name="t_start" id="t_start" value="{{ start }}">
-        <input type="hidden" name="t_end" id="t_end" value="{{ end }}">
-        <input type="hidden" name="t_type" id="t_type" value="{{ type }}">
-        <input type="hidden" name="coupon_code" id="coupon_code">
-        <input type="hidden" name="clear_type" id="clear_type">
-    </form>
 </div>
 <!--end-containt-part-->
 {% include "common/foot.html" %}
-<script src="{{ static }}/js/bootstrap-datetimepicker.js"></script>
-<script src="{{ static }}/js/bootstrap-datetimepicker.zh-CN.js"></script>
-<script type="text/javascript">
-    $('.form_date').datetimepicker({
-        language: 'zh-CN',
-        weekStart: 1,
-        todayBtn: 1,
-        autoclose: 1,
-        todayHighlight: 1,
-        startView: 2,
-        minView: 2,
-        forceParse: 0
-    });
-</script>
-<script>
-    $('#form #enter').click(function () {
-        var start = $('#start').val();
-        var end = $('#end').val();
-        if (!start || !end) {
-            alert('查询日期不能为空');
-            return false;
-        }
-        $('#form').submit();
-    });
-</script>
 <script>
     //确定按钮
     $('#pageEnter').click(function () {
@@ -184,13 +123,6 @@
         $('#page').val({{ List.paginator.num_pages }});
         $('#form').submit();
     });
-</script>
-<script>
-    function show_detail(code, type) {
-        $('#coupon_code').val(code);
-        $('#clear_type').val(type);
-        $('#detail_form').submit();
-    }
 </script>
 </body>
 </html>
