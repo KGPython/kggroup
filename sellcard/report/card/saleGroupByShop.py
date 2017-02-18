@@ -99,35 +99,46 @@ def index(request):
                     pay_id = sale['pay_id']
                     if sale['pay_id'] == 1:
                         item['pay_1'] += float(sale['pay_value'])
+                        item['inSub'] += float(sale['pay_value'])
                     if sale['pay_id'] == 2:
                         item['pay_2'] += float(sale['pay_value'])
+                        item['inSub'] += float(sale['pay_value'])
                     if sale['pay_id'] == 3:
                         item['pay_3'] += float(sale['pay_value'])
+                        item['inSub'] += float(sale['pay_value'])
                     if sale['pay_id'] == 4 and sale['is_pay'] == '0':
                         item['pay_4_0'] += float(sale['pay_value'])
+                        item['inSub'] += float(sale['pay_value'])
                     if sale['change_time']:
                         item['pay_4_1'] += float(sale['pay_value'])
                     if sale['pay_id'] == 5:
                         item['pay_5'] += float(sale['pay_value'])
+                        item['inSub'] += float(sale['pay_value'])
                     if sale['pay_id'] == 6:
                         item['pay_6'] += float(sale['pay_value'])
                         item['disc_6'] += float(sale['pay_value'])*paymentsRateDict[6]
+                        item['inSub'] += float(sale['pay_value'])
                     if sale['pay_id'] == 7:
                         item['pay_7'] += float(sale['pay_value'])
                         item['disc_7'] += float(sale['pay_value']) * paymentsRateDict[7]
+                        item['inSub'] += float(sale['pay_value'])
                     if sale['pay_id'] == 8:
                         item['pay_8'] += float(sale['pay_value'])
                         item['disc_8'] += float(sale['pay_value']) * paymentsRateDict[8]
+                        item['inSub'] += float(sale['pay_value'])
                     if sale['pay_id'] == 9:
                         item['pay_9'] += float(sale['pay_value'])
+                        item['inSub'] += float(sale['pay_value'])
                     if sale['pay_id'] == 10:
                         item['pay_10'] += float(sale['pay_value'])
                         item['disc_10'] += float(sale['pay_value']) * paymentsRateDict[10]
+                        item['inSub'] += float(sale['pay_value'])
                     if sale['pay_id'] == 11:
                         item['pay_11'] += float(sale['pay_value'])
                         item['disc_11'] += float(sale['pay_value']) * paymentsRateDict[11]
+                        item['inSub'] += float(sale['pay_value'])
 
-                    item['inSub'] += float(sale['pay_value'])
+
 
             for saleDisc in saleDiscList:
                 if saleDisc['shop_code'] == item['shop_code']:
@@ -158,10 +169,6 @@ def index(request):
                         item['pay_2'] += float(change['pay_value'])
                     if change['pay_id'] == 3:
                         item['pay_3'] += float(change['pay_value'])
-                    if change['pay_id'] == 4 :
-                        item['pay_4_0'] += float(change['pay_value'])
-                    if change['change_time'] :
-                        item['pay_4_1'] += float(change['pay_value'])
                     if change['pay_id'] == 5:
                         item['pay_5'] += float(change['pay_value'])
                     if change['pay_id'] == 6:
