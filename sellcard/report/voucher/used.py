@@ -71,7 +71,7 @@ def index(request):
     cur.close()
     conn.close()
 
-    ErpList = getAmount(start, endTime, code_list)
+    ErpList = getAmount(start, end, code_list)
 
     total={}
     total['card_amount'] = 0
@@ -213,7 +213,7 @@ def detail(request):
             cur.close()
             conn.close()
         else:
-            List = getDetail(code_list,start,endTime,shop)
+            List = getDetail(code_list,start,end,shop)
             # serial = KfJobsCouponSn.objects.exclude(serial_id='0').filter(request_shop=shop,
             #                                                                  used_flag=1,
             #                                                                  used_date__lte=endTime,
