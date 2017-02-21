@@ -4,7 +4,7 @@ from django.shortcuts import render
 import pymssql,random,hashlib
 from PIL import Image, ImageDraw, ImageFont
 from sellcard.common import Constants
-from sellcard.models import CardInventory, Orders, ExchangeCode,DisCode,Shops,ActionLog
+from sellcard.models import CardInventory, Orders, ExchangeCode,DisCode,Shops,Payment
 from django.conf import settings
 from django.core import serializers
 from django.http import HttpResponse
@@ -299,4 +299,9 @@ def getCityShopsCode(city=None):
     shopsCode = [shop['shop_code'] for shop in shops]
     return shopsCode
 
+
+def getPayDiscDict():
+    payDisc = Payment.objects.values('id', 'dis_rate').filter(flag=0)
+    payDiscDict = {str(pay['id']): pay['dis_rate'] for pay in payDisc if pay['dis_rate']}
+    return payDiscDict
 

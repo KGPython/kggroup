@@ -39,7 +39,6 @@ def index(request):
 
 def detail(request):
     orderSn = request.GET.get('orderSn', '')
-    total_in_price = total_out_price = 0.00
     type = request.GET.get('type', '')
     orderPayInfo = []
     if type == 'sale':
@@ -49,19 +48,12 @@ def detail(request):
             .filter(order_sn=orderSn)
         orderPayInfo = OrderPaymentInfo.objects.values('pay_id', 'pay_value').filter(order_id=orderSn)
         cardsNum = OrderInfo.objects.filter(order_id=orderSn).count()
-    if type == 'change':
-        order = OrderChangeCard.objects \
-            .values('order_sn', 'shop_code', 'total_in_price','total_out_price','disc', 'action_type', 'user_name', 'user_phone',
-                    'add_time') \
-            .filter(order_sn=orderSn)
-        orderPayInfo = OrderChangeCardPayment.objects.values('pay_id', 'pay_value').filter(order_id=orderSn)
 
     paysDict = {pay['pay_id']: pay['pay_value'] for pay in orderPayInfo}
     if 4 in paysDict.keys():
         totalVal = paysDict[4]
     else:
         totalVal = 0
-
 
     return render(request, 'card/nopay/detail.html', locals())
 
@@ -81,13 +73,19 @@ def save(request):
             paymentInfo.filter(order_id=orderSn, pay_id=4,is_pay=0).delete()
             for pay in payList:
                 if pay['payId'] == '3':
-                    OrderPaymentInfo.objects.create(order_id=orderSn, pay_id=pay['payId'], pay_value=pay['payVal'],
-                                                    remarks=pay['payRmarks'], is_pay=1, change_time=date,
-                                                    bank_name=pay['bankName'],bank_sn=pay['bankSn'],
-                                                    pay_company=pay['payCompany'])
+                    OrderPaymentInfo \
+                        .objects \
+                        .create(order_id=orderSn, pay_id=pay['payId'], pay_value=pay['payVal'],
+                                remarks=pay['payRmarks'], is_pay=1, change_time=date,
+                                bank_name=pay['bankName'], bank_sn=pay['bankSn'],
+                                pay_company=pay['payCompany']
+                                )
                 else:
-                    OrderPaymentInfo.objects.create(order_id=orderSn,pay_id=pay['payId'],pay_value=pay['payVal'],
-                                                    remarks=pay['payRmarks'],is_pay=1,change_time=date)
+                    OrderPaymentInfo \
+                        .objects \
+                        .create(order_id=orderSn, pay_id=pay['payId'], pay_value=pay['payVal'],
+                                remarks=pay['payRmarks'], is_pay=1, change_time=date
+                                )
             res['msg'] = '0'
     except Exception as e:
         print(e)

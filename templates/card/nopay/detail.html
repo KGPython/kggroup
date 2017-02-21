@@ -18,36 +18,8 @@
         </div>
         <div class="widget-content nopadding">
 
-            <table class="table table-hover order-table">
-                {% if type == 'sale' %}
-                    <tbody>
-                        <tr>
-                            <td class="col-md-1">订单 I D：</td>
-                            <td class="col-md-3">{{ order.0.order_sn }}</td>
-                            <td class="col-md-1">售卖门店：</td>
-                            <td class="col-md-3">{{ order.0.shop_code | transShopCode }}</td>
-                            <td class="col-md-1">下单时间：</td>
-                            <td class="col-md-3">{{ order.0.add_time | date:'Y年m月d日' }}</td>
-                        </tr>
-                        <tr>
-                            <td>订单总额</td>
-                            <td>{{ order.0.paid_amount | default:0.00 }} 元</td>
-                            <td>储值卡总数</td>
-                            <td>{{ cardsNum | default:0 }} 张</td>
-                            <td>优惠额度</td>
-                            <td>{{ order.0.disc_amount | default:0.00 }} 元</td>
-                        </tr>
-                        <tr>
-                            <td>买卡人姓名</td>
-                            <td>{{ order.0.buyer_name | default:'无' }}</td>
-                            <td>买卡人电话</td>
-                            <td>{{ order.0.buyer_tel | default:'无' }}</td>
-                            <td>买卡人单位</td>
-                            <td>{{ order.0.buyer_company | default:'无' }}</td>
-                        </tr>
-                    </tbody>
-                {% elif type == 'change' %}
-                    <tbody>
+            <table class="table table-hover order-table table-form-my">
+                <tbody>
                     <tr>
                         <td class="col-md-1">订单 I D：</td>
                         <td class="col-md-3">{{ order.0.order_sn }}</td>
@@ -57,23 +29,22 @@
                         <td class="col-md-3">{{ order.0.add_time | date:'Y年m月d日' }}</td>
                     </tr>
                     <tr>
-                        <td>入库金额</td>
-                        <td>{{ order.0.total_in_price | default:0.00 }} 元</td>
-                        <td>出库金额</td>
-                        <td>{{ order.0.total_out_price | default:0.00 }} 张</td>
+                        <td>订单总额</td>
+                        <td>{{ order.0.paid_amount | default:0.00 }} 元</td>
+                        <td>储值卡总数</td>
+                        <td>{{ cardsNum | default:0 }} 张</td>
                         <td>优惠额度</td>
-                        <td>{{ order.0.disc | default:0.00 }} 元</td>
+                        <td>{{ order.0.disc_amount | default:0.00 }} 元</td>
                     </tr>
                     <tr>
                         <td>买卡人姓名</td>
-                        <td>{{ order.0.user_name | default:'无' }}</td>
+                        <td>{{ order.0.buyer_name | default:'无' }}</td>
                         <td>买卡人电话</td>
-                        <td>{{ order.0.user_phone | default:'无' }}</td>
+                        <td>{{ order.0.buyer_tel | default:'无' }}</td>
                         <td>买卡人单位</td>
-                        <td></td>
+                        <td>{{ order.0.buyer_company | default:'无' }}</td>
                     </tr>
                 </tbody>
-                {% endif %}
             </table>
         </div>
     </div>
@@ -102,7 +73,7 @@
         </div>
         <div class="widget-content">
             <div class="row formline">
-                <label for="" class="col-md-1 formline-label" style="text-align: left">结束时间：</label>
+                <label for="" class="col-md-1 formline-label" style="text-align: left">到账日期：</label>
                 <div class="col-md-3 col-lg-2">
                     <div data-link-format="yyyy-mm-dd" data-link-field="dtp_input2" data-date-format="yyyy-mm-dd" data-date="" class="input-group date form_date">
                         <input readonly="" value="" size="16" id="date" class="form-control">
