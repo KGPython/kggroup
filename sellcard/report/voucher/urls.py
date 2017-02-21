@@ -13,4 +13,6 @@ urlpatterns = [
     url(r'^used/$', 'sellcard.report.voucher.used.index', name="voucherUsed"),
     # 批次明细
     url(r'^used/detail/$', 'sellcard.report.voucher.used.detail', name="voucherUsedDetail"),
+    # 详细日期明细
+    url(r'^used/detail/date/$', 'sellcard.report.voucher.used.detailDate', name="voucherUsedDetailDate"),
 ]

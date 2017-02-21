@@ -1,13 +1,14 @@
-#-*- coding:utf-8 -*-
+# -*- coding:utf-8 -*-
 __author__ = 'qixu'
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.db.models import Max
-from django.core.paginator import Paginator #分页查询
+from django.core.paginator import Paginator  # 分页查询
 import datetime, json, pymssql
 from sellcard.common import Constants
 from sellcard.common import Method as mth
-from sellcard.models import Shops,KfJobsCoupon,KfJobsCouponSn
+from sellcard.models import Shops, KfJobsCoupon, KfJobsCouponSn
+
 
 def index(request):
     """
@@ -18,13 +19,13 @@ def index(request):
     shop = request.session.get('s_shopcode')
     today = str(datetime.date.today())
     role = request.session.get('s_roleid')
-    shops = Shops.objects.values('shop_code','shop_name','city').order_by('shop_code')
+    shops = Shops.objects.values('shop_code', 'shop_name', 'city').order_by('shop_code')
     List = Shops.objects.values('shop_code')
-    if role in ('1','6','7') :
+    if role in ('1', '6', '7'):
         shops = shops
-    elif role == '8':#承德总部财务
+    elif role == '8':  # 承德总部财务
         shops = shops.filter(city='C')
-    elif role == '9':#唐山总部财务
+    elif role == '9':  # 唐山总部财务
         shops = shops.filter(city='T')
     else:
         shops = shops.filter(shop_code=shop)
@@ -37,7 +38,7 @@ def index(request):
     code_list = []
 
     if shopcode != '':
-        if role in ('1','6','7','8','9'):
+        if role in ('1', '6', '7', '8', '9'):
             code_list.append(shops.get(shop_code=shopcode)['shop_code'])
         else:
             code_list.append(shops.get(shop_code=shop)['shop_code'])
@@ -46,15 +47,13 @@ def index(request):
         for item_shop in shops:
             code_list.append(item_shop['shop_code'])
     code_list = str(code_list)
-    code_list = code_list.replace('[','').replace(']','')
+    code_list = code_list.replace('[', '').replace(']', '')
 
     sql = u" SELECT c.shop_code, " \
           u" sum(CASE WHEN c.type = 1 THEN IFNULL(jcs.used_amount, 0) ELSE 0 END ) AS card_amount, " \
           u" sum(CASE WHEN c.type = 1 THEN c.`values` * IFNULL(jcs.used_amount, 0) ELSE 0 END ) AS card_account, " \
           u" sum(CASE WHEN c.type = 2 THEN IFNULL(jcs.used_amount, 0) ELSE 0 END ) AS goods_amount, " \
-          u" sum(CASE WHEN c.type = 2 THEN c.`values` * IFNULL(jcs.used_amount, 0) ELSE 0 END ) AS goods_account, " \
-          u" sum(CASE WHEN c.type = 3 THEN IFNULL(jcs.used_amount, 0) ELSE 0 END ) AS back_amount, " \
-          u" sum(CASE WHEN c.type = 3 THEN c.`values` * IFNULL(jcs.used_amount, 0) ELSE 0 END ) AS back_account " \
+          u" sum(CASE WHEN c.type = 2 THEN c.`values` * IFNULL(jcs.used_amount, 0) ELSE 0 END ) AS goods_account " \
           u" FROM kf_jobs_coupon c, " \
           u" (SELECT count(cs.voucher) AS used_amount, cs.coupon_code " \
           u" FROM kf_jobs_coupon_sn cs " \
@@ -71,9 +70,9 @@ def index(request):
     cur.close()
     conn.close()
 
-    ErpList = getAmount(start, endTime, code_list)
+    ErpList = getAmount(start, end, code_list)
 
-    total={}
+    total = {}
     total['card_amount'] = 0
     total['card_account'] = 0
     total['goods_amount'] = 0
@@ -118,31 +117,40 @@ def index(request):
                 total['goods_amount'] += int(item_sn['goods_amount'])
                 item['goods_account'] = item_sn['goods_account']
                 total['goods_account'] += float('%.2f' % item_sn['goods_account'])
-                item['back_amount'] = item_sn['back_amount']
-                total['back_amount'] += int(item_sn['back_amount'])
-                item['back_account'] = item_sn['back_account']
-                total['back_account'] += float('%.2f' % item_sn['back_account'])
+                # item['back_amount'] = item_sn['back_amount']
+                # total['back_amount'] += int(item_sn['back_amount'])
+                # item['back_account'] = item_sn['back_account']
+                # total['back_account'] += float('%.2f' % item_sn['back_account'])
         for item_erp in ErpList:
             if item['shop_code'] == item_erp['shop_code']:
+                item['back_amount'] = item_erp['back_amount']
+                total['back_amount'] += int(item_erp['back_amount'])
+                item['back_account'] = item_erp['back_account']
+                total['back_account'] += float('%.2f' % item_erp['back_account'])
+                item['front_amount'] = item_erp['front_amount']
+                total['front_amount'] += int(item_erp['front_amount'])
+                item['front_account'] = item_erp['front_account']
+                total['front_account'] += float('%.2f' % item_erp['front_account'])
                 item['common_amount'] = item_erp['common_amount']
                 total['common_amount'] += int(item_erp['common_amount'])
                 item['common_account'] = item_erp['common_account']
                 total['common_account'] += float('%.2f' % item_erp['common_account'])
-        item['front_amount'] = int(item['common_amount'])-int(item['back_amount'])
-        total['front_amount'] += int(item['front_amount'])
-        item['front_account'] = float('%.2f' % item['common_account'])-float('%.2f' % item['back_account'])
-        total['front_account'] += float('%.2f' % item['front_account'])
-        item['total_b_amount'] = int(item['card_amount'])+int(item['back_amount'])
+        # item['front_amount'] = int(item['common_amount'])-int(item['back_amount'])
+        # total['front_amount'] += int(item['front_amount'])
+        # item['front_account'] = float('%.2f' % item['common_account'])-float('%.2f' % item['back_account'])
+        # total['front_account'] += float('%.2f' % item['front_account'])
+        item['total_b_amount'] = int(item['card_amount']) + int(item['back_amount'])
         total['total_b_amount'] += int(item['total_b_amount'])
-        item['total_b_account'] = float('%.2f' % item['card_account'])+float('%.2f' % item['back_account'])
+        item['total_b_account'] = float('%.2f' % item['card_account']) + float('%.2f' % item['back_account'])
         total['total_b_account'] += float('%.2f' % item['total_b_account'])
-        item['total_f_amount'] = int(item['goods_amount'])+int(item['front_amount'])
+        item['total_f_amount'] = int(item['goods_amount']) + int(item['front_amount'])
         total['total_f_amount'] += int(item['total_f_amount'])
-        item['total_f_account'] = float('%.2f' % item['goods_account'])+float('%.2f' % item['front_account'])
+        item['total_f_account'] = float('%.2f' % item['goods_account']) + float('%.2f' % item['front_account'])
         total['total_f_account'] += float('%.2f' % item['total_f_account'])
-        item['total_amount'] = int(item['card_amount'])+int(item['goods_amount'])+int(item['common_amount'])
+        item['total_amount'] = int(item['card_amount']) + int(item['goods_amount']) + int(item['common_amount'])
         total['total_amount'] += int(item['total_amount'])
-        item['total_account'] = float('%.2f' % item['card_account'])+float('%.2f' % item['goods_account'])+float('%.2f' % item['common_account'])
+        item['total_account'] = float('%.2f' % item['card_account']) + float('%.2f' % item['goods_account']) + float(
+            '%.2f' % item['common_account'])
         total['total_account'] += float('%.2f' % item['total_account'])
     total['card_account'] = '%.2f' % total['card_account']
     total['goods_account'] = '%.2f' % total['goods_account']
@@ -158,11 +166,11 @@ def index(request):
 def detail(request):
     if request.method == 'POST':
         page = mth.getReqVal(request, 'page', 1)
-        shop_code=request.POST.get('t_shop_code')
-        shop=request.POST.get('t_shop')
-        type=request.POST.get('t_type')
-        start=request.POST.get('t_start')
-        end=request.POST.get('t_end')
+        shop_code = request.POST.get('t_shop_code')
+        shop = request.POST.get('t_shop')
+        type = request.POST.get('t_type')
+        start = request.POST.get('t_start')
+        end = request.POST.get('t_end')
         endTime = datetime.datetime.strptime(end, '%Y-%m-%d') + datetime.timedelta(1)
 
         shops = Shops.objects.values('shop_code', 'shop_name', 'city').order_by('shop_code')
@@ -185,7 +193,7 @@ def detail(request):
         code_list = str(code_list)
         code_list = code_list.replace('[', '').replace(']', '')
 
-        List =[]
+        List = []
 
         if type != '3':
             sql = u" SELECT c.shop_code, c.`values` AS values_list, c.coupon_name, c.coupon_code, " \
@@ -201,10 +209,10 @@ def detail(request):
                   u" WHERE jcs.coupon_code = c.coupon_code " \
                   u" AND c.type = '{type}' " \
                   u" AND c.shop_code = '{shop}' ".format(code_list=code_list,
-                                                        start=start,
-                                                        end=endTime,
-                                                        type=type,
-                                                        shop=shop)
+                                                         start=start,
+                                                         end=endTime,
+                                                         type=type,
+                                                         shop=shop)
 
             conn = mth.getMysqlConn()
             cur = conn.cursor()
@@ -213,7 +221,7 @@ def detail(request):
             cur.close()
             conn.close()
         else:
-            List = getDetail(code_list,start,endTime,shop)
+            List = getDetail(code_list, start, end, shop)
             # serial = KfJobsCouponSn.objects.exclude(serial_id='0').filter(request_shop=shop,
             #                                                                  used_flag=1,
             #                                                                  used_date__lte=endTime,
@@ -221,8 +229,8 @@ def detail(request):
             #                                                                  used_shop__in=code_list)\
             #     .values('coupon_code').aggregate(serial_id=Max('serial_id'))
             # serial_id = []
-            #for item_serial in serial:
-                #serial_id.append(item_serial['serial_id'])
+            # for item_serial in serial:
+            # serial_id.append(item_serial['serial_id'])
 
             # serial_id = str(serial_id)
             # serial_id = serial_id.replace('[', '').replace(']', '')
@@ -250,6 +258,85 @@ def detail(request):
     return render(request, 'report/voucher/used/detail.html', locals())
 
 
+def detailDate(request):
+    if request.method == 'POST':
+        page = mth.getReqVal(request, 'page', 1)
+        shop_code = request.POST.get('t_shop_code')
+        type = request.POST.get('t_type')
+        coupon_code = request.POST.get('coupon_code')
+        clear_type = request.POST.get('clear_type')
+        start = request.POST.get('t_start')
+        end = request.POST.get('t_end')
+        endTime = datetime.datetime.strptime(end, '%Y-%m-%d') + datetime.timedelta(1)
+
+        shops = Shops.objects.values('shop_code', 'shop_name', 'city').order_by('shop_code')
+        role = request.session.get('s_roleid')
+        if role in ('1', '6', '7'):
+            shops = shops
+        elif role == '8':  # 承德总部财务
+            shops = shops.filter(city='C')
+        elif role == '9':  # 唐山总部财务
+            shops = shops.filter(city='T')
+        else:
+            shops = shops.filter(shop_code=shop_code)
+
+        code_list = []
+        if shop_code != '':
+            code_list.append(shops.get(shop_code=shop_code)['shop_code'])
+        else:
+            for item_shop in shops:
+                code_list.append(item_shop['shop_code'])
+        code_list = str(code_list)
+        code_list = code_list.replace('[', '').replace(']', '')
+
+        List = []
+
+        if type != '3':
+            sql = u" SELECT c.shop_code, c.`values` AS values_list, c.coupon_name, " \
+                  u" c.start_date, c.end_date, c.`range` as range_list, cs.used_shop, cs.used_date, cs.used_name " \
+                  u" FROM kf_jobs_coupon c,kf_jobs_coupon_sn cs " \
+                  u" WHERE cs.used_flag = 1 " \
+                  u" AND cs.used_shop IN ({code_list}) " \
+                  u" AND cs.used_date BETWEEN '{start}' AND '{end}' " \
+                  u" AND cs.coupon_code = c.coupon_code " \
+                  u" AND c.type = '{type}' " \
+                  u" AND c.coupon_code = '{coupon_code}' " \
+                  u" ORDER BY cs.used_date".format(code_list=code_list,
+                                                   start=start,
+                                                   end=endTime,
+                                                   type=type,
+                                                   coupon_code=coupon_code)
+
+            conn = mth.getMysqlConn()
+            cur = conn.cursor()
+            cur.execute(sql)
+            List = cur.fetchall()
+            cur.close()
+            conn.close()
+        else:
+            List = getDetailDate(code_list, start, end, coupon_code, clear_type)
+
+    # 表单分页开始
+    paginator = Paginator(List, 8)
+
+    try:
+        List = paginator.page(page)
+
+        if List.number > 1:
+            page_up = List.previous_page_number
+        else:
+            page_up = 1
+
+        if List.number < List.paginator.num_pages:
+            page_down = List.next_page_number
+        else:
+            page_down = List.paginator.num_pages
+
+    except Exception as e:
+        print(e)
+    # 表单分页结束
+    return render(request, 'report/voucher/used/detail_date.html', locals())
+
 
 def getAmount(start, end, shops):
     """
@@ -267,20 +354,26 @@ def getAmount(start, end, shops):
                            charset='utf8',
                            as_dict=True)
     cur = conn.cursor()
-    sql = "select c.ShopID AS shop_code, count(c.CouponNO) AS common_amount, sum(ISNULL(ct.Value,0)) AS common_account " \
+    sql = "select c.ShopID AS shop_code," \
+          " sum(CASE WHEN c.ClearSheetType = 220 THEN 1 ELSE 0 END) as back_amount," \
+          " sum(CASE WHEN c.ClearSheetType = 220 THEN ISNULL(ct. VALUE, 0) ELSE 0 END) as back_account," \
+          " sum(CASE WHEN c.ClearSheetType = 110 THEN 1 ELSE 0 END) as front_amount," \
+          " sum(CASE WHEN c.ClearSheetType = 110 THEN ISNULL(ct. VALUE, 0) ELSE 0 END) as front_account," \
+          " count(c.CouponNO) AS common_amount, sum(ISNULL(ct.Value,0)) AS common_account " \
           "from MyShop_Coupon c,MyShop_CouponType ct " \
-          " where c.ClearFlag = 1 and c.CouponTypeID like '8%' "\
-          " and SUBSTRING(c.ClearSDate, 7,4)+'-'+LEFT(c.ClearSDate, 2)+'-'+replace(SUBSTRING(c.ClearSDate, 4,2),' ','0') "\
+          " where c.ClearFlag = 1 and c.CouponTypeID like '8%' " \
+          " and SUBSTRING(c.ClearSDate, 7,4)+'-'+LEFT(c.ClearSDate, 2)+'-'+replace(SUBSTRING(c.ClearSDate, 4,2),' ','0') " \
           "  BETWEEN '{start}' AND  '{end}' " \
-          "   and c.CouponTypeID = ct.CouponTypeID and c.ClearShopID in ({shops})  "\
-          " group by c.ShopID ".format(start=start,end=end,shops=shops)
+          "   and c.CouponTypeID = ct.CouponTypeID and c.ClearShopID in ({shops})  " \
+          " group by c.ShopID ".format(start=start, end=end, shops=shops)
     cur.execute(sql)
     list = cur.fetchall()
     cur.close()
     conn.close()
     return list
 
-#def getDetail(used_shop, start, end, request_shop, serial_id):
+
+# def getDetail(used_shop, start, end, request_shop, serial_id):
 def getDetail(used_shop, start, end, request_shop):
     """
     获取已使用券明细
@@ -307,6 +400,10 @@ def getDetail(used_shop, start, end, request_shop):
           u"         c.EndDate AS end_date, " \
           u"         CASE WHEN ct.IfCurrShop = 0 THEN '全部店' " \
           u"          ELSE '发行店' END AS range_list, " \
+          u"         sum(CASE WHEN c.ClearSheetType = 220 THEN 1 ELSE 0 END) AS back_amount, " \
+          u"         ct.Value * sum(CASE WHEN c.ClearSheetType = 220 THEN 1 ELSE 0 END) AS back_account," \
+          u"         sum(CASE WHEN c.ClearSheetType = 110 THEN 1 ELSE 0 END) AS front_amount, " \
+          u"         ct.Value * sum(CASE WHEN c.ClearSheetType = 110 THEN 1 ELSE 0 END) AS front_account," \
           u"         count(c.CouponNO) AS used_amount, " \
           u"         ct.Value * count(c.CouponNO) AS used_account," \
           u"         c.SerialID AS serial_id," \
@@ -325,9 +422,58 @@ def getDetail(used_shop, start, end, request_shop):
           u"           c.EndDate, " \
           u"           ct.IfCurrShop," \
           u"           c.SerialID ".format(code_list=used_shop,
-                                            start=start,
-                                            end=end,
-                                            shop=request_shop)
+                                           start=start,
+                                           end=end,
+                                           shop=request_shop)
+    cur.execute(sql)
+    list = cur.fetchall()
+    cur.close()
+    conn.close()
+    return list
+
+
+def getDetailDate(used_shop, start, end, serial_id, clear_type):
+    """
+    获取已使用券明细时间
+    :param used_shop:使用门店
+    :param start:开始时间
+    :param end: 结束时间
+    :param serial_id: 批次号
+    :param clear_type: 核销类型
+    :return: 列表
+    """
+    conn = pymssql.connect(host=Constants.KGGROUP_DB_SERVER,
+                           port=Constants.KGGROUP_DB_PORT,
+                           user=Constants.KGGROUP_DB_USER,
+                           password=Constants.KGGROUP_DB_PASSWORD,
+                           database=Constants.KGGROUP_DB_DATABASE,
+                           charset='utf8',
+                           as_dict=True)
+    cur = conn.cursor()
+
+    sql = u" SELECT c.ShopID AS shop_code, " \
+          u"         ct.Value AS values_list, " \
+          u"         ct.CouponTypeName AS coupon_name, " \
+          u"         CONVERT(varchar(10), c.StartDate, 120) AS start_date, " \
+          u"         c.EndDate AS end_date, " \
+          u"         CASE WHEN ct.IfCurrShop = 0 THEN '全部店' " \
+          u"          ELSE '发行店' END AS range_list, " \
+          u"         c.ClearShopID AS used_shop, " \
+          u"         SUBSTRING(c.ClearSDate, 7,4)+'-'+LEFT(c.ClearSDate, 2)+'-' " \
+          u"         +replace(SUBSTRING(c.ClearSDate, 4,2),' ','0')+RIGHT(c.ClearSDate, 8) AS used_date, " \
+          u"         c.ClearPOSID AS used_name " \
+          u" FROM MyShop_Coupon c, " \
+          u"       MyShop_CouponType ct " \
+          u" WHERE c.CouponTypeID = ct.CouponTypeID " \
+          u"   AND c.ClearFlag = 1  and c.CouponTypeID like '8%' " \
+          u"   AND c.ClearShopID IN ({code_list}) " \
+          u"   AND SUBSTRING(c.ClearSDate, 7,4)+'-'+LEFT(c.ClearSDate, 2)+'-'+replace(SUBSTRING(c.ClearSDate, 4,2),' ','0') BETWEEN '{start}' AND '{end}' " \
+          u"   AND c.SerialID = '{serial_id}' " \
+          u"   AND c.ClearSheetType = '{clear_type}' ".format(code_list=used_shop,
+                                                              start=start,
+                                                              end=end,
+                                                              serial_id=serial_id,
+                                                              clear_type=clear_type)
     cur.execute(sql)
     list = cur.fetchall()
     cur.close()
