@@ -124,9 +124,9 @@ def save(request):
     #合计信息
     totalVal = request.POST.get('totalVal',0.00)
 
-    discountRate = request.POST.get('discount',0.00)
+    discountRate = float(request.POST.get('discount',0.00))/100
     disCode = request.POST.get('disCode','')
-    discountVal = request.POST.get('discountVal','')
+    discountVal = float(request.POST.get('discountVal',''))
 
     Ybalance = request.POST.get('Ybalance',0.00)
 
@@ -166,15 +166,26 @@ def save(request):
                 infoList.append(YorderInfo)
             OrderInfo.objects.bulk_create(infoList)
 
+            payDiscDict = mth.getPayDiscDict()
             paymentList = []
             for pay in payList:
                 orderPay = OrderPaymentInfo()
                 orderPay.order_id = order_sn
                 orderPay.pay_id = pay['payId']
-                if pay['payId'] in ('4','6'):
-                    orderPay.is_pay='0'
-                else:
-                    orderPay.is_pay='1'
+
+                # 处理混合支付的优惠
+                is_pay = 1
+                if pay['payId'] in ('3', '4'):
+                    is_pay = '0'
+                elif pay['payId'] == '6':
+                    is_pay = '0'
+                    discountRate = payDiscDict[pay['payId']]
+                    discountVal = Ycash = float(pay['payVal']) * float(discountRate)
+                elif pay['payId'] in ('7', '8', '10', '11'):
+                    discountRate = payDiscDict[pay['payId']]
+                    discountVal = Ycash = float(pay['payVal']) * float(discountRate)
+                orderPay.is_pay = is_pay
+
                 if pay['payId']=='9':
                     mth.upChangeCode(hjsList,shopcode)
 
@@ -189,14 +200,14 @@ def save(request):
             order.buyer_company = buyerCompany
             order.total_amount = float(totalVal)+float(discountVal)
             order.paid_amount = float(totalVal)+float(Ybalance)#实付款合计=售卡合计+优惠补差
-            order.disc_amount = float(discountVal)#优惠合计
+            order.disc_amount = discountVal#优惠合计
             order.diff_price = Ybalance
             order.shop_code = shopcode
             order.depart = depart
             order.operator_id = operator
             order.action_type = actionType
             order.add_time = datetime.datetime.now()
-            order.discount_rate = float(discountRate)/100
+            order.discount_rate = discountRate
             order.order_sn = order_sn
             order.y_cash = Ycash
             order.save()

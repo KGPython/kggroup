@@ -435,10 +435,6 @@ function getPayList(obj){
             if(!payId){
                 alert('请选择三方支付方式');
                 return false;
-            }else if((payId==3 || payId == 4)){
-                if((!$('#buyerName').val() || !$('#buyerPhone').val() || !$('#buyerCompany').val())){
-                    alert('使用赊销和汇款支付，顾客信息不能为空');
-                }
             }
             var payRmarks = $(trs[j]).find('td').eq(3).find('input').val();
             item = {'payId':payId,'payVal':payVal,'payRmarks':payRmarks};
@@ -609,7 +605,6 @@ function saveCardSaleOrder(action_type,url,cardList,orderSns){
             return false;
         }
     }
-
     var data = {
         csrfmiddlewaretoken: CSRF,
         'actionType':action_type,//操作类型
@@ -917,6 +912,7 @@ function setTotalByCardList(obj){
         var cardsSaleVal = parseFloat($('.Total #totalVal b').text());//售卡列表合计金额
         var orderVal = cardsSaleVal + discountPay;
         $('.Total #totalPaid b').text(orderVal)
+
     }
     else if($(cardList).hasClass('discount2'))//实物团购返点
     {
@@ -1035,7 +1031,6 @@ function setTotalBycardSaleTotalVal(discRate,cardSaleTotalVal){
     discountPay  = discountCardTotalVal - discountVal;
     $('.Total #totalYBalance b').text(discountPay);
     //3、计算应付金额
-    console.log(cardSaleTotalVal,discountPay)
     $('.Total #totalPaid b').text(cardSaleTotalVal+discountPay);
 }
 

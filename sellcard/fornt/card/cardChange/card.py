@@ -110,15 +110,26 @@ def save(request):
             OrderChangeCardInfo.objects.bulk_create(changeCardInfoList)
 
             #orderPayment
+            payDiscDict = mth.getPayDiscDict()
             ChangePaymentList = []
             for pay in payList:
                 orderPay = OrderChangeCardPayment()
                 orderPay.order_id = order_sn
                 orderPay.pay_id = pay['payId']
-                if pay['payId'] in ('4','6'):
-                    orderPay.is_pay = '0'
-                else:
-                    orderPay.is_pay = '1'
+
+                # 处理混合支付的优惠
+                is_pay = 1
+                if pay['payId'] in ('3', '4'):
+                    is_pay = '0'
+                elif pay['payId'] == '6':
+                    is_pay = '0'
+                    disRate = payDiscDict[pay['payId']]
+                    disc = discCash = float(pay['payVal']) * float(disRate)
+                elif pay['payId'] in ('7', '8', '10', '11'):
+                    disRate = payDiscDict[pay['payId']]
+                    disc = discCash = float(pay['payVal']) * float(disRate)
+                orderPay.is_pay = is_pay
+
                 if pay['payId'] == '9':
                     mth.upChangeCode(hjsList, shopCode)
 
