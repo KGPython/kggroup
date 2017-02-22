@@ -81,13 +81,18 @@
                                     </div>
                                 </div>
                                 <div class="row formline">
-                                    <label for="" class="col-md-2 formline-label must red">核销方式：</label>
-                                    <div class="col-md-3">
-                                        <select name="clearFlag" id="clearFlag" class="form-control" required>
-                                            <option value="331">换卡</option>
-                                            <option value="332">提货</option>
-                                        </select>
-                                    </div>
+                                    {% if info.type == 3 %}
+                                        <label for="" class="col-md-2 formline-label must red">核销方式：</label>
+                                        <div class="col-md-3">
+                                            <select name="clearFlag" id="clearFlag" class="form-control" required>
+                                                <option value="331">换卡</option>
+                                                <option value="332">提货</option>
+                                            </select>
+                                        </div>
+                                    {% else %}
+                                        <div class="col-md-5">
+                                        </div>
+                                    {% endif %}
                                     <div class="col-md-1">
                                         <button type="button" class="btn btn-warning pull-right" id="btn_save">
                                             确认使用
