@@ -42,6 +42,7 @@
                                 <th>使用门店</th>
                                 <th>使用日期</th>
                                 <th>使用人</th>
+                                <th>券号</th>
                             </tr>
                             </thead>
                             <tbody class="cardIn" id="nopayList">
@@ -56,6 +57,7 @@
                                     <td>{{ row.used_shop | transShopCode }}</td>
                                     <td>{{ row.used_date }}</td>
                                     <td>{{ row.used_name }}</td>
+                                    <td>{{ row.voucher }}</td>
                                 </tr>
                             {% endfor %}
                             </tbody>
