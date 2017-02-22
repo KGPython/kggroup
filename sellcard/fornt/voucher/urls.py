@@ -21,7 +21,7 @@ urlpatterns = [
 
     # 过期券核销
     # 主页
-    url(r'^balance/$', 'sellcard.fornt.voucher.overdue.index', name="voucherOverdue"),
+    url(r'^overdue/$', 'sellcard.fornt.voucher.overdue.index', name="voucherOverdue"),
 
 
     #验证码发放
