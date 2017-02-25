@@ -77,6 +77,7 @@ def save(request):
             resCard = CardInventory.objects.filter(card_no__in=cardIdList).update(card_status='2',card_action='0')
             if resCard != cardNum:
                 raise MyError('CardInventory状态更新失败！')
+
             resGuest = mth.updateCard(cardIdList,'1',cardNum)
             if not resGuest:
                 raise MyError('Guest更新失败')

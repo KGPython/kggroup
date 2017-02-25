@@ -14,7 +14,7 @@ def index(request):
 
     shops = []
     shopsCodeStr = ''
-    if role_id == '1':
+    if role in ('1','6'):
         shops = mth.getCityShopsCode()
         shopsCodeStr = "'" + "','".join(shops) + "'"
     if role_id == '9':

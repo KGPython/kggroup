@@ -427,6 +427,7 @@
             if(!list.length){
                 alert('提交列表不能为空');
             }else{
+                $(this).attr('disabled',true);
                 $.post(
                     "{% url 'orderAdjustCreate' %}",
                     dataPost,
@@ -440,6 +441,7 @@
                             }else{
                                 alert('数据提交失败');
                             }
+                            $(this).removeAttr('disabled');
                         }else{
                             alert(status)
                         }

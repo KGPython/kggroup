@@ -198,8 +198,7 @@ function saveBorrowOrder(url){
     var borrowName = $('#borrowName').val();
     var borrowDepartCode = $('#borrowDepartCode').val();
     var borrowPhone = $('#borrowPhone').val();
-
-    if(isNaN(totalVal)){
+    if(!totalVal){
         alert('还未添加售卡信息，请核对后再尝试提交！');
         return false;
     }

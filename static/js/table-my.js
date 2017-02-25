@@ -558,14 +558,78 @@ function discCash() {
 /***************************************************优惠管理  end****************************************************/
 
 
-//保存售卡订单
-function saveCardSaleOrder(action_type,url,cardList,orderSns){
-    //售卡列表
-    var cardList = cardList;
-    var orderSnList = '';
-    if(orderSns){
-        orderSnList = orderSns;
+function saveBorrowPayOrder(action_type,url,orderSns){
+    var totalNum = parseInt($('.Total #totalNum b').text());
+    var totalVal = parseFloat($('.Total #totalVal b').text());//卡合计金额
+    var payTotal = parseFloat($('.Total #payTotal b').text());//支付合计
+    var discPay =parseFloat($('.Total #totalYBalance b').text());//优惠补差
+    var discount = parseFloat($('.Total #discount input').val());//折扣比率
+    var disCode = $('.Total #disCode').val();
+    var discountVal = parseFloat($('.Total #discountVal b').text());//优惠金额
+    var YcardList = [];
+    var YtotalNum=0,Ycash=0,YtotalVal=0;
+    if(discountVal){
+        //赠卡列表
+        YcardList = getCardList($('#YcardList'),'1');
+        YtotalNum =parseInt($('.discountTotal #totalNum b').text());
+        Ycash = parseFloat($('#Ycash').val());//优惠返现
+        YtotalVal =parseFloat($('.discountTotal #totalVal b').text());//优惠列表合计=卡合计+返现合计
     }
+
+    //支付列表
+    var payList = getPayList($('.payList'));
+    var hjsStr = $('.payList #remark-hjs').val();
+    //买卡人信息
+    var buyerName = $('#buyerName').val();
+    var buyerPhone = $('#buyerPhone').val();
+    var buyerCompany = $('#buyerCompany').val();
+
+    var postToken = $('#post-token').val();
+
+    if(totalVal==0){
+        alert('还未添加售卡信息，请核对后再尝试提交！');
+        return false;
+    }
+    if(payTotal!=totalVal+discPay){
+        alert('支付金额与应付金额不等，请核对后提交！');
+        return false;
+    }
+
+    if(discountVal>0){
+        //优惠补差
+        if(discPay<0){
+            alert('优惠补差不能为负数！');
+            return false;
+        }
+    }
+
+    var data = {
+        csrfmiddlewaretoken: CSRF,
+        'actionType':action_type,//操作类型
+        'orderSnList':orderSns,
+        'totalNum':totalNum,//售卡总数
+        'totalVal':totalVal,//售卡总价
+        'discount':discount,//返点百分比
+        'disCode':disCode,//返点自定义授权
+        'discountVal':discountVal,//优惠返点金额
+        'YcardStr':JSON.stringify(YcardList),//优惠卡列表
+        'YtotalNum':YtotalNum,//优惠卡总数
+        'Ycash':Ycash,//优惠返现
+        'YtotalVal':YtotalVal,//优惠区域合计
+        'Ybalance':discPay,//优惠补差
+        'payStr':JSON.stringify(payList),//支付列表
+        'hjsStr':hjsStr,//黄金手列表
+        'buyerName':buyerName,
+        'buyerPhone':buyerPhone,
+        'buyerCompany':buyerCompany,
+        'postToken':postToken
+    };
+    doAjaxSave(url,data);
+}
+
+//保存售卡订单
+function saveCardSaleOrder(action_type,url,cardList){
+    //售卡列表
     var totalNum = parseInt($('.Total #totalNum b').text());
     var totalVal = parseFloat($('.Total #totalVal b').text());//卡合计金额
     var payTotal = parseFloat($('.Total #payTotal b').text());//支付合计
@@ -614,7 +678,6 @@ function saveCardSaleOrder(action_type,url,cardList,orderSns){
         csrfmiddlewaretoken: CSRF,
         'actionType':action_type,//操作类型
         'cardStr':JSON.stringify(cardList),//售卡列表
-        'orderSnList':orderSnList,
         'totalNum':totalNum,//售卡总数
         'totalVal':totalVal,//售卡总价
         'discount':discount,//返点百分比
@@ -1056,15 +1119,38 @@ function checkAll(obj) {
         var check_status=$(_this).prop('checked');
         var tbody = $(_this).parents('table').find('tbody');
         if(check_status){
-            $("tbody :checkbox").prop('checked',true);
+            tbody.find("input[type='checkbox']").prop('checked',true);
         }else{
-            $("tbody :checkbox").prop('checked',false);
+            tbody.find("input[type='checkbox']").prop('checked',false);
         }
     });
 }
+
+function getCheckedIdList(checkBoxList){
+    var list = [] ;
+    checkBoxList.find(':checked').each(function () {
+        var orderSn = $(this).attr('id');
+        list.push(orderSn);
+    });
+    return list;
+}
+function getCheckedOrder(checkBoxList){
+    var list = [] ;
+    var totalVal = 0;
+    checkBoxList.find(':checked').each(function () {
+        var orderSn = $(this).attr('id');
+        list.push(orderSn);
+        var val = parseFloat($(this).parent().siblings('td.rowVal').text());
+        totalVal += val;
+    });
+    return {list:list,totalVal:totalVal};
+}
+
+
 $(document).ready(function(){
     var parterVal = $('#parter').val();
     $('#parterId').val(parterVal);
     var blankVal = $('#blank').val();
     $('#blankId').val(blankVal);
 });
+

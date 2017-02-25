@@ -17,7 +17,7 @@ def index(request):
     depart_id = request.session.get('s_depart')
     user_id = request.session.get('s_uid')
     shops = []
-    if role_id == '1':
+    if role_id in ('1','6'):
         shops = mth.getCityShopsCode()
     if role_id == '9':
         shops = mth.getCityShopsCode('T')

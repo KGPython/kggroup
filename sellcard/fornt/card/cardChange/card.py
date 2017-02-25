@@ -158,13 +158,9 @@ def save(request):
             order.save()
 
             #更新
-            cardIdInList = []
-            for card in cardListIn:
-                cardIdInList.append(card['cardId'])
-            cardIdOutList = []
-            temp = cardListOut+discList
-            for card in temp:
-                cardIdOutList.append(card['cardId'])
+            cardIdInList = [card['cardId'] for card in cardListIn]
+            temp = cardListOut + discList
+            cardIdOutList = [card['cardId'] for card in temp]
             cardsOutNum = len(cardIdOutList)
             cardsInNum = len(cardIdInList)
 
@@ -206,15 +202,19 @@ def save(request):
                 raise ('Guest入卡更新失败')
 
             res["status"] = 1
-            ActionLog.objects.create(action='换卡-单卡',u_name=request.session.get('s_uname'),cards_in=cardListInStr,cards_out=cardListOutStr,add_time=datetime.datetime.now())
+            ActionLog.objects.create(
+                action='换卡-单卡', u_name=request.session.get('s_uname'), cards_in=json.dumps(cardIdInList),
+                cards_out=json.dumps(cardIdOutList), add_time=datetime.datetime.now()
+            )
             del request.session['postToken']
     except Exception as e:
         res["status"] = 0
-        if e.value:
+        if hasattr(e, 'value'):
             res['msg'] = e.value
-        else:
-            res["msg"] = e
-        ActionLog.objects.create(action='换卡-单卡',u_name=request.session.get('s_uname'),cards_in=cardListInStr,cards_out=cardListOutStr,add_time=datetime.datetime.now(),err_msg=e)
+        ActionLog.objects.create(
+            action='换卡-单卡', u_name=request.session.get('s_uname'),
+            add_time=datetime.datetime.now(), err_msg=e
+        )
 
     return HttpResponse(json.dumps(res))
 
