@@ -292,8 +292,8 @@ def detailDate(request):
         List = []
 
         if type != '3':
-            sql = u" SELECT c.shop_code, c.`values` AS values_list, c.coupon_name, " \
-                  u" c.start_date, c.end_date, c.`range` as range_list, cs.used_shop, cs.used_date, cs.used_name " \
+            sql = u" SELECT c.shop_code, c.`values` AS values_list, c.coupon_name, c.start_date, " \
+                  u" c.end_date, c.`range` as range_list, cs.used_shop, cs.used_date, cs.used_name, cs.voucher " \
                   u" FROM kf_jobs_coupon c,kf_jobs_coupon_sn cs " \
                   u" WHERE cs.used_flag = 1 " \
                   u" AND cs.used_shop IN ({code_list}) " \
@@ -461,7 +461,8 @@ def getDetailDate(used_shop, start, end, serial_id, clear_type):
           u"         c.ClearShopID AS used_shop, " \
           u"         SUBSTRING(c.ClearSDate, 7,4)+'-'+LEFT(c.ClearSDate, 2)+'-' " \
           u"         +replace(SUBSTRING(c.ClearSDate, 4,2),' ','0')+RIGHT(c.ClearSDate, 8) AS used_date, " \
-          u"         c.ClearPOSID AS used_name " \
+          u"         c.ClearPOSID AS used_name," \
+          u"         c.CouponNO AS voucher " \
           u" FROM MyShop_Coupon c, " \
           u"       MyShop_CouponType ct " \
           u" WHERE c.CouponTypeID = ct.CouponTypeID " \

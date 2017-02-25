@@ -1,0 +1,158 @@
+{% load basefilter %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>核销购物券</title>
+</head>
+<body>
+{% include 'common/head.html' %}
+<!--containt-part-->
+<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb">
+            <a data-original-title="Go to Home" href="#" title="" class="tip-bottom">
+                <span class="glyphicon glyphicon-home" aria-hidden="true"> </span> 首页
+            </a>
+            <a href="#" class="">购物券管理</a>
+            <a href="#" class="current">过期券核销</a>
+        </div>
+    </div>
+    <div class="widget-box">
+        <div class="widget-content nopadding">
+            <div class="collapse in widget-content">
+                <form action="{% url 'voucherOverdue' %}" method="post" id="form">
+                    {% csrf_token %}
+                    <input type="hidden" id="btn_value" name="btn_value">
+                    <div class="row formline" id="div_query">
+                        <label for="" class="col-md-1 formline-label">查询券号：</label>
+                        <div class="col-md-2">
+                            <input type="text" class="form-control" name="voucherSn" id="voucherSn" required
+                                   value="{{ voucherSn }}">
+                        </div>
+                        <div class="col-md-1">
+                            <button type="button" class="btn btn-success pull-right" id="btn_query">查询</button>
+                        </div>
+                    </div>
+                    <div class="row formline" id="vouInfo" style="display:none">
+                        <div class="widget-box">
+                            <div class="widget-content nopadding" style="overflow: hidden">
+                                <div class="row formline">
+                                    <label for="" class="col-md-2 formline-label">发行门店：</label>
+                                    <div class="col-md-3">
+                                        <input type="text" class="form-control" readonly
+                                               value="{{ info.shop_code | transShopCode }}">
+                                    </div>
+
+                                    <label for="" class="col-md-2 formline-label">发行日期：</label>
+                                    <div class="col-md-3">
+                                        <input type="text" class="form-control" readonly
+                                               value="{{ info.start_date }}">
+                                    </div>
+                                </div>
+                                <div class="row formline">
+                                    <label for="" class="col-md-2 formline-label">券类型：</label>
+                                    <div class="col-md-3">
+                                        <input type="text" class="form-control" readonly
+                                               id="type" name="type"
+                                               value="{{ info.type | transCouponTypeByChinese }}">
+                                    </div>
+
+                                    <label for="" class="col-md-2 formline-label">券号：</label>
+                                    <div class="col-md-3">
+                                        <input type="text" class="form-control" readonly
+                                               value="{{ voucherSn }}">
+                                    </div>
+                                </div>
+
+                                <div class="row formline">
+                                    <label for="" class="col-md-2 formline-label">截至日期：</label>
+                                    <div class="col-md-3">
+                                        <input type="text" class="form-control" readonly
+                                               value="{{ info.end_date }}">
+                                    </div>
+
+                                    <label for="" class="col-md-2 formline-label">券面值：</label>
+                                    <div class="col-md-3">
+                                        <input type="text" class="form-control" readonly
+                                               id="spend" name="spend" value="{{ info.spend }}">
+                                    </div>
+                                </div>
+                                <div class="row formline">
+                                    {% if info.type == 3 %}
+                                        <label for="" class="col-md-2 formline-label must red">核销方式：</label>
+                                        <div class="col-md-3">
+                                            <select name="clearFlag" id="clearFlag" class="form-control" required>
+                                                <option value="331">换卡</option>
+                                                <option value="332">提货</option>
+                                            </select>
+                                        </div>
+                                    {% else %}
+                                        <div class="col-md-5">
+                                        </div>
+                                    {% endif %}
+                                    <div class="col-md-1">
+                                        <button type="button" class="btn btn-warning pull-right" id="btn_save">
+                                            确认使用
+                                        </button>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <button type="button" class="btn btn-info pull-right" id="btn_close">
+                                            取消
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!--end-containt-part-->
+{% include "common/foot.html" %}
+<script>
+    var msg = {{ msg }};
+    if (msg == 1) {
+        alert('查无此券号');
+    }
+    if (msg == 2) {
+        alert('该券已使用');
+    }
+    if (msg == 3) {
+        alert('该券未过期，请去普通核销页面核销！');
+    }
+    if (msg == 4) {
+        $('#div_query').hide();
+        $('#vouInfo').show();
+    }
+    if (msg == 5) {
+        alert('使用成功！');
+        window.location("{% url 'voucherOverdue' %}");
+    }
+</script>
+<script>
+    $('#btn_query').click(function () {
+        var voucherSn = $('#voucherSn').val();
+        if (!voucherSn) {
+            alert('请输入券号');
+            return false;
+        }
+
+        $('#btn_value').val('query');
+        $('#form').submit();
+    });
+    $('#btn_save').click(function () {
+        $('#btn_value').val('save');
+        $('#form').submit();
+    });
+    $('#btn_close').click(function () {
+        window.location("{% url 'voucherOverdue' %}");
+    });
+</script>
+</body>
+</html>

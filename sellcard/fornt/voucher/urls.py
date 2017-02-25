@@ -12,9 +12,16 @@ urlpatterns = [
     # 打印
     url(r'^issue/printed/$',
         'sellcard.fornt.voucher.issue.printed', name="voucherIssuePrint"),
+
+
     # 核销代金券
     # 主页
     url(r'^balance/$', 'sellcard.fornt.voucher.balance.index', name="voucherBalance"),
+
+
+    # 过期券核销
+    # 主页
+    url(r'^overdue/$', 'sellcard.fornt.voucher.overdue.index', name="voucherOverdue"),
 
 
     #验证码发放
