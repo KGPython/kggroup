@@ -387,6 +387,7 @@ class OrderBorrow(models.Model):
     add_time = models.DateTimeField()
     is_paid = models.CharField(max_length=1)
     paid_time = models.DateTimeField(blank=True, null=True)
+    reply_order = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
         managed = False

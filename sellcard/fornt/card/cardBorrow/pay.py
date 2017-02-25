@@ -214,6 +214,7 @@ def save(request):
             order.y_cash = Ycash
             order.save()
 
+
             #未退回卡列表
             cardIdBorrowList = [card['card_no'] for card in cardList]
             #优惠卡列表
@@ -233,7 +234,9 @@ def save(request):
 
             #更新借卡单的结算状态
             orderSnNum = len(orderSnList)
-            resBorrow =  OrderBorrow.objects.filter(order_sn__in=orderSnList).update(is_paid='1',paid_time=datetime.datetime.now())
+            resBorrow =  OrderBorrow.objects\
+                .filter(order_sn__in=orderSnList).\
+                update(is_paid='1',paid_time=datetime.datetime.now(),reply_order=order_sn)
             if orderSnNum != resBorrow:
                 raise MyError('OrderBorrow状态更新失败')
 
