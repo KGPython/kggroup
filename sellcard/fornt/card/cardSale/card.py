@@ -74,25 +74,8 @@ def saveOrder(request):
 
         with transaction.atomic():
             order_sn = 'S'+mth.setOrderSn()
-            #保存OrderInfo
-            orderInfoList = []
-            for card in cardList:
-                orderInfo = OrderInfo()
-                orderInfo.order_id = order_sn
-                orderInfo.card_id = card['cardId'].strip()
-                orderInfo.card_balance = float(card['cardVal'])
-                orderInfo.card_action = '0'
-                orderInfo.card_attr = '1'
-                orderInfoList.append(orderInfo)
-            for Ycard in YcardList:
-                YorderInfo = OrderInfo()
-                YorderInfo.order_id = order_sn
-                YorderInfo.card_id = Ycard['cardId'].strip()
-                YorderInfo.card_balance = float(Ycard['cardVal'])
-                YorderInfo.card_action = '0'
-                YorderInfo.card_attr = '2'
-                orderInfoList.append(YorderInfo)
-            OrderInfo.objects.bulk_create(orderInfoList)
+
+            isThird = False
             #保存OrderPaymentInfo
             payDiscDict = mth.getPayDiscDict()
             oderPaymentList = []
@@ -105,14 +88,17 @@ def saveOrder(request):
                 if pay['payId'] in ('3','4'):
                     is_pay = '0'
                 elif pay['payId'] == '6':
+                    isThird = True
                     is_pay = '0'
                     discountRate = payDiscDict[pay['payId']]
                     discountVal = Ycash = float(pay['payVal']) * float(discountRate)
                 elif pay['payId'] in ('7','8','10','11'):
+                    isThird = True
                     discountRate = payDiscDict[pay['payId']]
                     discountVal = Ycash = float(pay['payVal']) * float(discountRate)
 
                 if pay['payId'] == '9':
+                    isThird = True
                     mth.upChangeCode(hjsList,shopcode)
 
                 orderPay.is_pay = is_pay
@@ -120,6 +106,27 @@ def saveOrder(request):
                 orderPay.remarks = pay['payRmarks']
                 oderPaymentList.append(orderPay)
             OrderPaymentInfo.objects.bulk_create(oderPaymentList)
+
+            # 保存OrderInfo
+            orderInfoList = []
+            for card in cardList:
+                orderInfo = OrderInfo()
+                orderInfo.order_id = order_sn
+                orderInfo.card_id = card['cardId'].strip()
+                orderInfo.card_balance = float(card['cardVal'])
+                orderInfo.card_action = '0'
+                orderInfo.card_attr = '1'
+                orderInfoList.append(orderInfo)
+            if not isThird:
+                for Ycard in YcardList:
+                    YorderInfo = OrderInfo()
+                    YorderInfo.order_id = order_sn
+                    YorderInfo.card_id = Ycard['cardId'].strip()
+                    YorderInfo.card_balance = float(Ycard['cardVal'])
+                    YorderInfo.card_action = '0'
+                    YorderInfo.card_attr = '2'
+                    orderInfoList.append(YorderInfo)
+            OrderInfo.objects.bulk_create(orderInfoList)
 
             order = Orders()
             order.buyer_name = buyerName

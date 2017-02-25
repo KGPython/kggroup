@@ -145,6 +145,37 @@ def save(request):
         with transaction.atomic():
             order_sn = 'S'+mth.setOrderSn()
 
+            payDiscDict = mth.getPayDiscDict()
+            isThird = False
+            paymentList = []
+            for pay in payList:
+                orderPay = OrderPaymentInfo()
+                orderPay.order_id = order_sn
+                orderPay.pay_id = pay['payId']
+                # 处理混合支付的优惠
+                is_pay = 1
+                if pay['payId'] in ('3', '4'):
+                    is_pay = '0'
+                elif pay['payId'] == '6':
+                    isThird = True
+                    is_pay = '0'
+                    discountRate = payDiscDict[pay['payId']]
+                    discountVal = Ycash = float(pay['payVal']) * float(discountRate)
+                elif pay['payId'] in ('7', '8', '10', '11'):
+                    isThird = True
+                    discountRate = payDiscDict[pay['payId']]
+                    discountVal = Ycash = float(pay['payVal']) * float(discountRate)
+                orderPay.is_pay = is_pay
+
+                if pay['payId']=='9':
+                    isThird = True
+                    mth.upChangeCode(hjsList,shopcode)
+
+                orderPay.pay_value = pay['payVal']
+                orderPay.remarks = pay['payRmarks']
+                paymentList.append(orderPay)
+            OrderPaymentInfo.objects.bulk_create(paymentList)
+
             infoList = []
             for card in cardList:
                 orderInfo = OrderInfo()
@@ -154,43 +185,16 @@ def save(request):
                 orderInfo.card_action = '0'
                 orderInfo.card_attr = '1'
                 infoList.append(orderInfo)
-            for Ycard in YcardList:
-                YorderInfo = OrderInfo()
-                YorderInfo.order_id = order_sn
-                YorderInfo.card_id = Ycard['cardId']
-                YorderInfo.card_balance = float(Ycard['cardVal'])
-                YorderInfo.card_action = '0'
-                YorderInfo.card_attr = '2'
-                infoList.append(YorderInfo)
+            if not isThird:
+                for Ycard in YcardList:
+                    YorderInfo = OrderInfo()
+                    YorderInfo.order_id = order_sn
+                    YorderInfo.card_id = Ycard['cardId']
+                    YorderInfo.card_balance = float(Ycard['cardVal'])
+                    YorderInfo.card_action = '0'
+                    YorderInfo.card_attr = '2'
+                    infoList.append(YorderInfo)
             OrderInfo.objects.bulk_create(infoList)
-
-            payDiscDict = mth.getPayDiscDict()
-            paymentList = []
-            for pay in payList:
-                orderPay = OrderPaymentInfo()
-                orderPay.order_id = order_sn
-                orderPay.pay_id = pay['payId']
-
-                # 处理混合支付的优惠
-                is_pay = 1
-                if pay['payId'] in ('3', '4'):
-                    is_pay = '0'
-                elif pay['payId'] == '6':
-                    is_pay = '0'
-                    discountRate = payDiscDict[pay['payId']]
-                    discountVal = Ycash = float(pay['payVal']) * float(discountRate)
-                elif pay['payId'] in ('7', '8', '10', '11'):
-                    discountRate = payDiscDict[pay['payId']]
-                    discountVal = Ycash = float(pay['payVal']) * float(discountRate)
-                orderPay.is_pay = is_pay
-
-                if pay['payId']=='9':
-                    mth.upChangeCode(hjsList,shopcode)
-
-                orderPay.pay_value = pay['payVal']
-                orderPay.remarks = pay['payRmarks']
-                paymentList.append(orderPay)
-            OrderPaymentInfo.objects.bulk_create(paymentList)
 
             order = Orders()
             order.buyer_name = buyerName
