@@ -171,7 +171,7 @@
 </div>
 <form action="{% url 'voucherUsedDetail' %}" method="post" id="detail_form">
     {% csrf_token %}
-    {% if role == '2' or role == '3' or role == '5' or role == '10' %}
+    {% if role == '2' or role == '3' or role == '11' or role == '5' or role == '10' %}
         <input type="hidden" name="t_shop_code" id="t_shop_code" value="{{ shop }}">
     {% else %}
         <input type="hidden" name="t_shop_code" id="t_shop_code" value="{{ shopcode }}">

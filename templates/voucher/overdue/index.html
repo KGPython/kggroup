@@ -81,7 +81,7 @@
                                     </div>
                                 </div>
                                 <div class="row formline">
-                                    {% if info.type == 3 %}
+                                    {% if info.type != 1 %}
                                         <label for="" class="col-md-2 formline-label must red">核销方式：</label>
                                         <div class="col-md-3">
                                             <select name="clearFlag" id="clearFlag" class="form-control" required>
