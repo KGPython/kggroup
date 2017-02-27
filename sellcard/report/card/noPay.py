@@ -3,6 +3,7 @@ from django.shortcuts import render
 from operator import itemgetter,attrgetter
 import datetime
 from sellcard.common import Method as mth
+from sellcard import views as base
 
 def order(request):
     shop = request.GET.get('shop')
@@ -208,21 +209,25 @@ def createNoPayRow(obj):
     item = {}
     item['time'] = obj['add_time']
     item['sn'] = obj['order_sn']
-    item['info'] = '赊销单位：' + obj['buyer_company']
+    buyer_company = obj['buyer_company'] if obj['buyer_company'] else '未填写'
+    item['info'] = '赊销单位：' + buyer_company
     item['shop'] = obj['shop_code']
     item['noPay'] = obj['pay_value']
     item['is_pay'] = '0'
     return  item
 
 def createPayRow(obj,time):
+    payList = base.findPays()
+    payDict = {pay['id']:pay['payment_name'] for pay in payList}
     if obj['change_time']<time:
         item = {}
         item['time'] = obj['change_time']
         item['sn'] = obj['order_sn']
+        pay_id = obj['pay_id']
         if obj['pay_company']:
-            info = '赊销到账：' + obj['pay_company']
+            info = '赊销到账：' +payDict[pay_id]+ '('+obj['pay_company']+')'
         else:
-            info = '赊销到账'
+            info = '赊销到账: '+payDict[pay_id]
         item['info'] = info
         item['shop'] = obj['shop_code']
         item['pay'] = obj['pay_value']

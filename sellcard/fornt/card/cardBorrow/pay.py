@@ -55,11 +55,11 @@ def index(request):
                 .values('order_sn','order_val','order_num','operator','borrow_depart','borrow_depart_code','borrow_phone','borrow_name','add_time','is_paid')\
                 .filter(**kwargs).order_by('order_sn')
 
-        totaSale = 0
-        listOrderSn = []
-        for row in listSale:
-            totaSale += row['order_val']
-            listOrderSn.append(row['order_sn'])
+        # totaSale = 0
+        # listOrderSn = []
+        # for row in listSale:
+        #     totaSale += row['order_val']
+        #     listOrderSn.append(row['order_sn'])
         #查询退卡明细
         conn = mth.getMysqlConn()
         cur = conn.cursor()
@@ -70,11 +70,11 @@ def index(request):
         cur.execute(sqlBack)
         listBack = cur.fetchall()
 
-        totalBack = 0
-        for row2 in listBack:
-            totalBack += row2['back_val']
+        # totalBack = 0
+        # for row2 in listBack:
+        #     totalBack += row2['back_val']
         #退卡后应缴费用
-        cardOutTotalVal = totaSale-totalBack
+        # cardOutTotalVal = totaSale-totalBack
         # cardOutTotalVal = 2800
 
         #查询未退卡明细
@@ -92,7 +92,7 @@ def index(request):
 
         cur.close()
         conn.close()
-    return render(request, 'card/borrow/borrowPay.html', locals())
+    return render(request, 'card/borrow/pay.html', locals())
 
 @transaction.atomic
 def save(request):
@@ -100,22 +100,22 @@ def save(request):
     shopcode = request.session.get('s_shopcode','')
     depart = request.session.get('s_depart','')
     actionType = request.POST.get('actionType','')
-    #售卡列表
-    cardStr = request.POST.get('cardStr','')
-    cardList = json.loads(cardStr)
 
     #借卡单号列表
     orderSnList = request.POST.getlist('orderSnList[]','')
-
+    #未退还卡列表
+    cardList = OrderBorrowInfo.objects.values('card_no','card_balance').filter(order_sn__in=orderSnList,is_back=None)
     #赠卡列表
     YcardStr = request.POST.get('YcardStr','')
     YcardList = json.loads(YcardStr)
     Ycash = request.POST.get('Ycash',0.00)
+
     #支付方式
     payStr = request.POST.get('payStr','')
     payList = json.loads(payStr)
+
+    # 黄金手卡号列表
     hjsStr = request.POST.get('hjsStr','')
-    #黄金手卡号列表
     hjsList=[]
     if len(hjsStr)>0:
         hjsStr = hjsStr[0:len(hjsStr)-1]
@@ -123,11 +123,9 @@ def save(request):
 
     #合计信息
     totalVal = request.POST.get('totalVal',0.00)
-
     discountRate = float(request.POST.get('discount',0.00))/100
     disCode = request.POST.get('disCode','')
     discountVal = float(request.POST.get('discountVal',''))
-
     Ybalance = request.POST.get('Ybalance',0.00)
 
     #买卡人信息
@@ -147,52 +145,56 @@ def save(request):
         with transaction.atomic():
             order_sn = 'S'+mth.setOrderSn()
 
-            infoList = []
-            for card in cardList:
-                orderInfo = OrderInfo()
-                orderInfo.order_id = order_sn
-                orderInfo.card_id = card['cardId']
-                orderInfo.card_balance = float(card['cardVal'])
-                orderInfo.card_action = '0'
-                orderInfo.card_attr = '1'
-                infoList.append(orderInfo)
-            for Ycard in YcardList:
-                YorderInfo = OrderInfo()
-                YorderInfo.order_id = order_sn
-                YorderInfo.card_id = Ycard['cardId']
-                YorderInfo.card_balance = float(Ycard['cardVal'])
-                YorderInfo.card_action = '0'
-                YorderInfo.card_attr = '2'
-                infoList.append(YorderInfo)
-            OrderInfo.objects.bulk_create(infoList)
-
             payDiscDict = mth.getPayDiscDict()
+            isThird = False
             paymentList = []
             for pay in payList:
                 orderPay = OrderPaymentInfo()
                 orderPay.order_id = order_sn
                 orderPay.pay_id = pay['payId']
-
                 # 处理混合支付的优惠
                 is_pay = 1
                 if pay['payId'] in ('3', '4'):
                     is_pay = '0'
                 elif pay['payId'] == '6':
+                    isThird = True
                     is_pay = '0'
                     discountRate = payDiscDict[pay['payId']]
                     discountVal = Ycash = float(pay['payVal']) * float(discountRate)
                 elif pay['payId'] in ('7', '8', '10', '11'):
+                    isThird = True
                     discountRate = payDiscDict[pay['payId']]
                     discountVal = Ycash = float(pay['payVal']) * float(discountRate)
                 orderPay.is_pay = is_pay
 
                 if pay['payId']=='9':
+                    isThird = True
                     mth.upChangeCode(hjsList,shopcode)
 
                 orderPay.pay_value = pay['payVal']
                 orderPay.remarks = pay['payRmarks']
                 paymentList.append(orderPay)
             OrderPaymentInfo.objects.bulk_create(paymentList)
+
+            infoList = []
+            for card in cardList:
+                orderInfo = OrderInfo()
+                orderInfo.order_id = order_sn
+                orderInfo.card_id = card['card_no']
+                orderInfo.card_balance = float(card['card_balance'])
+                orderInfo.card_action = '0'
+                orderInfo.card_attr = '1'
+                infoList.append(orderInfo)
+            if not isThird:
+                for Ycard in YcardList:
+                    YorderInfo = OrderInfo()
+                    YorderInfo.order_id = order_sn
+                    YorderInfo.card_id = Ycard['cardId']
+                    YorderInfo.card_balance = float(Ycard['cardVal'])
+                    YorderInfo.card_action = '0'
+                    YorderInfo.card_attr = '2'
+                    infoList.append(YorderInfo)
+            OrderInfo.objects.bulk_create(infoList)
 
             order = Orders()
             order.buyer_name = buyerName
@@ -212,14 +214,12 @@ def save(request):
             order.y_cash = Ycash
             order.save()
 
-            #获取所有出卡列表
-            cardIdBorrowList = []
-            for card in cardList:
-                cardIdBorrowList.append(card['cardId'])
 
-            cardIdDisclist = []
-            for card in YcardList:
-                cardIdDisclist.append(card['cardId'])
+            #未退回卡列表
+            cardIdBorrowList = [card['card_no'] for card in cardList]
+            #优惠卡列表
+            cardIdDisclist = [card['cardId'] for card in YcardList]
+
 
             # 更新kggroup内部优惠赠送卡状态
             resCard = CardInventory.objects.filter(card_no__in=cardIdDisclist).update(card_status='2',card_action='0')
@@ -234,7 +234,9 @@ def save(request):
 
             #更新借卡单的结算状态
             orderSnNum = len(orderSnList)
-            resBorrow =  OrderBorrow.objects.filter(order_sn__in=orderSnList).update(is_paid='1',paid_time=datetime.datetime.now())
+            resBorrow =  OrderBorrow.objects\
+                .filter(order_sn__in=orderSnList).\
+                update(is_paid='1',paid_time=datetime.datetime.now(),reply_order=order_sn)
             if orderSnNum != resBorrow:
                 raise MyError('OrderBorrow状态更新失败')
 
@@ -250,12 +252,13 @@ def save(request):
 
             res["status"] = 1
             res["urlRedirect"] ='/kg/sellcard/fornt/cardsale/orderInfo/?orderSn='+order_sn
-            ActionLog.objects.create(action='借卡-结算',u_name=request.session.get('s_uname'),cards_out=cardStr+','+YcardStr,add_time=datetime.datetime.now())
+            cardOutTotal = cardIdBorrowList + cardIdDisclist
+            ActionLog.objects.create(action='借卡-结算',u_name=request.session.get('s_uname'),cards_out=json.dumps(cardOutTotal),add_time=datetime.datetime.now())
             del request.session['postToken']
     except Exception as e:
         res["status"] = 0
         if hasattr(e,'value'):
             res['msg'] = e.value
-        ActionLog.objects.create(action='借卡-结算',u_name=request.session.get('s_uname'),cards_out=cardStr+','+YcardStr,add_time=datetime.datetime.now(),err_msg=e)
+        ActionLog.objects.create(action='借卡-结算',u_name=request.session.get('s_uname'),add_time=datetime.datetime.now(),err_msg=e)
 
     return HttpResponse(json.dumps(res))

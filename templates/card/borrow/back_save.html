@@ -1,6 +1,9 @@
 {% extends 'common/baseForJobs.html' %}
+{% load basefilter %}
 {% block title %}借卡管理--退卡{% endblock %}
 {% block content %}
+<link rel="stylesheet" href="{{ static }}/css/bootstrap-datetimepicker.min.css">
+
 <div id="content">
     <div id="content-header">
         <div id="breadcrumb">
@@ -17,25 +20,6 @@
         </div>
         <div class="widget-content nopadding">
             <div class="container-fluid">
-                <div class="widget-box">
-                    <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
-                        <h5>顾客信息</h5>
-                    </div>
-                    <div class="widget-content nopadding">
-                        <div id="buyerInfo" class="collapse in widget-content">
-                            <div class="row formline">
-                                <label for="" class="col-md-1 formline-label">单位名称：</label>
-                                <div class="col-md-3">
-                                    <input class="form-control" placeholder="" type="text" id="borrowDepart">
-                                </div>
-                                <label for="" class="col-md-1 formline-label">单位编号：</label>
-                                <div class="col-md-3">
-                                    <input class="form-control" placeholder="" type="text" id="borrowDepartCode">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 <!--  退卡 号段查询表单 start  -->
                 <div class="widget-box">
                     <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
@@ -61,7 +45,6 @@
                 <!--  退卡 号段查询结果 start  -->
                 <div class="enter-box">
                     <input id="post-token" type="hidden" value="{{ token }}">
-                    <input type="hidden" id="orderSnList">
                     <button class="btn btn-success pull-right" type="button" id="btn-enter">提交订单</button>
                 </div>
             </div>
@@ -71,13 +54,24 @@
 {% endblock %}
 
 {% block js %}
+<script src="{{ static }}/js/bootstrap-datetimepicker.js"></script>
+<script src="{{ static }}/js/bootstrap-datetimepicker.zh-CN.js"></script>
+<script type="text/javascript">
+    $('.form_date').datetimepicker({
+        language: 'zh-CN',
+        weekStart: 1,
+        todayBtn: 1,
+	    autoclose: 1,
+	    todayHighlight: 1,
+	    startView: 2,
+	    minView: 2,
+	    forceParse: 0
+    });
+
+    var orderSns = {{ orderSns | safe }};
+</script>
 <script>
-    $('.query-btn').click(function(){
-        var borrowDepartCode = $('#borrowDepartCode').val();
-        if(!borrowDepartCode){
-            alert('借卡单位编号不能为空');
-            return false;
-        }
+    $('#queryCard').click(function(){
         //拼接查询号段
         var rows = $('#cardsForm').find('.row');
         var cards = [];
@@ -105,7 +99,7 @@
             data:{
                 csrfmiddlewaretoken: CSRF,
                 cards:JSON.stringify(cards),
-                borrowDepartCode:borrowDepartCode
+                orderSns:JSON.stringify(orderSns)
             },
             success:function(data){
                 if(data.length==0){
@@ -227,7 +221,7 @@
             csrfmiddlewaretoken: CSRF,
             'cardStr':JSON.stringify(cardList),
             'postToken':$('#post-token').val(),
-            'orderSnList':$('#orderSnList').val()
+            'orderSnList':JSON.stringify(orderSns)
         };
         doAjaxSave(url,data);
     }

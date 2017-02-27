@@ -80,35 +80,8 @@ def save(request):
         with transaction.atomic():
             order_sn = 'C'+mth.setOrderSn(OrderChangeCard)
             created_time=datetime.datetime.today()
-            # orderInfo
-            changeCardInfoList = []
-            for cardIn in cardListIn:
-                orderInfo = OrderChangeCardInfo()
-                orderInfo.order_sn = order_sn
-                orderInfo.card_no = cardIn['cardId'].strip()
-                orderInfo.card_attr = '1'
-                orderInfo.card_value = cardIn['cardVal']
-                orderInfo.card_balance = cardIn['cardVal']
-                changeCardInfoList.append(orderInfo)
-            for cardOut in cardListOut:
-                orderInfo = OrderChangeCardInfo()
-                orderInfo.order_sn = order_sn
-                orderInfo.card_no = cardOut['cardId'].strip()
-                orderInfo.card_attr = '0'
-                orderInfo.card_value = cardOut['cardVal']
-                orderInfo.card_balance = cardOut['cardVal']
-                changeCardInfoList.append(orderInfo)
-            for Ycard in discList:
-                YorderInfo = OrderChangeCardInfo()
-                YorderInfo.order_sn = order_sn
-                YorderInfo.card_no = Ycard['cardId'].strip()
-                YorderInfo.card_value = Ycard['cardVal']
-                YorderInfo.card_balance = Ycard['cardVal']
-                YorderInfo.card_attr = '0'
-                YorderInfo.is_disc = '1'
-                changeCardInfoList.append(YorderInfo)
-            OrderChangeCardInfo.objects.bulk_create(changeCardInfoList)
 
+            isThird = False
             #orderPayment
             payDiscDict = mth.getPayDiscDict()
             ChangePaymentList = []
@@ -122,15 +95,18 @@ def save(request):
                 if pay['payId'] in ('3', '4'):
                     is_pay = '0'
                 elif pay['payId'] == '6':
+                    isThird = True
                     is_pay = '0'
                     disRate = payDiscDict[pay['payId']]
                     disc = discCash = float(pay['payVal']) * float(disRate)
                 elif pay['payId'] in ('7', '8', '10', '11'):
+                    isThird = True
                     disRate = payDiscDict[pay['payId']]
                     disc = discCash = float(pay['payVal']) * float(disRate)
                 orderPay.is_pay = is_pay
 
                 if pay['payId'] == '9':
+                    isThird = True
                     mth.upChangeCode(hjsList, shopCode)
 
                 orderPay.pay_value = pay['payVal']
@@ -157,14 +133,40 @@ def save(request):
             order.add_time = created_time
             order.save()
 
+            # orderInfo
+            changeCardInfoList = []
+            for cardIn in cardListIn:
+                orderInfo = OrderChangeCardInfo()
+                orderInfo.order_sn = order_sn
+                orderInfo.card_no = cardIn['cardId'].strip()
+                orderInfo.card_attr = '1'
+                orderInfo.card_value = cardIn['cardVal']
+                orderInfo.card_balance = cardIn['cardVal']
+                changeCardInfoList.append(orderInfo)
+            for cardOut in cardListOut:
+                orderInfo = OrderChangeCardInfo()
+                orderInfo.order_sn = order_sn
+                orderInfo.card_no = cardOut['cardId'].strip()
+                orderInfo.card_attr = '0'
+                orderInfo.card_value = cardOut['cardVal']
+                orderInfo.card_balance = cardOut['cardVal']
+                changeCardInfoList.append(orderInfo)
+            if not isThird:
+                for Ycard in discList:
+                    YorderInfo = OrderChangeCardInfo()
+                    YorderInfo.order_sn = order_sn
+                    YorderInfo.card_no = Ycard['cardId'].strip()
+                    YorderInfo.card_value = Ycard['cardVal']
+                    YorderInfo.card_balance = Ycard['cardVal']
+                    YorderInfo.card_attr = '0'
+                    YorderInfo.is_disc = '1'
+                    changeCardInfoList.append(YorderInfo)
+                OrderChangeCardInfo.objects.bulk_create(changeCardInfoList)
+
             #更新
-            cardIdInList = []
-            for card in cardListIn:
-                cardIdInList.append(card['cardId'])
-            cardIdOutList = []
-            temp = cardListOut+discList
-            for card in temp:
-                cardIdOutList.append(card['cardId'])
+            cardIdInList = [card['cardId'] for card in cardListIn]
+            temp = cardListOut + discList
+            cardIdOutList = [card['cardId'] for card in temp]
             cardsOutNum = len(cardIdOutList)
             cardsInNum = len(cardIdInList)
 
@@ -206,17 +208,25 @@ def save(request):
                 raise ('Guest入卡更新失败')
 
             res["status"] = 1
-            ActionLog.objects.create(action='换卡-单卡',u_name=request.session.get('s_uname'),cards_in=cardListInStr,cards_out=cardListOutStr,add_time=datetime.datetime.now())
+            ActionLog.objects.create(
+                action='换卡-单卡', u_name=request.session.get('s_uname'), cards_in=json.dumps(cardIdInList),
+                cards_out=json.dumps(cardIdOutList), add_time=datetime.datetime.now()
+            )
             del request.session['postToken']
     except Exception as e:
         res["status"] = 0
-        if e.value:
+        if hasattr(e, 'value'):
             res['msg'] = e.value
-        else:
-            res["msg"] = e
-        ActionLog.objects.create(action='换卡-单卡',u_name=request.session.get('s_uname'),cards_in=cardListInStr,cards_out=cardListOutStr,add_time=datetime.datetime.now(),err_msg=e)
+        ActionLog.objects.create(
+            action='换卡-单卡', u_name=request.session.get('s_uname'),
+            add_time=datetime.datetime.now(), err_msg=e
+        )
 
     return HttpResponse(json.dumps(res))
+
+
+def saveChangeInfo():
+    pass
 
 
 def info(request):

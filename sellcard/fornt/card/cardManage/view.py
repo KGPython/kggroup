@@ -13,7 +13,7 @@ def cardInStore(request):
     if request.method=='POST':
         shop = request.session.get("s_shopcode",'')
 
-        res={}
+        res = {}
         conn = m.getMssqlConn()
         cur = conn.cursor()
         sheetid = (request.POST.get('orderSn','')).strip()
@@ -27,8 +27,8 @@ def cardInStore(request):
                 if shopDict['note'].strip() != shop:
                     raise MyError('此单号不属于此门店，权限受限')
                 else:
-                    list = CardInventory.objects.values('order_sn').filter(sheetid=sheetid)
-                    if(len(list)>0):
+                    data = CardInventory.objects.values('order_sn').filter(sheetid=sheetid)
+                    if len(data) > 0:
                         raise MyError('此单号已经存在')
                     else:
                         sql="SELECT CardNO,detail FROM guest WHERE SheetID ='"+sheetid+"' " \
@@ -41,11 +41,11 @@ def cardInStore(request):
                             for card in cardList:
                                 updateNum = CardInventory.objects\
                                         .filter(card_no=card['CardNO'],card_status='1',card_action='1',card_blance=0,shop_code=shop)\
-                                        .update(card_blance =card['detail'],card_value =card['detail'],charge_time=datetime.datetime.now(),sheetid=sheetid)
+                                        .update(card_blance=card['detail'],card_value=card['detail'],charge_time=datetime.datetime.now(),sheetid=sheetid)
                                 card['detail'] = float(card['detail'])
                                 if not updateNum:
                                     raise MyError(card['CardNO']+'状态更新失败')
-                            res['status']='1'
+                            res['status'] = '1'
                             ActionLog.objects.create(action='门店卡入库',u_name=request.session.get('s_uname'),cards_in=json.dumps(cardList),add_time=datetime.datetime.now())
 
         except Exception as e:
