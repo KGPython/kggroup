@@ -107,10 +107,10 @@
                                         <td>{{ row.time | date:'Y-m-d'}}</td>
                                         <td>{{ row.shop | transShopCode }}</td>
                                         <td>{{ row.sn }}</td>
-                                        <td>{{ row.info }}</td>
+                                        <td>{{ row.info }} </td>
                                         <td>{{ row.noPay }}</td>
                                         <td>{{ row.pay }}</td>
-                                        <td>{{ row.sub }}</td>
+                                        <td>{{ row.sub | floatformat:2}}</td>
                                     </tr>
                                 {% endfor %}
                             </tbody>
