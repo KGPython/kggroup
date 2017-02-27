@@ -438,6 +438,7 @@ function getPayList(obj){
             }else if((payId==3 || payId == 4)){
                 if((!$('#buyerName').val() || !$('#buyerPhone').val() || !$('#buyerCompany').val())){
                     alert('使用赊销和汇款支付，顾客信息不能为空');
+                    return false;
                 }
             }
             var payRmarks = $(trs[j]).find('td').eq(3).find('input').val();

@@ -300,6 +300,9 @@ def detail(request):
              u"       ord.buyer_name as user_name," \
              u"       ord.buyer_tel as user_phone," \
              u"       ord.buyer_company as user_company," \
+             u"       opi.bank_name," \
+             u"       opi.bank_sn," \
+             u"       opi.pay_company," \
              u"       opi.pay_value," \
              u"        case" \
              u"        when opi.is_pay = '1' then" \
@@ -326,6 +329,9 @@ def detail(request):
              u"       occ.user_name," \
              u"       occ.user_phone," \
              u"       '' as user_company," \
+             u"       occp.bank_name," \
+             u"       occp.bank_sn," \
+             u"       occp.pay_company," \
              u"       occp.pay_value," \
              u"        case" \
              u"        when occp.is_pay = '1' then" \
