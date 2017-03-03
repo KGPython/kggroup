@@ -215,7 +215,7 @@ def save(request):
             order.save()
 
 
-            #未退回卡列表
+            #未退回卡列表 chedan
             cardIdBorrowList = [card['card_no'] for card in cardList]
             #优惠卡列表
             cardIdDisclist = [card['cardId'] for card in YcardList]
