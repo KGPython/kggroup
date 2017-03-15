@@ -18,12 +18,13 @@ def index(request):
         if not start:
             start = monthFirstDay
         end = request.POST.get('end')
+        endStr = datetime.datetime.strptime(end,'%Y-%m-%d')+datetime.timedelta(1)
         if not end:
             end = today
         buyerName = (mth.getReqVal(request,"buyerName","")).strip()
         #售卡数据
         queryWhereSale1 = " and b.buyer_name='"+buyerName+"'" if buyerName else ''
-        queryWhereSale2 = " and b.add_time >='{start}' and b.add_time <='{end}' ".format(start=start, end=end)
+        queryWhereSale2 = " and b.add_time >='{start}' and b.add_time <='{end}' ".format(start=start, end=endStr)
         conn = mth.getMysqlConn()
         cur = conn.cursor()
         sqlSale="select a.pay_value,b.order_sn,b.operator_id,b.add_time,b.buyer_name,b.buyer_tel,b.paid_amount " \
