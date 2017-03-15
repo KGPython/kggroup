@@ -203,32 +203,55 @@ def changeCodeCheck(request):
 
 # 跟新ERP内部卡状态
 
-def updateCard(list, mode, num):
-    cards = "'"
-    for obj in list:
-        cards += str(obj)
-        cards += "','"
-    cards = cards[0:len(cards) - 2]
-    sql = "UPDATE guest SET Mode ='{mode}' WHERE CardNO IN ({cards}) AND detail=new_amount"\
-          .format(mode=mode,cards=cards)
+def updateCard(updateConfList):
     conn = getMssqlConn()
     cur = conn.cursor()
+    res = {}
     try:
         conn.autocommit(False)
-        cur.execute(sql)
-        res = cur.rowcount
-        if res != num :
-            raise MyError('卡库数据更新失败')
-        else:
-            conn.commit()
-            return type
+        for conf in updateConfList:
+            mode = conf['mode']
+            if mode in ('9','7'):
+                cardStatus = '1'
+            elif mode == '1':
+                cardStatus = '9'
+
+            cards = "'"+"','".join(conf['ids'])+"'"
+            sql = "UPDATE guest SET Mode ='{mode}' WHERE CardNO IN ({cards}) AND detail=new_amount AND mode={cardStatus} "\
+                .format(mode=mode,cards=cards,cardStatus=cardStatus)
+            cur.execute(sql)
+            updateNum = cur.rowcount
+            if updateNum != conf['count'] :
+                raise MyError('Guest中：'+cards+'状态更新失败')
+        conn.commit()
+        res['status'] = 1
     except Exception as e:
         conn.rollback()
-        print(e)
-        return False
+        res["status"] = 0
+        if hasattr(e, 'value'):
+            res['msg'] = e.value
     finally:
         cur.close()
         conn.close()
+        return res
+
+
+    # try:
+    #     conn.autocommit(False)
+    #     cur.execute(sql)
+    #     res = cur.rowcount
+    #     if res != num :
+    #         raise MyError('卡库数据更新失败')
+    #     else:
+    #         conn.commit()
+    #         return type
+    # except Exception as e:
+    #     conn.rollback()
+    #     print(e)
+    #     return False
+    # finally:
+    #     cur.close()
+    #     conn.close()
 
 
 def setOrderSn(mode=None):
