@@ -265,23 +265,24 @@ function checkCardStu(obj,cardId,shopCode,url){
 
                 //卡面值赋值
                 var parentTr = $(obj).parent().parent();
-
+                var card_value = !res.card_value ? res.card_value : 0;
                 if($(obj).hasClass('start')){
                     var cardType = parentTr.find('.type2').val();
-                    if(cardType && cardType!=res.card_value){
+
+                    if(cardType && cardType!=card_value){
                         alert('起止卡号，面值不等');
                         $(obj).val('')
                     }else {
-                        parentTr.find('.type').val(res.card_value)
+                        parentTr.find('.type').val(card_value)
                     }
                 }
                 if($(obj).hasClass('end')){
                     var cardType = parentTr.find('.type').val();
-                    if(cardType && cardType!=res.card_value){
+                    if(cardType && cardType!=card_value){
                         alert('起止卡号，面值不等');
                         $(obj).val('')
                     }else {
-                        parentTr.find('.type2').val(res.card_value)
+                        parentTr.find('.type2').val(card_value)
                     }
                 }
             }

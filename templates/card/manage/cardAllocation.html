@@ -143,6 +143,7 @@
             var subNum = $(trs[i]).find('.subTotal').val();
             if(subNum){
                 var cardType = $(trs[i]).find('.type').val();
+                cardType = isNaN(cardType) ? 0 : cardType;
                 var subVal = parseInt(subNum)*parseFloat(cardType);
                 totalVal += subVal;
                 totalNum += parseInt(subNum);
@@ -206,7 +207,6 @@
         }
 
         list.remove(key);
-        console.log(list)
         if(list.indexOf(key)>-1){
             alert('卡号：'+key+',已经存在于上面的卡段中，请检查');
             $(obj).val('').focus();
