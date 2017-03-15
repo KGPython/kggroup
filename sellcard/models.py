@@ -436,7 +436,7 @@ class OrderChangeCardInfo(models.Model):
     card_attr = models.CharField(max_length=1, blank=True, null=True)
     card_value = models.CharField(max_length=12, blank=True, null=True)
     card_balance = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
-    is_disc = models.CharField(max_length=1, blank=True, null=True)
+    type = models.CharField(max_length=1, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -471,10 +471,21 @@ class OrderInfo(models.Model):
         managed = False
         db_table = 'order_info'
 
+class Payment(models.Model):
+    payment_name = models.CharField(max_length=60)
+    flag = models.CharField(max_length=255)
+    dis_rate = models.DecimalField(max_digits=5, decimal_places=3, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'payment'
+
 
 class OrderPaymentInfo(models.Model):
-    order_id = models.CharField(max_length=20)
-    pay_id = models.IntegerField()
+    # order_id = models.CharField(max_length=20)
+    # pay_id = models.IntegerField()
+    order = models.ForeignKey('Orders',to_field='order_sn')
+    pay = models.ForeignKey('Payment',related_name='pay_set')
     pay_value = models.DecimalField(max_digits=11, decimal_places=2)
     remarks = models.TextField(blank=True, null=True)
     is_pay = models.CharField(max_length=1, blank=True, null=True)
@@ -486,6 +497,22 @@ class OrderPaymentInfo(models.Model):
     class Meta:
         managed = False
         db_table = 'order_payment_info'
+
+# class OrderPaymentInfo(models.Model):
+#     order_id = models.CharField(max_length=20)
+#     # pay_id = models.IntegerField()
+#     pay_id = models.ForeignKey(Payment)
+#     pay_value = models.DecimalField(max_digits=11, decimal_places=2)
+#     remarks = models.TextField(blank=True, null=True)
+#     is_pay = models.CharField(max_length=1, blank=True, null=True)
+#     change_time = models.DateTimeField(blank=True, null=True)
+#     bank_name = models.CharField(max_length=12, blank=True, null=True)
+#     bank_sn = models.CharField(max_length=25, blank=True, null=True)
+#     pay_company = models.CharField(max_length=15, blank=True, null=True)
+#
+#     class Meta:
+#         managed = False
+#         db_table = 'order_payment_info'
 
 
 class OrderUpCard(models.Model):
@@ -560,14 +587,9 @@ class OrderErr(models.Model):
         managed = False
         db_table = 'order_err'
 
-class Payment(models.Model):
-    payment_name = models.CharField(max_length=60)
-    flag = models.CharField(max_length=255)
-    dis_rate = models.DecimalField(max_digits=5, decimal_places=3, blank=True, null=True)
 
-    class Meta:
-        managed = False
-        db_table = 'payment'
+
+
 
 
 class PrintExplain(models.Model):

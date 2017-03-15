@@ -246,9 +246,12 @@ def save(request):
 
             # 更新ERP内部优惠赠送卡状态
             if len(cardIdDisclist)>0:
-                resGuest = mth.updateCard(cardIdDisclist, '1',len(cardIdDisclist))
-                if not resGuest:
-                    raise ('优惠赠卡，Guest更新失败')
+                # 更新Guest
+                updateConfList = []
+                updateConfList.append({'ids': cardIdDisclist, 'mode': '1', 'count': len(cardIdDisclist)})
+                resGuest = mth.updateCard(updateConfList)
+                if resGuest['status'] == 0:
+                    raise MyError(resGuest['msg'])
 
             res["status"] = 1
             res["urlRedirect"] ='/kg/sellcard/fornt/cardsale/orderInfo/?orderSn='+order_sn

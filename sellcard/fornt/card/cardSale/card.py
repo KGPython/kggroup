@@ -162,10 +162,13 @@ def saveOrder(request):
                 resCode = mth.updateDisCode(disCode,shopcode,order_sn)
                 if resCode == 0:
                     raise MyError('折扣授权码状态更新失败')
-            # 更新ERP内部卡状态
-            resGuest = mth.updateCard(cardIdList,'1',cardsNum)
-            if not resGuest:
-                raise MyError('Guest更新失败')
+
+            # 更新Guest
+            updateConfList = []
+            updateConfList.append({'ids': cardIdList, 'mode': '1', 'count': cardsNum})
+            resGuest = mth.updateCard(updateConfList)
+            if resGuest['status'] == 0:
+                raise MyError(resGuest['msg'])
 
             res["status"] = 1
             res["urlRedirect"] ='/kg/sellcard/fornt/cardsale/orderInfo/?orderSn='+order_sn
@@ -179,13 +182,6 @@ def saveOrder(request):
 
     return HttpResponse(json.dumps(res))
 
-def checkPayment(pay,hjsList, shopcode):
-    if pay['payId'] in ('4', '6'):
-        is_pay = '0'
-    else:
-        is_pay = '1'
-    if pay['payId'] == '9':
-        mth.upChangeCode(hjsList, shopcode)
 
 def info(request):
     orderSn = request.GET.get('orderSn','').strip()

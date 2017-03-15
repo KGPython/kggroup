@@ -157,9 +157,13 @@ def save(request):
                 if cardList.count()==0:
                     OrderBorrow.objects.filter(order_sn=orderSn).update(is_paid='3')
 
-            resGuest = mth.updateCard(cardnoList, '9',cardsNum)
-            if not resGuest:
-                raise MyError('Guest更新失败')
+            #更新Guest
+            updateConfList = []
+            updateConfList.append({'ids': cardnoList, 'mode': '9', 'count': cardsNum})
+            resGuest = mth.updateCard(updateConfList)
+            if resGuest['status'] == 0:
+                raise MyError(resGuest['msg'])
+
 
             res['status'] = 1
             ActionLog.objects.create(action='借卡-还卡',u_name=request.session.get('s_uname'),cards_in=cardsStr,add_time=datetime.datetime.now())

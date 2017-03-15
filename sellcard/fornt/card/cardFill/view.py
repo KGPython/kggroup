@@ -167,10 +167,13 @@ def update(request):
             resCardOut = CardInventory.objects.filter(card_no__in=cardIdOutList).update(card_status=2)
             if resCardOut != cardOutNum:
                 raise MyError('CardInventory状态更新失败')
-            #回写卡库
-            resGuest = mtu.updateCard(cardIdOutList,"1",cardOutNum)
-            if not resGuest:
-                raise MyError('Guest更新失败')
+
+            # 更新Guest
+            updateConfList = []
+            updateConfList.append({'ids': cardIdOutList, 'mode': '1', 'count': cardOutNum})
+            resGuest = mtu.updateCard(updateConfList)
+            if resGuest['status'] == 0:
+                raise MyError(resGuest['msg'])
 
             res["status"] = 1
             res['urlRedirect'] = '/kg/sellcard/fornt/cardfill/query/'

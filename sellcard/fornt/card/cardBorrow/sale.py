@@ -78,9 +78,12 @@ def save(request):
             if resCard != cardNum:
                 raise MyError('CardInventory状态更新失败！')
 
-            resGuest = mth.updateCard(cardIdList,'1',cardNum)
-            if not resGuest:
-                raise MyError('Guest更新失败')
+            # 更新Guest
+            updateConfList = []
+            updateConfList.append({'ids': cardIdList, 'mode': '1', 'count': cardNum})
+            resGuest = mth.updateCard(updateConfList)
+            if resGuest['status'] == 0:
+                raise MyError(resGuest['msg'])
 
             res["status"] = 1
             res["urlRedirect"] = '/kg/sellcard/fornt/borrow/sale/info/?orderSn='+order_sn

@@ -80,16 +80,48 @@ def save(request):
         with transaction.atomic():
             order_sn = 'C'+mth.setOrderSn(OrderChangeCard)
             created_time=datetime.datetime.today()
+            cardIsStoreList = []
+            cardCommonList = []
+            #1、更新cardInventory中入库卡数据
+            for card in cardListIn:
+                queryCard = CardInventory \
+                    .objects \
+                    .filter(card_status='2', card_action='0', card_no=card['cardId'], card_value=F('card_blance'))
+                cardInventory = queryCard.values('is_store').first()
+                if cardInventory:
+                    is_store = cardInventory['is_store']
 
+                    if is_store:
+                        card['type'] = 2
+                        cardIsStoreList.append(card)
+                        status = '7'
+                        action = '0'
+                    else:
+                        cardCommonList.append(card)
+                        status = '1'
+                        action = '1'
+                resUpdate = resSave = 0
+                #处理老卡换入
+                if not cardInventory:
+                    obj = CardInventory \
+                        .objects \
+                        .create(card_no=card['cardId'], card_value=card['cardVal'], card_status='1', card_action='1',
+                                card_addtime=datetime.datetime.now(), shop_code=shopCode,
+                                is_store=0, card_blance=card['cardVal'])
+                    resSave = obj.id
+                else:
+                    resUpdate = queryCard.update(card_status=status, card_action=action, shop_code=shopCode)
+                if (resUpdate == 0 and resSave == 0):
+                    raise MyError(card['cardId'] + '状态更新失败')
+
+            #2、保存支付信息
             isThird = False
-            #orderPayment
             payDiscDict = mth.getPayDiscDict()
             ChangePaymentList = []
             for pay in payList:
                 orderPay = OrderChangeCardPayment()
                 orderPay.order_id = order_sn
                 orderPay.pay_id = pay['payId']
-
                 # 处理混合支付的优惠
                 is_pay = 1
                 if pay['payId'] in ('3', '4'):
@@ -114,7 +146,7 @@ def save(request):
                 ChangePaymentList.append(orderPay)
             OrderChangeCardPayment.objects.bulk_create(ChangePaymentList)
 
-            #orders
+            #3、保存order信息
             order = OrderChangeCard()
             order.order_sn = order_sn
             order.operator_id = operator
@@ -126,91 +158,72 @@ def save(request):
             order.total_in_price = totalValIn
             order.total_out_amount = totalNumOut
             order.total_out_price = totalValOut
-            order.disc_rate =disRate
+            order.disc_rate = disRate
             order.disc = disc
             order.disc_cash = discCash
             order.disc_pay = discPay
             order.add_time = created_time
             order.save()
 
-            # orderInfo
+            #4、分别创建orderInfo列表
+            cardOutInfoList =[]
             changeCardInfoList = []
-            for cardIn in cardListIn:
-                orderInfo = OrderChangeCardInfo()
-                orderInfo.order_sn = order_sn
-                orderInfo.card_no = cardIn['cardId'].strip()
-                orderInfo.card_attr = '1'
-                orderInfo.card_value = cardIn['cardVal']
-                orderInfo.card_balance = cardIn['cardVal']
-                changeCardInfoList.append(orderInfo)
-            for cardOut in cardListOut:
-                orderInfo = OrderChangeCardInfo()
-                orderInfo.order_sn = order_sn
-                orderInfo.card_no = cardOut['cardId'].strip()
-                orderInfo.card_attr = '0'
-                orderInfo.card_value = cardOut['cardVal']
-                orderInfo.card_balance = cardOut['cardVal']
-                changeCardInfoList.append(orderInfo)
-            if not isThird:
-                for Ycard in discList:
-                    YorderInfo = OrderChangeCardInfo()
-                    YorderInfo.order_sn = order_sn
-                    YorderInfo.card_no = Ycard['cardId'].strip()
-                    YorderInfo.card_value = Ycard['cardVal']
-                    YorderInfo.card_balance = Ycard['cardVal']
-                    YorderInfo.card_attr = '0'
-                    YorderInfo.is_disc = '1'
-                    changeCardInfoList.append(YorderInfo)
-                OrderChangeCardInfo.objects.bulk_create(changeCardInfoList)
+            cardInIdList = []
+            cardCommonIdList=[]
+            cardIsStoreIdList = []
+            cardCommonInNum=cardIsStoreInNum = 0
+            if len(cardCommonList):
+                infoCommon = createChangInfoList(cardCommonList,order_sn)
+                changeCardInfoList += infoCommon
+                cardCommonIdList = [card['cardId'] for card in cardCommonList]
+                cardInIdList += cardCommonIdList
+                cardCommonInNum = len(cardCommonIdList)
+            if len(cardIsStoreList):
+                infoIsStore = createChangInfoList(cardIsStoreList, order_sn)
+                changeCardInfoList += infoIsStore
+                cardIsStoreIdList = [card['cardId'] for card in cardIsStoreList]
+                cardInIdList += cardIsStoreIdList
+                cardIsStoreInNum = len(cardIsStoreIdList)
+            if len(cardListOut):
+                infoOut = createChangInfoList(cardListOut,order_sn)
+                changeCardInfoList += infoOut
+                cardOutInfoList += cardListOut
+            if not isThird and len(discList):
+                infoDisc = createChangInfoList(cardIsStoreList, discList)
+                changeCardInfoList += infoDisc
+                cardOutInfoList += discList
 
-            #更新
-            cardIdInList = [card['cardId'] for card in cardListIn]
-            temp = cardListOut + discList
-            cardIdOutList = [card['cardId'] for card in temp]
-            cardsOutNum = len(cardIdOutList)
-            cardsInNum = len(cardIdInList)
-
-
-            for card in cardListIn:
-                resUpdate = CardInventory.objects\
-                            .filter(card_no=card['cardId'],card_value=F('card_blance'))\
-                            .update(card_status='1', card_action='1',shop_code=shopCode)
-                resSave = 0
-                if resUpdate==0:
-                    obj = CardInventory()
-                    obj.card_no = card['cardId']
-                    obj.card_value = card['cardVal']
-                    obj.card_status = '1'
-                    obj.card_action = '1'
-                    obj.card_addtime = datetime.datetime.now()
-                    obj.shop_code = shopCode
-                    obj.is_store = 0
-                    obj.card_blance = card['cardVal']
-                    obj.save()
-                    resSave =obj.id
-                if (resUpdate==0 and resSave==0):
-                        raise MyError(card['cardId']+'状态更新失败')
-
-            resCardOut = CardInventory.objects.filter(card_no__in=cardIdOutList,card_value=F('card_blance')).update(card_status='2',card_action='0')
+            #5、保存orderInfo
+            OrderChangeCardInfo.objects.bulk_create(changeCardInfoList)
+            #6、更新CardInventory出库卡状态
+            cardOutIdList = [card['cardId'] for card in cardOutInfoList]
+            cardsOutNum = len(cardOutIdList)
+            resCardOut = CardInventory.objects\
+                .filter(card_status='1',card_action='1',card_no__in=cardOutIdList,card_value=F('card_blance'),is_store='0')\
+                .update(card_status='2',card_action='0')
             if resCardOut != cardsOutNum:
                 raise MyError('CardInventory状态更新失败')
 
+            #7、更新折扣授权码信息
             if discCode:
                 resCode = mth.updateDisCode(discCode,shopCode,order_sn)
                 if resCode == 0:
                     raise MyError('折扣授权码状态更新失败')
 
-            resGuestOut = mth.updateCard(cardIdOutList,'1',cardsOutNum)
-            if not resGuestOut:
-                raise ('Guest出卡更新失败')
-            resGuestIn = mth.updateCard(cardIdInList,'9',cardsInNum)
-            if not resGuestIn:
-                raise ('Guest入卡更新失败')
+            # 8、更新Guest信息
+            updateConfList = []
+            updateConfList.append({'ids':cardIsStoreIdList,'mode':'7','count':cardIsStoreInNum})
+            updateConfList.append({'ids': cardCommonIdList, 'mode': '9', 'count': cardCommonInNum})
+            updateConfList.append({'ids':cardOutIdList,'mode':'1','count':cardsOutNum})
+
+            resGuest = mth.updateCard(updateConfList)
+            if resGuest['status']==0:
+                raise MyError(resGuest['msg'])
 
             res["status"] = 1
             ActionLog.objects.create(
-                action='换卡-单卡', u_name=request.session.get('s_uname'), cards_in=json.dumps(cardIdInList),
-                cards_out=json.dumps(cardIdOutList), add_time=datetime.datetime.now()
+                action='换卡-单卡', u_name=request.session.get('s_uname'), cards_in=json.dumps(cardInIdList),
+                cards_out=json.dumps(cardOutIdList), add_time=datetime.datetime.now()
             )
             del request.session['postToken']
     except Exception as e:
@@ -225,8 +238,19 @@ def save(request):
     return HttpResponse(json.dumps(res))
 
 
-def saveChangeInfo():
-    pass
+def createChangInfoList(cardList,order_sn):
+    infoList = []
+    for card in cardList:
+        orderInfo = OrderChangeCardInfo()
+        orderInfo.order_sn = order_sn
+        orderInfo.card_no = card['cardId'].strip()
+        orderInfo.card_attr = '1'
+        orderInfo.card_value = card['cardVal']
+        orderInfo.card_balance = card['cardVal']
+        if 'type' in card.keys():
+            orderInfo.type = card['type']
+        infoList.append(orderInfo)
+    return infoList
 
 
 def info(request):
