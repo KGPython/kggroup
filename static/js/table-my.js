@@ -23,7 +23,7 @@ function addRow(obj,target){
     var row = $("<tr></tr>");
     for(var i=0;i<columsL;i++){
         var td = $("<td></td>");
-        if(target=='changeCode'){
+        if(target=='changeCode'){//黄金手
             if(i==0 || i==1){
                 var input = $("<input type='text' class='form-control changeCode'>");
                 $(td).append(input);
@@ -41,9 +41,6 @@ function addRow(obj,target){
             }else if(i==columsL-1){
                 var button = $('<button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this,1)">删除</button>');
                 $(td).append(button);
-            }else{
-                var input = $("<input type='text' class='form-control' disabled='disabled'>");
-                $(td).append(input);
             }
         }
 
@@ -112,6 +109,8 @@ function showCardIfno(obj,data){
             cardStu ='已冻结';
         }else if(data.card_status==4){
             cardStu ='已作废';
+        }else{
+            cardStu ='异常卡';
         }
     }
     if(flag && parseFloat(cardVal)==parseFloat(cardBlance)){
@@ -120,9 +119,9 @@ function showCardIfno(obj,data){
         $(obj).parent().parent().find('td').eq(3).find('input').eq(0).addClass('red')
     }
 
-    $(obj).parent().parent().find('td').eq(1).find('input').eq(0).val(cardVal);
-    $(obj).parent().parent().find('td').eq(2).find('input').eq(0).val(cardBlance);
-    $(obj).parent().parent().find('td').eq(3).find('input').eq(0).val(cardStu);
+    $(obj).parent().parent().find('td').eq(1).text(cardVal);
+    $(obj).parent().parent().find('td').eq(2).text(cardBlance);
+    $(obj).parent().parent().find('td').eq(3).text(cardStu);
 }
 
 /*
@@ -301,9 +300,9 @@ function getCardListVal(cardList,cardtype,cls){
     var totalNum = 0;//卡合计数量
     var totalVal = 0.00;//卡合计金额
     for(var i=0;i<trs.length;i++){
-        var status = $(trs[i]).find('td').eq(3).find('input').val();
-        var val = $(trs[i]).find('td').eq(2).find('input').val();
-        var type = $(trs[i]).find('td').eq(1).find('input').val();
+        var status = $(trs[i]).find('td').eq(3).text();
+        var val = $(trs[i]).find('td').eq(2).text();
+        var type = $(trs[i]).find('td').eq(1).text();
         if(cardtype==1)
         {
             if(status=='未激活'&& parseFloat(val)==parseFloat(type)){
@@ -580,6 +579,9 @@ function saveBorrowPayOrder(action_type,url,orderSns){
 
     //支付列表
     var payList = getPayList($('.payList'));
+    if(!payList){
+        return false;
+    }
     var hjsStr = $('.payList #remark-hjs').val();
     //买卡人信息
     var buyerName = $('#buyerName').val();
@@ -651,6 +653,9 @@ function saveCardSaleOrder(action_type,url,cardList){
 
     //支付列表
     var payList = getPayList($('.payList'));
+    if(!payList){
+        return false;
+    }
     var hjsStr = $('.payList #remark-hjs').val();
     //买卡人信息
     var buyerName = $('#buyerName').val();
@@ -786,6 +791,9 @@ function saveCardChangeOrder(url){
     var discCode = $('.Total #disCode').val();
     //支付列表
     var payList = getPayList($('.payList'));
+    if(!payList){
+        return false;
+    }
     var hjsStr = $('.payList #remark-hjs').val();
 
     //优惠列表信息
@@ -987,7 +995,7 @@ function setTotalByCardList(obj){
     {
         cardtype = 1;
         cls = 'discountTotal';
-        var cardsTotal = getCardListVal(cardList,1,cls);
+        var cardsTotal = getCardListVal(cardList,cardtype,cls);
         var cardsTotalVal = cardsTotal.totalVal;
         var discVal = parseFloat($("#discTotal").val());
         if(!discVal){discVal=0}
@@ -999,13 +1007,13 @@ function setTotalByCardList(obj){
     {
         cls = 'cardInTotal';
         cardtype = 2;
-        setOrderInfoByCardChange(cardList,cls,cardtype);
+        setOrderInfoByCardList(cardList,cls,cardtype);
     }
     else if($(cardList).hasClass('cardOut'))//换卡出库
     {
         cardtype=1;
         cls = 'cardOutTotal';
-        setOrderInfoByCardChange(cardList,cls,cardtype);
+        setOrderInfoByCardList(cardList,cls,cardtype);
     }
     else if($(cardList).hasClass('cardFillIn'))//补卡入库
     {
@@ -1028,41 +1036,41 @@ function setTotalByCardList(obj){
     else{
         cardtype=1;
         cls = 'Total';
-        // 2、计算卡列表的合计金额和合计张数
-        var cardsTotal = getCardListVal(cardList,cardtype,cls);
-        var cardsTotalVal = cardsTotal.totalVal;
-        var discountVal = createDiscount('',cardsTotalVal);
-        //4、优惠补差
-        var discountCardTotalVal = parseFloat($(".discountTotal #totalVal b").text());
-        discountPay  = discountCardTotalVal - discountVal;
-        $('.Total #totalYBalance b').text(discountPay);//设置“合计”区域->优惠补差
-        //5、设置订单应付金额 = 售卡列表合计金额 + 优惠补差
-        $('.Total #totalPaid b').text(cardsTotalVal+discountPay);
+        setOrderInfoByCardList(cardList,cls,cardtype);
     }
 }
-function setOrderInfoByCardChange(cardList,cls,cardtype) {
+function setOrderInfoByCardList(cardList,cls,cardtype) {
     // 2、计算卡列表的合计金额和合计张数
     var data = getCardListVal(cardList,cardtype,cls);
     var totalVal = data.totalVal;
-    if(cardtype==1){
-        var cardChangeInTotalVal = $(".cardInTotal #totalVal b").text();
-        var cardsPayVal = parseFloat(totalVal)-parseFloat(cardChangeInTotalVal);
+    var module = $('#content').attr('data-module');
+    var cardsPayVal = 0;
+    if(module=='sale'){
+        cardsPayVal = totalVal
+    }else if(module=='change'){
+        if(cardtype==1){
+            var cardChangeInTotalVal = $(".cardInTotal #totalVal b").text();
+            cardsPayVal = parseFloat(totalVal)-parseFloat(cardChangeInTotalVal);
+        }
+        else
+        {
+            var cardChangeOutTotalVal = $(".cardOutTotal #totalVal b").text();
+            cardsPayVal = parseFloat(cardChangeOutTotalVal)-parseFloat(totalVal);
+        }
+        console.log(cardsPayVal);
+        //3.1、计算补差金额
+        if(cardsPayVal>0){
+            $('.payment').show();
+            $('.Total').show();
+        }
+        else {
+            $('.payment').hide();
+            $('.Total').hide();
+            $('.payList .payVal').val('')
+        }
     }
-    else
-    {
-        var cardChangeOutTotalVal = $(".cardOutTotal #totalVal b").text();
-        var cardsPayVal = parseFloat(cardChangeOutTotalVal)-parseFloat(totalVal);
-    }
-    //3.1、计算补差金额
-    if(cardsPayVal>0){
-        $('.payment').show();
-        $('.Total').show();
-    }
-    else {
-        $('.payment').hide();
-        $('.Total').hide();
-        $('.payList .payVal').val('')
-    }
+
+
     $('.Total #totalVal b').text(cardsPayVal);
     //3.2、计算优惠返点
     var discountVal = createDiscount('',cardsPayVal);

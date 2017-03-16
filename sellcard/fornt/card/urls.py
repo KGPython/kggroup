@@ -9,6 +9,11 @@ urlpatterns = [
     # 批量售卡
     url(r'^cardssale/$', 'sellcard.fornt.card.cardSale.cards.index', name='cardssale'),
     url(r'^cardssale/query', 'sellcard.fornt.card.cardSale.cards.query', name='cardsSaleQuery'),
+    # 售卡打印订单
+    url(r'^cardsale/orderInfo/$', 'sellcard.fornt.card.cardSale.card.info', name='cardsSaleOrderInfo'),
+    url(r'^cardsale/orderInfo/print', 'sellcard.fornt.card.cardSale.card.reprint', name='cardsSaleOrderReprint'),
+    url(r'^cardsale/orderInfo/explain', 'sellcard.fornt.card.cardSale.card.print_explain',
+        name='cardsSaleOrderExplain'),
 
     # 大宗赠卡
     url(r'^bestowed/$', 'sellcard.fornt.card.cardSale.bestowed.index', name='bestowed'),
@@ -19,8 +24,10 @@ urlpatterns = [
     url(r'^cardchange/$', 'sellcard.fornt.card.cardChange.card.index', name='cardchange'),
     url(r'^cardchange/save', 'sellcard.fornt.card.cardChange.card.save', name='cardchange_save'),
     url(r'^cardschange/$', 'sellcard.fornt.card.cardChange.cards.index', name='cardsChange'),
-    url(r'^cardschange/query', 'sellcard.fornt.card.cardChange.cards.query', name='cardsChangeQuery'),
+    url(r'^cardschange/query/$', 'sellcard.fornt.card.cardChange.cards.query', name='cardsChangeQuery'),
     url(r'^cardschange2/$', 'sellcard.fornt.card.cardChange.cards2.index', name='cardsChange2'),
+    # 更换卡打印订单
+    url(r'^cardChange/orderInfo/$', 'sellcard.fornt.card.cardChange.card.info', name='cardChangeOrderInfo'),
     ################################################# 换卡模块 end ###############################################
 
     ################################################# 补卡模块 start #############################################
@@ -58,19 +65,8 @@ urlpatterns = [
         name='cardAllocation'),
     url(r'^cardmanage/allocationsave/', 'sellcard.fornt.card.cardManage.cardAllocation.allocationSave',
         name='allocationSave'),
+    url(r'^cardmanage/status/$','sellcard.fornt.card.cardManage.changeStatus.statusTo1',name='statusTo1'),
     ################################################# 卡管理 end ###############################################
-
-    ################################################# 卡管理 start ##############################################
-    # 售卡打印订单
-    url(r'^cardsale/orderInfo/$', 'sellcard.fornt.card.cardSale.card.info', name='cardsSaleOrderInfo'),
-    url(r'^cardsale/orderInfo/print', 'sellcard.fornt.card.cardSale.card.reprint', name='cardsSaleOrderReprint'),
-    url(r'^cardsale/orderInfo/explain', 'sellcard.fornt.card.cardSale.card.print_explain',
-        name='cardsSaleOrderExplain'),
-    # 更换卡打印订单
-    url(r'^cardChange/orderInfo/$', 'sellcard.fornt.card.cardChange.card.info', name='cardChangeOrderInfo'),
-    ################################################# 卡管理 end   ##############################################
-
-
 
     ###########################################  返点折扣授权码 start ##############################################
     # 生成

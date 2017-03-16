@@ -40,7 +40,7 @@ def index(request):
     shopsCodeStr = "'" + "','".join(shopsCode) + "'"
     # shopsCodeStr = "('C003')"
 
-    saleDiscGroupByShop = 'select shop_code,SUM(disc_amount) as disc,SUM(y_cash) as disc_cash, SUM(disc_amount-y_cash) as disc_card ' \
+    saleDiscGroupByShop = 'select shop_code,SUM(disc_amount) as disc,SUM(y_cash) as disc_cash, SUM(disc_amount-y_cash+diff_price) as disc_card ' \
                           'from orders ' \
                           'where add_time>="{start}" and add_time<="{end}" and shop_code in ({shopsCodeStr})' \
                           'group by shop_code ' \
@@ -229,7 +229,7 @@ def index(request):
     totalDict['total_disc_qita'] = totalDict['discCashTotal']-totalDict['total_disc_6']-totalDict['total_disc_7']\
                                    -totalDict['total_disc_8']-totalDict['total_disc_10']-totalDict['total_disc_11']
 
-    return render(request, 'report/card/saleGroupByShop/saleGroupByShop.html', locals())
+    return render(request, 'report/card/saleGroupByShop/index.html', locals())
 
 
 
