@@ -442,8 +442,15 @@ def date_detail(request):
           u" WHERE occ.order_sn = b.order_id " \
           u" and occ.add_time>='{start_b}' " \
           u" and occ.add_time<='{end_b}' " \
-          u" and occ.shop_code ='{shopcode_b}' ) d group by  d.date_time "\
-         .format(start_a=start, end_a=endTime, shopcode_a=shopcode, start_b=start, end_b=endTime,shopcode_b=shopcode)
+          u" and occ.shop_code ='{shopcode_b}'  " \
+          u" UNION all SELECT DATE_FORMAT( ouc.add_time, '%Y-%m-%d'), 0, 0, " \
+          u" 0, ouc.diff_price, 0, 0, 0, 0, 0, " \
+          u" 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, " \
+          u" 0 FROM order_up_card ouc " \
+          u" WHERE ouc.add_time>='{start_b}' " \
+          u" and ouc.add_time<='{end_b}' " \
+          u" and ouc.shop_code ='{shopcode_b}' ) d group by  d.date_time " \
+        .format(start_a=start, end_a=endTime, shopcode_a=shopcode, start_b=start, end_b=endTime,shopcode_b=shopcode)
     cur.execute(sql)
     List = cur.fetchall()
 
