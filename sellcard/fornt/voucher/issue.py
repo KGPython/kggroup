@@ -353,7 +353,7 @@ def InsertCoupon(cardinfo, list):
           u" Note,PayValue,UseScope,IfCurrShop,EnableValue,PayType)" \
           u"values(" \
           u" 'K001',{coupontypeid},'{coupontypename}',2,0," \
-          u" GETdate(),{EndDate},{value},null,100," \
+          u" GETdate(),'{EndDate}',{value},null,100," \
           u" '',0.00,1,{ifcurrshop},0,'') ".format(coupontypeid=type,
                                                    coupontypename=cardinfo[1],
                                                    EndDate=cardinfo[3],
