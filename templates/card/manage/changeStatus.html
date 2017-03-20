@@ -1,0 +1,36 @@
+{% extends 'common/baseForJobs.html' %}
+{% block title %}卡状态调整{% endblock %}
+{% block content %}
+    <div id="content" data-module="cardStore_zero">
+        <div id="content-header">
+            <div id="breadcrumb">
+                <a data-original-title="Go to Home" href="#" title="" class="tip-bottom">
+                    <span class="glyphicon glyphicon-home" aria-hidden="true"> </span> 首页
+                </a>
+                <a href="#" class="">卡管理</a>
+                <a href="#" class="current">状态调整</a>
+            </div>
+        </div>
+        {% include 'common/cardsInQuery.html' %}
+        <div class="enter-box">
+            <input type="hidden" id="post-token" value="{{ token }}">
+            <button class="btn btn-success pull-right" type="button" id="btn-enter">提交订单</button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        $(document).on('click', '#btn-enter', function () {
+            var url = "{% url 'statusTo1' %}";
+            var cardList = getCardIdList($('#correctIn #cardInList'));
+            data={
+                csrfmiddlewaretoken: CSRF,
+                'cardList':JSON.stringify(cardList),
+                'postToken':$('#post-token').val()
+            };
+            doAjaxSave(url,data);
+        });
+    </script>
+
+{% endblock %}

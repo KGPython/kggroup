@@ -1,7 +1,7 @@
 {% extends 'common/baseForJobs.html' %}
 {% block title %}单卡售卡{% endblock %}
 {% block content %}
-<div id="content">
+<div id="content" data-module="sale">
     <div id="content-header">
         <div id="breadcrumb">
             <a data-original-title="Go to Home" href="#" title="" class="tip-bottom">
@@ -47,7 +47,7 @@
     $(document).on('click','#btn-enter',function(){
         var action_type = '1';//单卡售卡
         var url = "{% url 'saveorder' %}";
-        var cardList = getCardList($('#cardList'),'1');
+        var cardList = getCardList($('#cardList'));
         saveCardSaleOrder(action_type,url,cardList);
     })
 </script>

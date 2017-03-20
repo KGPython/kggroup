@@ -222,7 +222,8 @@ def save(request):
 
 
             # 更新kggroup内部优惠赠送卡状态
-            resCard = CardInventory.objects.filter(card_no__in=cardIdDisclist).update(card_status='2',card_action='0')
+            resCard = CardInventory.objects.filter(card_no__in=cardIdDisclist,card_status='1',is_store='0')\
+                .update(card_status='2',card_action='0')
             if resCard != len(cardIdDisclist):
                 raise MyError('CardInventory状态更新失败')
 

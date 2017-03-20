@@ -2,14 +2,14 @@
     <table class="table table-striped table-hover table-form-my">
         <thead>
         <tr>
-            <th>卡号</th>
+            <th style="width: 10em">卡号</th>
             <th>面值</th>
             <th>余额</th>
             <th>状态</th>
-            <th>操作</th>
+            <th style="width: 10em">操作</th>
         </tr>
         </thead>
-        <tbody class="cardIn" id="cardInList">
+        <tbody class="cardIn" id="correctIn">
         <tr>
             <td><input class="form-control cardId" type="text"></td>
             <td><input type='text' class='form-control' disabled="disabled"></td>
@@ -26,3 +26,37 @@
         <p class="text col-md-3" id="totalVal">入卡合计金额：<b>0.00</b>元</p>
     </div>
 </div>
+<script>
+    // 卡校验
+    $(document).on("change", ".cardIn .cardId", function () {
+        type = 'in';
+        checkCardIn(type,$(this))
+
+    });
+    function checkCardIn(type,obj) {
+        var cardIdStr = obj.val();
+        var cardId = cardIdStr.split("=")[0];
+        obj.val(cardId);
+        //检查是否有重复卡号
+        var cardInList = $('#cardInList');
+        var arr1 = getCardIds(cardInList);
+        var cardOutList = $('#ListOut');
+        var arr2 = getCardIds(cardOutList);
+        var YcardList =$('#YcardList');
+        var arr3 = getCardIds(YcardList);
+        var arr = [];
+        arr = arr.concat(arr1,arr2,arr3);
+        arr.remove(cardId);
+        if (arr.indexOf(cardId) > -1) {
+            alert('卡号：' + cardId + ',已经存卡列表中,请更换');
+            obj.val('');
+            return false;
+        }
+        //卡校验
+        if(type=='in'){
+            var ajaxOpt = {'url': '{% url 'cardcheck_change' %}?cardId=' + cardId, 'method': 'get'};
+            doAjax2(obj, ajaxOpt, showCardIfno3, setTotalByCardList);
+        }
+        addRow(obj);
+    }
+</script>

@@ -4,8 +4,8 @@
 <style>
 .payment,.Total{display: none}
 </style>
-<div id="content">
-    <div id="content-header">
+<div id="content" data-module="change">
+    <div id="content-header" data-module="change">
         <div id="breadcrumb">
             <a data-original-title="Go to Home" href="#" title="" class="tip-bottom">
                 <span class="glyphicon glyphicon-home" aria-hidden="true"> </span> 首页
@@ -17,24 +17,8 @@
     <div class="widget-box">
         <div class="widget-content nopadding">
             <div class="container-fluid">
-                <div id="cardInBox">
-                    <div class="widget-box">
-                        <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-search"> </span></span>
-                            <h5 data-toggle="collapse" data-target="#demo">入卡查询</h5>
-                        </div>
-                        {% include 'common/cardsQueryForm.html' %}
-                    </div>
-                    {% include 'common/cardsInQueryResult.html' %}
-                </div>
-                <div id="cardOutBox">
-                    <div class="widget-box">
-                        <div class="widget-title"> <span class="icon"> <spanut class="glyphicon glyphicon-search"> </spanut></span>
-                            <h5 data-toggle="collapse" data-target="#demo">出卡查询</h5>
-                        </div>
-                        {% include 'common/cardsQueryForm.html' %}
-                    </div>
-                    {% include 'common/cardsOutQueryResult.html' %}
-                </div>
+                {% include 'common/cardsInQuery.html' %}
+                {% include 'common/cardsOutQuery.html' %}
 
                 {% include 'common/discount.html' %}
                 {% include 'common/paymentForChange.html' %}
@@ -53,221 +37,9 @@
 
 {% block js %}
     <script>
-    $(function () {
-        $('#cardInBox').find('.query-btn').attr('id','cardsInQuery');
-        $('#cardOutBox').find('.query-btn').attr('id','cardsOutQuery');
-    })
-    </script>
-<script>
-    $('.query-btn').click(function(){
-        var rows = $(this).parent().parent().siblings('#cardsForm').eq(0).find('.row');
-        var cards = [];
-        for(var i=0;i<rows.length;i++){
-            var startStr = $(rows[i]).find('#cardStart').val();
-            var start = startStr.split('=')[0];
-            $(rows[i]).find('#cardStart').val(start);
-            var endStr = $(rows[i]).find('#cardEnd').val();
-            var end = endStr.split('=')[0];
-            $(rows[i]).find('#cardEnd').val(end);
-            if(start && end){
-                if(parseInt(start)>parseInt(end)){
-                    alert('起始卡号必须小于截至卡号，\n错误位置：(起始卡号：'+start+',结束卡号：'+end+')');
-                    return false;
-                }
-                var item = {'start':start,'end':end};
-                cards.push(item);
-            }
-        }
-        var btnID = $(this).attr('id');
-        var type = '';
-        if(btnID=='cardsInQuery'){
-            type = 'in';
-        }else{
-            type = 'out';
-        }
-        var data = {
-            csrfmiddlewaretoken: CSRF,
-            cards: JSON.stringify(cards),
-            type: type
-        };
-        query(data,btnID)
-
-    });
-    function query(data,btnID) {
-        $.ajax({
-            url:'{% url 'cardsChangeQuery' %}',
-            method:'post',
-            dataType:'json',
-            data:data,
-            success:function(data){
-                if(data.length==0){
-                    alert('此卡段不存在，请核查!')
-                }
-                if(btnID=='cardsInQuery'){
-                    showData('#cardInBox',data);
-                }else{
-                    showData2('#cardOutBox',data);
-                }
-            },
-            error:function(){ }
+        $(document).on('click','#btn-enter',function(){
+            var url = "{% url 'cardchange_save' %}";
+            saveCardChangeOrder(url);
         })
-    }
-    function showData(boxID,data) {
-        $(boxID+' #anomalyBox').hide();
-        $(boxID+' #anomaly').find('tbody').empty();
-        $(boxID+' #correct').find('tbody').empty();
-        for(var i=0;i<data.length;i++){
-            if(data[i].mode=='1' && data[i].detail==data[i].new_amount){
-                var cols = $('#correct').find('th').length;
-                var tr=$('<tr></tr>');
-                for(var j=0;j<cols;j++){
-                    var td = $('<td></td>');
-                    if(j==0){
-                        var obj = $('<input class="form-control" disabled></input>');
-                        obj.val(data[i].cardno)
-                    }else if(j==1){
-                        var obj = $('<input class="form-control" disabled></input>');
-                        obj.val(data[i].new_amount)
-                    }else if(j==2){
-                        var obj = $('<input class="form-control" disabled></input>');
-                        obj.val(data[i].detail)
-                    }else if(j==3){
-                        var obj = $('<input class="form-control" disabled></input>');
-                        obj.val('已激活');
-                    }else if(j==4){
-                        var obj = $('<button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this);">删除</button>');
-                    }
-                    td.append(obj);
-                    tr.append(td);
-                }
-                $(boxID+' #correct').find('tbody').append(tr);
-
-            }
-            else{
-                $(boxID+' #anomalyBox').show();
-                var cols = $(boxID+' #anomaly').find('th').length;
-                var tr=$('<tr></tr>');
-                for(var j=0;j<cols;j++){
-                    var td = $('<td></td>');
-                    if(j==0){
-                        var obj = $('<input class="form-control" disabled></input>');
-                        obj.val(data[i].cardno)
-                    }else if(j==1){
-                        var obj = $('<input class="form-control" disabled></input>');
-                        obj.val(data[i].new_amount)
-                    }else if(j==2){
-                        var obj = $('<input class="form-control" disabled></input>');
-                        obj.val(data[i].detail)
-                    }else if(j==3){
-                        var obj = $('<input class="form-control red" disabled ></input>');
-                        if(data[i].mode=='9'){
-                            obj.val('未激活');
-                        }else if(data[i].mode=='2'){
-                            obj.val('未到账款');
-                        }else if(data[i].mode=='r'){
-                            obj.val('已回收');
-                        }else if(data[i].mode=='m'){
-                            obj.val('一般挂失');
-                        }else if(data[i].mode=='l'){
-                            obj.val('严重挂失');
-                        }else if(data[i].mode=='f'){
-                            obj.val('已冻结');
-                        }else if(data[i].mode=='e'){
-                            obj.val('已换卡');
-                        }else if(data[i].mode=='q'){
-                            obj.val('退卡');
-                        }else if(data[i].mode=='-1'){
-                            obj.val('不存在');
-                        }
-                    }else if(j==4){
-                        var obj = $('<button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this);">删除</button>');
-                    }
-                    td.append(obj);
-                    tr.append(td);
-                }
-                $(boxID+' #anomaly').find('tbody').append(tr);
-
-            }
-        }
-        setTotalByCardList($(boxID+' #correct').find('tbody'));
-    }
-    function showData2(boxID,data) {
-        $(boxID+' #anomalyBox').hide();
-        $(boxID+' #anomaly').find('tbody').empty();
-        $(boxID+' #correct').find('tbody').empty();
-        for(var i=0;i<data.length;i++){
-            if(data[i].card_status=='1' || data[i].card_value!=data[i].card_blance)
-            {
-                var cols = $('#correct').find('th').length;
-                var tr=$('<tr></tr>');
-                for(var j=0;j<cols;j++){
-                    var td = $('<td></td>');
-                    if(j==0){
-                        var obj = $('<input class="form-control" disabled></input>');
-                        obj.val(data[i].card_no)
-                    }else if(j==1){
-                        var obj = $('<input class="form-control" disabled></input>');
-                        obj.val(data[i].card_value)
-                    }else if(j==2){
-                        var obj = $('<input class="form-control" disabled></input>');
-                        obj.val(data[i].card_blance)
-                    }else if(j==3){
-                        var obj = $('<input class="form-control" disabled></input>');
-                        obj.val('未激活');
-                    }else if(j==4){
-                        var obj = $('<button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this);">删除</button>');
-                    }
-                    td.append(obj);
-                    tr.append(td);
-                }
-                $(boxID+' #correct').find('tbody').append(tr);
-            }
-            else
-            {
-                $(boxID+' #anomalyBox').show();
-                var cols = $(boxID+' #anomaly').find('th').length;
-                var tr=$('<tr></tr>');
-                for(var j=0;j<cols;j++){
-                    var td = $('<td></td>');
-                    if(j==0){
-                        var obj = $('<input class="form-control" disabled></input>');
-                        obj.val(data[i].card_no)
-                    }else if(j==1){
-                        var obj = $('<input class="form-control" disabled></input>');
-                        obj.val(data[i].card_value)
-                    }else if(j==2){
-                        var obj = $('<input class="form-control" disabled></input>');
-                        obj.val(data[i].card_blance)
-                    }else if(j==3){
-                        var obj = $('<input class="form-control red" disabled ></input>');
-                        if(data[i].card_status=='1'){
-                            obj.val('未激活');
-                        }else if(data[i].card_status=='2'){
-                            obj.val('已激活');
-                        }else if(data[i].card_status=='3'){
-                            obj.val('已冻结');
-                        }else if(data[i].card_status=='4'){
-                            obj.val('已作废');
-                        }else{
-                            obj.val('异常卡');
-                        }
-                    }else if(j==4){
-                        var obj = $('<button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this);">删除</button>');
-                    }
-                    td.append(obj);
-                    tr.append(td);
-                }
-                $(boxID+' #anomaly').find('tbody').append(tr);
-            }
-        }
-        setTotalByCardList($(boxID+' #correct').find('tbody'));
-    }
-
-
-    $(document).on('click','#btn-enter',function(){
-        var url = "{% url 'cardchange_save' %}";
-        saveCardChangeOrder(url);
-    })
-</script>
-
+    </script>
 {% endblock %}

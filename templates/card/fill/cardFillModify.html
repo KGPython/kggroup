@@ -86,7 +86,7 @@
         var cardId = cardIdStr.split("=")[0];
         $(this).val(cardId);
         //检查是否有重复卡号
-        var cardOutList = $('#cardOutList');
+        var cardOutList = $('#cardFillOutList');
         var arr1 = getCardIds(cardOutList);
         arr1.remove(cardId);
         if(arr1.indexOf(cardId)>-1){

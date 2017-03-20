@@ -105,7 +105,6 @@
             'person':person,
             'postToken':$('#post-token').val()
         };
-        console.log(data);
         //3、提交数据
         doAjaxSave('{% url 'verifierSentSave' %}',data)
     })

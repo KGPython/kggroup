@@ -1,7 +1,7 @@
 {% extends 'common/baseForJobs.html' %}
 {% block title %}团购实物返点{% endblock %}
 {% block content %}
-<div id="content">
+<div id="content" data-module="sale">
     <div id="content-header">
         <div id="breadcrumb">
             <a data-original-title="Go to Home" href="#" title="" class="tip-bottom">
@@ -67,7 +67,7 @@
             return false;
         }
 
-        var cardList = getCardList($('#YcardList'),'1');
+        var cardList = getCardList($('#YcardList'));
         var discVal = parseFloat($('#totalVal b').text());
         var discPay = parseFloat($('#totalYBalance b').text());
         if(discPay<0){
@@ -75,7 +75,7 @@
             return false;
         }
         var remarks =$('.remarks').val().trim();
-        if(totalVal==0){
+        if(cardList.length==0){
             alert('还未添加赠卡信息，请核对后再尝试提交！');
             return false;
         }

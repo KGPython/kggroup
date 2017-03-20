@@ -144,4 +144,7 @@ td.first-col ,
     color: #333;
     text-align: center;
 }
+td.red{
+    color: #FF0000!important;
+}
 

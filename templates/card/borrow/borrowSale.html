@@ -17,26 +17,8 @@
         </div>
         <div class="widget-content nopadding">
             <div class="container-fluid">
-                <div class="widget-box">
-                    <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-search"> </span></span>
-                        <h5 data-toggle="collapse" data-target="#demo">批量查询</h5>
-                    </div>
-                    {% include 'common/cardsQueryForm.html' %}
-                </div>
+                {% include 'common/cardsOutQuery.html' %}
 
-                {% include 'common/cardsQueryResult.html' %}
-
-                <div class="widget-box">
-                    <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
-                        <h5>合计</h5>
-                    </div>
-                    <div class="widget-content nopadding Total">
-                        <div class="row">
-                            <p class="text col-md-2" id="totalNum">卡合计数量：<b class="red"></b>张</p>
-                            <p class="text col-md-2" id="totalVal">卡合计金额：<b class="red"></b>元</p>
-                        </div>
-                    </div>
-                </div>
                 <div class="widget-box">
                     <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
                         <h5>顾客信息</h5>
@@ -76,110 +58,6 @@
 
 {% block js %}
 <script>
-    $('.query-btn').click(function(){
-        var rows = $('#cardsForm').find('.row');
-        var cards = [];
-        for(var i=0;i<rows.length;i++){
-            var startStr = $(rows[i]).find('#cardStart').val();
-            var start = startStr.split('=')[0];
-            $(rows[i]).find('#cardStart').val(start);
-            var endStr = $(rows[i]).find('#cardEnd').val();
-            var end = endStr.split('=')[0];
-            $(rows[i]).find('#cardEnd').val(end);
-            if(start && end){
-                if(parseInt(start)>parseInt(end)){
-                    alert('起始卡号必须小于截至卡号，\n错误位置：(起始卡号：'+start+',结束卡号：'+end+')');
-                    return false;
-                }
-                var item = {'start':start,'end':end};
-                cards.push(item);
-            }
-        }
-
-        $.ajax({
-            url:'{% url 'cardsSaleQuery' %}',
-            method:'post',
-            dataType:'json',
-            data:{
-                csrfmiddlewaretoken: CSRF,
-                cards:JSON.stringify(cards)
-            },
-            success:function(data){
-                if(data.length==0){
-                    alert('此卡断不存在，请核查!')
-                }
-                $('#anomaly').find('tbody').empty();
-                $('#correct').find('tbody').empty();
-                for(var i=0;i<data.length;i++){
-                    if(data[i].card_status=='1' && data[i].card_value==data[i].card_blance)
-                    {
-                        var cols = $('#correct').find('th').length;
-                        var tr=$('<tr></tr>');
-                        for(var j=0;j<cols;j++){
-                            var td = $('<td></td>');
-                            if(j==0){
-                                var obj = $('<input class="form-control" disabled></input>');
-                                obj.val(data[i].card_no)
-                            }else if(j==1){
-                                var obj = $('<input class="form-control" disabled></input>');
-                                obj.val(data[i].card_value)
-                            }else if(j==2){
-                                var obj = $('<input class="form-control" disabled></input>');
-                                obj.val(data[i].card_blance)
-                            }else if(j==3){
-                                var obj = $('<input class="form-control" disabled></input>');
-                                obj.val("未激活")
-                            }else if(j==4){
-                                var obj = $('<button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this)">删除</button>');
-                            }
-                            td.append(obj);
-                            tr.append(td);
-                        }
-                        $('#correct').find('tbody').append(tr);
-                    }
-                    else
-                    {
-                        var cols = $('#anomaly').find('th').length;
-                        var tr=$('<tr></tr>');
-                        for(var j=0;j<cols;j++){
-                            var td = $('<td></td>');
-                            if(j==0){
-                                var obj = $('<input class="form-control" disabled></input>');
-                                obj.val(data[i].card_no)
-                            }else if(j==1){
-                                var obj = $('<input class="form-control" disabled></input>');
-                                obj.val(data[i].card_value)
-                            }else if(j==2){
-                                var obj = $('<input class="form-control" disabled></input>');
-                                obj.val(data[i].card_blance)
-                            }else if(j==3){
-                                var obj = $('<input class="form-control red" disabled></input>');
-                                if(data[i].card_status=='2'){
-                                    obj.val('已激活');
-                                }else if(data[i].card_status=='3'){
-                                    obj.val('已冻结');
-                                }else if(data[i].card_status=='4'){
-                                    obj.val('已作废')
-                                }
-                            }else if(j==4){
-                                var obj = $('<button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this)">删除</button>');
-                            }
-                            td.append(obj);
-                            tr.append(td);
-                        }
-                        $('#anomaly').find('tbody').append(tr);
-                        $('#anomalyBox').show();
-
-                    }
-                }
-                setTotalByCardList($('#correct').find('tbody'));
-            },
-            error:function(){
-
-            }
-        })
-    });
-
     $(document).on('click','#btn-enter',function(){
         var url = "{% url 'borrowSaleSave' %}";
         saveBorrowOrder(url);
@@ -189,16 +67,15 @@
     //借卡单保存
 function saveBorrowOrder(url){
     //售卡列表
-    var cardList = getCardList($('#cardList'),'1');
-    var totalNum = parseInt($('.Total #totalNum b').text());
-    var totalVal = parseFloat($('.Total #totalVal b').text());//卡合计金额
-
+    var cardList = getCardList($('#correctOut'));
+    var totalNum = parseInt($('.cardOutTotal #totalNum b').text());
+    var totalVal = parseFloat($('.cardOutTotal #totalVal b').text());//卡合计金额
     //买卡人信息
     var borrowDepart = $('#borrowDepart').val();
     var borrowName = $('#borrowName').val();
     var borrowDepartCode = $('#borrowDepartCode').val();
     var borrowPhone = $('#borrowPhone').val();
-    if(!totalVal){
+    if(cardList.length==0){
         alert('还未添加售卡信息，请核对后再尝试提交！');
         return false;
     }

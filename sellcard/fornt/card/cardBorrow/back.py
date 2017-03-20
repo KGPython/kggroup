@@ -94,15 +94,6 @@ def query(request):
     for cardNo in cardNoList:
         record = OrderBorrowInfo.objects.values('card_no','order_sn').filter(order_sn__in=orderSns,card_no=cardNo)
 
-        # sql2 = "select b.card_no,a.order_sn from order_borrow as a,order_borrow_info as b " \
-        #        "where a.shopcode='"+shopcode+"' and a.order_sn=b.order_sn and a.is_paid='0' and a.borrow_depart_code='"+borrowDepartCode+"' and b.card_no='"+cardNo+"'"
-        # connSql = mth.getMysqlConn()
-        # curSql = connSql.cursor()
-        # curSql.execute(sql2)
-        # record = curSql.fetchone()
-        # curSql.close()
-        # connSql.close()
-
         if not record:
             for card in listTotalNew:
                 if card['cardno'] == cardNo:
@@ -118,9 +109,9 @@ def query(request):
 
     data = {}
 
-    data['listTotalNew'] = listTotalNew
-    data['orderSnTuple'] = orderSnTuple
-    return HttpResponse(json.dumps(data))
+    # data['listTotalNew'] = listTotalNew
+    # data['orderSnTuple'] = orderSnTuple
+    return HttpResponse(json.dumps(listTotalNew))
 
 
 def save(request):
@@ -166,6 +157,7 @@ def save(request):
 
 
             res['status'] = 1
+            res['urlRedirect'] = '/kg/sellcard/fornt/borrow/back/index/'
             ActionLog.objects.create(action='借卡-还卡',u_name=request.session.get('s_uname'),cards_in=cardsStr,add_time=datetime.datetime.now())
             del request.session['postToken']
     except Exception as e:

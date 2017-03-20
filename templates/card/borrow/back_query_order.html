@@ -82,7 +82,7 @@
                             <tbody id="orderList">
                              {% for row in listSale %}
                                 <tr>
-                                    <td><input type="checkbox" id="{{ row.order_sn }}"></td>
+                                    <td><input type="checkbox" value="{{ row.order_sn }}"></td>
                                     <td>{{ row.order_sn }}</td>
                                     <td>{{ row.order_val}}</td>
                                     <td>{{ row.order_num }}</td>
@@ -142,6 +142,7 @@
             return false;
         }
         $('#orderSns').val(JSON.stringify(orderSns));
+        $(this).attr('disabled',true);
         $('#nextPageForm').submit();
     });
 </script>

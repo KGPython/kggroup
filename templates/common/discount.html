@@ -6,11 +6,11 @@
         <table class="table table-striped table-hover table-form-my">
             <thead>
                 <tr>
-                    <th>卡号</th>
+                    <th style="width: 10em">卡号</th>
                     <th>面值</th>
                     <th>余额</th>
                     <th>状态</th>
-                    <th>操作</th>
+                    <th style="width: 10em">操作</th>
                 </tr>
             </thead>
             <tbody class="discount" id="YcardList">
@@ -34,7 +34,30 @@
             </div>
             <p class="text col-md-3" id="totalNum">优惠数卡合计：<b>0</b>张</p>
             <p class="text col-md-3" id="totalVal">优惠金额合计：<b>0.00</b>元</p>
-{#                            <p class="text col-md-3" id="balance">应补差额：<b>0.00</b>元</p>#}
         </div>
     </div>
 </div>
+<script>
+    $(document).on("change",".discount .cardId",function(){
+        var cardIdStr = $(this).val();
+        var cardId = cardIdStr.split("=")[0];
+        $(this).val(cardId);
+        //检查是否有重复卡号
+        var cardList = $('#cardList');
+        var arr1 = getCardIds(cardList);
+        var YcardList =$('#YcardList');
+        var arr2 = getCardIds(YcardList);
+        arr1 = arr1.concat(arr2);
+        arr1.remove(cardId);
+        if(arr1.indexOf(cardId)>-1){
+            alert('卡号：'+cardId+',已经存在于售卡或赠卡列表中,请更换');
+            $(this).val('');
+            return false;
+        }
+        //卡校验
+        var ajaxOpt = {'url':'{% url 'cardcheck' %}?cardId='+cardId,'method':'get'};
+        doAjax(this,ajaxOpt,showCardIfno,setTotalByCardList);
+        addRow(this);
+    });
+
+</script>

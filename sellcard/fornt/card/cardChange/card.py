@@ -88,18 +88,19 @@ def save(request):
                     .objects \
                     .filter(card_status='2', card_action='0', card_no=card['cardId'], card_value=F('card_blance'))
                 cardInventory = queryCard.values('is_store').first()
+                is_store = 0
                 if cardInventory:
                     is_store = cardInventory['is_store']
 
-                    if is_store:
-                        card['type'] = 2
-                        cardIsStoreList.append(card)
-                        status = '7'
-                        action = '0'
-                    else:
-                        cardCommonList.append(card)
-                        status = '1'
-                        action = '1'
+                if is_store:
+                    card['type'] = 2
+                    cardIsStoreList.append(card)
+                    status = '7'
+                    action = '0'
+                else:
+                    cardCommonList.append(card)
+                    status = '1'
+                    action = '1'
                 resUpdate = resSave = 0
                 #处理老卡换入
                 if not cardInventory:
@@ -173,23 +174,23 @@ def save(request):
             cardIsStoreIdList = []
             cardCommonInNum=cardIsStoreInNum = 0
             if len(cardCommonList):
-                infoCommon = createChangInfoList(cardCommonList,order_sn)
+                infoCommon = createChangInfoList(cardCommonList,order_sn,'1')
                 changeCardInfoList += infoCommon
                 cardCommonIdList = [card['cardId'] for card in cardCommonList]
                 cardInIdList += cardCommonIdList
                 cardCommonInNum = len(cardCommonIdList)
             if len(cardIsStoreList):
-                infoIsStore = createChangInfoList(cardIsStoreList, order_sn)
+                infoIsStore = createChangInfoList(cardIsStoreList, order_sn,'1')
                 changeCardInfoList += infoIsStore
                 cardIsStoreIdList = [card['cardId'] for card in cardIsStoreList]
                 cardInIdList += cardIsStoreIdList
                 cardIsStoreInNum = len(cardIsStoreIdList)
             if len(cardListOut):
-                infoOut = createChangInfoList(cardListOut,order_sn)
+                infoOut = createChangInfoList(cardListOut,order_sn,'0')
                 changeCardInfoList += infoOut
                 cardOutInfoList += cardListOut
             if not isThird and len(discList):
-                infoDisc = createChangInfoList(cardIsStoreList, discList)
+                infoDisc = createChangInfoList(cardIsStoreList, discList,'0')
                 changeCardInfoList += infoDisc
                 cardOutInfoList += discList
 
@@ -199,7 +200,7 @@ def save(request):
             cardOutIdList = [card['cardId'] for card in cardOutInfoList]
             cardsOutNum = len(cardOutIdList)
             resCardOut = CardInventory.objects\
-                .filter(card_status='1',card_action='1',card_no__in=cardOutIdList,card_value=F('card_blance'),is_store='0')\
+                .filter(card_status='1',card_no__in=cardOutIdList,card_value=F('card_blance'),is_store='0')\
                 .update(card_status='2',card_action='0')
             if resCardOut != cardsOutNum:
                 raise MyError('CardInventory状态更新失败')
@@ -238,13 +239,13 @@ def save(request):
     return HttpResponse(json.dumps(res))
 
 
-def createChangInfoList(cardList,order_sn):
+def createChangInfoList(cardList,order_sn,attr):
     infoList = []
     for card in cardList:
         orderInfo = OrderChangeCardInfo()
         orderInfo.order_sn = order_sn
         orderInfo.card_no = card['cardId'].strip()
-        orderInfo.card_attr = '1'
+        orderInfo.card_attr = attr
         orderInfo.card_value = card['cardVal']
         orderInfo.card_balance = card['cardVal']
         if 'type' in card.keys():

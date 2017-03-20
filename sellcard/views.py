@@ -38,11 +38,30 @@ def findPays(payId=None):
     PayList = Payment.objects.values("id", "payment_name").filter(q).order_by('id')
     return PayList
 
-def index(request):
 
+from sellcard.models import Orders
+def index(request):
+    # data = OrderPaymentInfo.objects.get(order__order_sn='S1609240003')
+    # print(data.pay.payment_name)
+    # print(data.order.add_time)
+    # querySet = Orders.objects.filter(orderpaymentinfo__is_pay='1',order_sn='S1609240003')
+    # print(querySet)
+    # order = Orders.objects.get(order_sn='S1609240003')
+    # payList = order.orderpaymentinfo_set.all()
+    # print(payList)
+    # data = Orders.objects.filter(o__is_pay='1',order_sn='S1609240003')
+    # print(data)
     return render(request, "index.html")
 
 def global_setting(request):
     # 加密狗验证服务地址
     SOFTKEY_URL = "http://192.168.250.8:8082/authservice/inf/main"
     return locals()
+
+
+from sellcard.models import OrderPaymentInfo
+
+# Create your tests here.
+def test():
+    data = OrderPaymentInfo.objects.get(id=10)
+    print(data)

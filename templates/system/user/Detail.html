@@ -110,7 +110,6 @@
             'role':role,
             'postToken':$('#post-token').val()
         };
-        console.log(data);
         //提交数据
         doAjaxSave('{% url 'userManageSave' %}',data)
     });

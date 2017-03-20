@@ -62,7 +62,7 @@ def getCardsOut(cards):
     for obj in cards:
         list = CardInventory\
                .objects\
-               .values('card_no','card_value','card_blance','card_status')\
+               .values('card_no','card_value','card_blance','card_status','is_store')\
                .filter(card_no__gte=obj['start'],card_no__lte=obj['end'])
         listTotal.extend(list)
 

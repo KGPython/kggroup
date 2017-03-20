@@ -154,7 +154,8 @@ def saveOrder(request):
             cardsNum = len(cardIdList)
 
             # 更新kggroup内部卡状态
-            resCard = CardInventory.objects.filter(card_no__in=cardIdList).update(card_status='2',card_action='0')
+            resCard = CardInventory.objects.filter(card_no__in=cardIdList,card_status='1',is_store='0')\
+                .update(card_status='2',card_action='0')
             if resCard != cardsNum:
                 raise MyError('CardInventory状态更新失败')
             #更新折扣授权码校验码状态

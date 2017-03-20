@@ -1,0 +1,176 @@
+<div class="widget-box">
+    <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+        <h5>出库卡查询</h5>
+    </div>
+    <div id="demo" class="collapse in widget-content">
+        <div id="cardsForm">
+            <div class="row formline">
+                <label for="" class="col-md-1 formline-label">号段开始：</label>
+                <div class="col-md-3">
+                    <input type="text" class="form-control" name="cardStart" id="cardStart" required value="{{ cardStart }}">
+                </div>
+                <label for="" class="col-md-1 col-lg-1 formline-label">号段结束：</label>
+                <div class="col-md-3">
+                    <input type="text" class="form-control" name="cardEnd" id="cardEnd" required value="{{ cardEnd }}">
+                </div>
+                <div class="col-md-1">
+                    <button type="reset" class="btn btn-warning btn-add pull-right">添加</button>
+                </div>
+            </div>
+        </div>
+        <div class="row formline">
+            <div class="col-md-12">
+                <button type="button" class="btn btn-info query-btn pull-right" id="queryCardOut">储值卡查询</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="widget-box" style="display: none" id="anomalyBoxOut">
+    <div class="widget-title"><span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+        <h5>异常数据</h5>
+    </div>
+    <div class="widget-content nopadding check-operat" style="max-height: 200px;overflow-y: auto;">
+        <table class="table table-striped table-hover data-table table-form-my" id="anomalyOut">
+            <thead>
+            <tr>
+                <th style="width: 10em">卡号</th>
+                <th>面值</th>
+                <th>余额</th>
+                <th>状态</th>
+                <th style="width: 8em">操作</th>
+            </tr>
+            </thead>
+            <tbody id="ListOutErr"></tbody>
+        </table>
+    </div>
+</div>
+<div class="widget-box" id="correctBoxOut">
+    <div class="widget-title"><span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+        <h5>正常数据</h5>
+    </div>
+    <div class="widget-content nopadding check-operat" style="max-height: 200px;overflow-y: auto;">
+        <table class="table table-striped table-hover data-table table-form-my" id="correctOut">
+            <thead>
+            <tr>
+                <th style="width: 10em">卡号</th>
+                <th>面值</th>
+                <th>余额</th>
+                <th>状态</th>
+                <th style="width: 8em">操作</th>
+            </tr>
+            </thead>
+            <tbody class="cardOut" id="ListOut"></tbody>
+        </table>
+
+    </div>
+    <div class="widget-content nopadding cardOutTotal" style="overflow: hidden">
+        <p class="text col-md-3" id="totalNum">合计数量：<b>0</b>张</p>
+        <p class="text col-md-3" id="totalVal">合计金额：<b>0.00</b>元</p>
+    </div>
+</div>
+
+<script>
+    $('#queryCardOut').click(function(){
+        var rows = $(this).parent().parent().siblings('#cardsForm').eq(0).find('.row');
+        var cards = [];
+        for(var i=0;i<rows.length;i++){
+            var startStr = $(rows[i]).find('#cardStart').val();
+            var start = startStr.split('=')[0];
+            $(rows[i]).find('#cardStart').val(start);
+            var endStr = $(rows[i]).find('#cardEnd').val();
+            var end = endStr.split('=')[0];
+            $(rows[i]).find('#cardEnd').val(end);
+            if(start && end){
+                if(parseInt(start)>parseInt(end)){
+                    alert('起始卡号必须小于截至卡号，\n错误位置：(起始卡号：'+start+',结束卡号：'+end+')');
+                    return false;
+                }
+                var item = {'start':start,'end':end};
+                cards.push(item);
+            }
+        }
+
+        var data = {
+            csrfmiddlewaretoken: CSRF,
+            cards: JSON.stringify(cards),
+            type:'out'
+        };
+        queryCardsOut(data)
+
+    });
+    function queryCardsOut(postData) {
+        $.ajax({
+            url:'{% url 'cardsChangeQuery' %}',
+            method:'post',
+            dataType:'json',
+            data:postData,
+            success:function(data){
+                if(data.length==0){
+                    alert('此卡段不存在，请核查!')
+                }
+                showDataOut(data);
+            },
+            error:function(){ }
+        })
+    }
+
+    function showDataOut(data) {
+        var anomalyBoxOut= $('#anomalyBoxOut');
+        var anomalyTableOut= $('#anomalyOut');
+        var correctTableOut = $('#correctOut');
+        anomalyBoxOut.hide();
+        anomalyTableOut.find('tbody').empty();
+        correctTableOut.find('tbody').empty();
+        for(var i=0;i<data.length;i++){
+            if(data[i].card_status=='1' && data[i].card_value==data[i].card_blance && data[i].is_store=='0')
+            {
+                var cols = correctTableOut.find('th').length;
+                var tr=$('<tr></tr>');
+                for(var j=0;j<cols;j++){
+                    var td = $('<td></td>');
+                    if(j==0){
+                        var input = $("<input type='text' class='form-control cardId' readonly='readonly'>");
+                        input.val(data[i].card_no);
+                        td.append(input);
+                    }else if(j==1){
+                        td.text(data[i].card_value)
+                    }else if(j==2){
+                        td.text(data[i].card_blance)
+                    }else if(j==3){
+                        td.text('正常');
+                    }else if(j==4){
+                        var input = $('<button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this);">删除</button>');
+                        td.append(input);
+                    }
+                    tr.append(td);
+                }
+                correctTableOut.find('tbody').append(tr);
+            }
+            else
+            {
+                anomalyBoxOut.show();
+                var cols = anomalyTableOut.find('th').length;
+                var tr=$('<tr></tr>');
+                for(var j=0;j<cols;j++){
+                    var td = $('<td></td>');
+                    if(j==0){
+                        td.text(data[i].card_no)
+                    }else if(j==1){
+                        td.text(data[i].card_value)
+                    }else if(j==2){
+                        td.text(data[i].card_blance)
+                    }else if(j==3){
+                        td.text('异常');
+                    }else if(j==4){
+                        var obj = $('<button type="button" class="btn btn-danger btn-xs btn-del" id="err" onclick="delRow(this);">删除</button>');
+                        td.append(obj);
+                    }
+
+                    tr.append(td);
+                }
+                anomalyTableOut.find('tbody').append(tr);
+            }
+        }
+        setTotalByCardList(correctTableOut.find('tbody'));
+    }
+</script>

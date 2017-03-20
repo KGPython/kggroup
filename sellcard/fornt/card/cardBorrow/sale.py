@@ -74,7 +74,8 @@ def save(request):
                 cardIdList.append(card['cardId'])
             cardNum = len(cardIdList)
 
-            resCard = CardInventory.objects.filter(card_no__in=cardIdList).update(card_status='2',card_action='0')
+            resCard = CardInventory.objects.filter(card_no__in=cardIdList,card_status='1',is_store='0')\
+                .update(card_status='2',card_action='0')
             if resCard != cardNum:
                 raise MyError('CardInventory状态更新失败！')
 

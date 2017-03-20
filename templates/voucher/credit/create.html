@@ -73,7 +73,6 @@
             'pay_account':pay_account,
             'postToken':$('#post-token').val()
         };
-        console.log(data);
         //提交数据
         doAjaxSave('{% url 'voucherCreditCreateSave' %}',data)
     });
