@@ -55,27 +55,15 @@ def index(request):
                 .values('order_sn','order_val','order_num','operator','borrow_depart','borrow_depart_code','borrow_phone','borrow_name','add_time','is_paid')\
                 .filter(**kwargs).order_by('order_sn')
 
-        # totaSale = 0
-        # listOrderSn = []
-        # for row in listSale:
-        #     totaSale += row['order_val']
-        #     listOrderSn.append(row['order_sn'])
         #查询退卡明细
         conn = mth.getMysqlConn()
         cur = conn.cursor()
         sqlBack = 'select a.order_sn,a.operator,a.borrow_depart,a.borrow_depart_code,SUM(b.card_balance) as back_val,COUNT(b.card_no) as back_num,b.back_time' \
                   ' from order_borrow as a,order_borrow_info as b ' \
                   ' where a.shopcode = "'+shopcode+'" and a.order_sn=b.order_sn and b.is_back="1"'+whereStr+' group by(a.order_sn)'
-        # print(sqlBack)
         cur.execute(sqlBack)
         listBack = cur.fetchall()
 
-        # totalBack = 0
-        # for row2 in listBack:
-        #     totalBack += row2['back_val']
-        #退卡后应缴费用
-        # cardOutTotalVal = totaSale-totalBack
-        # cardOutTotalVal = 2800
 
         #查询未退卡明细
         sqlCardNoBack = 'select a.order' \
@@ -102,9 +90,14 @@ def save(request):
     actionType = request.POST.get('actionType','')
 
     #借卡单号列表
-    orderSnList = request.POST.getlist('orderSnList[]','')
+    orderSnList = request.POST.get('orderSnList[]','')
+    orderBorrow = OrderBorrow.objects.filter(order_sn=orderSnList)
+    if not orderBorrow.count():
+        return {'status':0,'msg':'此订单不存在'}
+    buyer = orderBorrow.values('borrow_name', 'borrow_depart', 'borrow_phone').first()
+
     #未退还卡列表
-    cardList = OrderBorrowInfo.objects.values('card_no','card_balance').filter(order_sn__in=orderSnList,is_back=None)
+    cardList = OrderBorrowInfo.objects.values('card_no','card_balance').filter(order_sn=orderSnList,is_back=None)
     #赠卡列表
     YcardStr = request.POST.get('YcardStr','')
     YcardList = json.loads(YcardStr)
@@ -115,11 +108,11 @@ def save(request):
     payList = json.loads(payStr)
 
     # 黄金手卡号列表
-    hjsStr = request.POST.get('hjsStr','')
-    hjsList=[]
-    if len(hjsStr)>0:
-        hjsStr = hjsStr[0:len(hjsStr)-1]
-        hjsList = hjsStr.split(',')
+    # hjsStr = request.POST.get('hjsStr','')
+    # hjsList=[]
+    # if len(hjsStr)>0:
+    #     hjsStr = hjsStr[0:len(hjsStr)-1]
+    #     hjsList = hjsStr.split(',')
 
     #合计信息
     totalVal = request.POST.get('totalVal',0.00)
@@ -128,10 +121,6 @@ def save(request):
     discountVal = float(request.POST.get('discountVal',''))
     Ybalance = request.POST.get('Ybalance',0.00)
 
-    #买卡人信息
-    buyerName = request.POST.get('buyerName','')
-    buyerPhone = request.POST.get('buyerPhone','')
-    buyerCompany = request.POST.get('buyerCompany','')
     order_sn = ''
     res = {}
     try:
@@ -167,9 +156,9 @@ def save(request):
                     discountVal = Ycash = float(pay['payVal']) * float(discountRate)
                 orderPay.is_pay = is_pay
 
-                if pay['payId']=='9':
-                    isThird = True
-                    mth.upChangeCode(hjsList,shopcode)
+                # if pay['payId']=='9':
+                #     isThird = True
+                #     mth.upChangeCode(hjsList,shopcode)
 
                 orderPay.pay_value = pay['payVal']
                 orderPay.remarks = pay['payRmarks']
@@ -197,9 +186,9 @@ def save(request):
             OrderInfo.objects.bulk_create(infoList)
 
             order = Orders()
-            order.buyer_name = buyerName
-            order.buyer_tel = buyerPhone
-            order.buyer_company = buyerCompany
+            order.buyer_name = buyer['borrow_name']
+            order.buyer_tel = buyer['borrow_phone']
+            order.buyer_company = buyer['borrow_depart']
             order.total_amount = float(totalVal)+float(discountVal)
             order.paid_amount = float(totalVal)+float(Ybalance)#实付款合计=售卡合计+优惠补差
             order.disc_amount = discountVal#优惠合计
@@ -234,14 +223,11 @@ def save(request):
                     raise MyError('折扣授权码状态更新失败')
 
             #更新借卡单的结算状态
-            orderSnNum = len(orderSnList)
-            resBorrow =  OrderBorrow.objects\
-                .filter(order_sn__in=orderSnList).\
-                update(is_paid='1',paid_time=datetime.datetime.now(),reply_order=order_sn)
-            if orderSnNum != resBorrow:
+            resBorrow =  orderBorrow.update(is_paid='1',paid_time=datetime.datetime.now(),reply_order=order_sn)
+            if not resBorrow:
                 raise MyError('OrderBorrow状态更新失败')
 
-            resBorrow2 = OrderBorrowInfo.objects.filter(order_sn__in=orderSnList,card_no__in=cardIdBorrowList, is_back=None).update(is_back='0')
+            resBorrow2 = OrderBorrowInfo.objects.filter(order_sn=orderSnList,card_no__in=cardIdBorrowList, is_back=None).update(is_back='0')
             if resBorrow2 != len(cardIdBorrowList):
                 raise MyError('OrderBorrowInfo数据更新失败')
 

@@ -63,7 +63,7 @@
                                                 <td>{{ row.total_amount }}</td>
                                                 <td>{{ row.total_price }}</td>
                                                 <td>
-                                                    {% ifequal row.action_type 0 %}
+                                                    {% ifequal row.action_type '0' %}
                                                          卡损坏
                                                     {% else %}
                                                          卡挂失
