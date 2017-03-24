@@ -25,9 +25,6 @@
             <div class="container-fluid">
                 <div class="widget-box">
                     <div class="widget-content collapse in ">
-                        <input type="hidden" id="buyerName" value="{{ listSale.0.borrow_name }}">
-                        <input type="hidden" id="buyerPhone" value="{{ listSale.0.borrow_phone }}">
-                        <input type="hidden" id="buyerCompany" value="{{ listSale.0.borrow_depart }}">
                         <form id="form" class="query-list" method="post" action="{% url 'borrowPay' %}">
                             {% csrf_token %}
                             <div class="row formline">
@@ -212,7 +209,7 @@ $()
         //2、计算折扣返点金额
         var discountVal = createDiscount('',payVal);
 
-        //3、计算优惠补差 getCardListVal(cardList,cardtype,cls)
+        //3、计算优惠补差
         var discCardTotalVal = getCardListVal($(".discount"),1,"discount").totalVal;
         var discPay = discCardTotalVal-discountVal;
         $(".Total #totalYBalance b").text(discPay);

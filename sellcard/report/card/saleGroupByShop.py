@@ -40,7 +40,7 @@ def index(request):
     shopsCodeStr = "'" + "','".join(shopsCode) + "'"
     # shopsCodeStr = "('C003')"
 
-    saleDiscGroupByShop = 'select shop_code,SUM(disc_amount) as disc,SUM(y_cash) as disc_cash, SUM(disc_amount-y_cash+diff_price) as disc_card ' \
+    saleDiscGroupByShop = 'select shop_code,SUM(disc_amount+ diff_price) as disc,SUM(y_cash) as disc_cash, SUM(disc_amount-y_cash+diff_price) as disc_card ' \
                           'from orders ' \
                           'where add_time>="{start}" and add_time<="{end}" and shop_code in ({shopsCodeStr})' \
                           'group by shop_code ' \
@@ -62,7 +62,7 @@ def index(request):
             .annotate(fill=Sum('diff_price'))\
             .order_by('shop_code')
 
-    changeDiscGroupByShop = 'select shop_code,SUM(disc) as disc,SUM(disc_cash) as disc_cash,(SUM(disc-disc_cash)) as disc_card ' \
+    changeDiscGroupByShop = 'select shop_code,SUM(disc+disc_pay) as disc,SUM(disc_cash) as disc_cash,(SUM(disc+disc_pay-disc_cash)) as disc_card ' \
                   'from order_change_card ' \
                   'where add_time>="{start}" and add_time<="{end}" and shop_code in ({shopsCodeStr}) ' \
                   'group by shop_code ' \
