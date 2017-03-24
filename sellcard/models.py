@@ -645,9 +645,8 @@ class Shops(models.Model):
         db_table = 'shops'
 
 class Vip(models.Model):
-    id = models.BigIntegerField(primary_key=True)
     company = models.CharField(max_length=50, blank=True, null=True)
-    name = models.CharField(max_length=15, blank=True, null=True)
+    person = models.CharField(max_length=15, blank=True, null=True)
     tel = models.CharField(max_length=11, blank=True, null=True)
     add_time = models.DateTimeField()
 
