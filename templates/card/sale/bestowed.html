@@ -1,6 +1,9 @@
 {% extends 'common/baseForJobs.html' %}
 {% block title %}团购实物返点{% endblock %}
 {% block content %}
+    <style>
+    .discBox{display: block}
+    </style>
 <div id="content" data-module="sale">
     <div id="content-header">
         <div id="breadcrumb">
@@ -61,14 +64,14 @@
     }
 
     $(document).on('click','#btn-enter',function(){
-        var disclVal = parseFloat($("#discTotal").val());
-        if(!disclVal){
+        var discVal = parseFloat($("#discTotal").val());
+        if(!discVal){
             alert('请填写实物团购返点金额');
             return false;
         }
 
         var cardList = getCardList($('#YcardList'));
-        var discVal = parseFloat($('#totalVal b').text());
+        var outTotalVal = parseFloat($('#totalVal b').text());
         var discPay = parseFloat($('#totalYBalance b').text());
         if(discPay<0){
             alert('补差金额不能为负数');
@@ -87,6 +90,7 @@
         var data ={
             csrfmiddlewaretoken: CSRF,
             'cardsStr':JSON.stringify(cardList),
+            'outTotalVal':outTotalVal,
             'discVal':discVal,
             'discPay':discPay,
             'remarks':remarks,

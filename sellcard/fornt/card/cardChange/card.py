@@ -93,7 +93,6 @@ def save(request):
                     is_store = cardInventory['is_store']
 
                 if is_store:
-                    card['type'] = 2
                     cardIsStoreList.append(card)
                     status = '7'
                     action = '0'
@@ -180,7 +179,7 @@ def save(request):
                 cardInIdList += cardCommonIdList
                 cardCommonInNum = len(cardCommonIdList)
             if len(cardIsStoreList):
-                infoIsStore = createChangInfoList(cardIsStoreList, order_sn,'1')
+                infoIsStore = createChangInfoList(cardIsStoreList, order_sn,'1','2')
                 changeCardInfoList += infoIsStore
                 cardIsStoreIdList = [card['cardId'] for card in cardIsStoreList]
                 cardInIdList += cardIsStoreIdList
@@ -190,7 +189,7 @@ def save(request):
                 changeCardInfoList += infoOut
                 cardOutInfoList += cardListOut
             if not isThird and len(discList):
-                infoDisc = createChangInfoList(cardIsStoreList, discList,'0')
+                infoDisc = createChangInfoList(cardIsStoreList, discList,'0','1')
                 changeCardInfoList += infoDisc
                 cardOutInfoList += discList
 
@@ -239,7 +238,7 @@ def save(request):
     return HttpResponse(json.dumps(res))
 
 
-def createChangInfoList(cardList,order_sn,attr):
+def createChangInfoList(cardList,order_sn,attr,card_type=None):
     infoList = []
     for card in cardList:
         orderInfo = OrderChangeCardInfo()
@@ -248,7 +247,7 @@ def createChangInfoList(cardList,order_sn,attr):
         orderInfo.card_attr = attr
         orderInfo.card_value = card['cardVal']
         orderInfo.card_balance = card['cardVal']
-        if 'type' in card.keys():
+        if card_type:
             orderInfo.type = card['type']
         infoList.append(orderInfo)
     return infoList
