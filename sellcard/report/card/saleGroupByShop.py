@@ -421,8 +421,23 @@ def date_detail(request):
           u" sum(d.inSub) as inSub FROM (select DATE_FORMAT( o.add_time, '%Y-%m-%d') as date_time, " \
           u" case when o.disc_amount >= o.y_cash then o.disc_amount else o.diff_price + o.disc_amount end  as disc, o.y_cash as disc_cash," \
           u" case when o.disc_amount >= o.y_cash then o.disc_amount - o.y_cash  else o.disc_amount + o.diff_price - o.y_cash end as disc_card, " \
-          u" a.pay_1, a.pay_2, a.pay_3, a.pay_4, a.pay_5, a.pay_6, a.pay_7, a.pay_8, a.pay_9, a.pay_10, a.pay_11, " \
-          u" a.disc_6, a.disc_7, a.disc_8, a.disc_10, a.disc_11, a.inSub FROM orders o, ( select opi.order_id, " \
+          u" IFNULL(a.pay_1, 0) AS pay_1, " \
+          u" IFNULL(a.pay_2, 0) AS pay_2, " \
+          u" IFNULL(a.pay_3, 0) AS pay_3, " \
+          u" IFNULL(a.pay_4, 0) AS pay_4, " \
+          u" IFNULL(a.pay_5, 0) AS pay_5, " \
+          u" IFNULL(a.pay_6, 0) AS pay_6, " \
+          u" IFNULL(a.pay_7, 0) AS pay_7, " \
+          u" IFNULL(a.pay_8, 0) AS pay_8, " \
+          u" IFNULL(a.pay_9, 0) AS pay_9, " \
+          u" IFNULL(a.pay_10, 0) AS pay_10, " \
+          u" IFNULL(a.pay_11, 0) AS pay_11,  " \
+          u" IFNULL(a.disc_6, 0) AS disc_6,  " \
+          u" IFNULL(a.disc_7, 0) AS disc_7,  " \
+          u" IFNULL(a.disc_8, 0) AS disc_8,  " \
+          u" IFNULL(a.disc_10, 0) AS disc_10,  " \
+          u" IFNULL(a.disc_11, 0) AS disc_11,  " \
+          u" IFNULL(a.inSub, 0) AS inSub FROM orders o left join ( select opi.order_id, " \
           u" sum(case when opi.pay_id = 1 then opi.pay_value else 0 end) as pay_1, " \
           u" sum(case when opi.pay_id = 2 then opi.pay_value else 0 end) as pay_2, " \
           u" sum(case when opi.pay_id = 3 then opi.pay_value else 0 end) as pay_3, " \
@@ -439,9 +454,9 @@ def date_detail(request):
           u" sum(case when opi.pay_id = 10 then opi.pay_value * case when p.dis_rate is not null then p.dis_rate else 0 end else 0 end) as disc_10, " \
           u" sum(case when opi.pay_id = 11 then opi.pay_value else 0 end) as pay_11, " \
           u" sum(case when opi.pay_id = 11 then opi.pay_value * case when p.dis_rate is not null then p.dis_rate else 0 end else 0 end) as disc_11, " \
-          u" sum(opi.pay_value) as inSub from order_payment_info opi, payment p where opi.pay_id = p.id group by opi.order_id ) as a  " \
-          u" WHERE o.order_sn = a.order_id  " \
-          u" and o.add_time>='{start_a}' " \
+          u" sum(opi.pay_value) as inSub from order_payment_info opi, payment p where opi.pay_id = p.id group by opi.order_id ) as a " \
+          u" on o.order_sn = a.order_id  " \
+          u" WHERE o.add_time>='{start_a}' " \
           u" and o.add_time<='{end_a}' " \
           u" and o.shop_code ='{shopcode_a}' " \
           u" UNION all SELECT DATE_FORMAT( occ.add_time, '%Y-%m-%d'), " \
