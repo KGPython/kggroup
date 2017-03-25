@@ -659,6 +659,7 @@ class VipBank(models.Model):
     id = models.BigIntegerField(primary_key=True)
     vip_id = models.IntegerField()
     bank_name = models.CharField(max_length=30, blank=True, null=True)
+    bank_no = models.CharField(max_length=30, blank=True, null=True)
 
     class Meta:
         managed = False
