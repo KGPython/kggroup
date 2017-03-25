@@ -16,6 +16,24 @@
 
             </div>
             <div class="widget-box">
+                <div class="row formline" style="margin-top: 15px;">
+                    <label for="" class="col-md-1 formline-label">公司名称：</label>
+                    <div class="col-md-3">
+                        <input type="text" name="company" class="form-control" id="company" placeholder=""
+                               required="required" value="{{ info.company }}">
+                    </div>
+                    <label for="" class="col-md-1 formline-label">联系人：</label>
+                    <div class="col-md-3">
+                        <input type="text" name="person" class="form-control" id="person" placeholder=""
+                               required="required" value="{{ info.person }}">
+                    </div>
+                    <label for="" class="col-md-1 formline-label">联系电话：</label>
+                    <div class="col-md-3">
+                        <input type="text" name="tel" class="form-control" id="tel" placeholder=""
+                               required="required" value="{{ info.tel }}">
+                    </div>
+                </div>
+
                 {#            <table class="table table-striped table-hover table-form-my">#}
                 {##}
                 {#                <thead>#}
@@ -35,22 +53,6 @@
                 {#                    </tr>#}
                 {#                </tbody>#}
                 {#            </table>#}
-                <div class="row formline" style="margin-top: 15px;">
-                    <label for="" class="col-md-1 formline-label">公司名称：</label>
-                    <div class="col-md-3">
-                        <input type="text" name="company" class="form-control" id="company" placeholder=""
-                               required="required">
-                    </div>
-                    <label for="" class="col-md-1 formline-label">联系人：</label>
-                    <div class="col-md-3">
-                        <input type="text" name="person" class="form-control" id="person" placeholder=""
-                               required="required">
-                    </div>
-                    <label for="" class="col-md-1 formline-label">联系电话：</label>
-                    <div class="col-md-3">
-                        <input type="text" name="tel" class="form-control" id="tel" placeholder="" required="required">
-                    </div>
-                </div>
             </div>
             <input id="post-token" type="hidden" value="{{ token }}">
             <input id="vip_id" type="hidden" value="{{ vip_id }}">

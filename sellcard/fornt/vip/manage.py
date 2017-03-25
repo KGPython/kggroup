@@ -54,11 +54,14 @@ def index(request):
 
 
 def detail(request):
-    # 在服务端session中添加key认证，避免用户重复提交表单
+    # 在服务端session中添加key认证，避免用户重复提交表单i
     token = 'allow'  # 可以采用随机数
     request.session['postToken'] = token
     vip_id = request.GET.get('vip_id')
-
+    if vip_id == None:
+        vip_id = ''
+    if vip_id !='':
+        info= Vip.objects.values('id', 'company', 'person', 'tel', 'add_time').get(id=vip_id)
     return render(request, 'vip/manageInfo.html', locals())
 
 
@@ -80,7 +83,7 @@ def save(request):
         tel = request.POST.get('tel')
         try:
             with transaction.atomic():
-                if vip_id == 'None':
+                if vip_id == '':
                     Vip.objects.create(company=company,
                                        person=person,
                                        tel=tel,
