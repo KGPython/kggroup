@@ -44,7 +44,7 @@ def index(request):
     # data = OrderPaymentInfo.objects.get(order__order_sn='S1609240003')
     # print(data.pay.payment_name)
     # print(data.order.add_time)
-    # querySet = Orders.objects.filter(orderpaymentinfo__is_pay='1',order_sn='S1609240003')
+    # querySet = Orders.objects.filter(b__is_pay='1')
     # print(querySet)
     # order = Orders.objects.get(order_sn='S1609240003')
     # payList = order.orderpaymentinfo_set.all()

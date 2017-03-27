@@ -1,0 +1,153 @@
+{% extends 'common/baseForJobs.html' %}
+{% block title %}大客户--返点结算{% endblock %}
+{% block content %}
+    <link rel="stylesheet" href="{{ static }}/css/bootstrap-datetimepicker.min.css">
+    <style>
+        td>a{color: #FF0000;}
+        .discBox{display: block;}
+    </style>
+    <div id="content" data-module="sale">
+        <div id="content-header">
+            <div id="breadcrumb">
+                <a data-original-title="Go to Home" href="#" title="" class="tip-bottom">
+                    <span class="glyphicon glyphicon-home" aria-hidden="true"> </span> 首页
+                </a>
+                <a href="#" class="">大客户</a>
+                <a href="#" class="current">返点结算</a>
+            </div>
+        </div>
+        <div class="widget-box">
+            <div class="widget-content nopadding">
+                <div class="container-fluid">
+                    <div class="widget-box">
+                        <div class="widget-content collapse in ">
+                            <form id="formQueryOrder" class="query-list" method="post">
+                                {% csrf_token %}
+                                <div class="row formline">
+                                    <label for="" class="col-md-2 col-lg-1 formline-label">开始时间：</label>
+                                    <div class="col-md-4 col-lg-2">
+                                        <div data-link-format="yyyy-mm-dd" data-link-field="dtp_input2" data-date-format="yyyy-mm-dd" data-date="" class="input-group date form_date">
+                                            <input readonly="" value="{{ time_start}}" size="16" name="start" id="start" class="form-control">
+                                            <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                                        </div>
+                                    </div>
+                                    <label for="" class="col-md-2 col-lg-1 formline-label">结束时间：</label>
+                                    <div class="col-md-4 col-lg-2">
+                                        <div data-link-format="yyyy-mm-dd" data-link-field="dtp_input2" data-date-format="yyyy-mm-dd" data-date="" class="input-group date form_date">
+                                            <input readonly="" value="{{ time_end}}" size="16" name="end" id="end" class="form-control">
+                                            <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12 col-lg-1">
+                                        <button type="button" class="btn btn-success pull-right" id="queryOrder">查询</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="widget-box">
+                        <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+                            <h5>订单列表</h5>
+                        </div>
+                        <div class="widget-content nopadding">
+                            <table class="table table-striped table-hover table-form-my">
+                                <thead>
+                                <tr>
+                                    <th><input type="checkbox" onchange="checkAll(this)"></th>
+                                    <th>订单编号</th>
+                                    <th>订单总额</th>
+                                    <th>订单日期</th>
+                                    <th>联系人</th>
+                                    <th>电话</th>
+                                    <th>到账状态</th>
+                                </tr>
+                                </thead>
+                                <tbody id="orderList">
+                                 {% for row in orders %}
+                                    <tr>
+                                        <td>
+                                            {% if row.is_pay == '1' %}
+                                                <input type="checkbox" value="{{ row.order_sn }}" id="{{ row.order_sn }}">
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if row.is_pay == '1' %}
+                                                {{ row.order_sn }}
+                                            {% else %}
+                                                <a href="{% url 'noPayOrdinaryDetail' %}?orderSn={{ row.order_sn }}&type=sale">
+                                                    {{ row.order_sn }}
+                                                </a>
+                                            {% endif %}
+                                            
+                                        </td>
+                                        <td class="rowVal">{{ row.paid_amount}}</td>
+                                        <td>{{ row.add_time }}</td>
+                                        <td>{{ row.buyer_name }}</td>
+                                        <td>{{ row.buyer_tel }}</td>
+                                        <td>{% if row.is_pay == '1' %}是{% else %}否{% endif %}</td>
+                                    </tr>
+                                 {% empty %}
+                                     <tr>
+                                        <td colspan="7" align="center" class="red">暂无数据</td>
+                                     </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    {% include 'common/discount.html' %}
+                    {% include 'common/paymentNoThird1.html' %}
+                    {% include 'common/orderTotal.html' %}
+                    {% include 'common/buyerInfoReadOnly.html' %}
+                    <div class="enter-box">
+                        <input type="hidden" id="post-token" value="{{ token }}">
+                        <input type="hidden" id="vipId" value="{{ vip_id }}">
+                        <button class="btn btn-success pull-right" type="button" id="btn-enter">提交订单</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script src="{{ static }}/js/bootstrap-datetimepicker.js"></script>
+    <script src="{{ static }}/js/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script type="text/javascript">
+        $('.form_date').datetimepicker({
+            language: 'zh-CN',
+            weekStart: 1,
+            todayBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 2,
+            forceParse: 0
+        });
+
+        $('#queryOrder').click(function () {
+            $('#formQueryOrder').submit();
+        });
+
+        var orderSns = '';
+        $('input[type=checkbox]').change(function () {
+            var data = getCheckedOrder($("#orderList"));
+            var totalVal = data.totalVal;
+            orderSns = data.list;
+            var discountVal = createDiscount('',totalVal);
+            var discCardTotalVal = getCardListVal($(".discount"),1,"discount").totalVal;
+            var discPay = discCardTotalVal-discountVal;
+            $(".Total #totalYBalance b").text(discPay);
+            $('.Total #totalPaid b').text(discPay);
+        });
+
+        $('#btn-enter').click(function(){
+            var action_type = '7';
+            var url = "{% url 'vip_settlement_save' %}";
+            saveVipSettlement(action_type,url,orderSns);
+        });
+    </script>
+{% endblock %}

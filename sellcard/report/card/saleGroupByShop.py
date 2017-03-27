@@ -48,6 +48,7 @@ def index(request):
     #                       'ON b.order_id = a.order_sn ' \
     #                       'WHERE a.add_time >= "{start}" AND a.add_time <= "{end}" AND a.shop_code IN ({shopsCodeStr}) group by a.shop_code '\
     #                      .format(start=start, end=endTime,shopsCodeStr=shopsCodeStr)
+
     saleDiscGroupByShop = 'select shop_code,'\
                           'SUM(case when disc_amount>=y_cash then disc_amount else diff_price+disc_amount end) as disc, '\
                           'SUM(y_cash) as disc_cash, '\

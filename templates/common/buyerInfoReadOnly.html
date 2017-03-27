@@ -1,0 +1,25 @@
+<div class="widget-box">
+    <div class="widget-title"><span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+        <h5>顾客信息</h5>
+    </div>
+    <div class="widget-content nopadding">
+        <div id="buyerInfo" class="collapse in widget-content">
+            <div class="row formline">
+                <label for="" class="col-md-1 formline-label">单位名称：</label>
+                <div class="col-md-3">
+                    <input class="form-control" type="text" id="buyerCompany" value="{{ buyer.company }}" readonly="readonly">
+                </div>
+                <label for="" class="col-md-1 formline-label">联系人：</label>
+                <div class="col-md-2">
+                    <input class="form-control" type="text" id="buyerName" value="{{ buyer.person }}" readonly="readonly">
+                </div>
+                <label for="" class="col-md-1 formline-label">电话：</label>
+                <div class="col-md-2">
+                    <input class="form-control" type="text" id="buyerPhone" value="{{ buyer.tel }}" readonly="readonly">
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>

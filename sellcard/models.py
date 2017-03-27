@@ -482,10 +482,8 @@ class Payment(models.Model):
 
 
 class OrderPaymentInfo(models.Model):
-    # order_id = models.CharField(max_length=20)
-    # pay_id = models.IntegerField()
-    order = models.ForeignKey('Orders',to_field='order_sn')
-    pay = models.ForeignKey('Payment',related_name='pay_set')
+    order_id = models.CharField(max_length=20)
+    pay_id = models.IntegerField()
     pay_value = models.DecimalField(max_digits=11, decimal_places=2)
     remarks = models.TextField(blank=True, null=True)
     is_pay = models.CharField(max_length=1, blank=True, null=True)
@@ -497,22 +495,6 @@ class OrderPaymentInfo(models.Model):
     class Meta:
         managed = False
         db_table = 'order_payment_info'
-
-# class OrderPaymentInfo(models.Model):
-#     order_id = models.CharField(max_length=20)
-#     # pay_id = models.IntegerField()
-#     pay_id = models.ForeignKey(Payment)
-#     pay_value = models.DecimalField(max_digits=11, decimal_places=2)
-#     remarks = models.TextField(blank=True, null=True)
-#     is_pay = models.CharField(max_length=1, blank=True, null=True)
-#     change_time = models.DateTimeField(blank=True, null=True)
-#     bank_name = models.CharField(max_length=12, blank=True, null=True)
-#     bank_sn = models.CharField(max_length=25, blank=True, null=True)
-#     pay_company = models.CharField(max_length=15, blank=True, null=True)
-#
-#     class Meta:
-#         managed = False
-#         db_table = 'order_payment_info'
 
 
 class OrderUpCard(models.Model):
@@ -643,3 +625,28 @@ class Shops(models.Model):
     class Meta:
         managed = False
         db_table = 'shops'
+
+
+class Vip(models.Model):
+    company = models.CharField(max_length=20)
+    person = models.CharField(max_length=5)
+    tel = models.CharField(max_length=11)
+    level = models.CharField(max_length=2)
+    add_time = models.DateTimeField()
+    status = models.CharField(max_length=1)
+
+    class Meta:
+        managed = False
+        db_table = 'vip'
+
+
+class VipOrder(models.Model):
+    vip_id = models.IntegerField()
+    order_sn = models.CharField(unique=True, max_length=20)
+    status = models.CharField(max_length=1)
+
+    class Meta:
+        managed = False
+        db_table = 'vip_order'
+
+
