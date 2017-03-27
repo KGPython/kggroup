@@ -50,12 +50,13 @@
                             <thead>
                             <tr>
                                 <th rowspan="3">日期</th>
-                                <th colspan="8">优惠部分</th>
-                                <th colspan="12">销售部分</th>
+                                <th colspan="7">优惠部分</th>
+                                <th colspan="11">销售部分</th>
 {#                                <th rowspan="3">销售占比</th>#}
                             </tr>
                             <tr valign="middle">
-                                <th colspan="6">优惠返现</th>
+                                <th colspan="4">虚拟返卡</th>
+                                <th>优惠返现</th>
                                 <th rowspan="2">优惠<br>返卡</th>
                                 <th rowspan="2">优惠<br>合计</th>
 
@@ -63,13 +64,8 @@
                                 <th rowspan="2">现金</th>
                                 <th rowspan="2">代金券</th>
                                 <th rowspan="2">汇款</th>
-                                <th rowspan="2">赊账</th>
                                 <th rowspan="2">Pos</th>
-                                <th rowspan="2">移动</th>
-                                <th rowspan="2">美团</th>
-                                <th rowspan="2">糯米</th>
-                                <th rowspan="2">黄金手</th>
-                                <th rowspan="2">慧购<br>线上</th>
+                                <th colspan="5">赊销</th>
                                 <th rowspan="2">慧购<br>线下</th>
                                 <th rowspan="2">销售<br>合计</th>
                             </tr>
@@ -79,7 +75,13 @@
                                 <th>糯米</th>
                                 <th>慧购</th>
                                 <th>其他</th>
-                                <th>合计</th>
+{#                                <th>合计</th>#}
+                                <th >赊账</th>
+                                <th >移动</th>
+                                <th >美团</th>
+                                <th>糯米</th>
+{#                                <th >黄金手</th>#}
+                                <th >慧购<br>线上</th>
                             </tr>
 
                             </thead>
@@ -92,21 +94,21 @@
                                     <td class="discCol">{{ row.disc_8 | floatformat:2 }}</td>
                                     <td class="discCol">{{ row.disc_10 | add:row.disc_11 | floatformat:2 }}</td>
                                     <td class="discCol">{{ row.disc_cash | subtract:row.disc_10 | subtract:row.disc_11 | subtract:row.disc_6 | subtract:row.disc_7 | subtract:row.disc_8 | floatformat:2 |default:0 }}</td>
-                                    <td class="discTypeTotal">{{ row.disc_cash | floatformat:2 |default:0 }}</td>
+{#                                    <td class="discTypeTotal">{{ row.disc_cash | floatformat:2 |default:0 }}</td>#}
                                     <td class="discTypeTotal">{{ row.disc_card | floatformat:2 |default:0 }}</td>
                                     <td class="discTotal">{{ row.disc | floatformat:2 |default:0 }}</td>
 
                                     <td class="saleCol">{{ row.pay_1 | floatformat:2 | default:0 }}</td>
                                     <td class="saleCol">{{ row.pay_2 | floatformat:2 | default:0 }}</td>
                                     <td class="saleCol">{{ row.pay_3 | floatformat:2 | default:0 }}</td>
+                                    <td class="saleCol">{{ row.pay_5 | floatformat:2 | default:0 }}</td>
                                     <td class="saleCol">
                                             {{ row.pay_4_1 | floatformat:2 | default:0 }}|<span class="red">{{ row.pay_4_0 | floatformat:2 | default:0 }}</span>
                                     </td>
-                                    <td class="saleCol">{{ row.pay_5 | floatformat:2 | default:0 }}</td>
                                     <td class="saleCol">{{ row.pay_6 | floatformat:2 | default:0 }}</td>
                                     <td class="saleCol">{{ row.pay_7 | floatformat:2 | default:0 }}</td>
                                     <td class="saleCol">{{ row.pay_8 | floatformat:2 | default:0 }}</td>
-                                    <td class="saleCol">{{ row.pay_9 | floatformat:2 | default:0 }}</td>
+{#                                    <td class="saleCol">{{ row.pay_9 | floatformat:2 | default:0 }}</td>#}
                                     <td class="saleCol">{{ row.pay_10 | floatformat:2 | default:0 }}</td>
                                     <td class="saleCol">{{ row.pay_11 | floatformat:2 | default:0 }}</td>
                                     <td class="saleTotal">{{ row.inSub | floatformat:2 | default:0 }}</td>

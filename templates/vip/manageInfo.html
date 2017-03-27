@@ -1,0 +1,116 @@
+{% extends 'common/baseForJobs.html' %}
+{% block title %}大客户明细{% endblock %}
+{% block content %}
+    <div id="content">
+        <div id="content-header">
+            <div id="breadcrumb">
+                <a data-original-title="Go to Home" href="#" title="" class="tip-bottom">
+                    <span class="glyphicon glyphicon-home" aria-hidden="true"> </span> 首页
+                </a>
+                <a href="#" class="current">大客户明细</a>
+            </div>
+        </div>
+        <div class="widget-box">
+            <div class="widget-title"><span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+                <h5>大客户明细</h5>
+
+            </div>
+            <div class="widget-box">
+                <div class="row formline" style="margin-top: 15px;">
+                    <label for="" class="col-md-1 formline-label">公司名称：</label>
+                    <div class="col-md-3">
+                        <input type="text" name="company" class="form-control" id="company" placeholder=""
+                               required="required" value="{{ info.company }}">
+                    </div>
+                    <label for="" class="col-md-1 formline-label">联系人：</label>
+                    <div class="col-md-3">
+                        <input type="text" name="person" class="form-control" id="person" placeholder=""
+                               required="required" value="{{ info.person }}">
+                    </div>
+                    <label for="" class="col-md-1 formline-label">联系电话：</label>
+                    <div class="col-md-3">
+                        <input type="text" name="tel" class="form-control" id="tel" placeholder=""
+                               required="required" value="{{ info.tel }}">
+                    </div>
+                </div>
+
+                {#            <table class="table table-striped table-hover table-form-my">#}
+                {##}
+                {#                <thead>#}
+                {#                    <tr>#}
+                {#                        <th>批次号</th>#}
+                {#                        <th>起始流水号</th>#}
+                {#                        <th>结束流水号</th>#}
+                {#                        <th>小计</th>#}
+                {#                    </tr>#}
+                {#                </thead>#}
+                {#                <tbody class="cardSent">#}
+                {#                    <tr>#}
+                {#                        <td><input type='text' name="batch" class='form-control' id='batch'></td>#}
+                {#                        <td><input type='text' name="start" class='form-control start cardno'></td>#}
+                {#                        <td><input type='text' name="end"  class='form-control end cardno'></td>#}
+                {#                        <td><input type='text' name="subTotal"  class='form-control subTotal'></td>#}
+                {#                    </tr>#}
+                {#                </tbody>#}
+                {#            </table>#}
+            </div>
+            <input id="post-token" type="hidden" value="{{ token }}">
+            <input id="vip_id" type="hidden" value="{{ vip_id }}">
+            <div class="enter-box">
+                <button class="btn btn-success pull-right btn-enter" type="button">提交</button>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        //保存订单信息
+        $('.btn-enter').click(function () {
+            var vip_id = $('#vip_id').val();
+            var company = $('#company').val();
+            var person = $('#person').val();
+            var tel = $('#tel').val();
+            var data = {
+                csrfmiddlewaretoken: CSRF,
+                'vip_id': vip_id,
+                'company': company,
+                'person': person,
+                'tel': tel,
+                'postToken': $('#post-token').val()
+            };
+            //3、提交数据
+            doAjaxSave('{% url 'vip_manage_save' %}', data)
+        });
+        function doAjaxSave(url, data) {
+            $("#btn-enter").attr('disabled', true);
+            $.ajax({
+                url: url,
+                type: 'post',
+                dataType: 'json',
+                data: data,
+                success: function (data) {
+                    $("#btn-enter").removeAttr('disabled');
+                    if (data.msg == 1) {
+                        alert('提交成功');
+                        window.location.reload(true);
+                        if (data.urlRedirect) {
+                            window.location.href = data.urlRedirect;
+                        }
+                    } else if (data.msg == 0) {
+                        if (data.msg_err) {
+                            alert(data.msg_err);
+                        } else {
+                            alert('提交失败');
+                        }
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    $("#btn-enter").removeAttr('disabled');
+                    alert('提交失败,失败原因：' + errorThrown);
+                }
+            })
+        }
+        ;
+    </script>
+{% endblock %}
