@@ -22,15 +22,28 @@
                         <input type="text" name="company" class="form-control" id="company" placeholder=""
                                required="required" value="{{ info.company }}">
                     </div>
+                </div>
+                <div class="row formline" style="margin-top: 15px;">
                     <label for="" class="col-md-1 formline-label">联系人：</label>
                     <div class="col-md-3">
                         <input type="text" name="person" class="form-control" id="person" placeholder=""
                                required="required" value="{{ info.person }}">
                     </div>
+                </div>
+                <div class="row formline" style="margin-top: 15px;">
                     <label for="" class="col-md-1 formline-label">联系电话：</label>
                     <div class="col-md-3">
                         <input type="text" name="tel" class="form-control" id="tel" placeholder=""
                                required="required" value="{{ info.tel }}">
+                    </div>
+                </div>
+                <div class="row formline" style="margin-top: 15px;">
+                    <label for="" class="col-md-1 formline-label">状态：</label>
+                    <div class="col-md-2">
+                        <select id="status">
+                            <option value="1">可用</option>
+                            <option value="0">禁用</option>
+                        </select>
                     </div>
                 </div>
 
@@ -65,18 +78,23 @@
 
 {% block js %}
     <script>
+        $("#status").val({{ info.status }});
+    </script>
+    <script>
         //保存订单信息
         $('.btn-enter').click(function () {
             var vip_id = $('#vip_id').val();
             var company = $('#company').val();
             var person = $('#person').val();
             var tel = $('#tel').val();
+            var status = $("#status").val();
             var data = {
                 csrfmiddlewaretoken: CSRF,
                 'vip_id': vip_id,
                 'company': company,
                 'person': person,
                 'tel': tel,
+                'status': status,
                 'postToken': $('#post-token').val()
             };
             //3、提交数据

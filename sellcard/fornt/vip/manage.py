@@ -61,7 +61,7 @@ def detail(request):
     if vip_id == None:
         vip_id = ''
     if vip_id !='':
-        info= Vip.objects.values('id', 'company', 'person', 'tel', 'add_time').get(id=vip_id)
+        info= Vip.objects.values('id', 'company', 'person', 'tel', 'status', 'add_time').get(id=vip_id)
     return render(request, 'vip/manageInfo.html', locals())
 
 
@@ -81,15 +81,17 @@ def save(request):
         company = request.POST.get('company')
         person = request.POST.get('person')
         tel = request.POST.get('tel')
+        status = request.POST.get('status')
         try:
             with transaction.atomic():
                 if vip_id == '':
                     Vip.objects.create(company=company,
                                        person=person,
                                        tel=tel,
+                                       status=status,
                                        add_time=datetime.datetime.now())
                 else:
-                    Vip.objects.filter(id=vip_id).update(company=company, person=person, tel=tel)
+                    Vip.objects.filter(id=vip_id).update(company=company, person=person, tel=tel, status=status)
 
                 res['msg'] = 1
                 del request.session['postToken']

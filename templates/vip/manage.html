@@ -57,7 +57,7 @@
                                         <th>名称</th>
                                         <th>联系人</th>
                                         <th>联系方式</th>
-                                        <th>账户信息</th>
+{#                                        <th>账户信息</th>#}
                                         <th>添加日期</th>
                                         <th>操作</th>
                                     </tr>
@@ -68,15 +68,15 @@
                                             <td>{{ row.company }}</td>
                                             <td>{{ row.person }}</td>
                                             <td>{{ row.tel }}</td>
-                                            <td><select id="{{ row.id }}">
-                                                {% for temp in row.bank_list %}
-                                                    <option value="{{ temp.bank_id }}">{{ temp.bank_name }}</option>
-                                                {% endfor %}
-                                            </select></td>
+{#                                            <td><select id="{{ row.id }}">#}
+{#                                                {% for temp in row.bank_list %}#}
+{#                                                    <option value="{{ temp.bank_id }}">{{ temp.bank_name }}</option>#}
+{#                                                {% endfor %}#}
+{#                                            </select></td>#}
                                             <td>{{ row.add_time }}</td>
                                             <td>
                                                 <a href="{% url 'vip_manage_detail' %}?vip_id={{ row.id }}">修改</a>
-                                                <a href="{% url 'vip_pay' %}?vip_id={{ row.id }}">结算</a>
+                                                <a href="{% url 'vip_settlement' %}?vip_id={{ row.id }}">结算</a>
                                                 <a href="{% url 'vip_sale' %}?vip_id={{ row.id }}">售卡</a>
                                             </td>
                                         </tr>
