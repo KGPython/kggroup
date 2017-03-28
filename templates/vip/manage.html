@@ -76,7 +76,7 @@
                                             <td>{{ row.add_time }}</td>
                                             <td>
                                                 <a href="{% url 'vip_manage_detail' %}?vip_id={{ row.id }}">修改</a>
-                                                <a href="{% url 'vip_pay' %}?vip_id={{ row.id }}">结算</a>
+                                                <a href="{% url 'vip_settlement' %}?vip_id={{ row.id }}">结算</a>
                                                 <a href="{% url 'vip_sale' %}?vip_id={{ row.id }}">售卡</a>
                                             </td>
                                         </tr>
