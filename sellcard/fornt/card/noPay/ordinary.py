@@ -2,6 +2,7 @@ __author__ = 'admin'
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.db import transaction
+from django.db.models import Q
 from sellcard.common import Method as mth
 
 import datetime,json
@@ -27,9 +28,9 @@ def index(request):
         queryWhereSale2 = " and b.add_time >='{start}' and b.add_time <='{end}' ".format(start=start, end=endStr)
         conn = mth.getMysqlConn()
         cur = conn.cursor()
-        sqlSale="select a.pay_value,b.order_sn,b.operator_id,b.add_time,b.buyer_name,b.buyer_tel,b.paid_amount " \
+        sqlSale="select a.pay_value,b.order_sn,b.operator_id,b.add_time,b.buyer_name,b.buyer_tel,b.paid_amount,a.pay_id " \
             "from order_payment_info as a ,orders as b " \
-            "where a.order_id=b.order_sn and a.pay_id=4 and a.is_pay='0' and b.shop_code ='"+shopcode+"'"+queryWhereSale1+queryWhereSale2
+            "where a.order_id=b.order_sn and a.pay_id in (4,3) and a.is_pay='0' and b.shop_code ='"+shopcode+"'"+queryWhereSale1+queryWhereSale2
         cur.execute(sqlSale)
         listSale = cur.fetchall()
 
@@ -53,6 +54,8 @@ def detail(request):
     paysDict = {pay['pay_id']: pay['pay_value'] for pay in orderPayInfo}
     if 4 in paysDict.keys():
         totalVal = paysDict[4]
+    elif 3 in paysDict.keys():
+        totalVal = paysDict[3]
     else:
         totalVal = 0
 
@@ -71,23 +74,34 @@ def save(request):
     try:
         with transaction.atomic():
             paymentInfo = OrderPaymentInfo.objects.filter(order_id=orderSn)
-            paymentInfo.filter(order_id=orderSn, pay_id=4,is_pay=0).delete()
-            for pay in payList:
-                if pay['payId'] == '3':
-                    OrderPaymentInfo \
-                        .objects \
-                        .create(order_id=orderSn, pay_id=pay['payId'], pay_value=pay['payVal'],
-                                remarks=pay['payRmarks'], is_pay=1, change_time=date,
-                                bank_name=pay['bankName'], bank_sn=pay['bankSn'],
-                                pay_company=pay['payCompany']
-                                )
-                else:
-                    OrderPaymentInfo \
-                        .objects \
-                        .create(order_id=orderSn, pay_id=pay['payId'], pay_value=pay['payVal'],
-                                remarks=pay['payRmarks'], is_pay=1, change_time=date
-                                )
-            res['msg'] = '0'
+            if paymentInfo.count():
+                payments = paymentInfo.values('pay_id','pay_value')
+                paysDict = {pay['pay_id']: pay['pay_value'] for pay in payments}
+                if 4 in paysDict.keys():
+                    paymentInfo.filter(pay_id=4, is_pay=0).delete()
+                    for pay in payList:
+                        if pay['payId'] == '3':
+                            OrderPaymentInfo \
+                                .objects \
+                                .create(order_id=orderSn, pay_id=pay['payId'], pay_value=pay['payVal'],
+                                        remarks=pay['payRmarks'], is_pay=1, change_time=date,
+                                        bank_name=pay['bankName'], bank_sn=pay['bankSn'],
+                                        pay_company=pay['payCompany']
+                                        )
+                        else:
+                            OrderPaymentInfo \
+                                .objects \
+                                .create(order_id=orderSn, pay_id=pay['payId'], pay_value=pay['payVal'],
+                                        remarks=pay['payRmarks'], is_pay=1, change_time=date
+                                        )
+                elif 3 in paysDict.keys():
+                    for pay in payList:
+                        paymentInfo.filter(pay_id=3, is_pay=0) \
+                        .update(is_pay=1, change_time=date, bank_name=pay['bankName'], bank_sn=pay['bankSn'],
+                                pay_company=pay['payCompany'])
+                res['msg'] = '0'
+            else:
+                res['msg'] = '1'
     except Exception as e:
         print(e)
         res['msg'] = '1'

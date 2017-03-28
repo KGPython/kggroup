@@ -133,44 +133,48 @@ function showCardIfno3(obj,data){
     }else if($(parentTbody).hasClass('discount')){
         cls = 'discountTotal';
     }
-
+    var cardVal = cardBlance = '';
     var cardStu = '正常';
-    if(data.length==0){
-         cardStu ='不存在';
-    }
-    var cardVal = data.New_amount;
-    var cardBlance = data.detail;
-    if(cls == 'cardInTotal'){
-        if(data.mode!='1' || cardVal!=cardBlance){
-            cardStu ='异常';
-            $(obj).parent().parent().find('td').eq(3).addClass('red');
-        }else{
-            $(obj).parent().parent().find('td').eq(3).removeClass('red');
+    var flag = true;
+    if(!data){
+        cardStu ='不存在';
+        flag = false;
+    } else {
+        cardVal = data.New_amount;
+        cardBlance = data.detail;
+        if (cls == 'cardInTotal') {
+            if (data.mode != '1' || cardVal != cardBlance) {
+                cardStu = '异常';
+                flag = false;
+            }
         }
-    }
-    if(cls == 'cardOutTotal' || cls== 'discountTotal') {
-        if(data.mode!='9' || cardVal!=cardBlance){
-            cardStu ='异常';
-            $(obj).parent().parent().find('td').eq(3).addClass('red');
-        }else{
-            $(obj).parent().parent().find('td').eq(3).removeClass('red');
+        if (cls == 'cardOutTotal' || cls == 'discountTotal') {
+            if (data.mode != '9' || cardVal != cardBlance) {
+                cardStu = '异常';
+            }
         }
     }
 
+
+    if(!flag){
+        $(obj).parent().parent().find('td').eq(3).addClass('red');
+    }else{
+        $(obj).parent().parent().find('td').eq(3).removeClass('red');
+    }
     $(obj).parent().parent().find('td').eq(1).text(cardVal);
     $(obj).parent().parent().find('td').eq(2).text(cardBlance);
     $(obj).parent().parent().find('td').eq(3).text(cardStu);
 }
 
 /*
-* 补卡模块----卡信息展示
+* 补卡模块----入卡信息展示
 * */
 function showCardIfno2(obj,data){
     var cardVal = parseFloat(data.card_value);
     var cardBlance = parseFloat(data.card_blance);
     var cardStu ='正常';
 
-    if(data.card_status ==1 && cardVal>=cardBlance && data.is_store=='0'){
+    if(data.card_status ==1 && cardVal>=cardBlance){
         $(obj).parent().parent().find('td').eq(3).removeClass('red')
     }else{
         cardStu ='异常';
@@ -510,20 +514,13 @@ function saveBorrowPayOrder(action_type,url,orderSns){
         Ycash = parseFloat($('#Ycash').val());//优惠返现
         YtotalVal =parseFloat($('.discountTotal #totalVal b').text());//优惠列表合计=卡合计+返现合计
     }
-
     //支付列表
     var payList = getPayList($('.payList'));
     if(!payList){
         return false;
     }
-    var hjsStr = $('.payList #remark-hjs').val();
-    //买卡人信息
-    var buyerName = $('#buyerName').val();
-    var buyerPhone = $('#buyerPhone').val();
-    var buyerCompany = $('#buyerCompany').val();
-
+    // var hjsStr = $('.payList #remark-hjs').val();
     var postToken = $('#post-token').val();
-
     if(orderSns.length==0){
         alert('还未添加售卡信息，请核对后再尝试提交！');
         return false;
@@ -532,7 +529,6 @@ function saveBorrowPayOrder(action_type,url,orderSns){
         alert('支付金额与应付金额不等，请核对后提交！');
         return false;
     }
-
     if(discountVal>0){
         //优惠补差
         if(discPay<0){
@@ -543,23 +539,19 @@ function saveBorrowPayOrder(action_type,url,orderSns){
 
     var data = {
         csrfmiddlewaretoken: CSRF,
-        'actionType':action_type,//操作类型
+        'actionType':action_type,
         'orderSnList':orderSns,
-        'totalNum':totalNum,//售卡总数
-        'totalVal':totalVal,//售卡总价
-        'discount':discount,//返点百分比
-        'disCode':disCode,//返点自定义授权
-        'discountVal':discountVal,//优惠返点金额
-        'YcardStr':JSON.stringify(YcardList),//优惠卡列表
-        'YtotalNum':YtotalNum,//优惠卡总数
-        'Ycash':Ycash,//优惠返现
-        'YtotalVal':YtotalVal,//优惠区域合计
-        'Ybalance':discPay,//优惠补差
-        'payStr':JSON.stringify(payList),//支付列表
-        'hjsStr':hjsStr,//黄金手列表
-        'buyerName':buyerName,
-        'buyerPhone':buyerPhone,
-        'buyerCompany':buyerCompany,
+        'totalNum':totalNum,
+        'totalVal':totalVal,
+        'discount':discount,
+        'disCode':disCode,
+        'discountVal':discountVal,
+        'YcardStr':JSON.stringify(YcardList),
+        'YtotalNum':YtotalNum,
+        'Ycash':Ycash,
+        'YtotalVal':YtotalVal,
+        'Ybalance':discPay,
+        'payStr':JSON.stringify(payList),
         'postToken':postToken
     };
     doAjaxSave(url,data);
@@ -590,7 +582,7 @@ function saveCardSaleOrder(action_type,url,cardList){
     if(!payList){
         return false;
     }
-    var hjsStr = $('.payList #remark-hjs').val();
+    // var hjsStr = $('.payList #remark-hjs').val();
     //买卡人信息
     var buyerName = $('#buyerName').val();
     var buyerPhone = $('#buyerPhone').val();
@@ -630,12 +622,161 @@ function saveCardSaleOrder(action_type,url,cardList){
         'YtotalVal':YtotalVal,//优惠区域合计
         'Ybalance':discPay,//优惠补差
         'payStr':JSON.stringify(payList),//支付列表
-        'hjsStr':hjsStr,//黄金手列表
+        // 'hjsStr':hjsStr,//黄金手列表
         'buyerName':buyerName,
         'buyerPhone':buyerPhone,
         'buyerCompany':buyerCompany,
         'postToken':postToken
     };
+    doAjaxSave(url,data);
+}
+
+function saveVipOrder(action_type,url){
+    var cardList = getCardList($('#correctOut'));
+    var totalNum = parseInt($('.Total #totalNum b').text());
+    var totalVal = parseFloat($('.Total #totalVal b').text());//卡合计金额
+    var payTotal = parseFloat($('.Total #payTotal b').text());//支付合计
+    var discPay =parseFloat($('.Total #totalYBalance b').text());//优惠补差
+    var discount = parseFloat($('.Total #discount input').val());//折扣比率
+    var disCode = $('.Total #disCode').val();
+    var disc_state = $("input[name='disc_state']:checked").val();
+    var disc_val = parseFloat($("#discountVal b").text());
+    var YcardList = [];
+    var YtotalNum=0,Ycash=0,YtotalVal=0;
+    if(disc_state==0){
+        r = confirm('确认此单不参加累计返点？');
+        if(!r){
+            return false;
+        }
+    }
+    if(disc_val>0){
+        if(disc_state == 1){
+            alert('请核对累计返点状态');
+            return false;
+        }
+        if(discPay<0){
+            alert('优惠补差不能为负数！');
+            return false;
+        }
+        //赠卡列表
+        YcardList = getCardList($('#YcardList'));
+        YtotalNum =parseInt($('.discountTotal #totalNum b').text());
+        Ycash = parseFloat($('#Ycash').val());//优惠返现
+        YtotalVal =parseFloat($('.discountTotal #totalVal b').text());//优惠列表合计=卡合计+返现合计
+    }
+
+    //支付列表
+    var payList = getPayList($('.payList'));
+    if(!payList){
+        return false;
+    }
+    // var hjsStr = $('.payList #remark-hjs').val();
+    //买卡人信息
+    var buyerName = $('#buyerName').val();
+    var buyerPhone = $('#buyerPhone').val();
+    var buyerCompany = $('#buyerCompany').val();
+    var vipId = $('#vipId').val();
+
+    var postToken = $('#post-token').val();
+
+    if(cardList.length==0){
+        alert('还未添加售卡信息，请核对后再尝试提交！');
+        return false;
+    }
+    if(payTotal!=totalVal+discPay){
+        alert('支付金额与应付金额不等，请核对后提交！');
+        return false;
+    }
+    var data = {
+        csrfmiddlewaretoken: CSRF,
+        'actionType':action_type,//操作类型
+        'cardStr':JSON.stringify(cardList),//售卡列表
+        'totalNum':totalNum,//售卡总数
+        'totalVal':totalVal,//售卡总价
+        'discount':discount,//返点百分比
+        'disCode':disCode,//返点自定义授权
+        'discountVal':disc_val,//优惠返点金额
+        'YcardStr':JSON.stringify(YcardList),//优惠卡列表
+        'YtotalNum':YtotalNum,//优惠卡总数
+        'Ycash':Ycash,//优惠返现
+        'YtotalVal':YtotalVal,//优惠区域合计
+        'Ybalance':discPay,//优惠补差
+        'payStr':JSON.stringify(payList),//支付列表
+        // 'hjsStr':hjsStr,//黄金手列表
+        'buyerName':buyerName,
+        'buyerPhone':buyerPhone,
+        'buyerCompany':buyerCompany,
+        'vipId':vipId,
+        'discState':disc_state,
+        'postToken':postToken
+    };
+    doAjaxSave(url,data);
+}
+
+function saveVipSettlement(action_type,url,orderSns) {
+    if(!orderSns){
+        alert('还未选择结算订单');
+        return false;
+    }
+    var totalVal = parseFloat($('.Total #totalVal b').text());//卡合计金额
+    var payTotal = parseFloat($('.Total #payTotal b').text());//支付合计
+    var discPay =parseFloat($('.Total #totalYBalance b').text());//优惠补差
+    var discount = parseFloat($('.Total #discount input').val());//折扣比率
+    var disCode = $('.Total #disCode').val();
+    var discountVal = parseFloat($('.Total #discountVal b').text());//优惠金额
+    var YcardList = [];
+    var YtotalNum=0,Ycash=0,YtotalVal=0;
+    if(discountVal){
+        //赠卡列表
+        YcardList = getCardList($('#YcardList'));
+        YtotalNum =parseInt($('.discountTotal #totalNum b').text());
+        Ycash = parseFloat($('#Ycash').val());//优惠返现
+        YtotalVal =parseFloat($('.discountTotal #totalVal b').text());//优惠列表合计=卡合计+返现合计
+    }
+
+    //支付列表
+    var payList = getPayList($('.payList'));
+    if(!payList){
+        return false;
+    }
+    //买卡人信息
+    var buyerName = $('#buyerName').val();
+    var buyerPhone = $('#buyerPhone').val();
+    var buyerCompany = $('#buyerCompany').val();
+    var postToken = $('#post-token').val();
+    if(payTotal!=totalVal+discPay){
+        alert('支付金额与应付金额不等，请核对后提交！');
+        return false;
+    }
+
+    if(discountVal>0){
+        //优惠补差
+        if(discPay<0){
+            alert('优惠补差不能为负数！');
+            return false;
+        }
+    }
+
+    var data = {
+        csrfmiddlewaretoken: CSRF,
+        'orderSns':orderSns,
+        'actionType':action_type,//操作类型
+        'totalVal':totalVal,//售卡总价
+        'discount':discount,//返点百分比
+        'disCode':disCode,//返点自定义授权
+        'discountVal':discountVal,//优惠返点金额
+        'YcardStr':JSON.stringify(YcardList),//优惠卡列表
+        'YtotalNum':YtotalNum,//优惠卡总数
+        'Ycash':Ycash,//优惠返现
+        'YtotalVal':YtotalVal,//优惠区域合计
+        'Ybalance':discPay,//优惠补差
+        'payStr':JSON.stringify(payList),//支付列表
+        'buyerName':buyerName,
+        'buyerPhone':buyerPhone,
+        'buyerCompany':buyerCompany,
+        'postToken':postToken
+    };
+    // console.log(data);
     doAjaxSave(url,data);
 }
 
@@ -727,7 +868,7 @@ function saveCardChangeOrder(url){
     if(!payList){
         return false;
     }
-    var hjsStr = $('.payList #remark-hjs').val();
+    // var hjsStr = $('.payList #remark-hjs').val();
 
     //优惠列表信息
     var discCardList = [];
@@ -778,7 +919,7 @@ function saveCardChangeOrder(url){
         'disc':discVal,
         'discPay':discPay,
         'payStr':JSON.stringify(payList),//支付列表
-        'hjsStr':hjsStr,//黄金手列表
+        // 'hjsStr':hjsStr,//黄金手列表
         // 支付人信息
         'buyerName':buyerName,
         'buyerPhone':buyerPhone,
@@ -1059,6 +1200,7 @@ function checkAll(obj) {
 }
 
 function getCheckedIdList(checkBoxList){
+
     var list = [] ;
     checkBoxList.find(':checked').each(function () {
         var orderSn = $(this).val();

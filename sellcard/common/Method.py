@@ -143,8 +143,10 @@ def cardCheck_Change(request):
     sql = "select New_amount, detail, mode from guest where CardNO='{cardId}'".format(cardId=cardId)
     cursor.execute(sql)
     data = cursor.fetchone()
-    data['New_amount'] = float(data['New_amount'])
-    data['detail'] = float(data['detail'])
+    if data:
+        data['New_amount'] = float(data['New_amount'])
+        data['detail'] = float(data['detail'])
+
 
     #查询mysql内部卡信息
     return HttpResponse(json.dumps(data), content_type="application/json")

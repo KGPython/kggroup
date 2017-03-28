@@ -48,6 +48,7 @@ def index(request):
     #                       'ON b.order_id = a.order_sn ' \
     #                       'WHERE a.add_time >= "{start}" AND a.add_time <= "{end}" AND a.shop_code IN ({shopsCodeStr}) group by a.shop_code '\
     #                      .format(start=start, end=endTime,shopsCodeStr=shopsCodeStr)
+
     saleDiscGroupByShop = 'select shop_code,'\
                           'SUM(case when disc_amount>=y_cash then disc_amount else diff_price+disc_amount end) as disc, '\
                           'SUM(y_cash) as disc_cash, '\
@@ -171,11 +172,9 @@ def index(request):
                         saleDisc['disc_cash'] = 0
                     if not saleDisc['disc_card']:
                         saleDisc['disc_card'] = 0
-                    elif saleDisc['disc_card']>0:
-                        item['disc_card'] += float(saleDisc['disc_card'])
                     item['disc'] += float(saleDisc['disc'])
                     item['disc_cash'] += float(saleDisc['disc_cash'])
-
+                    item['disc_card'] += float(saleDisc['disc_card'])
 
             for fill in fillList:
                 if item['shop_code'] == fill['shop_code']:
@@ -224,7 +223,6 @@ def index(request):
                         changeDisc['disc_cash'] = 0
                     if not changeDisc['disc_card']:
                         changeDisc['disc_card'] = 0
-
                     item['disc'] += float(changeDisc['disc'])
                     item['disc_cash'] += float(changeDisc['disc_cash'])
                     item['disc_card'] += float(changeDisc['disc_card'])

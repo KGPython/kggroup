@@ -1,0 +1,65 @@
+{% extends 'common/baseForJobs.html' %}
+{% block title %}大客户--售卡{% endblock %}
+{% block content %}
+<div id="content" data-module="sale">
+    <div id="content-header">
+        <div id="breadcrumb">
+            <a data-original-title="Go to Home" href="#" title="" class="tip-bottom">
+                <span class="glyphicon glyphicon-home" aria-hidden="true"> </span> 首页
+            </a>
+            <a href="#" class="">大客户</a>
+            <a href="#" class="current">售卡</a>
+        </div>
+    </div>
+    <div class="widget-box">
+        <div class="widget-content nopadding">
+            <div class="container-fluid">
+                {% include 'common/cardsOutQuery.html' %}
+                {% include 'common/discount.html' %}
+                {% include 'common/paymentNoThird.html' %}
+                <div>
+                    <span>是否累计返点</span> ：
+                    <input type="radio" name="disc_state" id="disc_state_1" value="1 "><label for="disc_state_1">是</label>
+                    <input type="radio" name="disc_state" id="disc_state_0" value="0"><label for="disc_state_0">否</label>
+                </div>
+                {% include 'common/orderTotal.html' %}
+                {% include 'common/buyerInfoReadOnly.html' %}
+                <div class="enter-box">
+                    <input type="hidden" id="post-token" value="{{ token }}">
+                    <input type="hidden" id="vipId" value="{{ vip_id }}">
+                    <button class="btn btn-success pull-right" type="button" id="btn-enter">提交订单</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        $("input[name='disc_state']").click(function () {
+            var disc_state = $(this).val();
+            if(disc_state==1){
+                var cardSaleTotalVal = parseFloat($(".Total #totalVal b").text());
+                $('.Total #discountVal b').text(0);
+                //5、优惠补差清零
+                $('.Total #totalYBalance b').text(0);
+                $('.Total #discount input').val(0);
+                //6、设置订单应付金额 = 售卡列表合计金额 + 优惠补差
+                $('.Total #totalPaid b').text(cardSaleTotalVal);
+                $('.discBox').hide();
+            }else {
+                var correctTableOut = $('#correctOut');
+                setTotalByCardList(correctTableOut.find('tbody'));
+            }
+        });
+
+        $(document).on('click','#btn-enter',function(){
+            var action_type = '7';//批量售卡
+            var url = "{% url 'vip_sale' %}";
+
+            saveVipOrder(action_type,url);
+        });
+
+    </script>
+{% endblock %}

@@ -20,7 +20,6 @@ def index(request):
         shopcode = request.session.get('s_shopcode', '')
         departName = (request.POST.get('departName', '')).strip()
         departCode = (request.POST.get('departCode', '')).strip()
-        state = request.POST.get('state', '')
         start = request.POST.get('start', '')
         end = request.POST.get('end', '')
         nextDay = datetime.datetime.strptime(end, '%Y-%m-%d') + datetime.timedelta(1)

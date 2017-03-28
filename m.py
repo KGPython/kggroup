@@ -2,11 +2,9 @@
 # You'll have to do the following manually to clean this up:
 #   * Rearrange models' order
 #   * Make sure each model has one field with primary_key=True
+#   * Make sure each ForeignKey has `on_delete` set to the desired behavior.
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
-#
-# Also note: You'll have to insert the output of 'django-admin sqlcustom [app_label]'
-# into your database.
 from __future__ import unicode_literals
 
 from django.db import models
@@ -35,8 +33,8 @@ class AdminUser(models.Model):
     shop_code = models.CharField(max_length=11, blank=True, null=True)
     depart = models.CharField(max_length=45, blank=True, null=True)
     salt = models.CharField(max_length=10, blank=True, null=True)
-    last_login = models.DateTimeField(blank=True, null=True)
-    last_ip = models.CharField(max_length=15,blank=True, null=True)
+    last_login = models.DateTimeField()
+    last_ip = models.CharField(max_length=15)
     role_id = models.CharField(max_length=11)
 
     class Meta:
@@ -86,6 +84,7 @@ class CardInventory(models.Model):
         managed = False
         db_table = 'card_inventory'
 
+
 class CardReceive(models.Model):
     shop_code = models.CharField(max_length=16)
     rec_sn = models.CharField(max_length=20)
@@ -103,69 +102,6 @@ class CardType(models.Model):
     class Meta:
         managed = False
         db_table = 'card_type'
-
-
-class CashierAuthorization(models.Model):
-    license = models.CharField(db_column='License', max_length=19, blank=True, null=True)  # Field name made lowercase.
-    mac = models.CharField(db_column='Mac', max_length=17, blank=True, null=True)  # Field name made lowercase.
-    md5 = models.CharField(db_column='MD5', max_length=32, blank=True, null=True)  # Field name made lowercase.
-    shop = models.CharField(db_column='Shop', max_length=4, blank=True, null=True)  # Field name made lowercase.
-    cashier = models.CharField(db_column='Cashier', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    state = models.CharField(db_column='State', max_length=1, blank=True, null=True)  # Field name made lowercase.
-    effective = models.CharField(max_length=1, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'cashier_authorization'
-
-
-class CashierList(models.Model):
-    username = models.CharField(max_length=32, blank=True, null=True)
-    password = models.CharField(max_length=64, blank=True, null=True)
-    pass_field = models.CharField(db_column='pass', max_length=6, blank=True, null=True)  # Field renamed because it was a Python reserved word.
-    name = models.CharField(max_length=255, blank=True, null=True)
-    shop_code = models.CharField(max_length=4, blank=True, null=True)
-    login_cashier = models.CharField(db_column='login_Cashier', max_length=4, blank=True, null=True)  # Field name made lowercase.
-    satate = models.CharField(max_length=1, blank=True, null=True)
-    effective = models.CharField(max_length=1, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'cashier_list'
-
-
-class CashierLog(models.Model):
-    uid = models.CharField(max_length=10, blank=True, null=True)
-    sid = models.CharField(max_length=10, blank=True, null=True)
-    cid = models.CharField(max_length=10, blank=True, null=True)
-    card_no = models.CharField(max_length=255, blank=True, null=True)
-    card_shop = models.CharField(max_length=10, blank=True, null=True)
-    card_value = models.CharField(max_length=10, blank=True, null=True)
-    card_blance = models.CharField(max_length=10, blank=True, null=True)
-    coutent = models.TextField(blank=True, null=True)
-    time = models.CharField(max_length=255, blank=True, null=True)
-    addtime = models.DateTimeField()
-
-    class Meta:
-        managed = False
-        db_table = 'cashier_log'
-
-
-class CashierOrder(models.Model):
-    uid = models.CharField(max_length=10, blank=True, null=True)
-    sid = models.CharField(max_length=10, blank=True, null=True)
-    cid = models.CharField(max_length=10, blank=True, null=True)
-    card_no = models.CharField(max_length=255, blank=True, null=True)
-    card_shop = models.CharField(max_length=10, blank=True, null=True)
-    card_value = models.CharField(max_length=10, blank=True, null=True)
-    card_blance = models.CharField(max_length=10, blank=True, null=True)
-    coutent = models.TextField(blank=True, null=True)
-    time = models.CharField(max_length=255, blank=True, null=True)
-    addtime = models.DateTimeField()
-
-    class Meta:
-        managed = False
-        db_table = 'cashier_order'
 
 
 class Departs(models.Model):
@@ -234,132 +170,6 @@ class ExchangeCode(models.Model):
         db_table = 'exchange_code'
 
 
-class KfJobsCoupon(models.Model):
-    coupon_code = models.CharField(max_length=255)
-    coupon_name = models.CharField(max_length=255)
-    batch = models.IntegerField()
-    shop_code = models.CharField(max_length=255)
-    type = models.IntegerField()
-    values = models.DecimalField(max_digits=10, decimal_places=2)
-    start_date = models.DateTimeField()
-    end_date = models.DateTimeField(blank=True, null=True)
-    range = models.CharField(max_length=255)
-    payment_type = models.IntegerField()
-    pay_account = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    credit_account = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    discount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    amount = models.IntegerField()
-    print_amount = models.IntegerField(blank=True, null=True)
-    state = models.IntegerField(blank=True, null=True)
-    remark = models.CharField(max_length=400, blank=True, null=True)
-    create_uesr_id = models.IntegerField(blank=True, null=True)
-    create_user_name = models.CharField(max_length=255, blank=True, null=True)
-    create_date = models.CharField(max_length=8, blank=True, null=True)
-    start_sn = models.CharField(max_length=255, blank=True, null=True)
-    end_sn = models.CharField(max_length=255, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'kf_jobs_coupon'
-
-
-class KfJobsCouponBatch(models.Model):
-    batch = models.IntegerField()
-    shopid = models.CharField(db_column='shopID', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    createdate = models.CharField(max_length=8, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'kf_jobs_coupon_batch'
-
-
-class KfJobsCouponCredit(models.Model):
-    coupon_code = models.CharField(max_length=255, blank=True, null=True)
-    payment_type = models.IntegerField(blank=True, null=True)
-    pay_account = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    create_uesr_id = models.IntegerField(blank=True, null=True)
-    create_user_name = models.CharField(max_length=255, blank=True, null=True)
-    create_date = models.DateTimeField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'kf_jobs_coupon_credit'
-
-
-class KfJobsCouponGoodsDetail(models.Model):
-    batch = models.CharField(max_length=255)
-    goodname = models.CharField(max_length=255, blank=True, null=True)
-    goodcode = models.CharField(max_length=255, blank=True, null=True)
-    amount = models.CharField(max_length=255, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'kf_jobs_coupon_goods_detail'
-
-
-class KfJobsCouponOld(models.Model):
-    id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
-    couponname = models.CharField(db_column='CouponName', max_length=255)  # Field name made lowercase.
-    batch = models.CharField(max_length=255)
-    shopid = models.CharField(db_column='ShopID', max_length=10)  # Field name made lowercase.
-    couponno = models.CharField(db_column='CouponNO', max_length=19)  # Field name made lowercase.
-    coupontypeid = models.IntegerField(db_column='CouponTypeID')  # Field name made lowercase.
-    startdate = models.DateTimeField(db_column='StartDate')  # Field name made lowercase.
-    enddate = models.DateTimeField(db_column='EndDate')  # Field name made lowercase.
-    cpwdflag = models.IntegerField(db_column='CPwdFlag')  # Field name made lowercase.
-    cpwd = models.CharField(db_column='CPwd', max_length=32, blank=True, null=True)  # Field name made lowercase.
-    usetime = models.IntegerField(db_column='UseTime')  # Field name made lowercase.
-    maxusetime = models.IntegerField(db_column='MaxUseTime')  # Field name made lowercase.
-    value = models.DecimalField(db_column='Value', max_digits=12, decimal_places=3)  # Field name made lowercase.
-    giftvalue = models.DecimalField(db_column='GiftValue', max_digits=12, decimal_places=3, blank=True, null=True)  # Field name made lowercase.
-    discount = models.IntegerField(db_column='Discount')  # Field name made lowercase.
-    flag = models.IntegerField(db_column='Flag')  # Field name made lowercase.
-    fromsheettype = models.IntegerField(db_column='FromSheetType', blank=True, null=True)  # Field name made lowercase.
-    rangeremark = models.CharField(db_column='RangeRemark', max_length=400, blank=True, null=True)  # Field name made lowercase.
-    createuserid = models.CharField(db_column='CreateUserID', max_length=10)  # Field name made lowercase.
-    updateuserid = models.CharField(db_column='UpdateUserID', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    updatetime = models.DateTimeField(db_column='UpdateTime', blank=True, null=True)  # Field name made lowercase.
-    fromsheetid = models.CharField(db_column='FromSheetID', max_length=20, blank=True, null=True)  # Field name made lowercase.
-    fromsdate = models.CharField(db_column='FromSDate', max_length=1000, blank=True, null=True)  # Field name made lowercase.
-    fromlistno = models.CharField(db_column='FromListNO', max_length=1000, blank=True, null=True)  # Field name made lowercase.
-    fromposid = models.CharField(db_column='FromPOSID', max_length=1000, blank=True, null=True)  # Field name made lowercase.
-    serialid = models.CharField(db_column='SerialID', max_length=20)  # Field name made lowercase.
-    clearflag = models.IntegerField(db_column='ClearFlag')  # Field name made lowercase.
-    clearvalue = models.DecimalField(db_column='ClearValue', max_digits=12, decimal_places=3)  # Field name made lowercase.
-    clearshopid = models.CharField(db_column='ClearShopID', max_length=10, blank=True, null=True)  # Field name made lowercase.
-    clearsheettype = models.IntegerField(db_column='ClearSheetType', blank=True, null=True)  # Field name made lowercase.
-    clearsheetid = models.CharField(db_column='ClearSheetID', max_length=16, blank=True, null=True)  # Field name made lowercase.
-    clearsdate = models.CharField(db_column='ClearSDate', max_length=1000, blank=True, null=True)  # Field name made lowercase.
-    clearlistno = models.CharField(db_column='ClearListNO', max_length=1000, blank=True, null=True)  # Field name made lowercase.
-    clearposid = models.CharField(db_column='ClearPOSID', max_length=1000, blank=True, null=True)  # Field name made lowercase.
-
-    class Meta:
-        managed = False
-        db_table = 'kf_jobs_coupon_old'
-
-
-class KfJobsCouponSn(models.Model):
-    sn = models.CharField(max_length=6)
-    batch = models.CharField(max_length=3)
-    voucher = models.CharField(max_length=13)
-    salt = models.CharField(max_length=16)
-    result = models.CharField(max_length=32)
-    request_shop = models.CharField(max_length=255, blank=True, null=True)
-    request_name = models.CharField(max_length=255, blank=True, null=True)
-    request_date = models.DateTimeField(blank=True, null=True)
-    state = models.IntegerField(blank=True, null=True)
-    coupon_code = models.CharField(max_length=255, blank=True, null=True)
-    serial_id = models.CharField(max_length=20, blank=True, null=True)
-    used_flag = models.IntegerField(blank=True, null=True)
-    used_shop = models.CharField(max_length=255, blank=True, null=True)
-    used_name = models.CharField(max_length=255, blank=True, null=True)
-    used_date = models.DateTimeField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'kf_jobs_coupon_sn'
-
-
 class NavList(models.Model):
     nav_id = models.CharField(max_length=32)
     nav_name = models.CharField(max_length=45)
@@ -375,7 +185,7 @@ class NavList(models.Model):
 
 
 class OrderBorrow(models.Model):
-    order_sn = models.CharField(unique=True, max_length=20)
+    order_sn = models.CharField(max_length=20)
     order_val = models.DecimalField(max_digits=11, decimal_places=2)
     order_num = models.IntegerField()
     shopcode = models.CharField(max_length=16)
@@ -408,7 +218,7 @@ class OrderBorrowInfo(models.Model):
 
 
 class OrderChangeCard(models.Model):
-    order_sn = models.CharField(unique=True, max_length=20)
+    order_sn = models.CharField(max_length=20)
     operator_id = models.SmallIntegerField()
     depart = models.CharField(max_length=10, blank=True, null=True)
     shop_code = models.CharField(max_length=16)
@@ -419,11 +229,11 @@ class OrderChangeCard(models.Model):
     total_in_price = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
     total_out_amount = models.IntegerField(blank=True, null=True)
     total_out_price = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
-    add_time = models.DateTimeField()
     disc_rate = models.DecimalField(max_digits=11, decimal_places=4, blank=True, null=True)
     disc = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
     disc_pay = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
     disc_cash = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
+    add_time = models.DateTimeField()
 
     class Meta:
         managed = False
@@ -433,15 +243,14 @@ class OrderChangeCard(models.Model):
 class OrderChangeCardInfo(models.Model):
     order_sn = models.CharField(max_length=20)
     card_no = models.CharField(max_length=32)
-    card_attr = models.CharField(max_length=1, blank=True, null=True)
     card_value = models.CharField(max_length=12, blank=True, null=True)
     card_balance = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
+    card_attr = models.CharField(max_length=1, blank=True, null=True)
     type = models.CharField(max_length=1, blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'order_change_card_info'
-        unique_together = (('order_sn', 'card_no'),)
 
 
 class OrderChangeCardPayment(models.Model):
@@ -462,7 +271,7 @@ class OrderChangeCardPayment(models.Model):
 
 class OrderInfo(models.Model):
     order_id = models.CharField(max_length=20)
-    card_id = models.CharField(max_length=32)
+    card_id = models.IntegerField()
     card_balance = models.DecimalField(max_digits=11, decimal_places=2)
     card_action = models.CharField(max_length=1)
     card_attr = models.CharField(max_length=1)
@@ -470,15 +279,6 @@ class OrderInfo(models.Model):
     class Meta:
         managed = False
         db_table = 'order_info'
-
-class Payment(models.Model):
-    payment_name = models.CharField(max_length=60)
-    flag = models.CharField(max_length=255)
-    dis_rate = models.DecimalField(max_digits=5, decimal_places=3, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'payment'
 
 
 class OrderPaymentInfo(models.Model):
@@ -498,7 +298,7 @@ class OrderPaymentInfo(models.Model):
 
 
 class OrderUpCard(models.Model):
-    order_sn = models.CharField(unique=True, max_length=20)
+    order_sn = models.CharField(max_length=20)
     action_type = models.CharField(max_length=1)
     total_amount = models.IntegerField(blank=True, null=True)
     total_price = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
@@ -522,7 +322,7 @@ class OrderUpCard(models.Model):
 
 class OrderUpCardInfo(models.Model):
     order_sn = models.CharField(max_length=20)
-    card_no = models.CharField(max_length=32)
+    card_no = models.CharField(unique=True, max_length=32)
     card_attr = models.CharField(max_length=1)
     card_value = models.CharField(max_length=12, blank=True, null=True)
     card_balance = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
@@ -531,7 +331,6 @@ class OrderUpCardInfo(models.Model):
     class Meta:
         managed = False
         db_table = 'order_up_card_info'
-        unique_together = (('order_sn', 'card_no'),)
 
 
 class Orders(models.Model):
@@ -557,21 +356,15 @@ class Orders(models.Model):
         managed = False
         db_table = 'orders'
 
-class OrderErr(models.Model):
-    order_sn = models.CharField(max_length=20)
-    record = models.CharField(max_length=255)
-    u_id = models.IntegerField()
-    shop = models.CharField(max_length=16)
-    c_time = models.DateField()
-    type = models.CharField(max_length=1)
+
+class Payment(models.Model):
+    payment_name = models.CharField(max_length=60)
+    flag = models.CharField(max_length=255)
+    dis_rate = models.DecimalField(max_digits=5, decimal_places=3, blank=True, null=True)
 
     class Meta:
         managed = False
-        db_table = 'order_err'
-
-
-
-
+        db_table = 'payment'
 
 
 class PrintExplain(models.Model):
@@ -629,9 +422,10 @@ class Shops(models.Model):
 
 class Vip(models.Model):
     company = models.CharField(max_length=20)
-    person = models.CharField(max_length=5)
+    name = models.CharField(max_length=5)
     tel = models.CharField(max_length=11)
-    level = models.CharField(max_length=2)
+    lavel = models.CharField(max_length=2)
+    branks = models.CharField(max_length=255, blank=True, null=True)
     add_time = models.DateTimeField()
     status = models.CharField(max_length=1)
 
@@ -648,13 +442,3 @@ class VipOrder(models.Model):
     class Meta:
         managed = False
         db_table = 'vip_order'
-
-class VipBank(models.Model):
-    id = models.BigIntegerField(primary_key=True)
-    vip_id = models.IntegerField()
-    bank_name = models.CharField(max_length=30, blank=True, null=True)
-    bank_no = models.CharField(max_length=30, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'vip_bank'

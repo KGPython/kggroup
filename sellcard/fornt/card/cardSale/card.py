@@ -42,12 +42,12 @@ def saveOrder(request):
     #支付方式
     payStr = request.POST.get('payStr','')
     payList = json.loads(payStr)
-    hjsStr = request.POST.get('hjsStr','')
+    # hjsStr = request.POST.get('hjsStr','')
     #黄金手卡号列表
-    hjsList=[]
-    if len(hjsStr)>0:
-        hjsStr = hjsStr[0:len(hjsStr)-1]
-        hjsList = hjsStr.split(',')
+    # hjsList=[]
+    # if len(hjsStr)>0:
+    #     hjsStr = hjsStr[0:len(hjsStr)-1]
+    #     hjsList = hjsStr.split(',')
 
     #合计信息
     totalVal = request.POST.get('totalVal',0.00)
@@ -97,9 +97,9 @@ def saveOrder(request):
                     discountRate = payDiscDict[pay['payId']]
                     discountVal = Ycash = float(pay['payVal']) * float(discountRate)
 
-                if pay['payId'] == '9':
-                    isThird = True
-                    mth.upChangeCode(hjsList,shopcode)
+                # if pay['payId'] == '9':
+                #     isThird = True
+                #     mth.upChangeCode(hjsList,shopcode)
 
                 orderPay.is_pay = is_pay
                 orderPay.pay_value = pay['payVal']
@@ -243,3 +243,5 @@ def print_explain(request):
         res['success'] = 'False'
 
     return HttpResponse(json.dumps(res))
+
+

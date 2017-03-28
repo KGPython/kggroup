@@ -58,7 +58,7 @@
                     <td><input type='text' class='form-control payVal'></td>
                     <td><input type='text' class='form-control remark'></td>
                 </tr>
-                <tr>
+                {% comment %}<tr>
                     <td><input id="hjs" value="9" type="checkbox"></td>
                     <td><input type='text' class='form-control payName' value="黄金手" disabled></td>
                     <td>
@@ -66,11 +66,11 @@
                         <input type='hidden' id="hjsStr" value="">
                     </td>
                     <td><input type='text' class='form-control remark' id="remark-hjs" disabled></td>
-                </tr>
+                </tr>{% endcomment %}
             </tbody>
         </table>
 
-        <div style="display: none; padding-right: 17px; background: rgba(0,0,0,0.5)" class="modal" id="hjsBox">
+       {% comment %} <div style="display: none; padding-right: 17px; background: rgba(0,0,0,0.5)" class="modal" id="hjsBox">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -104,7 +104,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div>{% endcomment %}
     </div>
 </div>
 <script>
@@ -184,8 +184,9 @@ $(document).on('blur','.payList .payVal,.payList input:checkbox,.payList .remark
     }
 });
 
-function checkPayError(payId,payIdList,payCash) {
-    payList1 = ['7','8','10','11'];
+{% comment %}function checkPayError(payId,payIdList,payCash) {
+    var payList1 = ['7','8','10','11'];
+    var payList2 = ['3','4'];
     res = false;
     if (payList1.indexOf(payId) > 0) {
         if (payIdList.indexOf('1') >= 0 || payIdList.indexOf('2') >= 0 || payIdList.indexOf('3') >= 0 || payIdList.indexOf('4') >= 0 || payIdList.indexOf('5') >= 0) {
@@ -195,12 +196,16 @@ function checkPayError(payId,payIdList,payCash) {
         if (payCash >= DISC_RATES[0].val_min) {
             res = true;
         }
+    }else if(payList2.indexOf(payId) >= 0){
+        if(payIdList.indexOf('3') >= 0 || payIdList.indexOf('4') >= 0){
+            res = true;
+        }
     }
     return res;
-}
+}{% endcomment %}
 </script>
 <script>
-//支付列表，三方平台切换
+{% comment %}//支付列表，三方平台切换
 $(document).on('change','.payList #parter',function(){
     var val = $(this).val();
     var parentTr = $(this).parent().parent();
@@ -264,5 +269,5 @@ function changeDiscValByPos(cardSaleTotalVal,posVal) {
         $('.Total #totalPaid b').text(cardSaleTotalVal);
         $('.discBox').hide();
     }
-}
+}{% endcomment %}
 </script>

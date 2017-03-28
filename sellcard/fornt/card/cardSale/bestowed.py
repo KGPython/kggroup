@@ -27,6 +27,7 @@ def saveOrder(request):
     cardList = json.loads(cardStr)
 
     #合计信息
+    outTotalVal = request.POST.get('outTotalVal',0.00)
     discVal = request.POST.get('discVal',0.00)
     discPay = request.POST.get('discPay',0.00)
     remark = request.POST.get('remarks','')
@@ -72,7 +73,7 @@ def saveOrder(request):
             order.buyer_name = buyerName
             order.buyer_tel = buyerPhone
             order.buyer_company = buyerCompany
-            order.total_amount = 0
+            order.total_amount = float(outTotalVal)
             order.paid_amount = float(discPay)
             order.disc_amount = float(discVal)
             order.diff_price = float(discPay)
@@ -92,7 +93,7 @@ def saveOrder(request):
                 cardIdList.append(card['cardId'])
             cardNum = len(cardIdList)
 
-            resCard = CardInventory.objects.filter(card_no__in=cardIdList).update(card_status=2,card_action='0')
+            resCard = CardInventory.objects.filter(card_no__in=cardIdList,card_status='1',is_store='0').update(card_status=2,card_action='0')
             if resCard!= cardNum:
                 raise MyError('CardInventory状态更新失败')
 
