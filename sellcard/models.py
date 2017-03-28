@@ -631,9 +631,9 @@ class Vip(models.Model):
     company = models.CharField(max_length=20)
     person = models.CharField(max_length=5)
     tel = models.CharField(max_length=11)
-    level = models.CharField(max_length=2)
+    level = models.CharField(max_length=2,default='1')
     add_time = models.DateTimeField()
-    status = models.CharField(max_length=1)
+    status = models.CharField(max_length=1,default='1')
 
     class Meta:
         managed = False
