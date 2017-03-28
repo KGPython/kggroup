@@ -643,11 +643,13 @@ class Vip(models.Model):
 class VipOrder(models.Model):
     vip_id = models.IntegerField()
     order_sn = models.CharField(unique=True, max_length=20)
-    status = models.CharField(max_length=1)
-
+    disc_state = models.CharField(max_length=1)
+    order_state = models.CharField(max_length=1)
+    relate_sn = models.CharField(max_length=20)
     class Meta:
         managed = False
         db_table = 'vip_order'
+
 
 class VipBank(models.Model):
     id = models.BigIntegerField(primary_key=True)

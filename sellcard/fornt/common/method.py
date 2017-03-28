@@ -82,5 +82,7 @@ def createVipOrder(id,order_sn,disc_state):
     order = VipOrder()
     order.vip_id = id
     order.order_sn = order_sn
-    order.status = disc_state
+    order.disc_state = disc_state
+    order_state = '0' if disc_state else '1'
+    order.order_state = order_state
     return order

@@ -5,6 +5,7 @@
     <style>
         td>a{color: #FF0000;}
         .discBox{display: block;}
+        #totalVal{display: none;}
     </style>
     <div id="content" data-module="sale">
         <div id="content-header">
@@ -74,13 +75,14 @@
                                             {% endif %}
                                         </td>
                                         <td>
-                                            {% if row.is_pay == '1' %}
+                                        {{ row.order_sn }}
+                                            {% comment %}{% if row.is_pay == '1' %}
                                                 {{ row.order_sn }}
                                             {% else %}
                                                 <a href="{% url 'noPayOrdinaryDetail' %}?orderSn={{ row.order_sn }}&type=sale">
                                                     {{ row.order_sn }}
                                                 </a>
-                                            {% endif %}
+                                            {% endif %}{% endcomment %}
                                             
                                         </td>
                                         <td class="rowVal">{{ row.paid_amount}}</td>
@@ -99,7 +101,7 @@
                         </div>
                     </div>
                     {% include 'common/discount.html' %}
-                    {% include 'common/paymentNoThird1.html' %}
+                    {% include 'common/paymentForVipSettle.html' %}
                     {% include 'common/orderTotal.html' %}
                     {% include 'common/buyerInfoReadOnly.html' %}
                     <div class="enter-box">
@@ -145,7 +147,7 @@
         });
 
         $('#btn-enter').click(function(){
-            var action_type = '7';
+            var action_type = '8';
             var url = "{% url 'vip_settlement_save' %}";
             saveVipSettlement(action_type,url,orderSns);
         });

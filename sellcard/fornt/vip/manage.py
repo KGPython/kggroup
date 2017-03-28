@@ -28,8 +28,8 @@ def index(request):
         else:
             List = Vip.objects.values('id', 'company', 'person', 'tel', 'add_time').order_by('id')
 
-        for row in List:
-            row['bank_list'] = VipBank.objects.values('id', 'bank_name').filter(vip_id=row['id'])
+        # for row in List:
+        #     row['bank_list'] = VipBank.objects.values('id', 'bank_name').filter(vip_id=row['id'])
         # 表单分页开始
         paginator = Paginator(List, show_num)
 

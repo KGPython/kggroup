@@ -106,10 +106,10 @@ function showCardIfno(obj,data){
         cardVal = data.card_value;
         cardBlance = data.card_blance;
         if(data.card_status==1 && parseFloat(cardVal)==parseFloat(cardBlance) && data.is_store=='0'){
-            cardStu ='正常';
+            cardStu ='可操作';
             $(obj).parent().parent().find('td').eq(3).removeClass('red')
         }else{
-            cardStu ='异常';
+            cardStu ='不可操作';
             $(obj).parent().parent().find('td').eq(3).addClass('red')
         }
     }
@@ -134,7 +134,7 @@ function showCardIfno3(obj,data){
         cls = 'discountTotal';
     }
     var cardVal = cardBlance = '';
-    var cardStu = '正常';
+    var cardStu = '可操作';
     var flag = true;
     if(!data){
         cardStu ='不存在';
@@ -144,13 +144,13 @@ function showCardIfno3(obj,data){
         cardBlance = data.detail;
         if (cls == 'cardInTotal') {
             if (data.mode != '1' || cardVal != cardBlance) {
-                cardStu = '异常';
+                cardStu = '不可操作';
                 flag = false;
             }
         }
         if (cls == 'cardOutTotal' || cls == 'discountTotal') {
             if (data.mode != '9' || cardVal != cardBlance) {
-                cardStu = '异常';
+                cardStu = '不可操作';
             }
         }
     }
@@ -172,12 +172,12 @@ function showCardIfno3(obj,data){
 function showCardIfno2(obj,data){
     var cardVal = parseFloat(data.card_value);
     var cardBlance = parseFloat(data.card_blance);
-    var cardStu ='正常';
+    var cardStu ='可操作';
 
     if(data.card_status ==1 && cardVal>=cardBlance){
         $(obj).parent().parent().find('td').eq(3).removeClass('red')
     }else{
-        cardStu ='异常';
+        cardStu ='不可操作';
         $(obj).parent().parent().find('td').eq(3).addClass('red')
     }
     $(obj).parent().parent().find('td').eq(1).text(cardVal);
@@ -203,7 +203,7 @@ function checkCardStu(obj,cardId,shopCode,url){
             else{
                 var res = data[0] ? data[0].fields : [];
                 if(res.card_status!='1'){
-                    alert('异常卡：'+cardId);
+                    alert('不可操作卡：'+cardId);
                     $(obj).val('').focus();
                     return false;
 
@@ -258,15 +258,14 @@ function getCardListVal(cardList,cardtype,cls){
         var type = $(trs[i]).find('td').eq(1).text();
         if(cardtype==1 || cardtype==2)
         {
-            if(status=='正常'&& parseFloat(val)==parseFloat(type)){
+            if(status=='可操作'&& parseFloat(val)==parseFloat(type)){
                 totalNum++;
                 totalVal += parseFloat(val);
             }
         }
         else if(cardtype==3)
         {
-
-            if(status=='正常' && parseFloat(val)<=parseFloat(type)){
+            if(status=='可操作' && parseFloat(val)<=parseFloat(type)){
                 totalNum++;
                 totalVal += parseFloat(val);
             }
@@ -315,7 +314,7 @@ function getCardList(obj){
         var status = $(trs[j]).find('td').eq(3).text();
         var cardType = $(trs[j]).find('td').eq(1).text();
         var val = $(trs[j]).find('td').eq(2).text();
-        if(status=='正常' && parseFloat(val)==parseFloat(cardType) ){
+        if(status=='可操作' && parseFloat(val)==parseFloat(cardType) ){
             var cardId = $(trs[j]).find('.cardId').eq(0).val();
             item = {'cardId':cardId,'cardVal':val};
             list.push(item)
@@ -330,7 +329,7 @@ function getCardIdList(obj){
         var status = $(trs[j]).find('td').eq(3).text();
         var cardType = $(trs[j]).find('td').eq(1).text();
         var val = $(trs[j]).find('td').eq(2).text();
-        if(status=='正常' && parseFloat(val)==parseFloat(cardType) ){
+        if(status=='可操作' && parseFloat(val)==parseFloat(cardType) ){
             var cardId = $(trs[j]).find('.cardId').eq(0).val();
             list.push(cardId.trim())
         }
@@ -346,7 +345,7 @@ function getCardFillList(obj){
     for(var j=0;j<trs.length;j++){
         var item = {};
         var status = $(trs[j]).find('td').eq(3).text();
-        if(status=='正常'){
+        if(status=='可操作'){
             var cardId = $(trs[j]).find('td').eq(0).find('input').val();
             var val = $(trs[j]).find('td').eq(1).text();
             var balance = $(trs[j]).find('td').eq(2).text();
@@ -462,6 +461,7 @@ function createDiscount(discRate,cardsValTotal) {
         $('.discBox').hide();
         $('.discountTotal #totalVal b').text(0);
         $('.discountTotal #Ycash').val(0);
+        $('#YcardList .cardId').val('');
     }
     return discountVal;
 }
@@ -744,6 +744,7 @@ function saveVipSettlement(action_type,url,orderSns) {
     var buyerPhone = $('#buyerPhone').val();
     var buyerCompany = $('#buyerCompany').val();
     var postToken = $('#post-token').val();
+    var vipId = $('#vipId').val();
     if(payTotal!=totalVal+discPay){
         alert('支付金额与应付金额不等，请核对后提交！');
         return false;
@@ -774,6 +775,7 @@ function saveVipSettlement(action_type,url,orderSns) {
         'buyerName':buyerName,
         'buyerPhone':buyerPhone,
         'buyerCompany':buyerCompany,
+        'vipId':vipId,
         'postToken':postToken
     };
     // console.log(data);
@@ -1174,7 +1176,15 @@ function setTotalBycardSaleTotalVal(discRate,cardSaleTotalVal){
     //3、计算应付金额
     $('.Total #totalPaid b').text(cardSaleTotalVal+discountPay);
 }
-
+function setTotalByOrderTotalVal(discRate,cardSaleTotalVal) {
+    var discountVal = createDiscount(discRate,cardSaleTotalVal);
+    //2、计算优惠补差
+    var discountCardTotalVal = parseFloat($(".discountTotal #totalVal b").text());
+    discountPay  = discountCardTotalVal - discountVal;
+    $('.Total #totalYBalance b').text(discountPay);
+    //3、计算应付金额
+    $('.Total #totalPaid b').text(discountPay);
+}
 /******************************  支付相关 end   *****************************************/
 
 function closeFun() {

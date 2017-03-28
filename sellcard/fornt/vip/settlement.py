@@ -7,10 +7,9 @@ from django.db import transaction
 
 import datetime,json
 
-from sellcard.models import Orders,Vip,ActionLog
 from sellcard.common.model import MyError
 from sellcard.common import Method as mth
-from sellcard.models import OrderPaymentInfo,CardInventory,ActionLog,Vip,VipOrder
+from sellcard.models import OrderPaymentInfo,CardInventory,ActionLog,Vip,VipOrder,OrderInfo
 from sellcard.fornt.common import  method as cardMethod
 
 
@@ -35,7 +34,7 @@ def index(request):
                 FROM `orders`
                 INNER JOIN `vip_order` ON (`orders`.`order_sn` = `vip_order`.`order_sn`)
                 LEFT OUTER JOIN `order_payment_info` ON ( `orders`.`order_sn` = `order_payment_info`.`order_id` )
-                WHERE ( `vip_order`.`status` = 1 AND `orders`.`add_time` <= '{end}' AND `orders`.`add_time` >= '{start}' )'''\
+                WHERE ( `vip_order`.`disc_state` = 1 AND `vip_order`.`order_state` = 0 AND `orders`.`add_time` <= '{end}' AND `orders`.`add_time` >= '{start}' )'''\
             .format(start=time_start,end=nextDay)
         conn = mth.getMysqlConn()
         cur = conn.cursor()
@@ -70,7 +69,7 @@ def save(request):
     vip_person = request.POST.get('buyerName', '')
     vip_tel = request.POST.get('buyerPhone', '')
     vip_company = request.POST.get('buyerCompany', '')
-    vip_id = request.POST.get('vipId', '')
+    vip_id = int(request.POST.get('vipId', ''))
 
     order_sn = ''
     res = {}
@@ -85,6 +84,9 @@ def save(request):
             # OrderPaymentInfo
             oderPaymentList, isThird, discountVal, Ycash = cardMethod.createPaymentList(payList, order_sn, discountVal, Ycash)
             OrderPaymentInfo.objects.bulk_create(oderPaymentList)
+            # 保存OrderInfo
+            orderInfoList = cardMethod.createOrderInfoList([], order_sn, isThird, YcardList)
+            OrderInfo.objects.bulk_create(orderInfoList)
             #Order
             orderData = {
                 'buyerName': vip_person, 'buyerPhone': vip_tel, 'buyerCompany': vip_company,
@@ -107,7 +109,9 @@ def save(request):
             if resCard != cardsNum:
                 raise MyError('CardInventory状态更新失败')
             # VipOrder
-            resVip = VipOrder.objects.filter(order_sn__in=orderSns,vip_id=vip_id,disc_state='1').update(status='3')
+            resVip = VipOrder.objects\
+                .filter(order_sn__in=orderSns,vip_id=vip_id,disc_state='1',order_state='0')\
+                .update(order_state='1',relate_sn = order_sn)
             if resVip != len(orderSns):
                 raise MyError('VipOrder状态更新失败')
             # 更新折扣授权码校验码状态
@@ -123,7 +127,6 @@ def save(request):
                 raise MyError(resGuest['msg'])
 
             res["status"] = 1
-            res["urlRedirect"] = '/kg/sellcard/fornt/cardsale/orderInfo/?orderSn=' + order_sn
             ActionLog.objects.create(url=path, u_name=request.session.get('s_uname'),
                                      cards_out=json.dumps(cardIdList), add_time=datetime.datetime.now())
             del request.session['postToken']

@@ -59,19 +59,11 @@ $(document).on('blur','.payList .payVal,.payList input:checkbox,.payList .remark
                 payId = $(palyList[i]).find('td').eq(0).find('input[type=checkbox]').val();
                 payName = $(palyList[i]).find('td').eq(1).find('input').val();
             }
-            //核查混合支付
-            var checkRes = checkPayError(payId,payIdList,payCash);
-            if (checkRes) {
-                alert('混合支付存在异常，请核查');
-                $(palyList[i]).find('td').eq(2).find('input').val('');
-                break;
-            }else{
-                payIdList.push(payId);
-            }
+
             //根据支付方式，产生应付金额/优惠等信息
-            if(payId == 1 || payId == 2 || payId == 3 || payId == 4){
+            if(payId == 1 || payId == 3){
                 payCash += payVal;
-{#                setTotalBycardSaleTotalVal('',cardSaleTotalVal)#}
+{#                setTotalByOrderTotalVal('',0)#}
             }
             else if(payId == 5){//pos刷卡
                 payCash += payVal;

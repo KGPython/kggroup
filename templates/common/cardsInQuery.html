@@ -36,7 +36,7 @@
                 <th style="width: 10em">卡号</th>
                 <th>面值</th>
                 <th>余额</th>
-                <th>状态</th>
+                <th>可否操作</th>
                 <th style="width: 8em">操作</th>
             </tr>
             </thead>
@@ -55,7 +55,7 @@
                 <th style="width: 10em">卡号</th>
                 <th>面值</th>
                 <th>余额</th>
-                <th>状态</th>
+                <th>可否操作</th>
                 <th style="width: 8em">操作</th>
             </tr>
             </thead>
@@ -169,7 +169,7 @@
                 }else if(j==2){
                     td.text(data.detail)
                 }else if(j==3){
-                    td.text('正常');
+                    td.text('可操作');
                 }else if(j==4){
                     var obj = $('<button type="button" class="btn btn-danger btn-xs btn-del" onclick="delRow(this);">删除</button>');
                     td.append(obj);
@@ -190,7 +190,7 @@
                     }else if(j==2){
                         td.text(data.detail)
                     }else if(j==3){
-                        td.text('异常');
+                        td.text('不可操作');
                     }else if(j==4){
                         var obj = $('<button type="button" class="btn btn-danger btn-xs btn-del" id="err" onclick="delRow(this);">删除</button>');
                         td.append(obj);
