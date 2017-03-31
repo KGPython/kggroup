@@ -14,6 +14,7 @@ from sellcard.fornt.common import  method as cardMethod
 
 
 def index(request):
+    shop = request.session.get('s_shopcode')
     vip_id = request.GET.get('vip_id')
     buyer = Vip.objects.filter(id=vip_id, status='1').values('company', 'person', 'tel', 'id').first()
     token = 'allow'
@@ -34,8 +35,9 @@ def index(request):
                 FROM `orders`
                 INNER JOIN `vip_order` ON (`orders`.`order_sn` = `vip_order`.`order_sn`)
                 LEFT OUTER JOIN `order_payment_info` ON ( `orders`.`order_sn` = `order_payment_info`.`order_id` )
-                WHERE ( `vip_order`.`disc_state` = 1 AND `vip_order`.`order_state` = 0 AND `orders`.`add_time` <= '{end}' AND `orders`.`add_time` >= '{start}' )'''\
-            .format(start=time_start,end=nextDay)
+                WHERE ( `vip_order`.`disc_state` = 1 AND `vip_order`.`order_state` = 0 AND `orders`.`add_time` <= '{end}'
+                AND `orders`.`add_time` >= '{start}' AND `orders`.`shop_code`='{shop}')'''\
+            .format(start=time_start,end=nextDay,shop=shop)
         conn = mth.getMysqlConn()
         cur = conn.cursor()
         cur.execute(sql)

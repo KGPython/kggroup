@@ -46,7 +46,8 @@ def cardInStore(request):
                                 if not updateNum:
                                     raise MyError(card['CardNO']+'状态更新失败')
                             res['status'] = '1'
-                            ActionLog.objects.create(action='门店卡入库',u_name=request.session.get('s_uname'),cards_in=json.dumps(cardList),add_time=datetime.datetime.now())
+                            cardIdList = [card['CardNO'] for card in cardList]
+                            ActionLog.objects.create(action='门店卡入库',u_name=request.session.get('s_uname'),cards_in=json.dumps(cardIdList),add_time=datetime.datetime.now())
 
         except Exception as e:
             if hasattr(e, 'value'):
