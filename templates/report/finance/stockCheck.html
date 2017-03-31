@@ -64,47 +64,43 @@
                         <table class="table table-striped table-hover table-form-my  ">
                             <thead>
                                 <tr>
+                                    <th rowspan="2">门店</th>
                                     <th rowspan="2">期初库存</th>
                                     <th rowspan="2">本月生效</th>
-                                    <th colspan="6">售卡</th>
+                                    <th colspan="5">售卡</th>
                                     <th rowspan="2">挂售卡</th>
                                     <th rowspan="2">返卡</th>
                                     <th rowspan="2">期末库存</th>
                                     <th rowspan="2">借卡未结算</th>
                                     <th rowspan="2">赊销未到账</th>
-                                    <th rowspan="2">累计库存</th>
                                 </tr>
                                 <tr>
                                     <th>现金</th>
                                     <th>POS</th>
                                     <th>汇款</th>
                                     <th>代金券（换卡）</th>
-                                    <th>赊销到账</th>
                                     <th>借卡已结算</th>
                                 </tr>
                             </thead>
 
-                            <tbody class="cardIn" id="nopayList">
-                                {% for row in payList %}
+                            <tbody>
+                                {% for row in List %}
                                     <tr>
-                                        <td>{{ row.pay_id | transPayCode}}</td>
-                                        <td>
-                                            {{ row.pay_value }}
-                                            {% if row.pay_id == 4 %}
-                                                <span style="margin-left: 30px;">
-                                                    (未到帐款：
-                                                    <b>{{ nopayDict.pay_value | default:0.00 | floatformat:2 }}</b>)
-                                                </span>
-                                            {% endif %}
-                                        </td>
-                                        <td>{{ row.pay_value | divide:payTotal }}</td>
+                                        <td>{{ row.shop_name }}</td>
+                                        <td>{{ row.initial_stock }}</td>
+                                        <td>{{ row.period_stock }}</td>
+                                        <td>{{ row.cash }}</td>
+                                        <td>{{ row.pos }}</td>
+                                        <td>{{ row.remittance }}</td>
+                                        <td>{{ row.voucher }}</td>
+                                        <td>{{ row.borrow_already }}</td>
+                                        <td>{{ row.hang_sale }}</td>
+                                        <td>{{ row.disc }}</td>
+                                        <td>{{ row.end_stock }}</td>
+                                        <td>{{ row.borrow_not }}</td>
+                                        <td>{{ row.credit_not }}</td>
                                     </tr>
                                 {% endfor %}
-                            <tr>
-                                <td>合计</td>
-                                <td>{{ payTotal }}</td>
-                                <td></td>
-                            </tr>
                             </tbody>
                         </table>
                     </div>
