@@ -420,6 +420,28 @@ function getPayList1(obj){
     return data;
 }
 
+function getPayList2(obj){
+    var list = [];
+    var trs = $(obj).find('tr');
+    for(var j=0;j<trs.length;j++){
+        var item = {};
+        var checkBox = $(trs[j]).find('td').eq(0).find('input')[0];
+        var flag = $(checkBox).is(':checked');
+        var payVal= $(trs[j]).find('td').eq(2).find('input').val();
+        if(flag && payVal){
+            var payId = $(checkBox).val();
+            if(!payId){
+                alert('请选择三方支付方式');
+                return false;
+            }
+            var payRmarks = $(trs[j]).find('td').eq(3).find('input').val();
+            item = {'payId':payId,'payVal':payVal,'payRmarks':payRmarks};
+            list.push(item)
+        }
+    }
+    return list;
+}
+
 /*
 * 1、设置优惠返点率
 * 2、计算优惠金额
@@ -515,7 +537,7 @@ function saveBorrowPayOrder(action_type,url,orderSns){
         YtotalVal =parseFloat($('.discountTotal #totalVal b').text());//优惠列表合计=卡合计+返现合计
     }
     //支付列表
-    var payList = getPayList($('.payList'));
+    var payList = getPayList2($('.payList'));
     if(!payList){
         return false;
     }
