@@ -34,7 +34,7 @@ def index(request):
         sql = """
 SELECT
 	s.shop_name,
-	IFNULL(u.initial_stock, 0) AS initial_stock,
+	FORMAT(IFNULL(u.initial_stock, 0), 2) AS initial_stock,
 	IFNULL(v.period_stock, 0) AS period_stock,
 	IFNULL(w.cash, 0) AS cash,
 	IFNULL(w.pos, 0) AS pos,
