@@ -67,7 +67,7 @@
                                     <th rowspan="2">门店</th>
                                     <th rowspan="2">期初库存</th>
                                     <th rowspan="2">本月生效</th>
-                                    <th colspan="5">售卡</th>
+                                    <th colspan="6">售卡</th>
                                     <th rowspan="2">挂售卡</th>
                                     <th rowspan="2">返卡</th>
                                     <th rowspan="2">期末库存</th>
@@ -79,6 +79,7 @@
                                     <th>POS</th>
                                     <th>汇款</th>
                                     <th>代金券（换卡）</th>
+                                    <th>移动积分（第三方）</th>
                                     <th>借卡已结算</th>
                                 </tr>
                             </thead>
@@ -93,6 +94,7 @@
                                         <td>{{ row.pos }}</td>
                                         <td>{{ row.remittance }}</td>
                                         <td>{{ row.voucher }}</td>
+                                        <td>{{ row.third_party }}</td>
                                         <td>{{ row.borrow_already }}</td>
                                         <td>{{ row.hang_sale }}</td>
                                         <td>{{ row.disc }}</td>

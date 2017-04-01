@@ -40,6 +40,7 @@ SELECT
 	IFNULL(w.pos, 0) AS pos,
 	IFNULL(w.remittance, 0) AS remittance,
 	IFNULL(w.voucher, 0) AS voucher,
+	IFNULL(w.third_party, 0) AS third_party,
 	IFNULL(x.borrow_already, 0) AS borrow_already,
 	IFNULL(y.hang_sale, 0) AS hang_sale,
 	IFNULL(z.disc, 0) AS disc,
@@ -105,7 +106,15 @@ LEFT JOIN (
 			ELSE
 				0
 			END
-		) AS voucher
+		) AS voucher,
+		sum(
+			CASE
+			WHEN m.pay_id in (6, 7, 8, 9, 10, 11) THEN
+				m.pay_value
+			ELSE
+				0
+			END
+		) AS third_party
 	FROM
 		(
 			SELECT
