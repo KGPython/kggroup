@@ -43,13 +43,12 @@ def detail(request):
     orderSn = request.GET.get('orderSn', '')
     type = request.GET.get('type', '')
     orderPayInfo = []
-    if type == 'sale':
-        order = Orders.objects \
-            .values('order_sn', 'shop_code', 'paid_amount', 'disc_amount', 'action_type', 'buyer_name', 'buyer_tel',
-                    'buyer_company', 'add_time') \
-            .filter(order_sn=orderSn)
-        orderPayInfo = OrderPaymentInfo.objects.values('pay_id', 'pay_value').filter(order_id=orderSn)
-        cardsNum = OrderInfo.objects.filter(order_id=orderSn).count()
+    order = Orders.objects \
+        .values('order_sn', 'shop_code', 'paid_amount', 'disc_amount', 'action_type', 'buyer_name', 'buyer_tel',
+                'buyer_company', 'add_time') \
+        .filter(order_sn=orderSn)
+    orderPayInfo = OrderPaymentInfo.objects.values('pay_id', 'pay_value').filter(order_id=orderSn)
+    cardsNum = OrderInfo.objects.filter(order_id=orderSn).count()
 
     paysDict = {pay['pay_id']: pay['pay_value'] for pay in orderPayInfo}
     if 4 in paysDict.keys():

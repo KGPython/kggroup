@@ -70,7 +70,7 @@
                     <h4 class="text-center">集团售卡销售汇总</h4>
                     <h5 class="text-right" style="overflow: hidden">
                         <span class="red pull-left">金额单位：元</span>
-                        <span class="red pull-left" style="margin-left: 30px" >赊销：（到帐|未到帐）</span>
+{#                        <span class="red pull-left" style="margin-left: 30px" >赊销：（到帐|未到帐）</span>#}
                         <span class="pull-right">销售合计=现金+代金券+汇款+赊账未到账+Pos+移动+美团+糯米+慧购线上+慧购线下</span>
                     </h5>
                     <div class="widget-content nopadding" style="overflow-x: auto">
@@ -147,7 +147,7 @@
 
                                     <td class="saleCol">
                                         <a href="{% url 'report_card_noPay_order' %}?shop={{ row.shop_code }}&start={{ start }}&end={{ end }}">
-                                            {{ row.pay_4_1 | floatformat:2 | default:0 }}|<span class="red">{{ row.pay_4_0 | floatformat:2 | default:0 }}</span>
+                                            {% comment %}{{ row.pay_4_1 | floatformat:2 | default:0 }}|{% endcomment %}<span class="red">{{ row.pay_4_0 | floatformat:2 | default:0 }}</span>
                                         </a>
                                     </td>
 
@@ -196,7 +196,6 @@
                                 <td>{{ totalDict.total_3 | floatformat:2 }}</td>
                                 <td>{{ totalDict.total_5 | floatformat:2 }}</td>
                                 <td>
-                                    {{ totalDict.total_4_1 | floatformat:2 }} |
                                     <span class="red">{{ totalDict.total_4_0 | floatformat:2 }}</span>
                                 </td>
                                 <td>{{ totalDict.total_6 | floatformat:2 }}</td>

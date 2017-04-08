@@ -85,7 +85,7 @@
                                     <td><input class='form-control' disabled="disabled" value="{{ row.buyer_name }}"></td>
                                     <td><input class='form-control' disabled="disabled" value="{{ row.buyer_tel }}"></td>
                                     <td>
-                                        <a href="{% url 'noPayOrdinaryDetail' %}?orderSn={{ row.order_sn }}&type=sale" class="btn btn-danger btn-xs btn-enter">标记到账</a>
+                                        <a href="{% url 'noPayOrdinaryDetail' %}?orderSn={{ row.order_sn }}&type={{ row.pay_id }}" class="btn btn-danger btn-xs btn-enter">标记到账</a>
                                     </td>
                                 </tr>
                             {% endfor %}

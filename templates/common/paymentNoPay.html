@@ -1,121 +1,146 @@
-<div class="widget-box payment">
-    <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
-        <h5>支付管理</h5>
-    </div>
-    <div class="widget-content nopadding">
-        <table class="table table-striped table-hover table-form-my">
-            <thead>
-                <tr>
-                    <th>选择</th>
-                    <th>支付方式</th>
-                    <th>支付额度</th>
-                    <th>备注</th>
-                </tr>
-            </thead>
-            <tbody class="payList">
-                <tr>
-                    <td><input value="1" type="checkbox"></td>
-                    <td><input type='text' class='form-control payName' value="现金" disabled></td>
-                    <td><input type='text' class='form-control payVal'></td>
-                    <td><input type='text' class='form-control'></td>
-                </tr>
+{% if type == '4' %}
+    <div class="widget-box payment">
+        <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+            <h5>支付管理</h5>
+        </div>
+        <div class="widget-content nopadding">
+            <table class="table table-striped table-hover table-form-my">
+                <thead>
+                    <tr>
+                        <th>选择</th>
+                        <th>支付方式</th>
+                        <th>支付额度</th>
+                        <th>备注</th>
+                    </tr>
+                </thead>
+                <tbody class="payList">
+                    <tr>
+                        <td><input value="1" type="checkbox"></td>
+                        <td><input type='text' class='form-control payName' value="现金" disabled></td>
+                        <td><input type='text' class='form-control payVal'></td>
+                        <td><input type='text' class='form-control'></td>
+                    </tr>
 
-                <tr>
-                    <td><input value="3" type="checkbox" id="bank"></td>
-                    <td><input type='text' class='form-control payName' value="汇款" disabled></td>
-                    <td><input type='text' class='form-control payVal'></td>
-                    <td><input type='text' class='form-control'></td>
-                </tr>
-                <tr>
-                    <td><input value="5" type="checkbox"></td>
-                    <td><input type='text' class='form-control payName' value="POS消费" disabled></td>
-                    <td><input type='text' class='form-control payVal'></td>
-                    <td><input type='text' class='form-control'></td>
-                </tr>
-            </tbody>
-        </table>
+                    <tr>
+                        <td><input value="3" type="checkbox" id="bank"></td>
+                        <td><input type='text' class='form-control payName' value="汇款" disabled></td>
+                        <td><input type='text' class='form-control payVal'></td>
+                        <td><input type='text' class='form-control'></td>
+                    </tr>
+                    <tr>
+                        <td><input value="5" type="checkbox"></td>
+                        <td><input type='text' class='form-control payName' value="POS消费" disabled></td>
+                        <td><input type='text' class='form-control payVal'></td>
+                        <td><input type='text' class='form-control'></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
-<div style="display: none; padding-right: 17px; background: rgba(0,0,0,0.5)" class="modal" id="bankBox">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel">
-                   汇款到帐信息
-                </h4>
-            </div>
-            <div class="modal-body widget-content">
-                <table class="table table-striped table-form-my">
-                    <tbody>
-                        <tr>
-                            <td>银行名称</td>
-                            <td><input type="text" class='form-control' id="bankName"></td>
-                        </tr>
-                        <tr>
-                            <td>到帐账户</td>
-                            <td><input type="text" class='form-control' id="bankSn"></td>
-                        </tr>
-                        <tr>
-                            <td>汇款单位</td>
-                            <td><input type="text" class='form-control' id="payCompany"></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" id="close">取消</button>
-                <button type="button" class="btn btn-primary" id="submit">提交</button>
+    <div style="display: none; padding-right: 17px; background: rgba(0,0,0,0.5)" class="modal" id="bankBox">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">
+                       汇款到帐信息
+                    </h4>
+                </div>
+                <div class="modal-body widget-content">
+                    <table class="table table-striped table-form-my">
+                        <tbody>
+                            <tr>
+                                <td>银行名称</td>
+                                <td><input type="text" class='form-control' id="bankName"></td>
+                            </tr>
+                            <tr>
+                                <td>到帐账户</td>
+                                <td><input type="text" class='form-control' id="bankSn"></td>
+                            </tr>
+                            <tr>
+                                <td>汇款单位</td>
+                                <td><input type="text" class='form-control' id="payCompany"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" id="close">取消</button>
+                    <button type="button" class="btn btn-primary" id="submit">提交</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
-
-<script>
-$('.payList #bank').click(function(){
-    var flag = $(this).is(':checked');
-    if(flag){
-        $('#bankBox').show()
-    }
-});
-$('.modal-footer #submit').click(function(){
-    var bankName = $('#bankName').val();
-    var bankSn = $('#bankSn').val();
-    var payCompany = $('#payCompany').val();
-    if(!bankName||!bankSn||!payCompany){
-        alert('请补全信息后提交');
-    }else{
-        $('#bankBox').hide()
-    }
-});
-$('.modal-footer #close').click(function(){
-    $('.payList #bank').prop('checked',false);
-    $('#bankBox').hide()
-});
-
-//计算混合支付的合计金额
-$(document).on('blur','.payList .payVal,.payList input:checkbox,.payList .remark',function(){
-    palyList = $('.payList').find('tr');
-    var totalStr = '';
-    var payTotal=0;
-    for(var i=0;i<palyList.length;i++){
-        var checkBox = $(palyList[i]).find('td').eq(0).find('input')[0];
-        var flag = $(checkBox).is(':checked');
-        var payVal= $(palyList[i]).find('td').eq(2).find('input').val();
-        if(flag && payVal){
-            //获取支付ID
-            var payName = $(palyList[i]).find('td').eq(1).find('input').val();
-            totalStr += payName +' : '+payVal+'元 ';
-            remarks = $(palyList[i]).find('td').eq(3).find('input').val();
-            if(remarks){
-                totalStr += '(备注：'+remarks+'), ';
-            }else{
-                totalStr += ', ';
+    <script>
+        $('.payList #bank').click(function(){
+            var flag = $(this).is(':checked');
+            if(flag){
+                $('#bankBox').show()
             }
-            payTotal +=parseFloat(payVal);
-        }
-    }
-    $('.Total #payInfo span').html(totalStr);
-    $('.Total #payTotal b').html(payTotal)
-});
+        });
+        $('.modal-footer #submit').click(function(){
+            var bankName = $('#bankName').val();
+            var bankSn = $('#bankSn').val();
+            var payCompany = $('#payCompany').val();
+            if(!bankName||!bankSn||!payCompany){
+                alert('请补全信息后提交');
+            }else{
+                $('#bankBox').hide()
+            }
+        });
+        $('.modal-footer #close').click(function(){
+            $('.payList #bank').prop('checked',false);
+            $('#bankBox').hide()
+        });
 
-</script>
+        //计算混合支付的合计金额
+        $(document).on('blur','.payList .payVal,.payList input:checkbox,.payList .remark',function(){
+            palyList = $('.payList').find('tr');
+            var totalStr = '';
+            var payTotal=0;
+            for(var i=0;i<palyList.length;i++){
+                var checkBox = $(palyList[i]).find('td').eq(0).find('input')[0];
+                var flag = $(checkBox).is(':checked');
+                var payVal= $(palyList[i]).find('td').eq(2).find('input').val();
+                if(flag && payVal){
+                    //获取支付ID
+                    var payName = $(palyList[i]).find('td').eq(1).find('input').val();
+                    totalStr += payName +' : '+payVal+'元 ';
+                    remarks = $(palyList[i]).find('td').eq(3).find('input').val();
+                    if(remarks){
+                        totalStr += '(备注：'+remarks+'), ';
+                    }else{
+                        totalStr += ', ';
+                    }
+                    payTotal +=parseFloat(payVal);
+                }
+            }
+            $('.Total #payInfo span').html(totalStr);
+            $('.Total #payTotal b').html(payTotal)
+        });
+    </script>
+{% elif type == '5' %}
+   <div class="widget-box payment">
+        <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+            <h5>汇款到帐信息</h5>
+        </div>
+        <div class="widget-content nopadding">
+            <table class="table table-striped table-form-my">
+                <tbody>
+                    <tr>
+                        <td>银行名称</td>
+                        <td><input type="text" class='form-control' id="bankName"></td>
+                    </tr>
+                    <tr>
+                        <td>到帐账户</td>
+                        <td><input type="text" class='form-control' id="bankSn"></td>
+                    </tr>
+                    <tr>
+                        <td>汇款单位</td>
+                        <td><input type="text" class='form-control' id="payCompany"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+   </div>
+{% endif %}
+

@@ -133,8 +133,8 @@ def index(request):
                     if sale['pay_id'] == 4 and sale['is_pay'] == '0':
                         item['pay_4_0'] += float(sale['pay_value'])
                         item['inSub'] += float(sale['pay_value'])
-                    if sale['change_time']:
-                        item['pay_4_1'] += float(sale['pay_value'])
+                    # if sale['change_time']:
+                    #     item['pay_4_1'] += float(sale['pay_value'])
                     if sale['pay_id'] == 5:
                         item['pay_5'] += float(sale['pay_value'])
                         item['inSub'] += float(sale['pay_value'])
@@ -240,7 +240,7 @@ def index(request):
             totalDict['total_2'] += item['pay_2']
             totalDict['total_3'] += item['pay_3']
             totalDict['total_4_0'] += item['pay_4_0']
-            totalDict['total_4_1'] += item['pay_4_1']
+            # totalDict['total_4_1'] += item['pay_4_1']
             totalDict['total_5'] += item['pay_5']
             totalDict['total_6'] += item['pay_6']
             totalDict['total_7'] += item['pay_7']

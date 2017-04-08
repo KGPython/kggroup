@@ -107,7 +107,8 @@
     });
 
 </script>
-<script>
+    {% if type == '4' %}
+        <script>
     $(document).on('click','#btn-enter',function(){
         var orderSn = '{{ orderSn | safe }}';
         var date = $('#date').val();
@@ -151,4 +152,7 @@
         }
     })
 </script>
+    {% elif type == '5' %}
+
+    {% endif %}
 {% endblock %}
