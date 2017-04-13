@@ -24,21 +24,21 @@ def order(request):
     saleList = cur.fetchall()
     saleData,saleTotalPay,saleTotalNoPay= mergeData(saleList)
 
-    #换卡数据
-    changeSql = 'select a.order_sn,b.pay_id,b.pay_value,b.change_time,b.bank_name,b.bank_sn,b.pay_company,b.is_pay ' \
-                'from order_change_card as a , order_change_card_payment as b ' \
-                'where a.add_time>="{start}" and a.add_time<="{end}" and a.shop_code ="{shop}" and a.order_sn = b.order_id and (ISNULL(b.change_time) is FALSE or b.pay_id=4) ' \
-                'order by b.is_pay,a.order_sn' \
-                .format(start=start, end=endTime, shop=shop)
-    cur.execute(changeSql)
-    changeList = cur.fetchall()
-    cur.close()
-    conn.close()
-    changeData,changeTotalPay,changeTotalNoPay = mergeData(changeList)
+    # #换卡数据
+    # changeSql = 'select a.order_sn,b.pay_id,b.pay_value,b.change_time,b.bank_name,b.bank_sn,b.pay_company,b.is_pay ' \
+    #             'from order_change_card as a , order_change_card_payment as b ' \
+    #             'where a.add_time>="{start}" and a.add_time<="{end}" and a.shop_code ="{shop}" and a.order_sn = b.order_id and (ISNULL(b.change_time) is FALSE or b.pay_id=4) ' \
+    #             'order by b.is_pay,a.order_sn' \
+    #             .format(start=start, end=endTime, shop=shop)
+    # cur.execute(changeSql)
+    # changeList = cur.fetchall()
+    # cur.close()
+    # conn.close()
+    # changeData,changeTotalPay,changeTotalNoPay = mergeData(changeList)
 
-    data = saleData+changeData
-    totalPay = saleTotalPay + changeTotalPay
-    totalNoPay = saleTotalNoPay + changeTotalNoPay
+    data = saleData
+    totalPay = saleTotalPay
+    totalNoPay = saleTotalNoPay
     data = sorted(data,key=itemgetter('is_pay','order_sn'),reverse=True)
     return render(request, 'report/card/nopay/order.html', locals())
 
