@@ -135,6 +135,7 @@ def save(request):
             with transaction.atomic():
                 CardInventory.objects.filter(is_store=1,
                                              shop_code=shop_code,
+                                             username=None,
                                              card_no__gte=start_no,
                                              card_no__lte=end_no).update(username=name)
 
