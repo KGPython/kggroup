@@ -81,6 +81,7 @@ class CardInventory(models.Model):
     order_sn = models.CharField(max_length=32, blank=True, null=True)
     sheetid = models.CharField(max_length=32, blank=True, null=True)
     is_store = models.SmallIntegerField()
+    username = models.CharField(max_length=16)
 
     class Meta:
         managed = False

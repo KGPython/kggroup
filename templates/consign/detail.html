@@ -1,0 +1,96 @@
+{% extends 'common/baseForSys.html' %}
+{% block title %}用户管理{% endblock %}
+{% block content %}<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb">
+            <a data-original-title="Go to Home" href="#" title="" class="tip-bottom">
+                <span class="glyphicon glyphicon-home" aria-hidden="true"> </span> 首页
+            </a>
+            <a href="#" class="">系统管理</a>
+            <a href="#" class="current">用户管理--用户信息</a>
+        </div>
+    </div>
+    <div class="widget-box">
+        <div class="widget-content nopadding">
+            <div class="collapse in widget-content">
+                <form action="{% url 'userManageSave' %}" method="post" id="form">
+                    {% csrf_token %}
+                    <div class="row formline">
+                        <label for="name" class="col-md-1 formline-label">分配人：</label>
+                        <div class="col-md-2">
+                            <select name="name" id="name" class="form-control" required="required">
+                                {% for item in userList %}
+                                    <option value="{{ item.username }}">{{ item.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row formline">
+                        <label for="start_no" class="col-md-1 formline-label">号段开始：</label>
+                        <div class="col-md-2">
+                            <input name="start_no" id="start_no" type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row formline">
+                        <label for="end_no" class="col-md-1 formline-label">号段结束：</label>
+                        <div class="col-md-2">
+                            <input name="end_no" id="end_no" type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row formline">
+                        <div class="col-md-1">
+                            <input id="post-token" type="hidden" value="{{ token }}">
+                            <button type="button" class="btn btn-info enter-btn pull-right" id="btn_save">提交</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+    $('#btn_save').click(function () {
+        var data = {
+            csrfmiddlewaretoken: CSRF,
+            'name':$('#name').val(),
+            'start_no':$('#start_no').val(),
+            'end_no':$('#end_no').val(),
+            'postToken':$('#post-token').val()
+        };
+        //提交数据
+        doAjaxSave('{% url 'allocate_save' %}',data)
+    });
+ function doAjaxSave(url,data){
+    $("#btn_save").attr('disabled',true);
+    $.ajax({
+        url:url,
+        type:'post',
+        dataType:'json',
+        data:data,
+        success:function(data){
+            $("#btn_save").removeAttr('disabled');
+            if(data.status==1){
+                alert('提交成功');
+                window.location.reload(true);
+                if(data.urlRedirect){
+                    window.location.href=data.urlRedirect;
+                }
+            }else if(data.status==0){
+                if(data.msg){
+                    alert(data.msg);
+                }else{
+                    alert('提交失败');
+                }
+            }
+        },
+        error:function(XMLHttpRequest, textStatus, errorThrown){
+             $("#btn_save").removeAttr('disabled');
+            alert('提交失败,失败原因：'+errorThrown);
+        }
+    })
+}
+</script>
+{% endblock %}
