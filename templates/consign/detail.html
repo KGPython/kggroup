@@ -72,18 +72,14 @@
         data:data,
         success:function(data){
             $("#btn_save").removeAttr('disabled');
-            if(data.status==1){
+            if(data.msg==1){
                 alert('提交成功');
                 window.location.reload(true);
                 if(data.urlRedirect){
                     window.location.href=data.urlRedirect;
                 }
-            }else if(data.status==0){
-                if(data.msg){
-                    alert(data.msg);
-                }else{
-                    alert('提交失败');
-                }
+            }else if(data.msg==0){
+                alert('提交失败');
             }
         },
         error:function(XMLHttpRequest, textStatus, errorThrown){
