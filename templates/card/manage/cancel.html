@@ -25,10 +25,6 @@
         </form>
         <div class="row formline" id="cardInfo" style="display:none">
             <div class="widget-box">
-                <div class="widget-content nopadding" style="overflow: hidden">
-                    <div class="row formline">
-                        <label for="" class="col-md-1 formline-label">发行门店：</label>
-                        <div class="col-md-2">
                             <input type="text" class="form-control" readonly
                                    value="{{ data_info.0.shop_code }}">
                         </div>
@@ -39,6 +35,10 @@
                                    value="{{ card_no }}">
                         </div>
 
+                <div class="widget-content nopadding" style="overflow: hidden">
+                    <div class="row formline">
+                        <label for="" class="col-md-1 formline-label">发行门店：</label>
+                        <div class="col-md-2">
                         <label for="" class="col-md-1 formline-label">卡面值：</label>
                         <div class="col-md-2">
                             <input type="text" class="form-control" readonly value="{{ data_info.0.card_blance }}">
