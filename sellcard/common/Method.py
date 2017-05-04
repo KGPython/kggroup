@@ -330,3 +330,16 @@ def getPayDiscDict():
     payDiscDict = {str(pay['id']): pay['dis_rate'] for pay in payDisc if pay['dis_rate']}
     return payDiscDict
 
+def getPrevPageNum(resList):
+    if resList.number > 1:
+        page_up = resList.previous_page_number
+    else:
+        page_up = 1
+    return page_up
+
+def getNextPageNum(resList):
+    if resList.number < resList.paginator.num_pages:
+        page_down = resList.next_page_number
+    else:
+        page_down = resList.paginator.num_pages
+    return page_down

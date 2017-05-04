@@ -44,7 +44,7 @@ def index(request):
         shop = mth.getReqVal(request, 'shop', '')
         personList = AdminUser.objects.values('id', 'name').exclude(role_id__in=('7','8','9'))
 
-    if role in ('2','10'):
+    elif role in ('2','10'):
         shop = shop
         personList = AdminUser.objects.values('id', 'name').filter(shop_code=shop)
     end2 = datetime.datetime.strptime(end,'%Y-%m-%d')+datetime.timedelta(1)
