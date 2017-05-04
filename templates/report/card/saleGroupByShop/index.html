@@ -158,17 +158,17 @@
                                     </td>
                                     <td class="saleCol">
                                         <a href="{% url 'saleGroupByShopDet' %}?shop={{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=7">
-                                            {{ row.pay_7 | floatformat:2 | default:0 }}
+                                            {{ row.pay_7 | subtract:row.disc_7 | floatformat:2 | default:0 }}
                                         </a>
                                     </td>
                                     <td class="saleCol">
                                         <a href="{% url 'saleGroupByShopDet' %}?shop{{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=8">
-                                            {{ row.pay_8 | floatformat:2 | default:0 }}
+                                            {{ row.pay_8 | subtract:row.disc_8  | floatformat:2 | default:0 }}
                                         </a>
                                     </td>
                                     <td class="saleCol">
                                         <a href="{% url 'saleGroupByShopDet' %}?shop{{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=10">
-                                            {{ row.pay_10 | floatformat:2 | default:0 }}
+                                            {{ row.pay_10 | subtract:row.disc_10  | floatformat:2 | default:0 }}
                                         </a>
                                     </td>
                                     <td class="saleCol">
@@ -176,7 +176,7 @@
                                             {{ row.pay_11 | floatformat:2 | default:0 }}
                                         </a>
                                     </td>
-                                    <td class="saleTotal">{{ row.inSub | floatformat:2 | default:0 }}</td>
+                                    <td class="saleTotal">{{ row.inSub | subtract:row.disc_7 | subtract:row.disc_8 | subtract:row.disc_10 | floatformat:2 | default:0 }}</td>
 
                                     <td>{% if inSubTotal != '0' %}{{ row.inSub | divide:totalDict.inSubTotal }}{% endif %}</td>
                                 </tr>
@@ -199,11 +199,11 @@
                                     <span class="red">{{ totalDict.total_4_0 | floatformat:2 }}</span>
                                 </td>
                                 <td>{{ totalDict.total_6 | floatformat:2 }}</td>
-                                <td>{{ totalDict.total_7 | floatformat:2 }}</td>
-                                <td>{{ totalDict.total_8 | floatformat:2 }}</td>
-                                <td>{{ totalDict.total_10 | floatformat:2 }}</td>
+                                <td>{{ totalDict.total_7 | subtract:totalDict.total_disc_7  | floatformat:2 }}</td>
+                                <td>{{ totalDict.total_8 | subtract:totalDict.total_disc_8  | floatformat:2 }}</td>
+                                <td>{{ totalDict.total_10 | subtract:totalDict.total_disc_10  | floatformat:2 }}</td>
                                 <td>{{ totalDict.total_11 | floatformat:2 }}</td>
-                                <td>{{ totalDict.inSubTotal | floatformat:2 }}</td>
+                                <td>{{ totalDict.inSubTotal | subtract:totalDict.total_disc_7  | subtract:totalDict.total_disc_8  | subtract:totalDict.total_disc_10  | floatformat:2 }}</td>
 
                                 <td></td>
                             </tr>

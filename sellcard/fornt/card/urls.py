@@ -66,6 +66,9 @@ urlpatterns = [
     url(r'^cardmanage/allocationsave/', 'sellcard.fornt.card.cardManage.cardAllocation.allocationSave',
         name='allocationSave'),
     url(r'^cardmanage/status/$','sellcard.fornt.card.cardManage.changeStatus.statusTo1',name='statusTo1'),
+    # 卡注销
+    url(r'^cardmanage/cardcancel/$', 'sellcard.fornt.card.cardManage.cancel.index', name='cardcancel'),
+    url(r'^cardmanage/cardcancel/save', 'sellcard.fornt.card.cardManage.cancel.save', name='cardcancelsave'),
     ################################################# 卡管理 end ###############################################
 
     ###########################################  返点折扣授权码 start ##############################################

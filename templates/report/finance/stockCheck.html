@@ -72,6 +72,7 @@
                                     <th rowspan="2">返卡</th>
                                     <th rowspan="2">期末库存</th>
                                     <th rowspan="2">借卡未结算</th>
+                                    <th rowspan="2">移动积分</th>
                                     <th rowspan="2">赊销未到账</th>
                                 </tr>
                                 <tr>
@@ -79,7 +80,7 @@
                                     <th>POS</th>
                                     <th>汇款</th>
                                     <th>代金券（换卡）</th>
-                                    <th>移动积分（第三方）</th>
+                                    <th>第三方付款</th>
                                     <th>借卡已结算</th>
                                 </tr>
                             </thead>
@@ -100,6 +101,7 @@
                                         <td>{{ row.disc }}</td>
                                         <td>{{ row.end_stock }}</td>
                                         <td>{{ row.borrow_not }}</td>
+                                        <td>{{ row.move_integral }}</td>
                                         <td>{{ row.credit_not }}</td>
                                     </tr>
                                 {% endfor %}

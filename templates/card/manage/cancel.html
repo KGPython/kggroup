@@ -1,0 +1,104 @@
+{% extends 'common/baseForJobs.html' %}
+{% block title %}卡注销页面{% endblock %}
+{% block content %}
+    <div id="content" data-module="cardStore_zero">
+        <div id="content-header">
+            <div id="breadcrumb">
+                <a data-original-title="Go to Home" href="#" title="" class="tip-bottom">
+                    <span class="glyphicon glyphicon-home" aria-hidden="true"> </span> 首页
+                </a>
+                <a href="#" class="">卡管理</a>
+                <a href="#" class="current">卡注销页面</a>
+            </div>
+        </div>
+        <form action="{% url 'cardcancel' %}" method="post" id="form">
+            {% csrf_token %}
+            <div class="enter-box" id="div_query">
+                <input type="hidden" id="post-token" value="{{ token }}">
+                <label for="card_no" class="col-md-2 formline-label">待注销卡号：</label>
+                <div class="col-md-2">
+                    <input type="text" class="form-control" name="card_no" id="card_no" required
+                           value="{{ card_no }}">
+                </div>
+                <button class="btn btn-success pull-right" type="button" id="btn_query">查询</button>
+            </div>
+        </form>
+        <div class="row formline" id="cardInfo" style="display:none">
+            <div class="widget-box">
+                <div class="widget-content nopadding" style="overflow: hidden">
+                    <div class="row formline">
+                        <label for="" class="col-md-1 formline-label">发行门店：</label>
+                        <div class="col-md-2">
+                            <input type="text" class="form-control" readonly
+                                   value="{{ data_info.0.shop_code }}">
+                        </div>
+
+                        <label for="" class="col-md-1 formline-label">卡号：</label>
+                        <div class="col-md-2">
+                            <input type="text" class="form-control" readonly
+                                   value="{{ card_no }}">
+                        </div>
+
+                        <label for="" class="col-md-1 formline-label">卡面值：</label>
+                        <div class="col-md-2">
+                            <input type="text" class="form-control" readonly value="{{ data_info.0.card_blance }}">
+                        </div>
+                    </div>
+                    <div class="row formline">
+                        <div class="col-md-5">
+                        </div>
+                        <div class="col-md-1">
+                            <button type="button" class="btn btn-warning pull-right" id="btn-enter">
+                                确认注销
+                            </button>
+                        </div>
+                        <div class="col-md-1">
+                            <button type="button" class="btn btn-info pull-right" id="btn_close">
+                                取消
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        var msg = {{ msg }};
+        if (msg == 1) {
+            alert('查无此卡号');
+        }
+        if (msg == 2) {
+            alert('此卡该账户不可操作');
+        }
+        if (msg == 3) {
+            $('#div_query').hide();
+            $('#cardInfo').show();
+        }
+    </script>
+    <script>
+        $('#btn_query').click(function () {
+            var card_no = $('#card_no').val();
+            if (!card_no) {
+                alert('请输入卡号');
+                return false;
+            }
+            $('#form').submit();
+        });
+        $(document).on('click', '#btn-enter', function () {
+            var url = "{% url 'cardcancelsave' %}";
+            data = {
+                csrfmiddlewaretoken: CSRF,
+                'card_no': $('#card_no').val(),
+                'postToken': $('#post-token').val()
+            };
+            doAjaxSave(url, data);
+        });
+        $('#btn_close').click(function () {
+            window.location("{% url 'cardcancel' %}");
+        });
+    </script>
+
+{% endblock %}
