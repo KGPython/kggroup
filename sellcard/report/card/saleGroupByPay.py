@@ -30,7 +30,6 @@ def index(request):
             shopsCodeStr = "'" + "','".join(shopsCode) + "'"
             whereStr += " AND a.shop_code IN (" + shopsCodeStr + ")"
 
-
         sql = "SELECT b.pay_id,SUM(b.pay_value) AS pay_value FROM orders as a,order_payment_info as b "+whereStr+" GROUP BY b.pay_id ORDER BY b.pay_id"
         cur.execute(sql)
         payList = cur.fetchall()

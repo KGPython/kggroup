@@ -18,14 +18,19 @@ def index(request):
 
     today = str(datetime.date.today())
     shops = []
-    users = AdminUser.objects.values('id', 'name').filter(role_id__in=('2', '3','5')).order_by('shop_code')
+    users = AdminUser.objects.values('id', 'name','is_enable').filter(role_id__in=('2', '3','5'))
     if role_id in ('1','6'):
         shops = mth.getCityShopsCode()
     if role_id == '9':
         shops = mth.getCityShopsCode('T')
     if role_id == '8':
         shops = mth.getCityShopsCode('C')
+    elif role_id in ('3', '5'):
+        shopcode = s_shop
+        depart = s_depart
+        operator = s_user
     personList = users.filter(shop_code__in=shops)
+    personList = sorted(personList, key=lambda p: p["name"].encode('gb2312'))
     departs = base.findDepart()
 
     if request.method == 'POST':
