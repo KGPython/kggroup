@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 __author__ = 'qixu'
-import json
+import datetime,json
 
 from django import forms
 from django.core.exceptions import ObjectDoesNotExist
@@ -90,7 +90,7 @@ def detail(request):
     user_id = mth.getReqVal(request, 'user_id', '')
     user_info = []
     if user_id != '':
-        user_info = AdminUser.objects.values('user_name', 'name', 'shop_code', 'depart', 'role_id').get(id=user_id)
+        user_info = AdminUser.objects.values('user_name', 'name', 'shop_code', 'depart', 'role_id', 'is_enable').get(id=user_id)
 
     return render(request, 'system/user/Detail.html', locals())
 
@@ -120,6 +120,7 @@ def save(request):
         shop_code = request.POST.get('shop_code')
         depart = request.POST.get('depart')
         role_id = request.POST.get('role')
+        is_enable = request.POST.get('is_enable')
 
         if user_id == '':
             flag = IsExist(user_name)
@@ -131,6 +132,11 @@ def save(request):
         shop_id = None
         if shop_code != '':
             shop_id = Shops.objects.values('id').get(shop_code=shop_code)['id']
+
+        valid_date=None
+        if is_enable == '1':
+            valid_date = datetime.datetime.now()
+
         try:
             with transaction.atomic():
                 if user_id == '':
@@ -140,7 +146,9 @@ def save(request):
                                                          shop_id=shop_id,
                                                          shop_code=shop_code,
                                                          depart=depart,
-                                                         role_id=role_id)
+                                                         role_id=role_id,
+                                                         is_enable=is_enable,
+                                                         valid_date=valid_date)
 
 
                     if  not createNum.id:
@@ -151,7 +159,9 @@ def save(request):
                                 shop_id=shop_id,
                                 shop_code=shop_code,
                                 depart=depart,
-                                role_id=role_id)
+                                role_id=role_id,
+                                is_enable=is_enable,
+                                valid_date=valid_date)
 
                     if updataNum != 1:
                         raise MyError('修改用户失败！')

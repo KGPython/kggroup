@@ -38,6 +38,8 @@ class AdminUser(models.Model):
     last_login = models.DateTimeField(blank=True, null=True)
     last_ip = models.CharField(max_length=15,blank=True, null=True)
     role_id = models.CharField(max_length=11)
+    is_enable = models.CharField(max_length=1, blank=True)
+    valid_date = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         managed = False

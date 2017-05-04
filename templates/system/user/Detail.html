@@ -70,6 +70,15 @@
                         </div>
                     </div>
                     <div class="row formline">
+                        <label for="" class="col-md-1 formline-label">是否禁用：</label>
+                        <div class="col-md-2">
+                            <select name="is_enable" id="is_enable" class="form-control" required="required">
+                                <option value="0">可用</option>
+                                <option value="1">禁用</option>
+                            </select>
+                        </div>is_enable
+                    </div>
+                    <div class="row formline">
                         <div class="col-md-1">
                             <input id="post-token" type="hidden" value="{{ token }}">
                             <button type="button" class="btn btn-info enter-btn pull-right" id="btn_save">提交</button>
@@ -87,6 +96,7 @@
     $("#shop_code").val('{{ user_info.shop_code }}');
     $("#depart").val('{{ user_info.depart }}');
     $("#role").val('{{ user_info.role_id }}');
+    $("#is_enable").val('{{ user_info.is_enable }}');
 </script>
 <script type="text/javascript">
     $('#btn_save').click(function () {
@@ -108,6 +118,7 @@
             'shop_code':$('#shop_code').val(),
             'depart':$('#depart').val(),
             'role':role,
+            'is_enable':$('#is_enable').val(),
             'postToken':$('#post-token').val()
         };
         //提交数据
