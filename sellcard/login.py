@@ -30,7 +30,7 @@ def login(request):
     try:
         if vcode == vcode2:
             # 查询用户信息
-            user = AdminUser.objects.get(user_name=user_name)
+            user = AdminUser.objects.get(user_name=user_name,is_enable='0')
             upwd = user.password
             password = mtu.md5(password)
             shop_code=user.shop_code

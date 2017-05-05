@@ -70,13 +70,13 @@
                                     {% if role_id == '1' or  role_id == '2' or role_id == '6' or role_id == '8' or role_id == '9'%}
                                         <select name="operator" id="operator" class="form-control">
                                             <option value="">全部</option>
-                                            {% for person in personList %}
-                                                <option value="{{ person.id }}">{{ person.name }}</option>
+                                            {% for p in personList %}
+                                                <option value="{{ p.id }}" {% if p.is_enable == '1' %}class="red"{% endif %}>{{ p.name }}</option>
                                             {% endfor %}
                                         </select>
                                     {% else %}
                                         <input name="operator" id="operator" type="hidden" value="{{ operator }}">
-                                        <input value="{{ user_id | transUserId}}" class="form-control" disabled>
+                                        <input value="{{ operator | transUserId}}" class="form-control" disabled>
                                     {% endif %}
                                 </div>
                             </div>
