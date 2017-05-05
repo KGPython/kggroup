@@ -41,7 +41,7 @@
                                     </div>
                                 </div>
 
-                                {% if role == '1' or role == '6' or role == '8' or role == '9'  %}
+                                {% if s_role == '1' or s_role == '6' or s_role == '8' or s_role == '9'  %}
                                 <label for="" class="col-md-2 col-lg-1 formline-label">门店：</label>
                                 <div class="col-md-4 col-lg-1">
                                     <select name="shop" id="shop" class="form-control">
@@ -55,16 +55,16 @@
 
                                 <label for="" class="col-md-2 col-lg-1 formline-label">售卡人：</label>
                                 <div class="col-md-4 col-lg-1">
-                                    {% if role == '1' or role == '2' or role == '6' or role == '8' or role == '9'  or role == '10' %}
+                                    {% if s_role == '1' or s_role == '2' or s_role == '6' or s_role == '8' or s_role == '9'  or s_role == '10' %}
                                     <select name="operator" id="operator" class="form-control">
                                         <option value="">全部</option>
                                         {% for person in personList %}
                                             <option value="{{ person.id }}">{{ person.name }}</option>
                                         {% endfor %}
                                     </select>
-                                    {% elif role == '3' or role == '5' %}
+                                    {% elif s_role == '3' or s_role == '5' %}
                                         <input name="operator" id="operator" type="hidden" value="{{ user }}">
-                                        <input value="{{ user | transUserId }}" class="form-control" disabled>
+                                        <input value="{{ s_user | transUserId }}" class="form-control" disabled>
                                     {% endif %}
                                 </div>
                                 <div class="col-md-12 col-lg-1">
