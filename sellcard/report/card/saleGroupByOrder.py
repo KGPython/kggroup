@@ -17,14 +17,18 @@ def index(request):
     s_user = request.session.get('s_uid')
 
     today = str(datetime.date.today())
+    start = end = today
+    actionType = 1
     shops = []
     users = AdminUser.objects.values('id', 'name','is_enable').filter(role_id__in=('2', '3','5'))
     if role_id in ('1','6'):
         shops = mth.getCityShopsCode()
-    if role_id == '9':
+    elif role_id == '9':
         shops = mth.getCityShopsCode('T')
-    if role_id == '8':
+    elif role_id == '8':
         shops = mth.getCityShopsCode('C')
+    elif role_id in ('2', '10'):
+        shops = [s_shop]
     elif role_id in ('3', '5'):
         shopcode = s_shop
         depart = s_depart
