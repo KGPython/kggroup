@@ -1,4 +1,4 @@
-__author__ = 'admin'
+#__author__ = 'admin'
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.db import transaction
