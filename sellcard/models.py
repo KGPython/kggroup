@@ -500,6 +500,21 @@ class OrderPaymentInfo(models.Model):
         db_table = 'order_payment_info'
 
 
+class OrderPaymentCredit(models.Model):
+    order_id = models.CharField(max_length=20)
+    pay_id = models.IntegerField()
+    pay_value = models.DecimalField(max_digits=11, decimal_places=2)
+    change_time = models.DateTimeField(blank=True, null=True)
+    bank_name = models.CharField(max_length=12, blank=True, null=True)
+    bank_sn = models.CharField(max_length=25, blank=True, null=True)
+    pay_company = models.CharField(max_length=15, blank=True, null=True)
+    remarks = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'order_payment_credit'
+
+
 class OrderUpCard(models.Model):
     order_sn = models.CharField(unique=True, max_length=20)
     action_type = models.CharField(max_length=1)

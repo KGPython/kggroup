@@ -5,7 +5,7 @@ from django.db import transaction
 from sellcard.common import Method as mth
 
 import datetime,json
-from sellcard.models import OrderPaymentInfo,OrderChangeCardPayment
+from sellcard.models import OrderPaymentInfo,OrderChangeCardPayment,OrderPaymentCredit
 
 def index(request):
     if request.method == 'POST':
@@ -60,9 +60,19 @@ def save(request):
         with transaction.atomic():
             for orderSn in orderSnList:
                 if orderSn.find('S')==0:
-                    OrderPaymentInfo.objects.filter(order_id=orderSn,pay_id=6,is_pay=0).update(pay_id=3,change_time=date,is_pay=1)
+                    #OrderPaymentInfo.objects.filter(order_id=orderSn,pay_id=6,is_pay=0).update(pay_id=3,change_time=date,is_pay=1)
+                    GetPayment = OrderPaymentInfo.objects.get(order_id=orderSn, pay_id=6, is_pay=0)
+                    OrderPaymentCredit \
+                        .objects \
+                        .create(order_id=orderSn, pay_id=3, pay_value=GetPayment['pay_value'], change_time=date)
+                    OrderPaymentInfo.objects.filter(order_id=orderSn, pay_id=6, is_pay=0).update(change_time=date, is_pay=1)
                 elif orderSn.find('C')==0:
-                    OrderChangeCardPayment.objects.filter(order_id=orderSn,pay_id=6,is_pay=0).update(pay_id=3,change_time=date,is_pay=1)
+                    #OrderChangeCardPayment.objects.filter(order_id=orderSn,pay_id=6,is_pay=0).update(pay_id=3,change_time=date,is_pay=1)
+                    GetPayment = OrderChangeCardPayment.objects.get(order_id=orderSn, pay_id=6, is_pay=0)
+                    OrderPaymentCredit \
+                        .objects \
+                        .create(order_id=orderSn, pay_id=3, pay_value=GetPayment['pay_value'], change_time=date)
+                    OrderChangeCardPayment.objects.filter(order_id=orderSn, pay_id=6, is_pay=0).update(change_time=date, is_pay=1)
             res['msg'] = '0'
     except Exception as e:
         print(e)
