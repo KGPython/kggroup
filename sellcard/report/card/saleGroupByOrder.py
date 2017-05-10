@@ -11,78 +11,83 @@ from sellcard.models import Orders,AdminUser,OrderUpCard,OrderChangeCard, OrderI
 
 
 def index(request):
-    #GET:数据展示
     role_id = request.session.get('s_roleid')
-    shopcode = request.session.get('s_shopcode')
-    depart_id = request.session.get('s_depart')
-    user_id = request.session.get('s_uid')
+    s_shop = request.session.get('s_shopcode')
+    s_depart = request.session.get('s_depart')
+    s_user = request.session.get('s_uid')
+
+    today = str(datetime.date.today())
+    start = end = today
+    actionType = 1
     shops = []
+    users = AdminUser.objects.values('id', 'name','is_enable').filter(role_id__in=('2', '3','5'))
     if role_id in ('1','6'):
         shops = mth.getCityShopsCode()
-    if role_id == '9':
+    elif role_id == '9':
         shops = mth.getCityShopsCode('T')
-    if role_id == '8':
+    elif role_id == '8':
         shops = mth.getCityShopsCode('C')
+    elif role_id in ('2', '10'):
+        shops = [s_shop]
+    elif role_id in ('3', '5'):
+        shopcode = s_shop
+        depart = s_depart
+        operator = s_user
+    personList = users.filter(shop_code__in=shops)
+    personList = sorted(personList, key=lambda p: p["name"].encode('gb2312'))
     departs = base.findDepart()
-    today = str(datetime.date.today())
 
-    resList=[]
-    #判断用户角色
-    shop = ''
-    operator = ''
-    depart = ''
-    if role_id in ('1','6','8','9'):
-        shop = mth.getReqVal(request,'shop','')
-        depart = mth.getReqVal(request, 'depart', '')
-        name = mth.getReqVal(request, 'operator', '').strip()
-        if name:
-            user = AdminUser.objects.values('id').filter(name=name)
-            if not user:
-                return render(request, 'report/card/saleGroupByOrder/index.html', locals())
-            else:
-                operator = user[0]['id']
+    if request.method == 'POST':
+        shop,operator,depart = '','',''
+        if role_id in ('1','6','8','9'):
+            shop = request.POST.get('shop','')
+            depart = request.POST.get('depart', '')
+            operator = request.POST.get('operator', '')
+        elif  role_id in ('2','10') :
+            shop = s_shop
+            depart = request.POST.get( 'depart', '')
+            operator = request.POST.get('operator', '')
+        elif role_id in ('3','5'):
+            shop = s_shop
+            depart = s_depart
+            operator = s_user
+        actionType = request.POST.get('actionType','1')
+        start = request.POST.get('start',today)
+        end = request.POST.get('end',today)
+        endTime = datetime.datetime.strptime(end,'%Y-%m-%d') + datetime.timedelta(1)
+        page = request.POST.get('page',1)
 
-    if  role_id in ('2','10') :
-        shop = shopcode
-        depart = mth.getReqVal(request, 'depart', '')
-        name = mth.getReqVal(request, 'operator', '').strip()
-        if name:
-            user = AdminUser.objects.values('id').filter(name=name)
-            if not user:
-                return render(request, 'report/card/saleGroupByOrder/index.html', locals())
-            else:
-                operator = user[0]['id']
+        kwargs = {}
+        if shop:
+            kwargs.setdefault('shop_code',shop)
+        if operator:
+            kwargs.setdefault('operator_id',operator)
+        if depart:
+            kwargs.setdefault('depart',depart)
+        kwargs.setdefault('add_time__gte',start)
+        kwargs.setdefault('add_time__lte',endTime)
 
-    if role_id in ('3','5'):
-        shop = shopcode
-        depart = depart_id
-        operator = user_id
-    actionType = mth.getReqVal(request,'actionType','1')
+        resList, paidTotal, discTotal, cardCount = getData(actionType,kwargs)
+        paginator = Paginator(resList,20)
+        try:
+            resList = paginator.page(page)
+            page_next = mth.getNextPageNum(resList)
+            page_prev = mth.getPrevPageNum(resList)
 
-    start = mth.getReqVal(request,'start',today)
-    end = mth.getReqVal(request,'end',today)
-    endTime = datetime.datetime.strptime(end,'%Y-%m-%d') + datetime.timedelta(1)
-    page = mth.getReqVal(request,'page',1)
+        except Exception as e:
+            print(e)
+    return render(request, 'report/card/saleGroupByOrder/index.html', locals())
 
 
-    kwargs = {}
-    if shop:
-        kwargs.setdefault('shop_code',shop)
-    else:
-        kwargs.setdefault('shop_code__in', shops)
-    if operator:
-        kwargs.setdefault('operator_id',operator)
-    if depart:
-        kwargs.setdefault('depart',depart)
-    kwargs.setdefault('add_time__gte',start)
-    kwargs.setdefault('add_time__lte',endTime)
+def getData(actionType,kwargs):
+    resList = []
+    paidTotal = 0.00
+    discTotal = 0.00
+    cardCount = 0
     if actionType=='1':
         resList = Orders.objects.values('shop_code','depart','operator_id','order_sn','action_type','paid_amount','disc_amount','add_time')\
                 .filter(**kwargs)\
                 .order_by('shop_code','depart','operator_id','add_time')
-        paidTotal = 0.00
-        discTotal = 0.00
-        cardCount = 0
         for item in resList:
             paidTotal += float(item['paid_amount'])
             discTotal += float(item['disc_amount'])
@@ -95,13 +100,7 @@ def index(request):
         resList = OrderChangeCard.objects.values('shop_code','depart','operator_id','order_sn','total_in_price','total_out_price','add_time')\
                 .filter(**kwargs)\
                 .order_by('shop_code','depart','operator_id','add_time')
-
-    paginator = Paginator(resList,20)
-    try:
-        resList = paginator.page(page)
-    except Exception as e:
-        print(e)
-    return  render(request, 'report/card/saleGroupByOrder/index.html', locals())
+    return resList,paidTotal,discTotal,cardCount
 
 
 def orderDetail(request):

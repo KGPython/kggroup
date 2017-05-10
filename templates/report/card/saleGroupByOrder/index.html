@@ -47,7 +47,7 @@
                                         </select>
                                     {% else %}
                                         <input name="shop" id="shop" type="hidden" value="{{ shopcode }}">
-                                        <input value="{{ shopcode | transShopCode}}" class="form-control" disabled>
+                                        <input value="{{ s_shop | transShopCode}}" class="form-control" disabled>
                                     {% endif %}
                                 </div>
 
@@ -61,17 +61,22 @@
                                             {% endfor %}
                                         </select>
                                     {% else %}
-                                        <input name="depart" id="depart" type="hidden" value="{{ depart_id }}">
-                                        <input value="{{ depart_id | transDepartCode}}" class="form-control" disabled>
+                                        <input name="depart" id="depart" type="hidden" value="{{ depart }}">
+                                        <input value="{{ depart | transDepartCode}}" class="form-control" disabled>
                                     {% endif %}
                                 </div>
                                 <label for="" class="col-md-1 formline-label">售卡人员：</label>
                                 <div class="col-md-3 col-lg-2">
                                     {% if role_id == '1' or  role_id == '2' or role_id == '6' or role_id == '8' or role_id == '9'%}
-                                        <input type="text" class="form-control" name="operator" id="orderSn" required value="{{ name }}">
+                                        <select name="operator" id="operator" class="form-control">
+                                            <option value="">全部</option>
+                                            {% for p in personList %}
+                                                <option value="{{ p.id }}" {% if p.is_enable == '1' %}class="red"{% endif %}>{{ p.name }}</option>
+                                            {% endfor %}
+                                        </select>
                                     {% else %}
-                                        <input name="operator" id="operator" type="hidden" value="{{ user_id }}">
-                                        <input value="{{ user_id | transUserId}}" class="form-control" disabled>
+                                        <input name="operator" id="operator" type="hidden" value="{{ operator }}">
+                                        <input value="{{ operator | transUserId}}" class="form-control" disabled>
                                     {% endif %}
                                 </div>
                             </div>
@@ -219,42 +224,68 @@
                                 </tbody>
                             {% endif %}
                         </table>
-
-                        <div class="page">
-                            <span>第<b>{{ page }}</b>页/共<b>{{ resList.paginator.num_pages }}</b>页</span>
-                            <a href="?page=1&shop={{ shop }}&depart={{ depart }}&operator={{ name }}&actionType={{ actionType }}&start={{ start }}&end={{ end }}">首页</a>
-                            {% if resList.has_previous %}
-                                <a href="?page={{ resList.previous_page_number }}&shop={{ shop }}&depart={{ depart }}&operator={{ name }}&actionType={{ actionType }}&start={{ start }}&end={{ end }}">上一页</a>
-                            {% else %}
-                                <a href="javascript:void(0)">上一页</a>
-                            {% endif %}
-                            {% if resList.has_next %}
-                                <a href="?page={{ resList.next_page_number }}&shop={{ shop }}&depart={{ depart }}&operator={{ name }}&actionType={{ actionType }}&start={{ start }}&end={{ end }}">下一页</a>
-                            {% else %}
-                                <a href="javascript:void(0)">下一页</a>
-                            {% endif %}
-                            <a href="?page={{ resList.paginator.num_pages }}&shop={{ shop }}&depart={{ depart }}&operator={{ name }}&actionType={{ actionType }}&start={{ start }}&end={{ end }}">尾页</a>
-
-                            <form method="post" id="pageForm" style="display: inline-block">
-                                {% csrf_token %}
-                                <input name="shop" value="{{ shop }}" type="hidden">
-                                <input name="depart" value="{{ depart }}" type="hidden">
-                                <input name="operator" value="{{ name }}" type="hidden">
-                                <input name="actionType" value="{{ actionType }}" type="hidden">
-                                <input name="start" value="{{ start }}" type="hidden">
-                                <input name="end" value="{{ end }}" type="hidden">
-                                <span class="totalPage">到第</span> <input class="pageTxt" id="page" name="page" value="1" type="text"> <span>页</span>
-                                <button type="button" class="btn btn-info btn-sm" id="pageEnter">确定</button>
-                            </form>
-                        </div>
                     </div>
                 </div>
+                <form action="{% url 'saleGroupByOrder' %}" method="post" id="pageForm">
+                    {% csrf_token %}
+                    <input type="hidden" name="shop" value="{{ shop }}">
+                    <input type="hidden" name="depart" value="{{ depart }}">
+                    <input type="hidden" name="operator" value="{{ operator }}">
+                    <input type="hidden" name="actionType" value="{{ actionType }}">
+                    <input type="hidden" name="start" value="{{ start }}">
+                    <input type="hidden" name="end" value="{{ end }}">
+                    <div class="page">
+                        <span>第<b>{{ page }}</b>页/共<b>{{ paginator.num_pages }}</b>页</span>
+                        <a id="page_a_head">首页</a>
+                        {% if resList.has_previous %}
+                            <a id="page_a_up">上一页</a>
+                        {% else %}
+                            <a href="javascript:void(0)">上一页</a>
+                        {% endif %}
+                        {% if resList.has_next %}
+                            <a id="page_a_down">下一页</a>
+                        {% else %}
+                            <a href="javascript:void(0)">下一页</a>
+                        {% endif %}
+                        <a id="page_a_foot">尾页</a>
+                        <span class="totalPage">到第</span>
+                        <input class="pageTxt" id="page" name="page" type="text">
+                        <span>页</span>
+                        <button type="button" class="btn btn-info btn-sm" id="pageEnter">确定</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 </div>
 <!--end-containt-part-->
 {% include "common/foot.html" %}
+<script>
+    //确定按钮
+    $('#pageEnter').click(function () {
+        $('#pageForm').submit();
+    });
+    //首页
+    $('#page_a_head').click(function () {
+        $('#page').val(1);
+        $('#pageForm').submit();
+    });
+    //上一页
+    $('#page_a_up').click(function () {
+        $('#page').val({{ page_prev }});
+        $('#pageForm').submit();
+    });
+    //下一页
+    $('#page_a_down').click(function () {
+        $('#page').val({{ page_next }});
+        $('#pageForm').submit();
+    });
+    //尾页
+    $('#page_a_foot').click(function () {
+        $('#page').val({{ paginator.num_pages }});
+        $('#pageForm').submit();
+    });
+</script>
 <script type="text/javascript">
     $('.form_date').datetimepicker({
         language: 'zh-CN',
@@ -284,9 +315,11 @@
 <script>
     var shop = "{{ shop |default:'' | safe }}";
     var depart = "{{ depart |default:'' | safe}}";
+    var operator = "{{ operator |default:'' | safe}}";
     var actionType = "{{ actionType |default:'' | safe}}";
     $("#shop").val(shop);
     $("#depart").val(depart);
+    $("#operator").val(operator);
     $("#actionType").val(actionType);
 </script>
 </body>

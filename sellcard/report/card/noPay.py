@@ -42,6 +42,7 @@ def order(request):
     data = sorted(data,key=itemgetter('is_pay','order_sn'),reverse=True)
     return render(request, 'report/card/nopay/order.html', locals())
 
+
 #列转行
 def mergeData(List):
     OrderSnList = [item['order_sn'] for item in List]
@@ -90,7 +91,8 @@ def month(request):
 
         conn = mth.getMysqlConn()
         cur = conn.cursor()
-        noPayBeforeSql = noPayOrderSql = 'select a.order_sn,a.buyer_company,a.shop_code,a.add_time,b.pay_id ,b.pay_value,b.change_time,b.bank_name,b.bank_sn,b.pay_company,b.is_pay ' \
+        # 查询：起始日期之前的历史数据
+        noPayBeforeSql = 'select a.order_sn,a.buyer_company,a.shop_code,a.add_time,b.pay_id ,b.pay_value,b.change_time,b.bank_name,b.bank_sn,b.pay_company,b.is_pay ' \
                    'from orders as a , order_payment_info as b ' \
                    'where ((a.add_time<="{start}"  and b.pay_id=4) or (b.change_time<="{start}")) ' \
                    'and a.order_sn = b.order_id ' \
@@ -98,7 +100,10 @@ def month(request):
             .format(start=start, end=end)
         cur.execute(noPayBeforeSql)
         noPayBeforeList = cur.fetchall()
+        # 分离数据
         dataBefore = splitDataBefore(noPayBeforeList,start,end)
+
+        # 计算：起始日期之前，未到账数据总和
         totalNoPayBefore = 0
         for row in dataBefore:
             if 'is_pay' in row:
@@ -107,6 +112,7 @@ def month(request):
                 else:
                     totalNoPayBefore += float(row['noPay'])
 
+        # 查询：起止时间段内的数据
         noPayOrderSql = 'select a.order_sn,a.buyer_company,a.shop_code,a.add_time,b.pay_id ,b.pay_value,b.change_time,b.bank_name,b.bank_sn,b.pay_company,b.is_pay ' \
                    'from orders as a , order_payment_info as b ' \
                    'where ((a.add_time>="{start}" and a.add_time<="{end}" and b.pay_id=4) or (b.change_time>="{start}" and b.change_time<="{end}")) ' \
@@ -115,26 +121,19 @@ def month(request):
             .format(start=start, end=end)
         cur.execute(noPayOrderSql)
         noPayOrderList = cur.fetchall()
-
-        paymentSql = ''
-
+        # 分离数据
         dataSelect = splitData(noPayOrderList,start,end)
-
         dataSorted = sorted(dataSelect, key=itemgetter('time'), reverse=False)
 
         totalNoPay = float(totalNoPayBefore)
-        totalPay = 0
-        MonthNoPay = 0
-        MonthPay = 0
-        index = 0
-        resData = []
-        monthSubTimeList = []
+        totalPay,MonthNoPay,MonthPay,index, = 0,0,0,0
+        resData,monthSubTimeList = [],[]
 
         for row in dataSorted:
-            # monthBefore = ''
             rowTimeNow = row['time']
             rowTimePre = dataSorted[index-1]['time']
-            if  isNextMonth(rowTimeNow,rowTimePre) and (row['time'].date()+datetime.timedelta(days=-1) not in monthSubTimeList):
+            #
+            if isNextMonth(rowTimeNow,rowTimePre) and (row['time'].date()+datetime.timedelta(days=-1) not in monthSubTimeList):
                 time = datetime.datetime(rowTimeNow.year,rowTimeNow.month,1)+datetime.timedelta(days=-1)
                 if time>=datetime.datetime.strptime(start,'%Y-%m-%d %H:%M:%S'):
                     monthSubitem = MonthSub(MonthPay,MonthNoPay,time)
@@ -171,11 +170,18 @@ def month(request):
 
     return render(request, 'report/card/nopay/month.html', locals())
 
+
 def splitData(dataList,start,end):
+    """
+    将起止日期之前的数据，进行到账与未到账的分离
+    :param dataList: 数据列表
+    :param start: 起始月份
+    :param end: 截至日月
+    :return: list
+    """
     data = []
     for order in dataList:
         if order['is_pay'] == '1':
-            # 创建赊销到账记录
             itemPay = createPayRow(order, end)
             if itemPay:
                 data.append(itemPay)
@@ -188,16 +194,22 @@ def splitData(dataList,start,end):
             data.append(itemNoPay)
     return data
 
+
 def splitDataBefore(dataList,start,end):
+    """
+    将起始日期之前的数据，进行到账与未到账的分离
+    :param dataList: 数据列表
+    :param start: 起始月份
+    :param end: 截至日月
+    :return: list
+    """
     data = []
     for order in dataList:
         if order['is_pay'] == '1':
-            # 创建赊销到账记录
             itemPay = createPayRow(order, datetime.datetime.strptime(start,'%Y-%m-%d %H:%M:%S'))
             if itemPay:
                 data.append(itemPay)
             if order['add_time'] < datetime.datetime.strptime(start, '%Y-%m-%d %H:%M:%S'):
-                # 创建赊销记录
                 itemNoPay = createNoPayRow(order)
                 data.append(itemNoPay)
         else:
@@ -205,7 +217,13 @@ def splitDataBefore(dataList,start,end):
             data.append(itemNoPay)
     return data
 
+
 def createNoPayRow(obj):
+    """
+    创建赊销未到账记录
+    :param obj:
+    :return:
+    """
     item = {}
     item['time'] = obj['add_time']
     item['sn'] = obj['order_sn']
@@ -216,7 +234,14 @@ def createNoPayRow(obj):
     item['is_pay'] = '0'
     return  item
 
+
 def createPayRow(obj,time):
+    """
+    创建赊销到账记录
+    :param obj:
+    :param time:
+    :return:
+    """
     payList = base.findPays()
     payDict = {pay['id']:pay['payment_name'] for pay in payList}
     if obj['change_time']<time:
@@ -234,6 +259,7 @@ def createPayRow(obj,time):
         item['is_pay'] = '1'
         return item
 
+
 def MonthSub(MonthPay,MonthNoPay,time):
     item = {}
     item['info'] = '月度合计'
@@ -244,7 +270,14 @@ def MonthSub(MonthPay,MonthNoPay,time):
     item['monthSub'] = True
     return item
 
+
 def isNextMonth(rowTimeNow,rowTimePre):
+    """
+    判断是否月初
+    :param rowTimeNow: 本条数据的日期
+    :param rowTimePre: 行一条数据的日期
+    :return: bool
+    """
     rowYearNow = rowTimeNow.year
     rowYearPre = rowTimePre.year
     rowMonthNow = rowTimeNow.month

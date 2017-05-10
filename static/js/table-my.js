@@ -467,15 +467,13 @@ function createDiscount(discRate,cardsValTotal) {
             }
         }
     }
-
     //处理特殊返点
     var discountVal = 0;
-    if((SHOP=='C010' || SHOP=='C023') && cardsValTotal>=3000 &&cardsValTotal<=3030){
+    if((SHOP=='C010' || SHOP=='C023') && cardsValTotal>=3000 &&cardsValTotal<=3030 && rate>0){
         discountVal = 100
     }else{
         discountVal = (parseFloat(cardsValTotal)*rate).toString().split(".")[0];
     }
-
     $('.Total #discountVal b').text(discountVal);
     if(discountVal>0){
         $('.discBox').show();
@@ -800,7 +798,6 @@ function saveVipSettlement(action_type,url,orderSns) {
         'vipId':vipId,
         'postToken':postToken
     };
-    // console.log(data);
     doAjaxSave(url,data);
 }
 
@@ -1191,6 +1188,7 @@ function setOrderInfoByCardFill(cardList,cls,cardtype) {
 function setTotalBycardSaleTotalVal(discRate,cardSaleTotalVal){
     $('.Total-discInfo').show();
     var discountVal = createDiscount(discRate,cardSaleTotalVal);
+
     //2、计算优惠补差
     var discountCardTotalVal = parseFloat($(".discountTotal #totalVal b").text());
     discountPay  = discountCardTotalVal - discountVal;
