@@ -33,7 +33,6 @@ def index(request):
 
     personList = sorted(personList, key=lambda p: p["name"].encode('gb2312'))
 
-
     if request.method == 'POST':
         shop,operator = '',''
         if s_role in ('1', '6', '8', '9'):
@@ -48,7 +47,6 @@ def index(request):
         start = mth.getReqVal(request, 'start', today)
         end = mth.getReqVal(request,'end',today)
         end2 = datetime.datetime.strptime(end, '%Y-%m-%d') + datetime.timedelta(1)
-
 
         #汇总数据
         kwargs ={}

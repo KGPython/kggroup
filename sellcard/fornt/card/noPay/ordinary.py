@@ -6,7 +6,7 @@ from django.db.models import Q
 from sellcard.common import Method as mth
 
 import datetime,json
-from sellcard.models import Orders,OrderPaymentInfo,OrderInfo,OrderChangeCard,OrderChangeCardPayment
+from sellcard.models import Orders,OrderPaymentInfo,OrderInfo,OrderPaymentCredit,OrderChangeCard,OrderChangeCardPayment
 
 def index(request):
     if request.method == 'POST':
@@ -77,21 +77,34 @@ def save(request):
                 payments = paymentInfo.values('pay_id','pay_value')
                 paysDict = {pay['pay_id']: pay['pay_value'] for pay in payments}
                 if 4 in paysDict.keys():
-                    paymentInfo.filter(pay_id=4, is_pay=0).delete()
+                    # paymentInfo.filter(pay_id=4, is_pay=0).delete()
+                    paymentInfo.filter(pay_id=4, is_pay=0).update(change_time=date, is_pay=1)
                     for pay in payList:
                         if pay['payId'] == '3':
-                            OrderPaymentInfo \
+                            # OrderPaymentInfo \
+                            #     .objects \
+                            #     .create(order_id=orderSn, pay_id=pay['payId'], pay_value=pay['payVal'],
+                            #             remarks=pay['payRmarks'], is_pay=1, change_time=date,
+                            #             bank_name=pay['bankName'], bank_sn=pay['bankSn'],
+                            #             pay_company=pay['payCompany']
+                            #             )
+                            OrderPaymentCredit \
                                 .objects \
                                 .create(order_id=orderSn, pay_id=pay['payId'], pay_value=pay['payVal'],
-                                        remarks=pay['payRmarks'], is_pay=1, change_time=date,
+                                        remarks=pay['payRmarks'], change_time=date,
                                         bank_name=pay['bankName'], bank_sn=pay['bankSn'],
                                         pay_company=pay['payCompany']
                                         )
                         else:
-                            OrderPaymentInfo \
+                            # OrderPaymentInfo \
+                            #     .objects \
+                            #     .create(order_id=orderSn, pay_id=pay['payId'], pay_value=pay['payVal'],
+                            #             remarks=pay['payRmarks'], is_pay=1, change_time=date
+                            #             )
+                            OrderPaymentCredit \
                                 .objects \
                                 .create(order_id=orderSn, pay_id=pay['payId'], pay_value=pay['payVal'],
-                                        remarks=pay['payRmarks'], is_pay=1, change_time=date
+                                        remarks=pay['payRmarks'], change_time=date
                                         )
                 elif 3 in paysDict.keys():
                     for pay in payList:

@@ -155,32 +155,24 @@ def cardCheck_Mssql(request):
     # cardId='501410070'
     item = {}
     item.setdefault("card_no", cardId)
-    try:
-        conn = getMssqlConn()
-        cur = conn.cursor()
-        sql = "select cardno,cardtype,sheetid,mode,detail,memo " \
-              "from guest where cardno='{cardId}'".format(cardId=cardId)
-        cur.execute(sql)
-        item1 = cur.fetchone()
+    conn = getMssqlConn()
+    cur = conn.cursor()
+    sql = "select cardno,cardtype,sheetid,mode,detail,memo,new_amount " \
+          "from guest where cardno='{cardId}'".format(cardId=cardId)
+    cur.execute(sql)
+    item1 = cur.fetchone()
 
-        if item1:
-            sql = "select sheetid,cardtype,money,amount from batchsalecarditem " \
-                  "where cast(beginno as bigint)<={cardId} and cast(endno as bigint)>={cardId} ".format(cardId=cardId)
-            cur.execute(sql)
-            item2 = cur.fetchone()
+    # if item1:
+    #     sql = "select sheetid,cardtype,money,amount from batchsalecarditem " \
+    #           "where cast(beginno as bigint)<={cardId} and cast(endno as bigint)>={cardId} ".format(cardId=cardId)
+    #     cur.execute(sql)
+    #     item2 = cur.fetchone()
+    #
+    item.setdefault("card_value", float(item1["new_amount"]))
+    item.setdefault("card_blance", float(item1["detail"]))
+    item.setdefault("card_status", item1["mode"])
 
-            item.setdefault("card_value", str(item2["money"]))
-            item.setdefault("card_blance", str(item1["detail"]))
-            item.setdefault("card_status", str(item1["mode"]))
-        else:
-            item.setdefault("card_value", '0.0')
-            item.setdefault("card_blance", '0.0')
-            item.setdefault("card_status", "-1")
-    except Exception as e:
-        print(e)
-        item.setdefault("card_value", '0.0')
-        item.setdefault("card_blance", '0.0')
-        item.setdefault("card_status", "-1")
+
 
     return HttpResponse(json.dumps(item), content_type="application/json")
 
