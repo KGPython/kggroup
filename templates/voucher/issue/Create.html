@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
@@ -46,19 +46,18 @@
                             <input type="text" class="form-control" name="sn_amount" id="sn_amount"
                                    readonly="readonly" value="{{ sn_amount }}">
                         </div>
-                        <label for="" class="col-md-1 formline-label must">序列号开始：</label>
+                        <label for="" class="col-md-1 formline-label must">券名称：</label>
                         <div class="col-md-3">
-                            <input type="text" class="form-control sn_val" name="sn_start" id="sn_start"
-                                   required value="{{ sn_start }}">
+                            <input type="text" class="form-control" name="couponname" id="couponname"
+                                   required value="{{ couponname }}">
                         </div>
                     </div>
                     <div class="row formline">
-                        <label for="" class="col-md-1 formline-label must">序列号结束：</label>
+                        <label for="" class="col-md-1 formline-label must">序列号开始：</label>
                         <div class="col-md-2">
-                            <input type="text" class="form-control sn_val" name="sn_end" id="sn_end"
-                                   required value="{{ sn_end }}">
+                            <input type="text" class="form-control sn_val" name="sn_start" id="sn_start"
+                                   required value="{{ sn_start }}">
                         </div>
-
                         <label for="" class="col-md-1 formline-label must">付款方式：</label>
                         <div class="col-md-2">
                             <select name="payment_type" id="payment_type" class="form-control" required>
@@ -75,10 +74,10 @@
                         </div>
                     </div>
                     <div class="row formline">
-                        <label for="" class="col-md-1 formline-label must">券名称：</label>
+                        <label for="" class="col-md-1 formline-label must">序列号结束：</label>
                         <div class="col-md-2">
-                            <input type="text" class="form-control" name="couponname" id="couponname"
-                                   required value="{{ couponname }}">
+                            <input type="text" class="form-control sn_val" name="sn_end" id="sn_end"
+                                   required value="{{ sn_end }}">
                         </div>
                         <label for="" class="col-md-1 formline-label must">类型：</label>
                         <div class="col-md-2">

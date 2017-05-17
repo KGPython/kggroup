@@ -172,8 +172,6 @@ def cardCheck_Mssql(request):
     item.setdefault("card_blance", float(item1["detail"]))
     item.setdefault("card_status", item1["mode"])
 
-
-
     return HttpResponse(json.dumps(item), content_type="application/json")
 
 # 黄金手--兑换码状态更新
