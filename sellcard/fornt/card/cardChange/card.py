@@ -248,7 +248,7 @@ def createChangInfoList(cardList,order_sn,attr,card_type=None):
         orderInfo.card_value = card['cardVal']
         orderInfo.card_balance = card['cardVal']
         if card_type:
-            orderInfo.type = card['type']
+            orderInfo.type = card_type
         infoList.append(orderInfo)
     return infoList
 

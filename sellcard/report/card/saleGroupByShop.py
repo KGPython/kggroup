@@ -130,7 +130,7 @@ def index(request):
                     if sale['pay_id'] == 3:
                         item['pay_3'] += float(sale['pay_value'])
                         item['inSub'] += float(sale['pay_value'])
-                    if sale['pay_id'] == 4 and sale['is_pay'] == '0':
+                    if sale['pay_id'] == 4:
                         item['pay_4_0'] += float(sale['pay_value'])
                         item['inSub'] += float(sale['pay_value'])
                     # if sale['change_time']:

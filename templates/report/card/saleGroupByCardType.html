@@ -64,7 +64,7 @@
                                     </select>
                                     {% elif s_role == '3' or s_role == '5' %}
                                         <input name="operator" id="operator" type="hidden" value="{{ user }}">
-                                        <input value="{{ user | transUserId }}" class="form-control"  readonly>
+                                        <input value="{{ s_user | transUserId }}" class="form-control" disabled>
                                     {% endif %}
                                 </div>
                                 <div class="col-md-12 col-lg-1">
