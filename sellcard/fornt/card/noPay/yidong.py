@@ -64,17 +64,19 @@ def save(request):
             for orderSn in orderSnList:
                 if orderSn.find('S')==0:
                     #OrderPaymentInfo.objects.filter(order_id=orderSn,pay_id=6,is_pay=0).update(pay_id=3,change_time=date,is_pay=1)
-                    GetPayment = OrderPaymentInfo.objects.get(order_id=orderSn, pay_id=6, is_pay=0)
+                    GetPayment = OrderPaymentInfo.objects.values('pay_value').get(order_id=orderSn, pay_id=6, is_pay=0)
+                    pay_value = GetPayment['pay_value']
                     OrderPaymentCredit \
                         .objects \
-                        .create(order_id=orderSn, pay_id=3, pay_value=GetPayment['pay_value'], change_time=date)
+                        .create(order_id=orderSn, pay_id=3, pay_value=pay_value, change_time=date)
                     OrderPaymentInfo.objects.filter(order_id=orderSn, pay_id=6, is_pay=0).update(change_time=date, is_pay=1)
                 elif orderSn.find('C')==0:
-                    #OrderChangeCardPayment.objects.filter(order_id=orderSn,pay_id=6,is_pay=0).update(pay_id=3,change_time=date,is_pay=1)
-                    GetPayment = OrderChangeCardPayment.objects.get(order_id=orderSn, pay_id=6, is_pay=0)
+                    # OrderChangeCardPayment.objects.filter(order_id=orderSn,pay_id=6,is_pay=0).update(pay_id=3,change_time=date,is_pay=1)
+                    GetPayment = OrderChangeCardPayment.objects.values('pay_value').get(order_id=orderSn, pay_id=6, is_pay=0)
+                    pay_value = GetPayment['pay_value']
                     OrderPaymentCredit \
                         .objects \
-                        .create(order_id=orderSn, pay_id=3, pay_value=GetPayment['pay_value'], change_time=date)
+                        .create(order_id=orderSn, pay_id=3, pay_value=pay_value, change_time=date)
                     OrderChangeCardPayment.objects.filter(order_id=orderSn, pay_id=6, is_pay=0).update(change_time=date, is_pay=1)
             res['msg'] = '0'
     except Exception as e:
