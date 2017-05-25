@@ -28,7 +28,7 @@ def save(request):
         # 获取用户表单提交的Token值
         userToken = request.POST.get('postToken', '')
         if userToken != Token:
-            res["msg"] = 0
+            res["status"] = 0
             return HttpResponse(json.dumps(res))
 
         path = request.path
@@ -45,7 +45,7 @@ def save(request):
                     .update(request_name = person,request_shop = shop,request_date=datetime.datetime.now(),state=1)
 
                 if updataNum == subTotal:
-                    res['msg'] = 1
+                    res['status'] = 1
                 else:
                     raise MyError('数据更新失败')
 
@@ -55,14 +55,14 @@ def save(request):
 
         except MyError as e1:
             print('My exception occurred, value:', e1.value)
-            res['msg'] = 0
+            res['status'] = 0
             res['cardId'] = e1.value
             ActionLog.objects.create(action='代金券验证码发放失败', u_name=request.session.get('s_uname'), cards_out=start + '--' + end,
                                      add_time=datetime.datetime.now(), err_msg=e1.value)
 
         except Exception as e:
             print(e)
-            res['msg'] = 0
+            res['status'] = 0
             ActionLog.objects.create(action='代金券验证码发放失败', u_name=request.session.get('s_uname'), cards_out=start + '--' + end,
                                      add_time=datetime.datetime.now(), err_msg=e)
 

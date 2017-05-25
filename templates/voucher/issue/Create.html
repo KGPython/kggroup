@@ -67,7 +67,7 @@
                                 <option value="5">POS机消费</option>
                             </select>
                         </div>
-                        <label for="" class="col-md-1 formline-label must">实收总金额：</label>
+                        <label for="" class="col-md-1 formline-label must">总实收金额：<br/>（去掉返点后）</label>
                         <div class="col-md-3">
                             <input type="text" class="form-control" name="pay_account" id="pay_account"
                                    required value="{{ pay_account }}">
@@ -107,7 +107,7 @@
                             <input type="text" class="form-control" name="costValue" id="costValue"
                                    required value="{{ costValue }}">
                         </div>
-                        <label for="" class="col-md-1 formline-label must">返点金额：</label>
+                        <label for="" class="col-md-1 formline-label must">返点金额：<br/>(单张返金额)</label>
                         <div class="col-md-2">
                             <input type="text" class="form-control" name="discount" id="discount"
                                    value="{{ discount }}">

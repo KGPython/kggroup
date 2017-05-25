@@ -14,11 +14,15 @@ def index(request):
         shop = request.session.get('s_shopcode', '')
         start = request.POST.get('start', monthFirstDay)
         end = request.POST.get('end', today)
+        order_sn = request.POST.get('order_sn', '')
 
         conn = mth.getMysqlConn()
         cur = conn.cursor()
         queryWhere1 = " and b.add_time >='{start} 00:00:00'  and b.add_time <='{end} 23:59:59' ".format(start=start,
                                                                                                         end=end)
+
+        if order_sn != '':
+            queryWhere1 += " and b.order_sn like '%{order_sn}%'".format(order_sn=order_sn)
         # 售卡数据
         sqlSale = "select a.pay_value,b.order_sn,b.operator_id,b.add_time,b.buyer_name,b.buyer_tel,b.paid_amount " \
                   "from order_payment_info as a ,orders as b " \
@@ -60,17 +64,19 @@ def save(request):
             for orderSn in orderSnList:
                 if orderSn.find('S')==0:
                     #OrderPaymentInfo.objects.filter(order_id=orderSn,pay_id=6,is_pay=0).update(pay_id=3,change_time=date,is_pay=1)
-                    GetPayment = OrderPaymentInfo.objects.get(order_id=orderSn, pay_id=6, is_pay=0)
+                    GetPayment = OrderPaymentInfo.objects.values('pay_value').get(order_id=orderSn, pay_id=6, is_pay=0)
+                    pay_value = GetPayment['pay_value']
                     OrderPaymentCredit \
                         .objects \
-                        .create(order_id=orderSn, pay_id=3, pay_value=GetPayment['pay_value'], change_time=date)
+                        .create(order_id=orderSn, pay_id=3, pay_value=pay_value, change_time=date)
                     OrderPaymentInfo.objects.filter(order_id=orderSn, pay_id=6, is_pay=0).update(change_time=date, is_pay=1)
                 elif orderSn.find('C')==0:
-                    #OrderChangeCardPayment.objects.filter(order_id=orderSn,pay_id=6,is_pay=0).update(pay_id=3,change_time=date,is_pay=1)
-                    GetPayment = OrderChangeCardPayment.objects.get(order_id=orderSn, pay_id=6, is_pay=0)
+                    # OrderChangeCardPayment.objects.filter(order_id=orderSn,pay_id=6,is_pay=0).update(pay_id=3,change_time=date,is_pay=1)
+                    GetPayment = OrderChangeCardPayment.objects.values('pay_value').get(order_id=orderSn, pay_id=6, is_pay=0)
+                    pay_value = GetPayment['pay_value']
                     OrderPaymentCredit \
                         .objects \
-                        .create(order_id=orderSn, pay_id=3, pay_value=GetPayment['pay_value'], change_time=date)
+                        .create(order_id=orderSn, pay_id=3, pay_value=pay_value, change_time=date)
                     OrderChangeCardPayment.objects.filter(order_id=orderSn, pay_id=6, is_pay=0).update(change_time=date, is_pay=1)
             res['msg'] = '0'
     except Exception as e:

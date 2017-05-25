@@ -33,7 +33,7 @@ def index(request):
     if role_id == '8':
         shops = mth.getCityShops('C')
         shopsCode = mth.getCityShopsCode('C')
-    if role_id == '10' or role_id == '2':
+    if role_id == '10' or role_id == '2' or role_id == '12':
         shops = base.findShop(shop)
         shopsCode = [shop]
 
@@ -271,7 +271,7 @@ def detail(request):
         shopsCode = mth.getCityShopsCode('C')
         if shop_code not in shopsCode:
             return render(request, '500.html', locals())
-    if role_id == '10' or role_id == '2':
+    if role_id == '10' or role_id == '2' or role_id == '12':
         if shop != shop_code:
             return render(request, '500.html', locals())
 
