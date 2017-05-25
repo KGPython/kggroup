@@ -54,7 +54,7 @@ def index(request):
                           'SUM(y_cash) as disc_cash, '\
                           'SUM(case when disc_amount>=y_cash then disc_amount-y_cash else disc_amount+diff_price-y_cash end) as disc_card ' \
                           'from orders ' \
-                          'where add_time>="{start}" and add_time<="{end}" and shop_code in ({shopsCodeStr})' \
+                          'where add_time>="{start}" and add_time<="{end}" and shop_code in ({shopsCodeStr}) ' \
                           'group by shop_code ' \
                         .format(start=start, end=endTime, shopsCodeStr=shopsCodeStr)
     cur.execute(saleDiscGroupByShop)
@@ -106,7 +106,7 @@ def index(request):
     totalDict  = {'discTotal':0,
                   'discCashTotal':0,'total_disc_6':0,'total_disc_7':0,'total_disc_8':0,'total_disc_10':0,'total_disc_11':0,'total_disc_qita':0,'discCardTotal':0,
                   'inSubTotal':0,'total_1':0,'total_2':0,'total_3':0,
-                  'total_4_0':0,'total_4_1':0,'total_5':0,'total_6':0,'total_7':0,'total_8':0,'total_9':0,'total_10':0,'total_11':0,}
+                  'total_4':0,'total_5':0,'total_6':0,'total_7':0,'total_8':0,'total_9':0,'total_10':0,'total_11':0,}
 
     dataList = []
     for i in range(0,len(shops)):
@@ -114,7 +114,7 @@ def index(request):
         if shops[i]['shop_code'] != 'ZBTG':
             item = {'shop_code':'',
                     'disc':0,'disc_6':0,'disc_7':0,'disc_8':0,'disc_10':0,'disc_11':0,'disc_cash':0,'disc_card':0,
-                    'inSub':0,'pay_1':0,'pay_2':0,'pay_3':0,'pay_4_1':0,'pay_4_0':0,'pay_5':0,'pay_6':0,'pay_7':0,'pay_8':0,
+                    'inSub':0,'pay_1':0,'pay_2':0,'pay_3':0,'pay_4':0,'pay_5':0,'pay_6':0,'pay_7':0,'pay_8':0,
                     'pay_9':0,'pay_10':0,'pay_11':0,}
             item['shop_code'] = shops[i]['shop_code']
             for sale in salePayList:
@@ -131,10 +131,8 @@ def index(request):
                         item['pay_3'] += float(sale['pay_value'])
                         item['inSub'] += float(sale['pay_value'])
                     if sale['pay_id'] == 4:
-                        item['pay_4_0'] += float(sale['pay_value'])
+                        item['pay_4'] += float(sale['pay_value'])
                         item['inSub'] += float(sale['pay_value'])
-                    # if sale['change_time']:
-                    #     item['pay_4_1'] += float(sale['pay_value'])
                     if sale['pay_id'] == 5:
                         item['pay_5'] += float(sale['pay_value'])
                         item['inSub'] += float(sale['pay_value'])
@@ -239,8 +237,7 @@ def index(request):
             totalDict['total_1'] += item['pay_1']
             totalDict['total_2'] += item['pay_2']
             totalDict['total_3'] += item['pay_3']
-            totalDict['total_4_0'] += item['pay_4_0']
-            # totalDict['total_4_1'] += item['pay_4_1']
+            totalDict['total_4'] += item['pay_4']
             totalDict['total_5'] += item['pay_5']
             totalDict['total_6'] += item['pay_6']
             totalDict['total_7'] += item['pay_7']
@@ -277,8 +274,6 @@ def detail(request):
     if role_id == '10' or role_id == '2':
         if shop != shop_code:
             return render(request, '500.html', locals())
-
-
 
     if pay_id == '2':
         pay_name = '代金券'

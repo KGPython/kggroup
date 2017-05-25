@@ -4,9 +4,6 @@ __author__ = 'liubf'
 from django.conf import settings
 import re
 from django.http import HttpResponseRedirect as redirect
-from django.core.cache import cache
-from django.http import HttpResponse
-import json
 
 EXEMPT_URLS=[re.compile(settings.KGGROUP_LOGIN_URL.lstrip('/'))]
 

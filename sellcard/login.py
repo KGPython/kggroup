@@ -101,7 +101,6 @@ def getMenu(purlist):
 
 #根据角色编码查询菜单
 def findNavByRcode(rcodes):
-
     sql = "select DISTINCT r.role_id,r.nav_id, "
     sql += "n.nav_name,n.parent_id,n.url, "
     sql += "n.sort_id,n.icon "
