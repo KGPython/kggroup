@@ -33,6 +33,7 @@ urlpatterns = [
     url('^cardSent/order/info/$', 'sellcard.report.card.cardSentGroupByOrder.info', name='cardSentOrderInfo'),
 
     # 门店费用报销（目前只含有移动积分支付订单）
-    url(r'reimbursement/$', 'sellcard.report.card.reimbursement.index', name='reimbursement')
-
+    url(r'reimbursement/$', 'sellcard.report.card.reimbursement.index', name='reimbursement'),
+    # 财务用卡到账列表
+    url(r'arrival/$', 'sellcard.report.card.cardArrival.index', name='cardArrival')
 ]
