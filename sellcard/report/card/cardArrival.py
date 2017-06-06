@@ -42,10 +42,21 @@ def index(request):
     sql = u"""
 SELECT
 	a.shop_code,
-	sum(a.pay_value) pay_value_3,
-	sum(IFNULL(opc4.pay_value, 0)) pay_value_4,
+	sum(a.pay_value_1) pay_value_1,
+	sum(a.pay_value_3) pay_value_3,
+	sum(a.pay_value_5) pay_value_5,
+	sum(a.pay_value_7) pay_value_7,
+	sum(a.pay_value_8) pay_value_8,
+	sum(a.pay_value_10) pay_value_10,
+	sum(a.pay_value_11) pay_value_11,
 	sum(IFNULL(opc6.pay_value, 0)) pay_value_6,
-	sum(a.pay_value) + sum(IFNULL(opc4.pay_value, 0)) + sum(IFNULL(opc6.pay_value, 0)) total_value
+	sum(case when IFNULL(opc4.pay_id, 0) = 1 then
+	IFNULL(opc4.pay_value, 0) else 0 end) credit_1,
+	sum(case when IFNULL(opc4.pay_id, 0) = 3 then
+	IFNULL(opc4.pay_value, 0) else 0 end) credit_3,
+	sum(case when IFNULL(opc4.pay_id, 0) = 5 then
+	IFNULL(opc4.pay_value, 0) else 0 end) credit_5,
+	sum(a.pay_value_total) + sum(IFNULL(opc4.pay_value, 0)) + sum(IFNULL(opc6.pay_value, 0)) total_value
 FROM
 	(
 		SELECT
@@ -53,11 +64,53 @@ FROM
 			ord.shop_code,
 			opi.pay_id,
 			CASE
+		WHEN opi.pay_id = 1 THEN
+			opi.pay_value
+		ELSE
+			0
+		END pay_value_1,
+			CASE
 		WHEN opi.pay_id = 3 THEN
 			opi.pay_value
 		ELSE
 			0
-		END pay_value,
+		END pay_value_3,
+			CASE
+		WHEN opi.pay_id = 5 THEN
+			opi.pay_value
+		ELSE
+			0
+		END pay_value_5,
+			CASE
+		WHEN opi.pay_id = 7 THEN
+			opi.pay_value
+		ELSE
+			0
+		END pay_value_7,
+			CASE
+		WHEN opi.pay_id = 8 THEN
+			opi.pay_value
+		ELSE
+			0
+		END pay_value_8,
+			CASE
+		WHEN opi.pay_id = 10 THEN
+			opi.pay_value
+		ELSE
+			0
+		END pay_value_10,
+			CASE
+		WHEN opi.pay_id = 11 THEN
+			opi.pay_value
+		ELSE
+			0
+		END pay_value_11,
+			CASE
+		WHEN opi.pay_id not in (4, 6) THEN
+			opi.pay_value
+		ELSE
+			0
+		END pay_value_total,
 		ord.add_time
 	FROM
 		orders ord,
@@ -65,18 +118,59 @@ FROM
 	WHERE
 		ord.order_sn = opi.order_id
 	AND opi.is_pay = 1
-	AND opi.pay_id IN (3, 4, 6)
 	UNION
 		SELECT
 			occ.order_sn,
 			occ.shop_code,
 			occp.pay_id,
 			CASE
+		WHEN occp.pay_id = 1 THEN
+			occp.pay_value
+		ELSE
+			0
+		END pay_value_1,
+			CASE
 		WHEN occp.pay_id = 3 THEN
 			occp.pay_value
 		ELSE
 			0
-		END pay_value,
+		END pay_value_3,
+			CASE
+		WHEN occp.pay_id = 5 THEN
+			occp.pay_value
+		ELSE
+			0
+		END pay_value_5,
+			CASE
+		WHEN occp.pay_id = 7 THEN
+			occp.pay_value
+		ELSE
+			0
+		END pay_value_7,
+			CASE
+		WHEN occp.pay_id = 8 THEN
+			occp.pay_value
+		ELSE
+			0
+		END pay_value_8,
+			CASE
+		WHEN occp.pay_id = 10 THEN
+			occp.pay_value
+		ELSE
+			0
+		END pay_value_10,
+			CASE
+		WHEN occp.pay_id = 11 THEN
+			occp.pay_value
+		ELSE
+			0
+		END pay_value_11,
+			CASE
+		WHEN occp.pay_id not in (4, 6) THEN
+			occp.pay_value
+		ELSE
+			0
+		END pay_value_total,
 		occ.add_time
 	FROM
 		order_change_card occ,
@@ -84,7 +178,6 @@ FROM
 	WHERE
 		occ.order_sn = occp.order_id
 	AND occp.is_pay = 1
-	AND occp.pay_id IN (3, 4, 6)
 	) a
 LEFT JOIN order_payment_credit opc4 ON a.pay_id = 4
 AND a.order_sn = opc4.order_id
@@ -106,13 +199,29 @@ GROUP BY
 
     if list_len > 1:
         total = {}
+        total['pay_value_1'] = 0
         total['pay_value_3'] = 0
-        total['pay_value_4'] = 0
+        total['pay_value_5'] = 0
+        total['pay_value_7'] = 0
+        total['pay_value_8'] = 0
+        total['pay_value_10'] = 0
+        total['pay_value_11'] = 0
         total['pay_value_6'] = 0
+        total['credit_1'] = 0
+        total['credit_3'] = 0
+        total['credit_5'] = 0
         total['total_value'] = 0
         for item in List:
+            total['pay_value_1'] += item['pay_value_1']
             total['pay_value_3'] += item['pay_value_3']
-            total['pay_value_4'] += item['pay_value_4']
+            total['pay_value_5'] += item['pay_value_5']
+            total['pay_value_7'] += item['pay_value_7']
+            total['pay_value_8'] += item['pay_value_8']
+            total['pay_value_10'] += item['pay_value_10']
+            total['pay_value_11'] += item['pay_value_11']
             total['pay_value_6'] += item['pay_value_6']
+            total['credit_1'] += item['credit_1']
+            total['credit_3'] += item['credit_3']
+            total['credit_5'] += item['credit_5']
             total['total_value'] += item['total_value']
     return render(request, 'report/card/cardArrival.html', locals())

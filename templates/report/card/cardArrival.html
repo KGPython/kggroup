@@ -78,9 +78,15 @@
                             <thead>
                             <tr valign="middle">
                                 <th>门店名称</th>
+                                <th>现金</th>
                                 <th>汇款到账</th>
-                                <th>赊销还款</th>
+                                <th>POS</th>
+                                <th>还赊现金</th>
+                                <th>还赊汇款</th>
+                                <th>还赊POS</th>
                                 <th>移动积分还款</th>
+                                <th>慧购线上</th>
+                                <th>慧购线下</th>
                                 <th>合计</th>
                             </tr>
                             </thead>
@@ -88,18 +94,30 @@
                             {% for row in List %}
                                 <tr>
                                     <td>{{ row.shop_code | transShopCode }}</td>
+                                    <td>{{ row.pay_value_1 }}</td>
                                     <td>{{ row.pay_value_3 }}</td>
-                                    <td>{{ row.pay_value_4 }}</td>
+                                    <td>{{ row.pay_value_5 }}</td>
+                                    <td>{{ row.credit_1 }}</td>
+                                    <td>{{ row.credit_3 }}</td>
+                                    <td>{{ row.credit_5 }}</td>
                                     <td>{{ row.pay_value_6 }}</td>
+                                    <td>{{ row.pay_value_10 }}</td>
+                                    <td>{{ row.pay_value_11 }}</td>
                                     <td>{{ row.total_value }}</td>
                                 </tr>
                             {% endfor %}
                             {% if list_len > 1 %}
                                 <tr>
                                     <th>合计</th>
+                                    <td>{{ total.pay_value_1 }}</td>
                                     <td>{{ total.pay_value_3 }}</td>
-                                    <td>{{ total.pay_value_4 }}</td>
+                                    <td>{{ total.pay_value_5 }}</td>
+                                    <td>{{ total.credit_1 }}</td>
+                                    <td>{{ total.credit_3 }}</td>
+                                    <td>{{ total.credit_5 }}</td>
                                     <td>{{ total.pay_value_6 }}</td>
+                                    <td>{{ total.pay_value_10 }}</td>
+                                    <td>{{ total.pay_value_11 }}</td>
                                     <td>{{ total.total_value }}</td>
                                 </tr>
                             {% endif %}
