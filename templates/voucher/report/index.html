@@ -1,0 +1,77 @@
+{% load basefilter %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>领用码报表</title>
+</head>
+<body>
+{% include 'common/head.html' %}
+<!--containt-part-->
+<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb">
+            <a data-original-title="Go to Home" href="#" title="" class="tip-bottom">
+                <span class="glyphicon glyphicon-home" aria-hidden="true"> </span> 首页
+            </a>
+            <a href="#" class="">购物券管理</a>
+            <a href="#" class="current">领用码报表</a>
+        </div>
+    </div>
+    <div class="widget-box">
+        <div class="widget-content nopadding">
+            <div class="collapse in widget-content">
+                <form action="{% url 'verifierReport' %}" method="post" id="form">
+                    {% csrf_token %}
+                    <input type="hidden" id="btn_value" name="btn_value">
+                    <div class="row formline">
+                        <label for="" class="col-md-3 formline-label">批次：
+                            <input type="text" class="form-control col-md-2" name="batch" id="batch" value="{{ batch }}">
+                        </label>
+                        <label for="" class="col-md-3 formline-label">开始号：
+                            <input type="text" class="form-control col-md-2" name="begin_no" id="begin_no" value="{{ begin_no }}">
+                        </label>
+                        <label for="" class="col-md-3 formline-label">结束号：
+                            <input type="text" class="form-control col-md-2" name="end_no" id="end_no" value="{{ end_no }}">
+                        </label>
+                        <div class="col-md-1">
+                            <button type="button" class="btn btn-success pull-right" id="btn_query">查询</button>
+                        </div>
+                    </div>
+                    <div class="widget-box">
+                        <div class="widget-content nopadding" style="overflow-x:auto; ">
+                            <table class="table table-striped table-hover table-form-my">
+                                <thead>
+                                <tr>
+                                    <th>所属门店</th>
+                                    <th>数量</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for row in List %}
+                                    <tr>
+                                        <td>{{ row.request_shop | transShopCode }}</td>
+                                        <td>{{ row.total }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!--end-containt-part-->
+{% include "common/foot.html" %}
+<script>
+    $('#btn_query').click(function () {
+        $('#form').submit();
+    });
+</script>
+</body>
+</html>
