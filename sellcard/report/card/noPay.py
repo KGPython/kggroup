@@ -15,26 +15,15 @@ def order(request):
     cur = conn.cursor()
 
     #售卡数据
-    saleSql = 'select a.order_sn,a.buyer_company,b.pay_id ,b.pay_value,b.change_time,b.bank_name,b.bank_sn,b.pay_company,b.is_pay ' \
-              'from orders as a , order_payment_info as b ' \
-              'where a.add_time>="{start}" and a.add_time<="{end}" and a.shop_code ="{shop}" and a.order_sn = b.order_id and (ISNULL(b.change_time) is FALSE or b.pay_id=4) ' \
+    saleSql = 'select a.order_sn,a.buyer_company,b.is_pay,b.pay_value as no_pay,c.bank_name,c.pay_value,c.pay_id,c.bank_sn,c.pay_company,c.change_time ' \
+              'from orders as a inner join order_payment_info as b on a.order_sn = b.order_id left join order_payment_credit as c on a.order_sn = c.order_id '\
+              'where a.add_time>="{start}" and a.add_time<="{end}" and a.shop_code ="{shop}" and b.pay_id=4 ' \
               'order by b.is_pay,a.order_sn' \
               .format(start=start, end=endTime, shop=shop)
     cur.execute(saleSql)
     saleList = cur.fetchall()
     saleData,saleTotalPay,saleTotalNoPay= mergeData(saleList)
 
-    # #换卡数据
-    # changeSql = 'select a.order_sn,b.pay_id,b.pay_value,b.change_time,b.bank_name,b.bank_sn,b.pay_company,b.is_pay ' \
-    #             'from order_change_card as a , order_change_card_payment as b ' \
-    #             'where a.add_time>="{start}" and a.add_time<="{end}" and a.shop_code ="{shop}" and a.order_sn = b.order_id and (ISNULL(b.change_time) is FALSE or b.pay_id=4) ' \
-    #             'order by b.is_pay,a.order_sn' \
-    #             .format(start=start, end=endTime, shop=shop)
-    # cur.execute(changeSql)
-    # changeList = cur.fetchall()
-    # cur.close()
-    # conn.close()
-    # changeData,changeTotalPay,changeTotalNoPay = mergeData(changeList)
 
     data = saleData
     totalPay = saleTotalPay
@@ -59,20 +48,24 @@ def mergeData(List):
                 item['is_pay'] = obj['is_pay']
                 item['depart'] = obj['buyer_company']
                 item['change_time'] = obj['change_time']
+                #原始赊销金额
+                old_value = float(obj['no_pay'])
+                #赊销还款金额
+                pay_value = float(obj['pay_value']) if obj['pay_value'] else 0
                 if obj['is_pay'] == '1':
-                    totalPay += float(obj['pay_value'])
+                    totalPay += pay_value
                     if obj['pay_id'] == 1:
-                        item['cash'] = float(obj['pay_value'])
+                        item['cash'] = pay_value
                     if obj['pay_id'] == 3:
-                        item['bank'] = float(obj['pay_value'])
+                        item['bank'] = pay_value
                         item['bank_name'] = obj['bank_name']
                         item['bank_sn'] = obj['bank_sn']
                         item['pay_company'] = obj['pay_company']
                     if obj['pay_id'] == 5:
-                        item['pos'] = float(obj['pay_value'])
+                        item['pos'] = pay_value
                 else:
-                    totalNoPay += float(obj['pay_value'])
-                    item['orderNoPay'] += float(obj['pay_value'])
+                    totalNoPay += old_value
+                    item['orderNoPay'] += old_value
         data.append(item)
     return data,totalPay,totalNoPay
 

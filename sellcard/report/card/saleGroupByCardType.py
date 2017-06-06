@@ -14,7 +14,7 @@ def index(request):
 
     shops = []
     shopsCodeStr = ''
-    personList = AdminUser.objects.values('id', 'name','is_enable').filter(role_id__in=('2', '3', '5'))
+    personList = AdminUser.objects.values('id', 'name','is_enable').filter(role_id__in=('2', '3', '5','11'))
     if s_role in ('1', '6'):
         shops = mth.getCityShopsCode()
         shopsCodeStr = "'" + "','".join(shops) + "'"
