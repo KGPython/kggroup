@@ -45,10 +45,10 @@ SELECT
 	sum(a.pay_value_1) pay_value_1,
 	sum(a.pay_value_3) pay_value_3,
 	sum(a.pay_value_5) pay_value_5,
-	sum(a.pay_value_7) pay_value_7,
-	sum(a.pay_value_8) pay_value_8,
-	sum(a.pay_value_10) pay_value_10,
-	sum(a.pay_value_11) pay_value_11,
+	sum(a.pay_value_7) * 0.98 pay_value_7,
+	sum(a.pay_value_8) * 0.98 pay_value_8,
+	sum(a.pay_value_10) * 0.98 pay_value_10,
+	sum(a.pay_value_11) * 0.98 pay_value_11,
 	sum(IFNULL(opc6.pay_value, 0)) pay_value_6,
 	sum(case when IFNULL(opc4.pay_id, 0) = 1 then
 	IFNULL(opc4.pay_value, 0) else 0 end) credit_1,
@@ -56,7 +56,7 @@ SELECT
 	IFNULL(opc4.pay_value, 0) else 0 end) credit_3,
 	sum(case when IFNULL(opc4.pay_id, 0) = 5 then
 	IFNULL(opc4.pay_value, 0) else 0 end) credit_5,
-	sum(a.pay_value_total) + sum(IFNULL(opc4.pay_value, 0)) + sum(IFNULL(opc6.pay_value, 0)) total_value
+	sum(a.pay_1_3_5) + sum(a.pay_7_8_10_11) * 0.98 + sum(IFNULL(opc4.pay_value, 0)) + sum(IFNULL(opc6.pay_value, 0)) total_value
 FROM
 	(
 		SELECT
@@ -106,11 +106,17 @@ FROM
 			0
 		END pay_value_11,
 			CASE
-		WHEN opi.pay_id not in (4, 6) THEN
+		WHEN opi.pay_id in (1, 3, 5) THEN
 			opi.pay_value
 		ELSE
 			0
-		END pay_value_total,
+		END pay_1_3_5,
+			CASE
+		WHEN opi.pay_id in (7,8,10,11) THEN
+			opi.pay_value
+		ELSE
+			0
+		END pay_7_8_10_11,
 		ord.add_time
 	FROM
 		orders ord,
@@ -166,11 +172,17 @@ FROM
 			0
 		END pay_value_11,
 			CASE
-		WHEN occp.pay_id not in (4, 6) THEN
+		WHEN occp.pay_id in (1, 3, 5) THEN
 			occp.pay_value
 		ELSE
 			0
-		END pay_value_total,
+		END pay_1_3_5,
+			CASE
+		WHEN occp.pay_id in (7, 8, 10, 11) THEN
+			occp.pay_value
+		ELSE
+			0
+		END pay_7_8_10_11,
 		occ.add_time
 	FROM
 		order_change_card occ,
@@ -178,6 +190,17 @@ FROM
 	WHERE
 		occ.order_sn = occp.order_id
 	AND occp.is_pay = 1
+	UNION
+		SELECT
+		ouc.order_sn,
+		ouc.shop_code,
+		1 as pay_id,
+		ouc.diff_price,
+		0,0,0,0,0,0,
+		ouc.diff_price,0,
+		ouc.add_time
+	FROM
+		order_up_card ouc
 	) a
 LEFT JOIN order_payment_credit opc4 ON a.pay_id = 4
 AND a.order_sn = opc4.order_id
