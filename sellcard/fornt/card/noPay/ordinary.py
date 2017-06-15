@@ -30,7 +30,7 @@ def index(request):
         cur = conn.cursor()
         sqlSale="select a.pay_value,b.order_sn,b.operator_id,b.add_time,b.buyer_name,b.buyer_tel,b.paid_amount,a.pay_id " \
             "from order_payment_info as a ,orders as b " \
-            "where a.order_id=b.order_sn and a.pay_id in (4,3) and a.is_pay='0' and b.shop_code ='"+shopcode+"'"+queryWhereSale1+queryWhereSale2
+            "where a.order_id=b.order_sn and a.pay_id in (4, 3) and a.is_pay != '1' and b.shop_code ='"+shopcode+"'"+queryWhereSale1+queryWhereSale2
         cur.execute(sqlSale)
         listSale = cur.fetchall()
 
@@ -52,7 +52,11 @@ def detail(request):
 
     paysDict = {pay['pay_id']: pay['pay_value'] for pay in orderPayInfo}
     if 4 in paysDict.keys():
+        orderCredit = OrderPaymentCredit.objects.values('pay_id', 'pay_value').filter(order_id=orderSn)
         totalVal = paysDict[4]
+        if orderCredit:
+            for item in orderCredit:
+                totalVal = float(totalVal) - float(item['pay_value'])
     elif 3 in paysDict.keys():
         totalVal = paysDict[3]
     else:
@@ -66,6 +70,15 @@ def detail(request):
 def save(request):
     orderSn = request.POST.get('orderSn')
     dateStr = request.POST.get('date')
+    totalPay = float(request.POST.get('totalPay', '0'))
+    totalVal = float(request.POST.get('totalVal', '0'))
+    user_id = request.session.get('s_uid', '')
+    uesr_name = request.session.get('s_unameChinese', '')
+    is_pay = 0
+    if totalPay == totalVal:
+        is_pay = 1
+    elif totalPay < totalVal:
+        is_pay = 8
     date = datetime.datetime.strptime(dateStr, "%Y-%m-%d").date()
     payStr = request.POST.get('payList')
     payList = json.loads(payStr)
@@ -78,7 +91,7 @@ def save(request):
                 paysDict = {pay['pay_id']: pay['pay_value'] for pay in payments}
                 if 4 in paysDict.keys():
                     # paymentInfo.filter(pay_id=4, is_pay=0).delete()
-                    paymentInfo.filter(pay_id=4, is_pay=0).update(change_time=date, is_pay=1)
+                    paymentInfo.filter(pay_id=4, is_pay=0).update(change_time=date, is_pay=is_pay)
                     for pay in payList:
                         if pay['payId'] == '3':
                             # OrderPaymentInfo \
@@ -93,7 +106,8 @@ def save(request):
                                 .create(order_id=orderSn, pay_id=pay['payId'], pay_value=pay['payVal'],
                                         remarks=pay['payRmarks'], change_time=date,
                                         bank_name=pay['bankName'], bank_sn=pay['bankSn'],
-                                        pay_company=pay['payCompany']
+                                        pay_company=pay['payCompany'], create_time=datetime.datetime.now(),
+                                        create_user_id=user_id, create_user_name=uesr_name
                                         )
                         else:
                             # OrderPaymentInfo \
@@ -104,7 +118,8 @@ def save(request):
                             OrderPaymentCredit \
                                 .objects \
                                 .create(order_id=orderSn, pay_id=pay['payId'], pay_value=pay['payVal'],
-                                        remarks=pay['payRmarks'], change_time=date
+                                        remarks=pay['payRmarks'], change_time=date, create_time=datetime.datetime.now(),
+                                        create_user_id=user_id, create_user_name=uesr_name
                                         )
                 elif 3 in paysDict.keys():
                     for pay in payList:
