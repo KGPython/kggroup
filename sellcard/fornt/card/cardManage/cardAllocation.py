@@ -48,9 +48,14 @@ def allocationSave(request):
                 info.cardno_start = card['start'].strip()
                 info.cardno_end = card['end'].strip()
                 info.save()
+                conn = mth.getMysqlConn()
+                sql = "update card_inventory set shop_code='{shop}' WHERE card_no BETWEEN {start} AND {end}"\
+                    .format(shop=shopIn,start=int(card['start'].strip()),end=int(card['end'].strip()))
+                cur = conn.cursor()
+                updateNum = cur.execute(sql)
+                conn.commit()
 
                 subNum = int(card['end'])-int(card['start'])+1
-                updateNum = CardInventory.objects.filter(card_no__gte=card['start'],card_no__lte=card['end']).update(shop_code=shopIn)
                 if subNum != updateNum :
                     raise MyError(card['start'].strip()+'-'+card['end'].strip()+'状态更新失败')
 
