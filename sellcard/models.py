@@ -575,6 +575,7 @@ class Orders(models.Model):
         managed = False
         db_table = 'orders'
 
+
 class OrderErr(models.Model):
     order_sn = models.CharField(max_length=20)
     record = models.CharField(max_length=255)
@@ -586,10 +587,6 @@ class OrderErr(models.Model):
     class Meta:
         managed = False
         db_table = 'order_err'
-
-
-
-
 
 
 class PrintExplain(models.Model):
