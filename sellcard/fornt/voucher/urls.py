@@ -27,6 +27,8 @@ urlpatterns = [
     #验证码发放
     url(r'^verifier/sent/$', 'sellcard.fornt.voucher.verifier.sent.index', name="verifierSent"),
     url(r'^verifier/sent/save/$', 'sellcard.fornt.voucher.verifier.sent.save', name="verifierSentSave"),
+    # 验证码查询
+    url(r'^verifier/report/$', 'sellcard.fornt.voucher.verifier.report.index', name="verifierReport"),
 
 
     # 生成验证码

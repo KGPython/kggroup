@@ -23,7 +23,7 @@
                 <div class="widget-title"><span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
                     <h5>订单基础信息</h5>
                     {% if role == '1' or role == '6' %}
-                    <span class="icon-add-btn">
+                        <span class="icon-add-btn">
                         <button type="button" class="btn btn-success btn-xs" id="payErr">支付调整</button>
                     </span>
                     {% endif %}
@@ -143,24 +143,28 @@
                         <table class="table table-hover order-table table-form-my">
                             <tbody>
                             <tr>
-                                <td class="col-md-1 col-lg-1">订单 I D：</td>
-                                <td class="col-md-3 col-lg-3">{{ order.0.order_sn }}</td>
-                                <td class="col-md-1 col-lg-1">售卖门店：</td>
-                                <td class="col-md-3 col-lg-3">{{ order.0.shop_code | transShopCode }}</td>
-                                <td class="col-md-1 col-lg-1">下单时间：</td>
-                                <td class="col-md-3 col-lg-3">{{ order.0.add_time | date:'Y年m月d日' }}</td>
+                                <td class="col-md-2 col-lg-2">订单 I D：</td>
+                                <td class="col-md-4 col-lg-4">{{ order.0.order_sn }}</td>
+                                <td class="col-md-2 col-lg-2">售卖门店：</td>
+                                <td class="col-md-4 col-lg-4">{{ order.0.shop_code | transShopCode }}</td>
+                            </tr>
+                            <tr>
+                                <td>总数量</td>
+                                <td>{{ order.0.total_amount | default:0 }} 张</td>
+                                <td>总金额</td>
+                                <td>{{ order.0.total_price | default:0.00 }} 元</td>
                             </tr>
                             <tr>
                                 <td>补卡数量</td>
-                                <td>{{ cardsInNum | default:0 }} 张</td>
-                                <td>丢失卡金额</td>
-                                <td>{{ order.0.total_in_price | default:0.00 }} 元</td>
-                            </tr>
-                            <tr>
-                                <td>补卡数量</td>
-                                <td>{{ cardsOutNum | default:0 }} 张</td>
+                                <td>{{ order.0.fill_amount | default:0 }} 张</td>
                                 <td>补卡金额</td>
-                                <td>{{ order.0.total_out_price | default:0.00 }} 元</td>
+                                <td>{{ order.0.fill_price | default:0.00 }} 元</td>
+                            </tr>
+                            <tr>
+                                <td>下单时间：</td>
+                                <td>{{ order.0.add_time | date:'Y年m月d日' }}</td>
+                                <td>补差额</td>
+                                <td>{{ order.0.diff_price | default:0.00 }} 元</td>
                             </tr>
                             <tr>
                                 <td>买卡人姓名</td>
@@ -241,11 +245,11 @@
                                 <td>入卡总金额</td>
                                 <td>{{ order.0.total_in_price | default:0.00 }} 元</td>
                                 <td class="red">补差金额</td>
-                                <td>{% if orderPayment.0.pay_value%}
+                                <td>{% if orderPayment.0.pay_value %}
                                     {{ orderPayment.0.pay_value }}
-                                    {% else %}
+                                {% else %}
                                     正常换卡
-                                    {% endif %}
+                                {% endif %}
                                 </td>
                             </tr>
                             <tr>
@@ -256,9 +260,9 @@
                                 <td class="red">支付方式</td>
                                 <td>{% if orderPayment.0.pay_id %}
                                     {{ orderPayment.0.pay_id | transPayCode }}
-                                    {% else %}
+                                {% else %}
                                     正常换卡
-                                    {% endif %}
+                                {% endif %}
                                 </td>
                             </tr>
                             <tr>
@@ -269,11 +273,11 @@
                                 <td class="red">是否到账</td>
                                 <td>{% if orderPayment.0.is_pay == '1' %}
                                     到账
-                                    {% elif orderPayment.0.is_pay == '0' %}
+                                {% elif orderPayment.0.is_pay == '0' %}
                                     未到账
-                                    {% else %}
+                                {% else %}
                                     正常换卡
-                                    {% endif %}
+                                {% endif %}
                                 </td>
                             </tr>
                             </tbody>
@@ -351,7 +355,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title" id="myModalLabel">
-                       支付方式调整
+                        支付方式调整
                     </h4>
                 </div>
                 <div class="modal-body widget-content">
@@ -396,7 +400,7 @@
 {% endblock %}
 {% block js %}
     <script>
-        $('#payErr').click(function(){
+        $('#payErr').click(function () {
             $('#payErrBox').show()
         });
 
@@ -406,15 +410,15 @@
                 var checkBox = $(this).find('input:checkbox');
                 var checked = checkBox.is(':checked');
                 var payNew = $(this).find('select').val();
-                if(checked &&payNew){
+                if (checked && payNew) {
                     var payOld = checkBox.val();
                     var payVal = $(this).find('#payVal').text();
-                    data.push({'payOld':payOld,'payNew':payNew,'payVal':payVal})
+                    data.push({'payOld': payOld, 'payNew': payNew, 'payVal': payVal})
                 }
             });
             return data;
         }
-        $('.modal-footer #submit').click(function(){
+        $('.modal-footer #submit').click(function () {
             var list = getList();
             var orderSn = $('#orderSn').val();
             var shop = $('#shop').val();
@@ -424,34 +428,34 @@
                 shop: shop,
                 csrfmiddlewaretoken: '{{ csrf_token }}'
             };
-            if(!list.length){
+            if (!list.length) {
                 alert('提交列表不能为空');
-            }else{
-                $(this).attr('disabled',true);
+            } else {
+                $(this).attr('disabled', true);
                 $.post(
-                    "{% url 'orderAdjustCreate' %}",
-                    dataPost,
-                    function (data, status) {
-                        if(status=='success'){
-                            if(data.msg==0){
-                                alert('数据提交成功');
-                                $('#payErrBox').hide();
-                                $('#paySelect').val('');
-                                $("#payAdjust :checkbox").prop('checked',false);
-                            }else{
-                                alert('数据提交失败');
+                        "{% url 'orderAdjustCreate' %}",
+                        dataPost,
+                        function (data, status) {
+                            if (status == 'success') {
+                                if (data.msg == 0) {
+                                    alert('数据提交成功');
+                                    $('#payErrBox').hide();
+                                    $('#paySelect').val('');
+                                    $("#payAdjust :checkbox").prop('checked', false);
+                                } else {
+                                    alert('数据提交失败');
+                                }
+                                $(this).removeAttr('disabled');
+                            } else {
+                                alert(status)
                             }
-                            $(this).removeAttr('disabled');
-                        }else{
-                            alert(status)
-                        }
-                    },'json'
+                        }, 'json'
                 );
 
 
             }
         });
-        $('.modal-footer #close').click(function(){
+        $('.modal-footer #close').click(function () {
             $('#payErrBox').hide()
         });
     </script>

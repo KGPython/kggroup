@@ -121,7 +121,7 @@ def orderDetail(request):
     elif actionType == '2':
         order = OrderUpCard.objects \
             .values('order_sn', 'shop_code', 'action_type', 'total_amount', 'total_price', 'fill_amount', 'fill_price',
-                    'diff_price', 'state', 'user_name', 'user_phone') \
+                    'diff_price', 'state', 'user_name', 'user_phone', 'add_time') \
             .filter(order_sn=orderSn)
         # 丢失卡
         orderInfo = OrderUpCardInfo.objects.values('card_no', 'card_value', 'card_balance', 'card_attr').filter(order_sn=orderSn)
