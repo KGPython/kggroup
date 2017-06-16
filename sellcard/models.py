@@ -509,6 +509,9 @@ class OrderPaymentCredit(models.Model):
     bank_sn = models.CharField(max_length=25, blank=True, null=True)
     pay_company = models.CharField(max_length=15, blank=True, null=True)
     remarks = models.TextField(blank=True, null=True)
+    create_time = models.DateTimeField(blank=True, null=True)
+    create_user_id = models.IntegerField(blank=True, null=True)
+    create_user_name = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
         managed = False
