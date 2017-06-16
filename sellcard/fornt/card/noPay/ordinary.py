@@ -68,6 +68,8 @@ def detail(request):
 # 更新赊销状态
 @transaction.atomic
 def save(request):
+    user_id = request.session.get('s_uid', '')
+    uesr_name = request.session.get('s_unameChinese', '')
     orderSn = request.POST.get('orderSn')
     dateStr = request.POST.get('date')
     date = datetime.datetime.strptime(dateStr, "%Y-%m-%d").date()
@@ -85,13 +87,6 @@ def save(request):
                     paymentInfo.filter(pay_id=4, is_pay=0).update(is_pay=1)
                     for pay in payList:
                         if pay['payId'] == '3':
-                            # OrderPaymentInfo \
-                            #     .objects \
-                            #     .create(order_id=orderSn, pay_id=pay['payId'], pay_value=pay['payVal'],
-                            #             remarks=pay['payRmarks'], is_pay=1, change_time=date,
-                            #             bank_name=pay['bankName'], bank_sn=pay['bankSn'],
-                            #             pay_company=pay['payCompany']
-                            #             )
                             OrderPaymentCredit \
                                 .objects \
                                 .create(order_id=orderSn, pay_id=pay['payId'], pay_value=pay['payVal'],
@@ -101,11 +96,6 @@ def save(request):
                                         create_user_id=user_id, create_user_name=uesr_name
                                         )
                         else:
-                            # OrderPaymentInfo \
-                            #     .objects \
-                            #     .create(order_id=orderSn, pay_id=pay['payId'], pay_value=pay['payVal'],
-                            #             remarks=pay['payRmarks'], is_pay=1, change_time=date
-                            #             )
                             OrderPaymentCredit \
                                 .objects \
                                 .create(order_id=orderSn, pay_id=pay['payId'], pay_value=pay['payVal'],
@@ -126,7 +116,7 @@ def save(request):
                         .create(order_id=orderSn, pay_id=3, pay_value=pay_value,
                                 remarks=remarks, change_time=date,
                                 bank_name=bankName, bank_sn=bankSn,
-                                pay_company=payCompany
+                                pay_company=payCompany,create_user_id=user_id, create_user_name=uesr_name
                                 )
                 res['msg'] = '0'
             else:
