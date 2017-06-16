@@ -2,24 +2,24 @@
 {% load basefilter %}
 {% block title %}赊销单详细{% endblock %}
 {% block content %}
-<link rel="stylesheet" href="{{ static }}/css/bootstrap-datetimepicker.min.css">
-<div id="content">
-    <div id="content-header">
-        <div id="breadcrumb">
-            <a data-original-title="Go to Home" href="#" title="" class="tip-bottom">
-                <span class="glyphicon glyphicon-home" aria-hidden="true"> </span> 首页
-            </a>
-            <a href="#" class="current">订单详情</a>
+    <link rel="stylesheet" href="{{ static }}/css/bootstrap-datetimepicker.min.css">
+    <div id="content">
+        <div id="content-header">
+            <div id="breadcrumb">
+                <a data-original-title="Go to Home" href="#" title="" class="tip-bottom">
+                    <span class="glyphicon glyphicon-home" aria-hidden="true"> </span> 首页
+                </a>
+                <a href="#" class="current">订单详情</a>
+            </div>
         </div>
-    </div>
-    <div class="widget-box nopadding">
-        <div class="widget-title"><span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
-            <h5>赊销单详细</h5>
-        </div>
-        <div class="widget-content nopadding">
+        <div class="widget-box nopadding">
+            <div class="widget-title"><span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+                <h5>赊销单详细</h5>
+            </div>
+            <div class="widget-content nopadding">
 
-            <table class="table table-hover order-table table-form-my">
-                <tbody>
+                <table class="table table-hover order-table table-form-my">
+                    <tbody>
                     <tr>
                         <td class="col-md-1">订单 I D：</td>
                         <td class="col-md-3">{{ order.0.order_sn }}</td>
@@ -44,115 +44,160 @@
                         <td>买卡人单位</td>
                         <td>{{ order.0.buyer_company | default:'无' }}</td>
                     </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-    {% include 'common/paymentNoPay.html' %}
-    <div class="widget-box">
-        <div class="widget-content nopadding Total">
-            <div class="row">
-                <p class="text col-md-2" id="totalVal">应付金额：<b class="red">{{ totalVal }}</b>元</p>
-            </div>
-            <div class="row">
-                <p class="text col-md-12" id="payInfo">
-                    <b>支付详细：</b>
-                    <span></span>
-                </p>
-            </div>
-            <div class="row">
-                <p class="text col-md-12" id="payTotal">
-                    支付合计：<b class="red">0.00</b>元
-                </p>
+                    </tbody>
+                </table>
             </div>
         </div>
-    </div>
-    <div class="widget-box nopadding">
-        <div class="widget-title"><span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
-            <h5>到账日期</h5>
+        {% include 'common/paymentNoPay.html' %}
+        <div class="widget-box">
+            <div class="widget-content nopadding Total">
+                <div class="row">
+                    <p class="text col-md-2" id="totalVal">应付金额：<b class="red">{{ totalVal }}</b>元</p>
+                </div>
+                {% if type == '4'  %}
+                    <div class="row">
+                        <p class="text col-md-12" id="payInfo">
+                            <b>支付详细：</b>
+                            <span></span>
+                        </p>
+                    </div>
+                    <div class="row">
+                        <p class="text col-md-12" id="payTotal">
+                            支付合计：<b class="red">0.00</b>元
+                        </p>
+                    </div>
+                {% endif %}
+            </div>
         </div>
-        <div class="widget-content">
-            <div class="row formline">
-                <label for="" class="col-md-1 formline-label" style="text-align: left">到账日期：</label>
-                <div class="col-md-3 col-lg-2">
-                    <div data-link-format="yyyy-mm-dd" data-link-field="dtp_input2" data-date-format="yyyy-mm-dd" data-date="" class="input-group date form_date">
-                        <input readonly="" value="" size="16" id="date" class="form-control">
-                        <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
-                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+        <div class="widget-box nopadding">
+            <div class="widget-title"><span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
+                <h5>到账日期</h5>
+            </div>
+            <div class="widget-content">
+                <div class="row formline">
+                    <label for="" class="col-md-1 formline-label" style="text-align: left">到账日期：</label>
+                    <div class="col-md-3 col-lg-2">
+                        <div data-link-format="yyyy-mm-dd" data-link-field="dtp_input2" data-date-format="yyyy-mm-dd"
+                             data-date="" class="input-group date form_date">
+                            <input readonly="" value="" size="16" id="date" class="form-control">
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="enter-box">
-        <button class="btn btn-success pull-right" type="button" id="btn-enter">提交订单</button>
+        <div class="enter-box">
+            <button class="btn btn-success pull-right" type="button" id="btn-enter">提交订单</button>
+        </div>
     </div>
-</div>
 
 {% endblock %}
 {% block js %}
-<script src="{{ static }}/js/bootstrap-datetimepicker.js"></script>
-<script src="{{ static }}/js/bootstrap-datetimepicker.zh-CN.js"></script>
-<script>
-    $('.form_date').datetimepicker({
-        language: 'zh-CN',
-        weekStart: 1,
-        todayBtn: 1,
-	    autoclose: 1,
-	    todayHighlight: 1,
-	    startView: 2,
-	    minView: 2,
-	    forceParse: 0
-    });
+    <script src="{{ static }}/js/bootstrap-datetimepicker.js"></script>
+    <script src="{{ static }}/js/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script>
+        $('.form_date').datetimepicker({
+            language: 'zh-CN',
+            weekStart: 1,
+            todayBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 2,
+            forceParse: 0
+        });
 
-</script>
+    </script>
     {% if type == '4' %}
         <script>
-    $(document).on('click','#btn-enter',function(){
-        var orderSn = '{{ orderSn | safe }}';
-        var date = $('#date').val();
-        var totalVal = parseFloat($('#totalVal b').text());
+            $(document).on('click', '#btn-enter', function () {
+                var orderSn = '{{ orderSn | safe }}';
+                var date = $('#date').val();
+                var totalVal = parseFloat($('#totalVal b').text());
 
-        var payJson = getPayList1($('.payList'));
-        var payList = payJson['payList'];
-        var totalPay = payJson['totalVal'];
-        if(totalPay!=totalVal){
-            alert('实际支付与应付合计不符');
-            return false;
-        }else if(!date){
-            alert('到帐日期不能为空');
-            return false;
-        }
-        data={
-            csrfmiddlewaretoken: CSRF,
-            'date':date,
-            'orderSn':orderSn,
-            'payList':JSON.stringify(payList)
-        };
-        var r=confirm('确认更改付款状态？');
-        if(r){
-            $.ajax({
-                url:"{% url 'upNoPayStatus' %}",
-                method:'post',
-                dataType:'json',
-                data:data,
-                success:function(data){
-                    if(data.msg=='0'){
-                        alert('状态更改成功');
-                        window.location.href='{% url 'nopay' %}'
-                    }
-                    if(data.msg=='1'){
-                        alert('状态更改失败')
-                    }
-                },
-                error:function(){
+                var payJson = getPayList1($('.payList'));
+                var payList = payJson['payList'];
+                var totalPay = payJson['totalVal'];
+                if (totalPay != totalVal) {
+                    alert('实际支付与应付合计不符');
+                    return false;
+                } else if (!date) {
+                    alert('到帐日期不能为空');
+                    return false;
+                }
+                data = {
+                    csrfmiddlewaretoken: CSRF,
+                    'date': date,
+                    'orderSn': orderSn,
+                    'payList': JSON.stringify(payList)
+                };
+                var r = confirm('确认更改付款状态？');
+                if (r) {
+                    $.ajax({
+                        url: "{% url 'upNoPayStatus' %}",
+                        method: 'post',
+                        dataType: 'json',
+                        data: data,
+                        success: function (data) {
+                            if (data.msg == '0') {
+                                alert('状态更改成功');
+                                window.location.href = '{% url 'nopay' %}'
+                            }
+                            if (data.msg == '1') {
+                                alert('状态更改失败')
+                            }
+                        },
+                        error: function () {
+                        }
+                    })
                 }
             })
-        }
-    })
-</script>
-    {% elif type == '5' %}
-
+        </script>
+    {% elif type == '3' %}
+        <script>
+            $(document).on('click', '#btn-enter', function () {
+                var orderSn = '{{ orderSn | safe }}';
+                var bankName = $('#bankName').val();
+                var bankSn = $('#bankSn').val();
+                var remarks = $('#remarks').val();
+                var payCompany = $('#payCompany').val();
+                var date = $('#date').val();
+                if(!(bankName&&bankSn&&payCompany&&date)){
+                    alert('请完善汇款到账信息');
+                    return false;
+                }
+                data = {
+                    csrfmiddlewaretoken: CSRF,
+                    'bankName': bankName,
+                    'bankSn': bankSn,
+                    'payCompany': payCompany,
+                    'remarks': remarks,
+                    'orderSn': orderSn,
+                    'date':date
+                };
+                var r = confirm('确认更改付款状态？');
+                if (r) {
+                    $.ajax({
+                        url: "{% url 'upNoPayStatus' %}",
+                        method: 'post',
+                        dataType: 'json',
+                        data: data,
+                        success: function (data) {
+                            if (data.msg == '0') {
+                                alert('状态更改成功');
+                                window.location.href = '{% url 'nopay' %}'
+                            }
+                            if (data.msg == '1') {
+                                alert('状态更改失败')
+                            }
+                        },
+                        error: function () {
+                        }
+                    })
+                }
+            })
+        </script>
     {% endif %}
 {% endblock %}

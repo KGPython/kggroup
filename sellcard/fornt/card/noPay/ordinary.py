@@ -67,8 +67,7 @@ def save(request):
     orderSn = request.POST.get('orderSn')
     dateStr = request.POST.get('date')
     date = datetime.datetime.strptime(dateStr, "%Y-%m-%d").date()
-    payStr = request.POST.get('payList')
-    payList = json.loads(payStr)
+
     res = {}
     try:
         with transaction.atomic():
@@ -77,17 +76,11 @@ def save(request):
                 payments = paymentInfo.values('pay_id','pay_value')
                 paysDict = {pay['pay_id']: pay['pay_value'] for pay in payments}
                 if 4 in paysDict.keys():
-                    # paymentInfo.filter(pay_id=4, is_pay=0).delete()
-                    paymentInfo.filter(pay_id=4, is_pay=0).update(change_time=date, is_pay=1)
+                    payStr = request.POST.get('payList')
+                    payList = json.loads(payStr)
+                    paymentInfo.filter(pay_id=4, is_pay=0).update(is_pay=1)
                     for pay in payList:
                         if pay['payId'] == '3':
-                            # OrderPaymentInfo \
-                            #     .objects \
-                            #     .create(order_id=orderSn, pay_id=pay['payId'], pay_value=pay['payVal'],
-                            #             remarks=pay['payRmarks'], is_pay=1, change_time=date,
-                            #             bank_name=pay['bankName'], bank_sn=pay['bankSn'],
-                            #             pay_company=pay['payCompany']
-                            #             )
                             OrderPaymentCredit \
                                 .objects \
                                 .create(order_id=orderSn, pay_id=pay['payId'], pay_value=pay['payVal'],
@@ -96,21 +89,27 @@ def save(request):
                                         pay_company=pay['payCompany']
                                         )
                         else:
-                            # OrderPaymentInfo \
-                            #     .objects \
-                            #     .create(order_id=orderSn, pay_id=pay['payId'], pay_value=pay['payVal'],
-                            #             remarks=pay['payRmarks'], is_pay=1, change_time=date
-                            #             )
                             OrderPaymentCredit \
                                 .objects \
                                 .create(order_id=orderSn, pay_id=pay['payId'], pay_value=pay['payVal'],
                                         remarks=pay['payRmarks'], change_time=date
                                         )
                 elif 3 in paysDict.keys():
-                    for pay in payList:
-                        paymentInfo.filter(pay_id=3, is_pay=0) \
-                        .update(is_pay=1, change_time=date, bank_name=pay['bankName'], bank_sn=pay['bankSn'],
-                                pay_company=pay['payCompany'])
+                    bankName = request.POST.get('bankName')
+                    bankSn = request.POST.get('bankSn')
+                    payCompany = request.POST.get('payCompany')
+                    remarks = request.POST.get('remarks')
+
+                    paymentInfo.filter(pay_id=3, is_pay=0).update(is_pay=1)
+                    pay = paymentInfo.get(pay_id=3, is_pay=1)
+                    pay_value = pay.pay_value
+                    OrderPaymentCredit \
+                        .objects \
+                        .create(order_id=orderSn, pay_id=3, pay_value=pay_value,
+                                remarks=remarks, change_time=date,
+                                bank_name=bankName, bank_sn=bankSn,
+                                pay_company=payCompany
+                                )
                 res['msg'] = '0'
             else:
                 res['msg'] = '1'
