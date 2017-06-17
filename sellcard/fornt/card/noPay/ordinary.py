@@ -28,9 +28,12 @@ def index(request):
         queryWhereSale2 = " and b.add_time >='{start}' and b.add_time <='{end}' ".format(start=start, end=endStr)
         conn = mth.getMysqlConn()
         cur = conn.cursor()
-        sqlSale="select a.pay_value,b.order_sn,b.operator_id,b.add_time,b.buyer_name,b.buyer_tel,b.paid_amount,a.pay_id " \
-            "from order_payment_info as a ,orders as b " \
-            "where a.order_id=b.order_sn and a.pay_id in (4, 3) and a.is_pay != '1' and b.shop_code ='"+shopcode+"'"+queryWhereSale1+queryWhereSale2
+        sqlSale="select a.pay_value,b.order_sn,b.operator_id,b.add_time,b.buyer_name,b.buyer_tel,b.paid_amount, " \
+                " IFNULL(c.pay_value, 0) as credit_value, a.pay_id " \
+            " from order_payment_info as a ,orders as b " \
+            " left join (select sum(p.pay_value) as pay_value, p.order_id from order_payment_credit p group by p.order_id) as c " \
+            " on b.order_sn = c.order_id " \
+            " where a.order_id=b.order_sn and a.pay_id in (4, 3) and a.is_pay != '1' and b.shop_code ='"+shopcode+"'"+queryWhereSale1+queryWhereSale2
         cur.execute(sqlSale)
         listSale = cur.fetchall()
 
@@ -108,9 +111,9 @@ def save(request):
                     payCompany = request.POST.get('payCompany')
                     remarks = request.POST.get('remarks')
 
-                    paymentInfo.filter(pay_id=3, is_pay=0).update(is_pay=1)
-                    pay = paymentInfo.get(pay_id=3, is_pay=1)
+                    pay = paymentInfo.get(pay_id=3, is_pay=0)
                     pay_value = pay.pay_value
+                    paymentInfo.filter(pay_id=3, is_pay=0).update(is_pay=1)
                     OrderPaymentCredit \
                         .objects \
                         .create(order_id=orderSn, pay_id=3, pay_value=pay_value,

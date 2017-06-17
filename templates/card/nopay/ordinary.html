@@ -68,6 +68,7 @@
                                 <th>售卡时间</th>
                                 <th>订单总额</th>
                                 <th>赊销金额</th>
+                                <th>到账金额</th>
                                 <th>赊销方式</th>
                                 <th>赊销方姓名</th>
                                 <th>赊销方电话</th>
@@ -81,6 +82,7 @@
                                     <td><input class='form-control' disabled="disabled" value="{{ row.add_time | date:"Y-m-d"}}"></td>
                                     <td><input class="form-control" disabled="disabled" value="{{ row.paid_amount }}"></td>
                                     <td><input class="form-control" disabled="disabled" value="{{ row.pay_value }}"></td>
+                                    <td><input class="form-control" disabled="disabled" value="{{ row.credit_value }}"></td>
                                     <td><input class="form-control" disabled="disabled" value="{{ row.pay_id | transPayCode }}"></td>
                                     <td><input class='form-control' disabled="disabled" value="{{ row.buyer_name }}"></td>
                                     <td><input class='form-control' disabled="disabled" value="{{ row.buyer_tel }}"></td>
