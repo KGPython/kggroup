@@ -55,6 +55,8 @@ def index(request):
 @transaction.atomic
 def save(request):
     dateStr = request.POST.get('date')
+    u_id = request.session.get('s_uid', '')
+    u_name = request.session.get('s_unameChinese', '')
     date = datetime.datetime.strptime(dateStr, "%Y-%m-%d").date()
     orderSnListStr = request.POST.get('orderSnList')
     orderSnList = orderSnListStr.split(',')
@@ -68,7 +70,8 @@ def save(request):
                     pay_value = GetPayment['pay_value']
                     OrderPaymentCredit \
                         .objects \
-                        .create(order_id=orderSn, pay_id=3, pay_value=pay_value, change_time=date)
+                        .create(order_id=orderSn, pay_id=3, pay_value=pay_value, change_time=date, create_time=datetime.datetime.now(),
+                                        create_user_id=u_id, create_user_name=u_name)
                     OrderPaymentInfo.objects.filter(order_id=orderSn, pay_id=6, is_pay=0).update(change_time=date, is_pay=1)
                 elif orderSn.find('C')==0:
                     # OrderChangeCardPayment.objects.filter(order_id=orderSn,pay_id=6,is_pay=0).update(pay_id=3,change_time=date,is_pay=1)
@@ -76,7 +79,8 @@ def save(request):
                     pay_value = GetPayment['pay_value']
                     OrderPaymentCredit \
                         .objects \
-                        .create(order_id=orderSn, pay_id=3, pay_value=pay_value, change_time=date)
+                        .create(order_id=orderSn, pay_id=3, pay_value=pay_value, change_time=date, create_time=datetime.datetime.now(),
+                                        create_user_id=u_id, create_user_name=u_name)
                     OrderChangeCardPayment.objects.filter(order_id=orderSn, pay_id=6, is_pay=0).update(change_time=date, is_pay=1)
             res['msg'] = '0'
     except Exception as e:
