@@ -116,9 +116,13 @@
                             {% for row in dataList %}
                                 <tr>
                                     <td class="first-col">
+                                        {% if role_id != '3' and role_id != '12' %}
                                         <a href="{% url 'saleGroupByShopDateDetail' %}?shopcode={{ row.shop_code }}&start={{ start }}&end={{ end }}">
                                             {{ row.shop_code | transShopCode }}
                                         </a>
+                                        {% else %}
+                                        {{ row.shop_code | transShopCode }}
+                                        {% endif %}
                                     </td>
                                     <td class="discCol">{{ row.disc_6 | floatformat:2 }}</td>
                                     <td class="discCol">{{ row.disc_7 | floatformat:2 }}</td>
@@ -130,51 +134,87 @@
 
                                     <td class="saleCol">{{ row.pay_1 | floatformat:2 | default:0 }}</td>
                                     <td class="saleCol">
+                                        {% if role_id != '3' and role_id != '12' %}
                                         <a href="{% url 'saleGroupByShopDet' %}?shop={{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=2">
                                             {{ row.pay_2 | floatformat:2 | default:0 }}
                                         </a>
+                                        {% else %}
+                                        {{ row.pay_2 | floatformat:2 | default:0 }}
+                                        {% endif %}
                                     </td>
                                     <td class="saleCol">
+                                        {% if role_id != '3' and role_id != '12' %}
                                         <a href="{% url 'saleGroupByShopDet' %}?shop={{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=3">
                                             {{ row.pay_3 | floatformat:2 | default:0 }}
                                         </a>
+                                        {% else %}
+                                        {{ row.pay_3 | floatformat:2 | default:0 }}
+                                        {% endif %}
                                     </td>
                                     <td class="saleCol">
+                                        {% if role_id != '3' and role_id != '12' %}
                                         <a href="{% url 'saleGroupByShopDet' %}?shop={{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=5">
                                             {{ row.pay_5 | floatformat:2 | default:0 }}
                                         </a>
+                                        {% else %}
+                                        {{ row.pay_5 | floatformat:2 | default:0 }}
+                                        {% endif %}
                                     </td>
 
                                     <td class="saleCol">
+                                        {% if role_id != '3' and role_id != '12' %}
                                         <a href="{% url 'report_card_noPay_order' %}?shop={{ row.shop_code }}&start={{ start }}&end={{ end }}">
                                             {{ row.pay_4 | floatformat:2 | default:0 }}
                                         </a>
+                                        {% else %}
+                                        {{ row.pay_4 | floatformat:2 | default:0 }}
+                                        {% endif %}
                                     </td>
 
                                     <td class="saleCol">
+                                        {% if role_id != '3' and role_id != '12' %}
                                         <a href="{% url 'saleGroupByShopDet' %}?shop={{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=6">
                                             {{ row.pay_6 | floatformat:2 | default:0 }}
                                         </a>
+                                        {% else %}
+                                        {{ row.pay_6 | floatformat:2 | default:0 }}
+                                        {% endif %}
                                     </td>
                                     <td class="saleCol">
+                                        {% if role_id != '3' and role_id != '12' %}
                                         <a href="{% url 'saleGroupByShopDet' %}?shop={{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=7">
                                             {{ row.pay_7 | subtract:row.disc_7 | floatformat:2 | default:0 }}
                                         </a>
+                                        {% else %}
+                                        {{ row.pay_7 | subtract:row.disc_7 | floatformat:2 | default:0 }}
+                                        {% endif %}
                                     </td>
                                     <td class="saleCol">
+                                        {% if role_id != '3' and role_id != '12' %}
                                         <a href="{% url 'saleGroupByShopDet' %}?shop{{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=8">
                                             {{ row.pay_8 | subtract:row.disc_8  | floatformat:2 | default:0 }}
                                         </a>
+                                        {% else %}
+                                        {{ row.pay_8 | subtract:row.disc_8  | floatformat:2 | default:0 }}
+                                        {% endif %}
                                     </td>
                                     <td class="saleCol">
+                                        {% if role_id != '3' and role_id != '12' %}
                                         <a href="{% url 'saleGroupByShopDet' %}?shop{{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=10">
                                             {{ row.pay_10 | subtract:row.disc_10  | floatformat:2 | default:0 }}
                                         </a>
+                                        {% else %}
+                                        {{ row.pay_10 | subtract:row.disc_10  | floatformat:2 | default:0 }}
+                                        {% endif %}
                                     </td>
                                     <td class="saleCol">
+                                        {% if role_id != '3' and role_id != '12' %}
                                         <a href="{% url 'saleGroupByShopDet' %}?shop{{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=11">
                                             {{ row.pay_11 | floatformat:2 | default:0 }}
                                         </a>
+                                        {% else %}
+                                        {{ row.pay_11 | floatformat:2 | default:0 }}
+                                        {% endif %}
                                     </td>
                                     <td class="saleTotal">{{ row.inSub | subtract:row.disc_7 | subtract:row.disc_8 | subtract:row.disc_10 | floatformat:2 | default:0 }}</td>
 
