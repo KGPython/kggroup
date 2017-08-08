@@ -502,6 +502,7 @@ class OrderPaymentInfo(models.Model):
 
 class OrderPaymentCredit(models.Model):
     order_id = models.CharField(max_length=20)
+    pay_id_old = models.IntegerField()
     pay_id = models.IntegerField()
     pay_value = models.DecimalField(max_digits=11, decimal_places=2)
     change_time = models.DateTimeField(blank=True, null=True)

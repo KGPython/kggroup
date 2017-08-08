@@ -164,7 +164,7 @@ def update(request):
 
             # 激活新卡
             cardOutNum = len(cardIdOutList)
-            resCardOut = CardInventory.objects.filter(card_no__in=cardIdOutList).update(card_status=2)
+            resCardOut = CardInventory.objects.filter(card_no__in=cardIdOutList).update(card_status=2,card_action=0)
             if resCardOut != cardOutNum:
                 raise MyError('CardInventory状态更新失败')
 

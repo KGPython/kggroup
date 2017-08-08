@@ -10,7 +10,6 @@ function delRow(dom) {
     if(id!='err'){
         setTotalByCardList(parnetTbody);
     }
-
 }
 $(document).on('click','.formline .btn-add',function(){
     var formBox = $(this).parent().parent().parent();

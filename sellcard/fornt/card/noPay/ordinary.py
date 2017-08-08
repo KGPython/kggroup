@@ -9,6 +9,7 @@ import datetime,json
 from sellcard.models import Orders,OrderPaymentInfo,OrderInfo,OrderPaymentCredit,OrderChangeCard,OrderChangeCardPayment
 
 def index(request):
+
     if request.method == 'POST':
         operator = str(request.session.get('s_uid', ''))
         shopcode = request.session.get('s_shopcode', '')
@@ -92,8 +93,8 @@ def save(request):
                         if pay['payId'] == '3':
                             OrderPaymentCredit \
                                 .objects \
-                                .create(order_id=orderSn, pay_id=pay['payId'], pay_value=pay['payVal'],
-                                        remarks=pay['payRmarks'], change_time=date,
+                                .create(order_id=orderSn, pay_id_old=4,pay_id=pay['payId'],
+                                        pay_value=pay['payVal'],remarks=pay['payRmarks'], change_time=date,
                                         bank_name=pay['bankName'], bank_sn=pay['bankSn'],
                                         pay_company=pay['payCompany'], create_time=datetime.datetime.now(),
                                         create_user_id=user_id, create_user_name=uesr_name
@@ -101,7 +102,7 @@ def save(request):
                         else:
                             OrderPaymentCredit \
                                 .objects \
-                                .create(order_id=orderSn, pay_id=pay['payId'], pay_value=pay['payVal'],
+                                .create(order_id=orderSn,pay_id_old=4, pay_id=pay['payId'], pay_value=pay['payVal'],
                                         remarks=pay['payRmarks'], change_time=date, create_time=datetime.datetime.now(),
                                         create_user_id=user_id, create_user_name=uesr_name
                                         )
@@ -116,7 +117,7 @@ def save(request):
                     paymentInfo.filter(pay_id=3, is_pay=0).update(is_pay=1)
                     OrderPaymentCredit \
                         .objects \
-                        .create(order_id=orderSn, pay_id=3, pay_value=pay_value,
+                        .create(order_id=orderSn,pay_id_old=3, pay_id=3, pay_value=pay_value,
                                 remarks=remarks, change_time=date,
                                 bank_name=bankName, bank_sn=bankSn,
                                 pay_company=payCompany,create_user_id=user_id, create_user_name=uesr_name

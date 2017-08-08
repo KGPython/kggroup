@@ -68,6 +68,17 @@
                                                 class="glyphicon glyphicon-calendar"></span></span>
                                     </div>
                                 </div>
+                                <label class="col-md-1 formline-label">门店：</label>
+                                <div class="col-md-3 col-lg-2">
+                                    <select name="shop" id="shop" class="form-control" required="required">
+                                        <option value="">全部</option>
+                                        {% for shop in shops %}
+                                            <option value="{{ shop }}" {% if shop_code == shop %}selected{% endif %}>
+                                                {{ shop | transShopCode }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
 
                                 <div class="col-md-2">
                                     <button type="button" class="btn btn-success pull-right" id="enter">查询</button>
@@ -80,7 +91,7 @@
                     <h3 class="text-center">集团售卡赊销到帐明细</h3>
                     <h5 class="text-right">
 {#                        <span class="red" style="margin-right: 30px">到账合计：{{ totalPay }}元</span>#}
-                        <span class="red" style="margin-right: 30px">赊销累计未到账合计：{{ totalNoPay }}元</span>
+                        <span class="red" style="margin-right: 30px">赊销累计未到账合计：{{ totalNoPay | floatformat:2 }}元</span>
                         <span style="margin-right: 30px">金额单位：元</span>
                     </h5>
                     <div class="widget-content nopadding">
@@ -108,9 +119,13 @@
                                         <td>{{ row.shop | transShopCode }}</td>
                                         <td>{{ row.sn }}</td>
                                         <td>{{ row.info }} </td>
-                                        <td>{{ row.noPay }}</td>
-                                        <td>{{ row.pay }}</td>
+                                        <td>{{ row.noPay | floatformat:2 }}</td>
+                                        <td>{{ row.pay | floatformat:2 }}</td>
                                         <td>{{ row.sub | floatformat:2}}</td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                    <td colspan="7">查无数据</td>
                                     </tr>
                                 {% endfor %}
                             </tbody>

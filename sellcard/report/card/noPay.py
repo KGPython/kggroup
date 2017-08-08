@@ -1,7 +1,8 @@
 # -*-  coding:utf-8 -*-
-from django.shortcuts import render
-from operator import itemgetter,attrgetter
 import datetime
+from django.shortcuts import render
+
+from operator import itemgetter,attrgetter
 from sellcard.common import Method as mth
 from sellcard import views as base
 
@@ -71,6 +72,11 @@ def mergeData(List):
 
 
 def month(request):
+    """
+    :param request:
+    :return:
+    """
+    shops = mth.getCityShopsCode()
     if request.method == 'POST':
         postStart = request.POST.get('start')
         postEnd = request.POST.get('end')
@@ -82,89 +88,124 @@ def month(request):
         else:
             end = datetime.datetime(endTemp.year, endTemp.month + 1, 1)
 
+        shop_code = request.POST.get('shop','')
+        parameterShop = '1=1'
+        if shop_code:
+            parameterShop = 'a.shop_code="{shop}"'.format(shop=shop_code)
+
         conn = mth.getMysqlConn()
         cur = conn.cursor()
         # 查询：起始日期之前的历史数据
-        noPayBeforeSql = 'select a.order_sn,a.buyer_company,a.shop_code,a.add_time,b.pay_id ,b.pay_value,b.change_time,b.bank_name,b.bank_sn,b.pay_company,b.is_pay ' \
-                   'from orders as a , order_payment_info as b ' \
-                   'where ((a.add_time<="{start}"  and b.pay_id=4) or (b.change_time<="{start}")) ' \
-                   'and a.order_sn = b.order_id ' \
-                   'order by a.add_time' \
-            .format(start=start, end=end)
-        cur.execute(noPayBeforeSql)
-        noPayBeforeList = cur.fetchall()
-        # 分离数据
-        dataBefore = splitDataBefore(noPayBeforeList,start,end)
+        # noPayBeforeSql = 'select a.order_sn,a.buyer_company,a.shop_code,a.add_time,b.pay_id ,b.pay_value,b.change_time,' \
+        #                  'b.bank_name,b.bank_sn,b.pay_company,b.is_pay ' \
+        #            'from orders as a , order_payment_info as b ' \
+        #            'where ((a.add_time<="{start}"  and b.pay_id=4) or (b.change_time<="{start}")) ' \
+        #            'and a.order_sn = b.order_id ' \
+        #            'order by a.add_time' \
+        #     .format(start=start, end=end)
+        # cur.execute(noPayBeforeSql)
+        # noPayBeforeList = cur.fetchall()
 
-        # 计算：起始日期之前，未到账数据总和
-        totalNoPayBefore = 0
-        for row in dataBefore:
-            if 'is_pay' in row:
-                if row['is_pay'] == '1':
-                    totalNoPayBefore += -float(row['pay'])
-                else:
-                    totalNoPayBefore += float(row['noPay'])
+        sqlBeforeNoPay = 'select sum(b.pay_value) as total from orders as a, order_payment_info as b ' \
+                         'where a.add_time<="{start}" and {shop} and b.is_pay=0 and b.pay_id in (4,6) and a.order_sn = b.order_id' \
+                        .format(start=start,shop=parameterShop)
+        cur.execute(sqlBeforeNoPay)
+        beforeNoPay = cur.fetchone()
+        totalNoPayBefore = beforeNoPay['total']
+        totalNoPayBefore= totalNoPayBefore if totalNoPayBefore else 0
+
+        sqlNoPay = 'select a.order_sn,a.buyer_company,a.shop_code,a.add_time,b.pay_id ,b.pay_value ' \
+                  'from orders as a,order_payment_info as b ' \
+                  'where a.add_time>="{start}" and a.add_time<="{end}" and {shop} ' \
+                  'and (b.pay_id in (4,6) or b.change_time>0) and a.order_sn = b.order_id ' \
+                  'order by a.add_time'.format(start=start, end=end,shop=parameterShop)
+        cur.execute(sqlNoPay)
+        noPayList = cur.fetchall()
+        sqlPaid = 'select a.order_sn,a.shop_code,b.pay_company,b.change_time,b.pay_id ,b.pay_value ' \
+                  'from order_payment_credit as b LEFT JOIN orders as a ' \
+                  'ON b.order_id = a.order_sn ' \
+                  'where b.change_time>="{start}" and {shop} and b.change_time<="{end}" and b.pay_id_old!=3 ' \
+                  'order by b.change_time'.format(start=start, end=end,shop=parameterShop)
+        cur.execute(sqlPaid)
+        paidList = cur.fetchall()
+        # # 分离数据
+        # dataBefore = splitDataBefore(noPayBeforeList,start,end)
+        #
+        # # 计算：起始日期之前，未到账数据总和
+        # totalNoPayBefore = 0
+        # for row in dataBefore:
+        #     if 'is_pay' in row:
+        #         if row['is_pay'] == '1':
+        #             totalNoPayBefore += -float(row['pay'])
+        #         else:
+        #             totalNoPayBefore += float(row['noPay'])
+
 
         # 查询：起止时间段内的数据
-        noPayOrderSql = 'select a.order_sn,a.buyer_company,a.shop_code,a.add_time,b.pay_id ,b.pay_value,b.change_time,b.bank_name,b.bank_sn,b.pay_company,b.is_pay ' \
-                   'from orders as a , order_payment_info as b ' \
-                   'where ((a.add_time>="{start}" and a.add_time<="{end}" and b.pay_id=4) or (b.change_time>="{start}" and b.change_time<="{end}")) ' \
-                   'and a.order_sn = b.order_id ' \
-                   'order by a.add_time' \
-            .format(start=start, end=end)
-        cur.execute(noPayOrderSql)
-        noPayOrderList = cur.fetchall()
+        # noPayOrderSql = 'select a.order_sn,a.buyer_company,a.shop_code,a.add_time,b.pay_id ,b.pay_value,b.change_time,' \
+        #                 'b.bank_name,b.bank_sn,b.pay_company,b.is_pay ' \
+        #            'from orders as a , order_payment_info as b ' \
+        #            'where ((a.add_time>="{start}" and a.add_time<="{end}" and b.pay_id=4) or (b.change_time>="{start}" and b.change_time<="{end}")) ' \
+        #            'and a.order_sn = b.order_id ' \
+        #            'order by a.add_time' \
+        #     .format(start=start, end=end)
+        # cur.execute(noPayOrderSql)
+        # noPayOrderList = cur.fetchall()
         # 分离数据
-        dataSelect = splitData(noPayOrderList,start,end)
-        dataSorted = sorted(dataSelect, key=itemgetter('time'), reverse=False)
 
+        # dataSelect =noPayList+paidList
+        noPayList = splitData('0',noPayList,start,end)
+        paidList = splitData('1',paidList,start,end)
+        dataSelect = noPayList + paidList
         totalNoPay = float(totalNoPayBefore)
-        totalPay,MonthNoPay,MonthPay,index, = 0,0,0,0
-        resData,monthSubTimeList = [],[]
+        if len(dataSelect)>0:
+            dataSorted = sorted(dataSelect, key=itemgetter('time'), reverse=False)
+            totalPay,MonthNoPay,MonthPay,index, = 0,0,0,0
+            resData,monthSubTimeList = [],[]
 
-        for row in dataSorted:
-            rowTimeNow = row['time']
-            rowTimePre = dataSorted[index-1]['time']
-            #
-            if isNextMonth(rowTimeNow,rowTimePre) and (row['time'].date()+datetime.timedelta(days=-1) not in monthSubTimeList):
-                time = datetime.datetime(rowTimeNow.year,rowTimeNow.month,1)+datetime.timedelta(days=-1)
-                if time>=datetime.datetime.strptime(start,'%Y-%m-%d %H:%M:%S'):
-                    monthSubitem = MonthSub(MonthPay,MonthNoPay,time)
-                    resData.insert(index+1,monthSubitem)
-                    monthSubTimeList.append(time)
-                    MonthNoPay = 0
-                    MonthPay = 0
-            if 'is_pay' in row:
-                if row['is_pay'] == '1':
-                    MonthPay += float(row['pay'])
-                    totalPay += float(row['pay'])
-                    totalNoPay += -float(row['pay'])
-                    row['sub'] = totalNoPay
-                else:
-                    MonthNoPay += float(row['noPay'])
-                    totalNoPay += float(row['noPay'])
-                    row['sub'] = totalNoPay
-                resData.append(row)
+            for row in dataSorted:
+                rowTimeNow = row['time']
+                rowTimePre = dataSorted[index-1]['time']
+                #
+                if isNextMonth(rowTimeNow,rowTimePre) and (row['time'].date()+datetime.timedelta(days=-1) not in monthSubTimeList):
+                    time = datetime.datetime(rowTimeNow.year,rowTimeNow.month,1)+datetime.timedelta(days=-1)
+                    if time>=datetime.datetime.strptime(start,'%Y-%m-%d %H:%M:%S'):
+                        monthSubitem = MonthSub(MonthPay,MonthNoPay,time)
+                        resData.insert(index+1,monthSubitem)
+                        monthSubTimeList.append(time)
+                        MonthNoPay = 0
+                        MonthPay = 0
+                if 'is_pay' in row:
+                    if row['is_pay'] == '1':
+                        MonthPay += float(row['pay'])
+                        totalPay += float(row['pay'])
+                        totalNoPay += -float(row['pay'])
+                        row['sub'] = totalNoPay
+                    else:
+                        MonthNoPay += float(row['noPay'])
+                        totalNoPay += float(row['noPay'])
+                        row['sub'] = totalNoPay
+                    resData.append(row)
 
-            index += 1
+                index += 1
 
-        #最后一行月度合计
-        lastDataTime = resData[len(resData)-1]['time']
-        if lastDataTime.month == 12:
-            lastMonthSubTime = datetime.datetime(lastDataTime.year+1, 1, 1) + datetime.timedelta(-1)
-        else:
-            lastMonthSubTime = datetime.datetime(lastDataTime.year, lastDataTime.month + 1, 1)+datetime.timedelta(-1)
-        if lastMonthSubTime not in monthSubTimeList:
-            monthSubitem = MonthSub(MonthPay, MonthNoPay, lastMonthSubTime)
-            resData.append(monthSubitem)
-            monthSubTimeList.append(lastMonthSubTime)
-            MonthNoPay = 0
-            MonthPay = 0
+            #最后一行月度合计
+            lastDataTime = resData[len(resData)-1]['time']
+            if lastDataTime.month == 12:
+                lastMonthSubTime = datetime.datetime(lastDataTime.year+1, 1, 1) + datetime.timedelta(-1)
+            else:
+                lastMonthSubTime = datetime.datetime(lastDataTime.year, lastDataTime.month + 1, 1)+datetime.timedelta(-1)
+            if lastMonthSubTime not in monthSubTimeList:
+                monthSubitem = MonthSub(MonthPay, MonthNoPay, lastMonthSubTime)
+                resData.append(monthSubitem)
+                monthSubTimeList.append(lastMonthSubTime)
+                MonthNoPay = 0
+                MonthPay = 0
 
     return render(request, 'report/card/nopay/month.html', locals())
 
 
-def splitData(dataList,start,end):
+def splitData(flag,dataList,start,end):
     """
     将起止日期之前的数据，进行到账与未到账的分离
     :param dataList: 数据列表
@@ -173,18 +214,33 @@ def splitData(dataList,start,end):
     :return: list
     """
     data = []
-    for order in dataList:
-        if order['is_pay'] == '1':
-            itemPay = createPayRow(order, end)
+    if flag == '1':
+        payList = base.findPays()
+        payDict = {pay['id']: pay['payment_name'] for pay in payList}
+        for order in dataList:
+            itemPay = createPayRow(payDict,order, end)
             if itemPay:
                 data.append(itemPay)
-            if order['add_time'] >= datetime.datetime.strptime(start, '%Y-%m-%d %H:%M:%S'):
-                # 创建赊销记录
-                itemNoPay = createNoPayRow(order)
-                data.append(itemNoPay)
-        else:
+            # if order['add_time'] >= datetime.datetime.strptime(start, '%Y-%m-%d %H:%M:%S'):
+            #     # 创建赊销记录
+            #     itemNoPay = createNoPayRow(order)
+            #     data.append(itemNoPay)
+    else:
+        for order in dataList:
             itemNoPay = createNoPayRow(order)
             data.append(itemNoPay)
+    # for order in dataList:
+    #     if order['is_pay'] == '1':
+    #         itemPay = createPayRow(order, end)
+    #         if itemPay:
+    #             data.append(itemPay)
+    #         if order['add_time'] >= datetime.datetime.strptime(start, '%Y-%m-%d %H:%M:%S'):
+    #             # 创建赊销记录
+    #             itemNoPay = createNoPayRow(order)
+    #             data.append(itemNoPay)
+    #     else:
+    #         itemNoPay = createNoPayRow(order)
+    #         data.append(itemNoPay)
     return data
 
 
@@ -228,15 +284,14 @@ def createNoPayRow(obj):
     return  item
 
 
-def createPayRow(obj,time):
+def createPayRow(payDict,obj,time):
     """
     创建赊销到账记录
     :param obj:
     :param time:
     :return:
     """
-    payList = base.findPays()
-    payDict = {pay['id']:pay['payment_name'] for pay in payList}
+
     if obj['change_time']<time:
         item = {}
         item['time'] = obj['change_time']

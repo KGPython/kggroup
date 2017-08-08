@@ -33,7 +33,7 @@ def index(request):
     if role_id == '8':
         shops = mth.getCityShops('C')
         shopsCode = mth.getCityShopsCode('C')
-    if role_id == '10' or role_id == '2' or role_id == '12':
+    if role_id == '10' or role_id == '2' or role_id == '12' or role_id=='11':
         shops = base.findShop(shop)
         shopsCode = [shop]
 

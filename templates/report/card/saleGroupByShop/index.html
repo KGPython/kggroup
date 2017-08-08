@@ -173,7 +173,7 @@
                                     </td>
                                     <td class="saleCol">
                                         <a href="{% url 'saleGroupByShopDet' %}?shop{{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=11">
-                                            {{ row.pay_11 | floatformat:2 | default:0 }}
+                                            {{ row.pay_11 | multiply:0.98 | floatformat:2 | default:0 }}
                                         </a>
                                     </td>
                                     <td class="saleTotal">{{ row.inSub | subtract:row.disc_7 | subtract:row.disc_8 | subtract:row.disc_10 | floatformat:2 | default:0 }}</td>
