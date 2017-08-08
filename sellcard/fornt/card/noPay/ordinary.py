@@ -9,7 +9,6 @@ import datetime,json
 from sellcard.models import Orders,OrderPaymentInfo,OrderInfo,OrderPaymentCredit,OrderChangeCard,OrderChangeCardPayment
 
 def index(request):
-
     if request.method == 'POST':
         operator = str(request.session.get('s_uid', ''))
         shopcode = request.session.get('s_shopcode', '')
