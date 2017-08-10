@@ -8,7 +8,7 @@
 # Also note: You'll have to insert the output of 'django-admin sqlcustom [app_label]'
 # into your database.
 from __future__ import unicode_literals
-
+import datetime
 from django.db import models
 
 
@@ -679,3 +679,41 @@ class VipBank(models.Model):
     class Meta:
         managed = False
         db_table = 'vip_bank'
+
+
+class CardStockInside(models.Model):
+    type = models.CharField(max_length=1)
+    value = models.CharField(max_length=10)
+    num = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'card_stock_inside'
+
+
+class CardStockIo(models.Model):
+    id = models.IntegerField(primary_key=True)
+    source = models.CharField(max_length=1)
+    target = models.CharField(max_length=255)
+    type = models.CharField(max_length=1)
+    value = models.CharField(max_length=10)
+    num = models.IntegerField()
+    create_time = models.DateTimeField(default=datetime.datetime.now)
+    operator = models.IntegerField()
+    remark = models.CharField(max_length=255, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'card_stock_io'
+
+
+class CardStockOutside(models.Model):
+    type = models.CharField(max_length=1)
+    value = models.CharField(max_length=10)
+    num = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'card_stock_outside'
+
+

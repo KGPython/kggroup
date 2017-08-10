@@ -58,6 +58,10 @@ urlpatterns = [
     # 领卡
     url(r'^cardSent/$', 'sellcard.fornt.card.cardSent.view.index', name='cardSent'),
     url(r'^cardSent/save', 'sellcard.fornt.card.cardSent.view.sentOrderSave', name='sentOrderSave'),
+
+    url(r'^stock/$', 'sellcard.fornt.card.cardSent.stock.index', name='stockIO'),
+    url(r'^stock/io/$', 'sellcard.fornt.card.cardSent.stock.stockIO', name='stockIOReport'),
+    url(r'^stock/io/log/$', 'sellcard.fornt.card.cardSent.stock.stockLog', name='stockIOLog'),
     # 卡入库
     url(r'^cardmanage/cardinstore/', 'sellcard.fornt.card.cardManage.view.cardInStore', name='cardInStore'),
     # 卡调拨

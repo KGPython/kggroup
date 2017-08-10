@@ -10,6 +10,7 @@ function delRow(dom) {
     if(id!='err'){
         setTotalByCardList(parnetTbody);
     }
+
 }
 $(document).on('click','.formline .btn-add',function(){
     var formBox = $(this).parent().parent().parent();
@@ -17,6 +18,14 @@ $(document).on('click','.formline .btn-add',function(){
     formBox.append(formLine);
     formLine.find('input').val('');
 });
+
+function addRow2(obj) {
+    var formBox = $(obj).parent().parent().parent();
+    var formLine = $(obj).parent().parent().clone();
+    formBox.append(formLine);
+    formLine.find('input').val('');
+    formLine.find('select').val('');
+}
 
 //增加table的tr，根据不同场景，产生不同的tr
 function addRow(obj,target){

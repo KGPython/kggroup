@@ -76,8 +76,12 @@ def transShopIdByName(key):
     """
     shopname = ''
 
-    if key == '9999':
-        shopname = '总店'
+    if key == 'factory':
+        shopname = '供应商'
+    elif key == 'outside':
+        shopname = '外部出库'
+    elif key == 'inside':
+        shopname = '内部出库'
     elif key:
         shop = Shops.objects.values("shop_name").filter(id=key)
         if shop:
@@ -267,3 +271,15 @@ def rmbUpper(arg):
     if words[-1] != unit[0]:  # 结尾非‘分’补整字
         words.append("整")
     return ''.join(words)
+
+
+@register.filter
+def toCardType(val):
+    dict = {'1':'储值卡','2':'挂售卡','3':'春节卡','4':'生日卡','9':'会员卡'}
+    return  dict[val]
+
+
+@register.filter
+def toCardType(val):
+    dict = {'1':'储值卡','2':'挂售卡','3':'春节卡','4':'生日卡','9':'会员卡'}
+    return  dict[val]
