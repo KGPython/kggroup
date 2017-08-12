@@ -5,7 +5,7 @@
     <meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>销售明细查询</title>
+    <title>出入库记录</title>
     <link rel="stylesheet" href="{{ static }}/css/bootstrap-datetimepicker.min.css">
 </head>
 <style>
@@ -23,13 +23,13 @@
             <a data-original-title="Go to Home" href="#" title="" class="tip-bottom">
                 <span class="glyphicon glyphicon-home" aria-hidden="true"> </span> 首页
             </a>
-            <a href="#" class="">卡管理</a>
-            <a href="#" class="current">销售明细查询</a>
+            <a href="#" class="">信息中心库存</a>
+            <a href="#" class="current">出入库记录</a>
         </div>
     </div>
     <div class="widget-box">
         <div class="widget-title"><span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
-            <h5>销售明细查询</h5>
+            <h5>出入库记录</h5>
         </div>
         <div class="widget-content nopadding">
             <div class="collapse in widget-content">
@@ -63,7 +63,7 @@
 
                                 <label for="" class="col-md-1 formline-label">出库方：</label>
                                 <div class="col-md-2">
-                                    <select id="source" class="form-control" required="required">
+                                    <select id="source" name="source" class="form-control" required="required">
                                         <option value="factory">供应商</option>
                                         <option value="outside">外部卡仓</option>
                                         <option value="inside">内部卡仓</option>
@@ -108,7 +108,7 @@
                 </div>
                 <form action="{% url 'saleGroupByOrder' %}" method="post" id="pageForm">
                     {% csrf_token %}
-                    <input type="hidden" name="shop" value="{{ shop }}">
+                    <input type="hidden" name="source" value="{{ source }}">
                     <input type="hidden" name="start" value="{{ start }}">
                     <input type="hidden" name="end" value="{{ end }}">
                     <div class="page">

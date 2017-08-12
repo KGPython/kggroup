@@ -278,8 +278,3 @@ def toCardType(val):
     dict = {'1':'储值卡','2':'挂售卡','3':'春节卡','4':'生日卡','9':'会员卡'}
     return  dict[val]
 
-
-@register.filter
-def toCardType(val):
-    dict = {'1':'储值卡','2':'挂售卡','3':'春节卡','4':'生日卡','9':'会员卡'}
-    return  dict[val]

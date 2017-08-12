@@ -1,6 +1,6 @@
 {% extends 'common/baseForJobs.html' %}
 {% load basefilter %}
-{% block title %}领卡{% endblock %}
+{% block title %}库存概况{% endblock %}
 {% block content %}
 <div id="content">
     <div id="content-header">
@@ -8,12 +8,13 @@
             <a data-original-title="Go to Home" href="#" title="" class="tip-bottom">
                 <span class="glyphicon glyphicon-home" aria-hidden="true"> </span> 首页
             </a>
-            <a href="#" class="current">库存管理</a>
+            <a href="#" class="">信息中心库存</a>
+            <a href="#" class="current">库存概况</a>
         </div>
     </div>
     <div class="widget-box">
         <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
-            <h5>库存管理</h5>
+            <h5>库存概况</h5>
         </div>
         <div class="widget-box">
             <h4 class="text-center">内部库存数据</h4>
@@ -28,9 +29,9 @@
                 <tbody class="cardSent">
                     {% for inside in inside_list %}
                         <tr>
-                            <td>{{ outside.type | toCardType }}</td>
-                            <td>{{ outside.value }}</td>
-                            <td>{{ outside.num }}</td>
+                            <td>{{ inside.type | toCardType }}</td>
+                            <td>{{ inside.value }}</td>
+                            <td>{{ inside.num }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>

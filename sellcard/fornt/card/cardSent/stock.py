@@ -85,8 +85,9 @@ def index(request):
         return render(request, 'card/sent/stock.html', locals())
 
 def stockIO(request):
-    inside_list = CardStockInside.objects.values().all().order_by('type','value')
-    outside_list = CardStockOutside.objects.values().all().order_by('type','value')
+    inside_list = CardStockInside.objects.extra(select={'value':'value+0'}).extra(order_by=['type','value'])
+
+    outside_list = CardStockOutside.objects.extra(select={'value':'value+0'}).extra(order_by=['type','value'])
 
     return render(request,'card/sent/stockIO.html',locals())
 
