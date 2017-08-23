@@ -56,9 +56,11 @@ def statusTo1(request):
             if hasattr(e,'value'):
                 res['msg'] = e.value
             ActionLog.objects.create(
-                action='挂售卡激活', u_name=u_name,cards_in=json.dumps(cardList),add_time=datetime.datetime.now(), err_msg=e
+                action='挂售卡解挂', u_name=u_name,cards_in=json.dumps(cardList),add_time=datetime.datetime.now(), err_msg=e
             )
         finally:
             cur.close()
             conn.close()
             return HttpResponse(json.dumps(res))
+
+

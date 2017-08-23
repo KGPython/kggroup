@@ -4,7 +4,6 @@ import datetime
 
 from sellcard.models import Orders,AdminUser
 from sellcard.common import Method as mth
-from sellcard import views as base
 
 def index(request):
     s_shop = request.session.get('s_shopcode')

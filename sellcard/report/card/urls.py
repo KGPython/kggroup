@@ -35,5 +35,8 @@ urlpatterns = [
     # 门店费用报销（目前只含有移动积分支付订单）
     url(r'reimbursement/$', 'sellcard.report.card.reimbursement.index', name='reimbursement'),
     # 财务用卡到账列表
-    url(r'arrival/$', 'sellcard.report.card.cardArrival.index', name='cardArrival')
+    url(r'arrival/$', 'sellcard.report.card.cardArrival.index', name='cardArrival'),
+
+    #返点
+    url(r'disc/bestowed$', 'sellcard.report.card.disc.bestowed', name='discBestowed')
 ]

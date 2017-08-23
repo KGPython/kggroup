@@ -69,8 +69,9 @@
     </div>
 </div>
 <script>
-    var module = $('#content').attr('data-module');
+
     $('#queryCardIn').click(function(){
+        var module = $('#content').attr('data-module');
         var rows = $(this).parent().parent().siblings('#cardsForm').eq(0).find('.row');
         var cards = [];
         for(var i=0;i<rows.length;i++){
@@ -101,14 +102,14 @@
             var orderSns = $('#orderSns').val();
             postData.orderSns = orderSns;
         }
-        queryCardsIn(postData)
+        queryCardsIn(postData,module)
 
     });
-    function queryCardsIn(postData) {
+    function queryCardsIn(postData,module) {
         var url = '';
         if(module=='borrow_back'){
             url = '{% url 'borrowBackQuery' %}';
-        }else if(module=='change'){
+        }else if(module=='change' || module=='cardStore_zero'){
             url = '{% url 'cardsChangeQuery' %}';
         }
         $.ajax({
@@ -120,12 +121,12 @@
                 if(data.length==0){
                     alert('此卡段不存在，请核查!')
                 }
-                showCardIn(data);
+                showCardIn(module,data);
             },
             error:function(){ }
         })
     }
-    function showCardIn(data) {
+    function showCardIn(module,data) {
         var anomalyBoxIn= $('#anomalyBoxIn');
         var anomalyTableIn= $('#anomalyIn');
         var correctTableIn = $('#correctIn');
@@ -133,11 +134,11 @@
         anomalyTableIn.find('tbody').empty();
         correctTableIn.find('tbody').empty();
         for(var i=0;i<data.length;i++){
-            showDataToTable(data[i],anomalyTableIn,correctTableIn,anomalyBoxIn)
+            showDataToTable(module,data[i],anomalyTableIn,correctTableIn,anomalyBoxIn)
         }
         setTotalByCardList(correctTableIn.find('tbody'));
     }
-    function showDataToTable(data,anomalyTableIn,correctTableIn,anomalyBoxIn) {
+    function showDataToTable(module,data,anomalyTableIn,correctTableIn,anomalyBoxIn) {
         var correctStatus = '';
         var flag =false;
         if(module=='cardStore_zero'){
@@ -177,7 +178,8 @@
                 tr.append(td);
             }
             correctTableIn.find('tbody').append(tr);
-        }else{
+        }
+        else{
                 anomalyBoxIn.show();
                 var cols = anomalyTableIn.find('th').length;
                 var tr=$('<tr></tr>');
