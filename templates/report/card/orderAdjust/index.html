@@ -17,7 +17,7 @@
             <a data-original-title="Go to Home" href="#" title="" class="tip-bottom">
                 <span class="glyphicon glyphicon-home" aria-hidden="true"> </span> 首页
             </a>
-            <a href="#" class="current">销售汇总</a>
+            <a href="#" class="current">支付调整报表</a>
         </div>
     </div>
     <div class="widget-box">
@@ -37,6 +37,7 @@
                                         <input class="form-control" name="shop" id="shop" type="text" readonly="readonly" value="{{ u_shop }}">
                                     {% else %}
                                         <select name="shop" id="shop" class="form-control">
+                                            <option>请选择</option>
                                             {% for shop in shops %}
                                                 <option value="{{ shop.shop_code }}">{{ shop.shop_name }}</option>
                                             {% endfor %}
@@ -88,7 +89,7 @@
                                     <th>现金</th>
                                     <th>代金券</th>
                                     <th>汇款</th>
-                                    <th >赊账</th>
+                                    <th>赊账</th>
                                     <th>Pos</th>
                                     <th>移动</th>
                                     <th>美团</th>
@@ -151,6 +152,9 @@
         minView: 2,
         forceParse: 0
     });
+
+    var shop = "{{ shop |default:'' | safe }}";
+    $('#shop').val(shop)
 </script>
 <script>
     $('#form #enter').click(function () {

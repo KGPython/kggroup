@@ -581,7 +581,7 @@ class Orders(models.Model):
 
 
 class OrderErr(models.Model):
-    order_sn = models.CharField(max_length=20)
+    order_sn = models.CharField(unique=True,max_length=20)
     record = models.CharField(max_length=255)
     u_id = models.IntegerField()
     shop = models.CharField(max_length=16)

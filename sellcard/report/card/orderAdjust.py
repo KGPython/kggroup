@@ -16,12 +16,16 @@ def create(request):
     sn = request.POST.get('orderSn')
     record = request.POST.get('payJsonStr')
     today = datetime.date.today()
-    data = OrderErr.objects.create(u_id=u_id, order_sn=sn, record=record, c_time=today, shop=shop,type='1')
-    data_id = data.id
     res = {}
-    if data_id:
+    try:
+        qs_err = OrderErr.objects.select_for_update().filter(order_sn=sn)
+        if qs_err.count()>0:
+            qs_err.update(u_id=u_id,record=record, c_time=today, shop=shop,type='1')
+        else:
+            OrderErr.objects.create(u_id=u_id,record=record, c_time=today, shop=shop,type='1',order_sn=sn)
         res['msg'] = 0
-    else:
+    except Exception as e:
+        print(e)
         res['msg'] = 1
     return HttpResponse(json.dumps(res))
 
@@ -88,9 +92,14 @@ def index(request):
     if request.method == 'POST':
         start = request.POST.get('start',monthFirst)
         end = request.POST.get('end',now)
-        shop = request.POST.get('shop','C001')
+        shop = request.POST.get('shop','')
+        kwargs = {}
+        kwargs.setdefault('c_time__gte',start)
+        kwargs.setdefault('c_time__lte',end)
+        if shop:
+            kwargs.setdefault('shop', shop)
         errs = OrderErr.objects.values('record','c_time','u_id','shop','c_time')\
-               .filter(c_time__gte=start,c_time__lte=end).order_by('shop','c_time')
+               .filter(**kwargs).order_by('shop','c_time')
 
         total = {}
         data = []
@@ -121,10 +130,10 @@ def index(request):
             data.append(row)
         #以日为单位，汇总
         for row in data:
-            shop = row['shop']
+            row_shop = row['shop']
             date = row['c_time']
             for row2 in data :
-                if row2['shop'] == shop and row2['c_time'] == date and row!=row2:
+                if row2['shop'] == row_shop and row2['c_time'] == date and row!=row2:
                     for key in row2.keys():
                         if (key in row.keys()) and (key not in ('shop','c_time')):
                             row[key] += float(row2[key])
