@@ -29,6 +29,7 @@ def findCardType(cardTypeCode=None):
 
     cardList = CardType.objects.values("card_type_name").filter(q)
     return cardList
+
 # 查询部门信息
 def findPays(payId=None):
     q = Q()

@@ -494,6 +494,7 @@ class OrderPaymentInfo(models.Model):
     bank_name = models.CharField(max_length=12, blank=True, null=True)
     bank_sn = models.CharField(max_length=25, blank=True, null=True)
     pay_company = models.CharField(max_length=15, blank=True, null=True)
+    received_time = models.DateTimeField(blank=True, null=True, verbose_name=u'预计到账日期')
 
     class Meta:
         managed = False
@@ -513,6 +514,7 @@ class OrderPaymentCredit(models.Model):
     create_time = models.DateTimeField(blank=True, null=True)
     create_user_id = models.IntegerField(blank=True, null=True)
     create_user_name = models.CharField(max_length=100, blank=True, null=True)
+    shop = models.CharField(max_length=16)
 
     class Meta:
         managed = False

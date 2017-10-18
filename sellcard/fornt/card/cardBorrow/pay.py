@@ -143,8 +143,11 @@ def save(request):
                 orderPay.pay_id = pay['payId']
                 # 处理混合支付的优惠
                 is_pay = 1
-                if pay['payId'] in ('3', '4'):
+                if pay['payId'] =='3':
                     is_pay = '0'
+                if pay['payId'] =='4':
+                    is_pay = '0'
+                    orderPay.received_time = pay['received_time']
                 elif pay['payId'] == '6':
                     isThird = True
                     is_pay = '0'

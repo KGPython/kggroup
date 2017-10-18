@@ -34,36 +34,28 @@
                             <thead>
                             <tr>
                                 <th>订单号</th>
-                                <th>类型</th>
-                                {% if pay_id != '3' %}
-                                    <th>姓名</th>
-                                    <th>电话</th>
-                                    <th>公司</th>
-                                {% else %}
+{#                                <th>类型</th>#}
+                                <th>{{ pay_name }}明细值</th>
+                                {% if pay_id == '3' %}
                                     <th>银行名称</th>
                                     <th>到账账号</th>
                                     <th>汇款单位</th>
+                                    <th>是否到账</th>
                                 {% endif %}
-                                <th>{{ pay_name }}明细值</th>
-                                <th>是否到账</th>
                             </tr>
                             </thead>
                             <tbody>
                             {% for row in List %}
                                 <tr>
                                     <td>{{ row.order_sn }}</td>
-                                    <td>{{ row.action_type }}</td>
-                                    {% if pay_id != '3' %}
-                                        <td>{{ row.user_name }}</td>
-                                        <td>{{ row.user_phone }}</td>
-                                        <td>{{ row.user_company }}</td>
-                                    {% else %}
-                                        <td>{{ row.bank_name }}</td>
-                                        <td>{{ row.bank_sn }}</td>
-                                        <td>{{ row.pay_company }}</td>
-                                    {% endif %}
+{#                                    <td>{{ row.action_type }}</td>#}
                                     <td>{{ row.pay_value }}</td>
-                                    <td>{{ row.is_pay }}</td>
+                                    {% if pay_id == '3' %}
+                                        <td>{{ row.bank_name | default:'' }}</td>
+                                        <td>{{ row.bank_sn | default:'' }}</td>
+                                        <td>{{ row.pay_company | default:'' }}</td>
+                                        <td>{% if row.is_pay == '0' %}未到账{% else %}已到账{% endif %}</td>
+                                    {% endif %}
                                 </tr>
                             {% endfor %}
                             </tbody>

@@ -71,6 +71,7 @@ def detail(request):
 # 更新赊销状态
 @transaction.atomic
 def save(request):
+    shop = request.session.get('s_shopcode', '')
     user_id = request.session.get('s_uid', '')
     uesr_name = request.session.get('s_unameChinese', '')
     orderSn = request.POST.get('orderSn')
@@ -96,14 +97,14 @@ def save(request):
                                         pay_value=pay['payVal'],remarks=pay['payRmarks'], change_time=date,
                                         bank_name=pay['bankName'], bank_sn=pay['bankSn'],
                                         pay_company=pay['payCompany'], create_time=datetime.datetime.now(),
-                                        create_user_id=user_id, create_user_name=uesr_name
+                                        create_user_id=user_id, create_user_name=uesr_name,shop=shop
                                         )
                         else:
                             OrderPaymentCredit \
                                 .objects \
                                 .create(order_id=orderSn,pay_id_old=4, pay_id=pay['payId'], pay_value=pay['payVal'],
                                         remarks=pay['payRmarks'], change_time=date, create_time=datetime.datetime.now(),
-                                        create_user_id=user_id, create_user_name=uesr_name
+                                        create_user_id=user_id, create_user_name=uesr_name,shop=shop
                                         )
                 elif 3 in paysDict.keys():
                     bankName = request.POST.get('bankName')
@@ -119,7 +120,7 @@ def save(request):
                         .create(order_id=orderSn,pay_id_old=3, pay_id=3, pay_value=pay_value,
                                 remarks=remarks, change_time=date,
                                 bank_name=bankName, bank_sn=bankSn,
-                                pay_company=payCompany,create_user_id=user_id, create_user_name=uesr_name
+                                pay_company=payCompany,create_user_id=user_id, create_user_name=uesr_name,shop=shop
                                 )
                 res['msg'] = '0'
             else:

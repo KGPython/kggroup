@@ -1,6 +1,6 @@
 {% extends 'common/baseForJobs.html' %}
 {% load basefilter %}
-{% block title %}赊销管理{% endblock %}
+{% block title %}汇款到账{% endblock %}
 {% block content %}
 <link rel="stylesheet" href="{{ static }}/css/bootstrap-datetimepicker.min.css">
 <style>
@@ -12,27 +12,23 @@
             <a data-original-title="Go to Home" href="#" title="" class="tip-bottom">
                 <span class="glyphicon glyphicon-home" aria-hidden="true"> </span> 首页
             </a>
-            <a href="#" class="current">赊销管理</a>
+            <a href="#" class="current">汇款到账</a>
         </div>
     </div>
     <div class="widget-box">
         <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
-            <h5>赊销管理</h5>
+            <h5>汇款到账</h5>
         </div>
         <div class="widget-content nopadding">
             <div class="container-fluid">
                 <div class="widget-box">
                     <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
-                        <h5>赊销单查询</h5>
+                        <h5>汇款到账查询</h5>
                     </div>
                     <div class="widget-content collapse in ">
-                        <form id="form" class="query-list" method="post" action="{% url 'nopay' %}">
+                        <form id="form" class="query-list" method="post" action="{% url 'r_bank' %}">
                             {% csrf_token %}
                             <div class="row formline">
-                                <label class="col-md-1 formline-label">赊销方姓名：</label>
-                                <div class="col-md-1">
-                                    <input type='text' class='form-control' name="buyerName" value="">
-                                </div>
                                 <label for="" class="col-md-1 formline-label">开始时间：</label>
                                 <div class="col-md-3 col-lg-2">
                                     <div data-link-format="yyyy-mm-dd" data-link-field="dtp_input2" data-date-format="yyyy-mm-dd" data-date="" class="input-group date form_date">
@@ -59,37 +55,31 @@
                 </div>
                 <div class="widget-box">
                     <div class="widget-title"> <span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
-                        <h5>赊销单列表</h5>
+                        <h5>汇款到账列表</h5>
                     </div>
                     <div class="widget-content nopadding">
                         <table class="table table-striped table-hover table-form-my">
                             <thead>
                             <tr>
                                 <th>订单单号</th>
-                                <th>售卡时间</th>
-                                <th>订单总额</th>
-                                <th>赊销金额</th>
+                                <th>赊销类型</th>
                                 <th>到账金额</th>
-                                <th>赊销方式</th>
-                                <th>赊销方姓名</th>
-                                <th>赊销方电话</th>
-                                <th>操作</th>
+                                <th>汇款单位</th>
+                                <th>汇款银行</th>
+                                <th>汇款账户</th>
+                                <th>汇款日期</th>
                             </tr>
                             </thead>
                             <tbody class="cardIn" id="nopayList">
-                             {% for row in listSale %}
+                             {% for row in list %}
                                 <tr>
-                                    <td>{{ row.order_sn }}</td>
-                                    <td>{{ row.add_time | date:"Y-m-d"}}</td>
-                                    <td>{{ row.paid_amount }}</td>
+                                    <td>{{ row.order_id }}</td>
+                                    <td>{{ row.pay_id_old | transPayCode }}</td>
                                     <td>{{ row.pay_value }}</td>
-                                    <td>{{ row.credit_value }}</td>
-                                    <td>{{ row.pay_id | transPayCode }}</td>
-                                    <td>{{ row.buyer_name }}</td>
-                                    <td>{{ row.buyer_tel }}</td>
-                                    <td>
-                                        <a href="{% url 'noPayOrdinaryDetail' %}?orderSn={{ row.order_sn }}&type={{ row.pay_id }}" class="btn btn-danger btn-xs btn-enter">标记到账</a>
-                                    </td>
+                                    <td>{{ row.pay_company }}</td>
+                                    <td>{{ row.bank_name }}</td>
+                                    <td>{{ row.bank_sn }}</td>
+                                    <td>{{ row.change_time | date:'Y-m-d' }}</td>
                                 </tr>
                             {% endfor %}
                             </tbody>

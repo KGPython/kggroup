@@ -13,7 +13,10 @@ urlpatterns = [
 
     # 赊销
     url(r'^nopay/order$', 'sellcard.report.card.noPay.order', name="report_card_noPay_order"),
+    url(r'^nopay/order2$', 'sellcard.report.card.noPay.order2', name="report_card_noPay_order2"),
     url(r'^nopay/month$', 'sellcard.report.card.noPay.month', name="report_card_noPay_month"),
+    url(r'^nopay/month/pay4$', 'sellcard.report.card.noPay.month_pay4', name="report_card_noPay_month_pay4"),
+    url(r'^nopay/month/pay6$', 'sellcard.report.card.noPay.month_pay6', name="report_card_noPay_month_pay6"),
 
     # 集团销售汇总--按支付分类汇总
     url(r'^kgsale/payment/$', 'sellcard.report.card.saleGroupByPay.index', name="saleGroupByPay"),
@@ -38,5 +41,8 @@ urlpatterns = [
     url(r'arrival/$', 'sellcard.report.card.cardArrival.index', name='cardArrival'),
 
     #返点
-    url(r'disc/bestowed$', 'sellcard.report.card.disc.bestowed', name='discBestowed')
+    url(r'disc/bestowed$', 'sellcard.report.card.disc.bestowed', name='discBestowed'),
+
+    #汇款到账
+    url(r'bank/$', 'sellcard.report.card.pay.bank_paid', name='r_bank')
 ]

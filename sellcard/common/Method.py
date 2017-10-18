@@ -4,7 +4,7 @@ from django.shortcuts import render
 import pymssql,random,hashlib
 from PIL import Image, ImageDraw, ImageFont
 from sellcard.common import Constants
-from sellcard.models import CardInventory, Orders, ExchangeCode,DisCode,Shops,Payment
+from sellcard.models import CardInventory, Orders, ExchangeCode,DisCode,Shops,Payment,OrderPaymentCredit
 from django.conf import settings
 from django.core import serializers
 from django.http import HttpResponse
@@ -12,6 +12,19 @@ import datetime,json
 import pymysql,_mssql
 import decimal
 from sellcard.common.model import MyError
+
+def getMysqlConn():
+    conn = pymysql.connect(
+        host=Constants.SCM_DB_MYSQL_SERVER,
+        port=3306,
+        user=Constants.SCM_DB_MYSQL_USER,
+        password=Constants.SCM_DB_MYSQL_PASSWORD,
+        db=Constants.SCM_DB_MYSQL_DATABASE,
+        charset='utf8mb4',
+        cursorclass=pymysql.cursors.DictCursor
+    )
+    return conn
+
 
 def getMssqlConn(as_dict=True):
     conn = pymssql.connect(host=Constants.KGGROUP_DB_SERVER,
@@ -249,7 +262,6 @@ def updateCard(updateConfList):
 def setOrderSn(mode=None):
     start = datetime.date.today().strftime('%Y-%m-%d 00:00:00')
     end = datetime.date.today().strftime('%Y-%m-%d 23:59:59')
-    count = 0
     if mode:
         count = mode.objects.filter(add_time__gte=start, add_time__lte=end).count() + 1
     else:
@@ -264,6 +276,17 @@ def setOrderSn(mode=None):
         sn = datetime.date.today().strftime('%y%m%d') + str(count)
     return sn
 
+
+def createSnCreditYD():
+    today = datetime.datetime.today()
+    begin = today.strftime('%Y-%m-%d') + ' 00:00:00'
+    end = today.strftime('%Y-%m-%d') + ' 23:59:59'
+
+    count = OrderPaymentCredit.objects.filter(create_time__lte=end, create_time__gte=begin,pay_id_old=6).count()
+    sn = str(count + 1).zfill(4)
+    sn = today.strftime('%y%m%d') + sn
+
+    return sn
 
 # 获取mysql数据库连接
 def getMysqlConn():
@@ -333,3 +356,14 @@ def getNextPageNum(resList):
     else:
         page_down = resList.paginator.num_pages
     return page_down
+
+
+def dateRange(beginDate, endDate):
+    dates = []
+    dt = datetime.datetime.strptime(beginDate, "%Y-%m-%d")
+    date = beginDate[:]
+    while date <= endDate:
+        dates.append(date)
+        dt = dt + datetime.timedelta(1)
+        date = dt.strftime("%Y-%m-%d")
+    return dates

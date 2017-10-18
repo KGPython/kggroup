@@ -88,7 +88,7 @@
                             <tbody class="cardIn">
                             {% for row in List %}
                                 <tr>
-                                    <td>{{ row.date_time }}</td>
+                                    <td>{{ row.date }}</td>
                                     <td class="discCol">{{ row.disc_6 | floatformat:2 }}</td>
                                     <td class="discCol">{{ row.disc_7 | floatformat:2 }}</td>
                                     <td class="discCol">{{ row.disc_8 | floatformat:2 }}</td>
@@ -103,14 +103,14 @@
                                     <td class="saleCol">{{ row.pay_3 | floatformat:2 | default:0 }}</td>
                                     <td class="saleCol">{{ row.pay_5 | floatformat:2 | default:0 }}</td>
                                     <td class="saleCol">
-                                            {{ row.pay_4_1 | floatformat:2 | default:0 }}|<span class="red">{{ row.pay_4_0 | floatformat:2 | default:0 }}</span>
+                                            {{ row.pay_4 | floatformat:2 | default:0 }}
                                     </td>
                                     <td class="saleCol">{{ row.pay_6 | floatformat:2 | default:0 }}</td>
-                                    <td class="saleCol">{{ row.pay_7 | floatformat:2 | default:0 }}</td>
-                                    <td class="saleCol">{{ row.pay_8 | floatformat:2 | default:0 }}</td>
+                                    <td class="saleCol">{{ row.pay_7 | subtract:row.disc_7 | floatformat:2 | default:0 }}</td>
+                                    <td class="saleCol">{{ row.pay_8 | subtract:row.disc_8 | floatformat:2 | default:0 }}</td>
 {#                                    <td class="saleCol">{{ row.pay_9 | floatformat:2 | default:0 }}</td>#}
-                                    <td class="saleCol">{{ row.pay_10 | floatformat:2 | default:0 }}</td>
-                                    <td class="saleCol">{{ row.pay_11 | floatformat:2 | default:0 }}</td>
+                                    <td class="saleCol">{{ row.pay_10 | subtract:row.disc_10  | floatformat:2 | default:0 }}</td>
+                                    <td class="saleCol">{{ row.pay_11 | multiply:0.98 | floatformat:2 | default:0 }}</td>
                                     <td class="saleTotal">{{ row.inSub | floatformat:2 | default:0 }}</td>
 
 {#                                    <td>{% if inSubTotal != '0' %}{{ row.inSub | divide:totalDict.inSubTotal }}{% endif %}</td>#}

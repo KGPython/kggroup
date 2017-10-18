@@ -125,7 +125,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 from datetime import datetime
-STATIC_VERSION = 'v'+datetime.today().strftime("%y%m%d%H")
+STATIC_VERSION = 'v'+datetime.today().strftime("%y%m%d%H%M")
 
 KGGROUP_LOGIN_URL ="/kg/sellcard/loginpage/"
 KGGROUP_LOGIN_EXEMPT_URLS=["kg/sellcard/login/","kg/sellcard/logout/","kg/sellcard/vcode/","favicon.ico"]

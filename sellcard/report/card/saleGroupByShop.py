@@ -8,38 +8,24 @@ from sellcard.models import OrderUpCard,Payment
 from sellcard.common import Method as mth
 from sellcard import views as base
 
-
-def index(request):
-    shop = request.session.get('s_shopcode','')
-    role_id = request.session.get('s_roleid')
-    if request.method == 'GET':
-        start = str(datetime.date.today().replace(day=1))
-        end = str(datetime.date.today())
-        endTime =str(datetime.date.today()+datetime.timedelta(1))
-    if request.method == 'POST':
-        today = datetime.date.today()
-        start = request.POST.get('start',today)
-        end = request.POST.get('end',today)
-        endTime = str(datetime.datetime.strptime(end,'%Y-%m-%d').date() + datetime.timedelta(1))
-
+def getData(role_id,shop,start,endTime):
     conn = mth.getMysqlConn()
     cur = conn.cursor()
     if role_id == '1' or role_id == '6':
         shops = mth.getCityShops()
         shopsCode = mth.getCityShopsCode()
-    if role_id == '9':
+    elif role_id == '9':
         shops = mth.getCityShops('T')
         shopsCode = mth.getCityShopsCode('T')
-    if role_id == '8':
+    elif role_id == '8':
         shops = mth.getCityShops('C')
         shopsCode = mth.getCityShopsCode('C')
-    if role_id == '10' or role_id == '2' or role_id == '12' or role_id=='11':
+    elif role_id == '10' or role_id == '2' or role_id == '12' or role_id == '11':
         shops = base.findShop(shop)
         shopsCode = [shop]
 
     shopsCodeStr = "'" + "','".join(shopsCode) + "'"
     # shopsCodeStr = "('C003')"
-
     # saleDiscGroupByShop = 'SELECT a.shop_code, SUM(CASE WHEN b.card_balance<= a.diff_price THEN a.y_cash+b.card_balance ELSE a.disc_amount END ) AS disc,' \
     #                       'SUM(a.y_cash) AS disc_cash,SUM(case WHEN b.card_balance<= a.diff_price THEN b.card_balance ELSE b.card_balance-a.diff_price END) AS disc_card ' \
     #                       'FROM orders AS a ' \
@@ -49,30 +35,31 @@ def index(request):
     #                       'WHERE a.add_time >= "{start}" AND a.add_time <= "{end}" AND a.shop_code IN ({shopsCodeStr}) group by a.shop_code '\
     #                      .format(start=start, end=endTime,shopsCodeStr=shopsCodeStr)
 
-    saleDiscGroupByShop = 'select shop_code,'\
-                          'SUM(case when disc_amount>=y_cash then disc_amount else diff_price+disc_amount end) as disc, '\
-                          'SUM(y_cash) as disc_cash, '\
+    saleDiscGroupByShop = 'select shop_code,' \
+                          'SUM(case when disc_amount>=y_cash then disc_amount else diff_price+disc_amount end) as disc, ' \
+                          'SUM(y_cash) as disc_cash, ' \
                           'SUM(case when disc_amount>=y_cash then disc_amount-y_cash else disc_amount+diff_price-y_cash end) as disc_card ' \
                           'from orders ' \
                           'where add_time>="{start}" and add_time<="{end}" and shop_code in ({shopsCodeStr}) ' \
                           'group by shop_code ' \
-                        .format(start=start, end=endTime, shopsCodeStr=shopsCodeStr)
+                          .format(start=start, end=endTime, shopsCodeStr=shopsCodeStr)
     cur.execute(saleDiscGroupByShop)
     saleDiscList = cur.fetchall()
 
-    salePayGroupByShop = 'select ord.shop_code,info.pay_id,info.change_time,info.is_pay,SUM(info.pay_value) as pay_value ' \
-                'from orders as ord , order_payment_info as info ' \
-                'where ord.add_time>="{start}" and ord.add_time<="{end}" and ord.shop_code in ({shopsCodeStr}) and ord.order_sn = info.order_id ' \
-                'group by ord.shop_code,info.pay_id,info.change_time ' \
-                .format(start=start, end=endTime,shopsCodeStr=shopsCodeStr)
+    salePayGroupByShop = 'select ord.shop_code,info.pay_id,info.change_time,SUM(info.pay_value) as pay_value ' \
+                         'from orders as ord , order_payment_info as info ' \
+                         'where ord.add_time>="{start}" and ord.add_time<="{end}" and ord.shop_code in ({shopsCodeStr})' \
+                         ' and ord.order_sn = info.order_id ' \
+                         'group by ord.shop_code,info.pay_id,info.change_time ' \
+                        .format(start=start, end=endTime, shopsCodeStr=shopsCodeStr)
     cur.execute(salePayGroupByShop)
     salePayList = cur.fetchall()
 
-    fillList = OrderUpCard.objects\
-            .values('shop_code')\
-            .filter(add_time__gte=start,add_time__lte=endTime,shop_code__in=shopsCode)\
-            .annotate(fill=Sum('diff_price'))\
-            .order_by('shop_code')
+    fillList = OrderUpCard.objects \
+        .values('shop_code') \
+        .filter(add_time__gte=start, add_time__lte=endTime, shop_code__in=shopsCode) \
+        .annotate(fill=Sum('diff_price')) \
+        .order_by('shop_code')
 
     # changeDiscGroupByShop = 'SELECT a.shop_code, SUM(CASE WHEN b.card_balance<= a.disc_pay THEN a.disc_cash+b.card_balance ELSE a.disc END) AS disc,' \
     #                         'SUM(a.disc_cash) AS disc_cash,SUM(case WHEN b.card_balance<= a.disc_pay THEN b.card_balance ELSE b.card_balance-a.disc_pay END) AS disc_card ' \
@@ -90,37 +77,41 @@ def index(request):
                             'from order_change_card ' \
                             'where add_time>="{start}" and add_time<="{end}" and shop_code in ({shopsCodeStr}) ' \
                             'group by shop_code ' \
-        .format(start=start, end=endTime, shopsCodeStr=shopsCodeStr)
+                            .format(start=start, end=endTime, shopsCodeStr=shopsCodeStr)
     cur.execute(changeDiscGroupByShop)
     changeDiscList = cur.fetchall()
     changePayGroupByShop = 'select ord.shop_code ,info.pay_id,info.change_time,SUM(info.pay_value) as pay_value ' \
                            'from order_change_card as ord , order_change_card_payment as info ' \
                            'where ord.add_time>="{start}" and ord.add_time<="{end}" and shop_code in ({shopsCodeStr}) and ord.order_sn = info.order_id ' \
                            'group by ord.shop_code,info.pay_id,info.change_time' \
-                           .format(start=start, end=endTime,shopsCodeStr=shopsCodeStr)
+                            .format(start=start, end=endTime, shopsCodeStr=shopsCodeStr)
     cur.execute(changePayGroupByShop)
     changePayList = cur.fetchall()
 
     paymentsRate = Payment.objects.values('id', 'dis_rate').filter(dis_rate__gte=0)
     paymentsRateDict = {item['id']: float(item['dis_rate']) for item in paymentsRate}
-    totalDict  = {'discTotal':0,
-                  'discCashTotal':0,'total_disc_6':0,'total_disc_7':0,'total_disc_8':0,'total_disc_10':0,'total_disc_11':0,'total_disc_qita':0,'discCardTotal':0,
-                  'inSubTotal':0,'total_1':0,'total_2':0,'total_3':0,
-                  'total_4':0,'total_5':0,'total_6':0,'total_7':0,'total_8':0,'total_9':0,'total_10':0,'total_11':0,}
+    totalDict = {'discTotal': 0,
+                 'discCashTotal': 0, 'total_disc_6': 0, 'total_disc_7': 0, 'total_disc_8': 0, 'total_disc_10': 0,
+                 'total_disc_11': 0, 'total_disc_qita': 0, 'discCardTotal': 0,
+                 'inSubTotal': 0, 'total_1': 0, 'total_2': 0, 'total_3': 0,
+                 'total_4': 0, 'total_5': 0, 'total_6': 0, 'total_7': 0, 'total_8': 0, 'total_9': 0, 'total_10': 0,
+                 'total_11': 0, }
 
     dataList = []
-    for i in range(0,len(shops)):
-        shopcode = shops[i]['shop_code']
+    for i in range(0, len(shops)):
+        # shopcode = shops[i]['shop_code']
         if shops[i]['shop_code'] != 'ZBTG':
-            item = {'shop_code':'',
-                    'disc':0,'disc_6':0,'disc_7':0,'disc_8':0,'disc_10':0,'disc_11':0,'disc_cash':0,'disc_card':0,
-                    'inSub':0,'pay_1':0,'pay_2':0,'pay_3':0,'pay_4':0,'pay_5':0,'pay_6':0,'pay_7':0,'pay_8':0,
-                    'pay_9':0,'pay_10':0,'pay_11':0,}
+            item = {'shop_code': '',
+                    'disc': 0, 'disc_6': 0, 'disc_7': 0, 'disc_8': 0, 'disc_10': 0, 'disc_11': 0, 'disc_cash': 0,
+                    'disc_card': 0,
+                    'inSub': 0, 'pay_1': 0, 'pay_2': 0, 'pay_3': 0, 'pay_4': 0, 'pay_5': 0, 'pay_6': 0, 'pay_7': 0,
+                    'pay_8': 0,
+                    'pay_9': 0, 'pay_10': 0, 'pay_11': 0, }
             item['shop_code'] = shops[i]['shop_code']
             for sale in salePayList:
-                if sale['shop_code']==item['shop_code']:
-                    #横向各门店售卡汇总赋值
-                    pay_id = sale['pay_id']
+                if sale['shop_code'] == item['shop_code']:
+                    # 横向各门店售卡汇总赋值
+                    # pay_id = sale['pay_id']
                     if sale['pay_id'] == 1:
                         item['pay_1'] += float(sale['pay_value'])
                         item['inSub'] += float(sale['pay_value'])
@@ -138,7 +129,7 @@ def index(request):
                         item['inSub'] += float(sale['pay_value'])
                     if sale['pay_id'] == 6:
                         item['pay_6'] += float(sale['pay_value'])
-                        item['disc_6'] += float(sale['pay_value'])*paymentsRateDict[6]
+                        item['disc_6'] += float(sale['pay_value']) * paymentsRateDict[6]
                         item['inSub'] += float(sale['pay_value'])
                     if sale['pay_id'] == 7:
                         item['pay_7'] += float(sale['pay_value'])
@@ -160,8 +151,6 @@ def index(request):
                         item['disc_11'] += float(sale['pay_value']) * paymentsRateDict[11]
                         item['inSub'] += float(sale['pay_value'])
 
-
-
             for saleDisc in saleDiscList:
                 if saleDisc['shop_code'] == item['shop_code']:
                     if not saleDisc['disc']:
@@ -177,7 +166,7 @@ def index(request):
             for fill in fillList:
                 if item['shop_code'] == fill['shop_code']:
                     if not fill['fill']:
-                        fill['fill']=0
+                        fill['fill'] = 0
 
                     item['pay_1'] += float(fill['fill'])
                     item['inSub'] += float(fill['fill'])
@@ -247,12 +236,25 @@ def index(request):
             totalDict['total_11'] += item['pay_11']
 
             dataList.append(item)
-    totalDict['total_disc_qita'] = totalDict['discCashTotal']-totalDict['total_disc_6']-totalDict['total_disc_7']\
-                                   -totalDict['total_disc_8']-totalDict['total_disc_10']-totalDict['total_disc_11']
+    totalDict['total_disc_qita'] = totalDict['discCashTotal'] - totalDict['total_disc_6'] - totalDict['total_disc_7'] \
+                                   - totalDict['total_disc_8'] - totalDict['total_disc_10'] - totalDict['total_disc_11']
 
+    return dataList,totalDict
+def index(request):
+    shop = request.session.get('s_shopcode','')
+    role_id = request.session.get('s_roleid')
+    if request.method == 'GET':
+        start = str(datetime.date.today().replace(day=1))
+        end = str(datetime.date.today())
+        endTime =str(datetime.date.today()+datetime.timedelta(1))
+    if request.method == 'POST':
+        today = datetime.date.today()
+        start = request.POST.get('start',today)
+        end = request.POST.get('end',today)
+        endTime = str(datetime.datetime.strptime(end,'%Y-%m-%d').date() + datetime.timedelta(1))
+
+    dataList, totalDict = getData(role_id, shop, start, endTime)
     return render(request, 'report/card/saleGroupByShop/index.html', locals())
-
-
 
 
 def detail(request):
@@ -267,34 +269,14 @@ def detail(request):
         shopsCode = mth.getCityShopsCode('T')
         if shop_code not in shopsCode:
             return render(request, '500.html', locals())
-    if role_id == '8':
+    elif role_id == '8':
         shopsCode = mth.getCityShopsCode('C')
         if shop_code not in shopsCode:
             return render(request, '500.html', locals())
-    if role_id == '10' or role_id == '2' or role_id == '12':
+    elif role_id == '10' or role_id == '2' or role_id == '12':
         if shop != shop_code:
             return render(request, '500.html', locals())
 
-    if pay_id == '2':
-        pay_name = '代金券'
-    if pay_id == '3':
-        pay_name = '汇款'
-    if pay_id == '4':
-        pay_name = '赊账'
-    if pay_id == '5':
-        pay_name = 'Pos'
-    if pay_id == '6':
-        pay_name = '移动积分'
-    if pay_id == '7':
-        pay_name = '美团'
-    if pay_id == '8':
-        pay_name = '糯米'
-    if pay_id == '9':
-        pay_name = '黄金手'
-    if pay_id == '10':
-        pay_name = '慧购线上'
-    if pay_id == '11':
-        pay_name = '慧购线下'
 
     start = request.GET.get('start', today)
     end = request.GET.get('end', today)
@@ -302,102 +284,32 @@ def detail(request):
 
     conn = mth.getMysqlConn()
     cur = conn.cursor()
+    if pay_id == '3':
+        sql = " select a.order_sn,a.action_type,b.is_pay,b.pay_value,c.bank_name,c.bank_sn,c.pay_company" \
+              " from orders as a inner join order_payment_info as b on a.order_sn = b.order_id left join order_payment_credit as c on a.order_sn = c.order_id"\
+              " where a.add_time>='{start}' and a.add_time<='{end}' and a.shop_code ='{shop}' and b.pay_id=3" \
+              " order by b.is_pay,a.order_sn"\
+              .format(start=start, end=endTime, shop=shop_code)
+    else:
+        sql = " select a.order_sn,a.action_type,a.buyer_name,a.buyer_tel,a.buyer_company,b.pay_value,b.is_pay" \
+              " from orders as a ,order_payment_info as b" \
+              " where a.order_sn = b.order_id and a.shop_code = '{shop}' and a.add_time >= '{start}'" \
+              " and a.add_time <= '{end}' and b.pay_id = '{pay}'"\
+            .format(shop=shop_code,start=start,end=end,pay=pay_id)
 
-    sqlstr = u"select ord.order_sn," \
-             u"        case" \
-             u"        when ord.action_type = '1' then" \
-             u"           '单卡售卡'" \
-             u"        when ord.action_type = '2' then" \
-             u"           '批量售卡'" \
-             u"        when ord.action_type = '3' then" \
-             u"           '借卡结算'" \
-             u"        when ord.action_type = '5' then" \
-             u"	          '实物团购返点'" \
-             u"        else" \
-             u"	          '其它售卡'" \
-             u"        end as action_type," \
-             u"       ord.buyer_name as user_name," \
-             u"       ord.buyer_tel as user_phone," \
-             u"       ord.buyer_company as user_company," \
-             u"       opi.bank_name," \
-             u"       opi.bank_sn," \
-             u"       opi.pay_company," \
-             u"       opi.pay_value," \
-             u"        case" \
-             u"        when opi.is_pay = '1' then" \
-             u"           '已到账'" \
-             u"        when opi.is_pay = '0' then" \
-             u"           '未到账'" \
-             u"        end as is_pay" \
-             u"  from orders ord, order_payment_info opi" \
-             u" where ord.shop_code = '{shop_code_ord}' " \
-             u"   and ord.add_time >= '{start_ord}' " \
-             u"   and ord.add_time <= '{end_ord}'" \
-             u"   and ord.order_sn = opi.order_id" \
-             u"   and opi.pay_id = {pay_id_ord}" \
-             u" union " \
-             u"select occ.order_sn, " \
-             u"        case" \
-             u"        when occ.action_type = '1' then" \
-             u"           '大面值换小面值'" \
-             u"        when occ.action_type = '2' then" \
-             u"	          '小面值换大面值'" \
-             u"        else" \
-             u"	          '其它换卡'" \
-             u"        end as action_type," \
-             u"       occ.user_name," \
-             u"       occ.user_phone," \
-             u"       '' as user_company," \
-             u"       occp.bank_name," \
-             u"       occp.bank_sn," \
-             u"       occp.pay_company," \
-             u"       occp.pay_value," \
-             u"        case" \
-             u"        when occp.is_pay = '1' then" \
-             u"           '已到账'" \
-             u"        when occp.is_pay = '0' then" \
-             u"           '未到账'" \
-             u"        end as is_pay" \
-             u"  from order_change_card occ, order_change_card_payment occp" \
-             u" where occ.shop_code = '{shop_code_occ}' " \
-             u"   and occ.add_time >= '{start_occ}' " \
-             u"   and occ.add_time <= '{end_occ}'" \
-             u"   and occ.order_sn = occp.order_id" \
-             u"   and occp.pay_id = {pay_id_occ}" \
-        .format(shop_code_ord=shop_code,
-                start_ord=start,
-                end_ord=endTime,
-                pay_id_ord=pay_id,
-                shop_code_occ=shop_code,
-                start_occ=start,
-                end_occ=endTime,
-                pay_id_occ=pay_id)
-    cur.execute(sqlstr)
+    cur.execute(sql)
     List = cur.fetchall()
 
     for item in List:
-        item['pay_value'] = float(item['pay_value'])
-    # paginator = Paginator(List, 20)
-    #
-    # try:
-    #     List = paginator.page(page)
-    #
-    #     if List.number > 1:
-    #         page_up = List.previous_page_number
-    #     else:
-    #         page_up = 1
-    #
-    #     if List.number < List.paginator.num_pages:
-    #         page_down = List.next_page_number
-    #     else:
-    #         page_down = List.paginator.num_pages
+        if item['pay_value']:
+            item['pay_value'] = float(item['pay_value'])
+        else:
+            item['pay_value'] = 0
 
-    # except Exception as e:
-    #     print(e)
     return render(request, 'report/card/saleGroupByShop/Detail.html', locals())
 
 def date_detail(request):
-    shopcode = mth.getReqVal(request, 'shopcode','')
+    shop = mth.getReqVal(request, 'shopcode','')
     start = mth.getReqVal(request, 'start','')
     end = mth.getReqVal(request, 'end','')
     endTime = str(datetime.datetime.strptime(end,'%Y-%m-%d').date() + datetime.timedelta(1))
@@ -405,94 +317,174 @@ def date_detail(request):
 
     conn = mth.getMysqlConn()
     cur = conn.cursor()
+    sale_sql = "select DATE_FORMAT(a.add_time, '%Y-%m-%d') as add_time,b.pay_id,sum(b.pay_value) as pay_value " \
+               " from orders as a, order_payment_info as b" \
+               " where a.order_sn = b.order_id and a.add_time>='{start}' and a.add_time<='{end}' and a.shop_code ='{shop}'" \
+               " group by DATE_FORMAT(a.add_time, '%Y-%m-%d'),b.pay_id" \
+                .format(start=start,end=endTime,shop=shop)
+    cur.execute(sale_sql)
+    data_sale = cur.fetchall()
 
-    sql = u" select d.date_time, sum(d.disc) as disc, sum(d.disc_cash) as disc_cash, sum(d.disc_card) as disc_card, " \
-          u" sum(d.pay_1) as pay_1, sum(d.pay_2) as pay_2, sum(d.pay_3) as pay_3, sum(d.pay_4) as pay_4, " \
-          u" sum(d.pay_5) as pay_5, sum(d.pay_6) as pay_6, sum(d.pay_7) as pay_7, sum(d.pay_8) as pay_8, " \
-          u" sum(d.pay_9) as pay_9, sum(d.pay_10) as pay_10, sum(d.pay_11) as pay_11, sum(d.disc_6) as disc_6, " \
-          u" sum(d.disc_7) as disc_7, sum(d.disc_8) as disc_8, sum(d.disc_10) as disc_10, sum(d.disc_11) as disc_11,  " \
-          u" sum(d.inSub) as inSub FROM (select DATE_FORMAT( o.add_time, '%Y-%m-%d') as date_time, " \
-          u" case when o.disc_amount >= o.y_cash then o.disc_amount else o.diff_price + o.disc_amount end  as disc, o.y_cash as disc_cash," \
-          u" case when o.disc_amount >= o.y_cash then o.disc_amount - o.y_cash  else o.disc_amount + o.diff_price - o.y_cash end as disc_card, " \
-          u" IFNULL(a.pay_1, 0) AS pay_1, " \
-          u" IFNULL(a.pay_2, 0) AS pay_2, " \
-          u" IFNULL(a.pay_3, 0) AS pay_3, " \
-          u" IFNULL(a.pay_4, 0) AS pay_4, " \
-          u" IFNULL(a.pay_5, 0) AS pay_5, " \
-          u" IFNULL(a.pay_6, 0) AS pay_6, " \
-          u" IFNULL(a.pay_7, 0) AS pay_7, " \
-          u" IFNULL(a.pay_8, 0) AS pay_8, " \
-          u" IFNULL(a.pay_9, 0) AS pay_9, " \
-          u" IFNULL(a.pay_10, 0) AS pay_10, " \
-          u" IFNULL(a.pay_11, 0) AS pay_11,  " \
-          u" IFNULL(a.disc_6, 0) AS disc_6,  " \
-          u" IFNULL(a.disc_7, 0) AS disc_7,  " \
-          u" IFNULL(a.disc_8, 0) AS disc_8,  " \
-          u" IFNULL(a.disc_10, 0) AS disc_10,  " \
-          u" IFNULL(a.disc_11, 0) AS disc_11,  " \
-          u" IFNULL(a.inSub, 0) AS inSub FROM orders o left join ( select opi.order_id, " \
-          u" sum(case when opi.pay_id = 1 then opi.pay_value else 0 end) as pay_1, " \
-          u" sum(case when opi.pay_id = 2 then opi.pay_value else 0 end) as pay_2, " \
-          u" sum(case when opi.pay_id = 3 then opi.pay_value else 0 end) as pay_3, " \
-          u" sum(case when opi.pay_id = 4 then opi.pay_value else 0 end) as pay_4, " \
-          u" sum(case when opi.pay_id = 5 then opi.pay_value else 0 end) as pay_5, " \
-          u" sum(case when opi.pay_id = 6 then opi.pay_value else 0 end) as pay_6, " \
-          u" sum(case when opi.pay_id = 6 then opi.pay_value * case when p.dis_rate is not null then p.dis_rate else 0 end else 0 end) as disc_6, " \
-          u" sum(case when opi.pay_id = 7 then opi.pay_value else 0 end) as pay_7, " \
-          u" sum(case when opi.pay_id = 7 then opi.pay_value * case when p.dis_rate is not null then p.dis_rate else 0 end else 0 end) as disc_7, " \
-          u" sum(case when opi.pay_id = 8 then opi.pay_value else 0 end) as pay_8, " \
-          u" sum(case when opi.pay_id = 8 then opi.pay_value * case when p.dis_rate is not null then p.dis_rate else 0 end else 0 end) as disc_8, " \
-          u" sum(case when opi.pay_id = 9 then opi.pay_value else 0 end) as pay_9, " \
-          u" sum(case when opi.pay_id = 10 then opi.pay_value else 0 end) as pay_10, " \
-          u" sum(case when opi.pay_id = 10 then opi.pay_value * case when p.dis_rate is not null then p.dis_rate else 0 end else 0 end) as disc_10, " \
-          u" sum(case when opi.pay_id = 11 then opi.pay_value else 0 end) as pay_11, " \
-          u" sum(case when opi.pay_id = 11 then opi.pay_value * case when p.dis_rate is not null then p.dis_rate else 0 end else 0 end) as disc_11, " \
-          u" sum(opi.pay_value) as inSub from order_payment_info opi, payment p where opi.pay_id = p.id group by opi.order_id ) as a " \
-          u" on o.order_sn = a.order_id  " \
-          u" WHERE o.add_time>='{start_a}' " \
-          u" and o.add_time<='{end_a}' " \
-          u" and o.shop_code ='{shopcode_a}' " \
-          u" UNION all SELECT DATE_FORMAT( occ.add_time, '%Y-%m-%d'), " \
-          u" case when occ.disc >= occ.disc_cash then occ.disc else occ.disc_pay + occ.disc end as disc, occ.disc_cash, " \
-          u" case when occ.disc >= occ.disc_cash then occ.disc - occ.disc_cash else occ.disc + occ.disc_pay - occ.disc_cash end ," \
-          u" b.pay_1, b.pay_2, b.pay_3, b.pay_4, b.pay_5, b.pay_6, " \
-          u" b.pay_7, b.pay_8, b.pay_9, b.pay_10, b.pay_11, b.disc_6, b.disc_7, b.disc_8, b.disc_10, b.disc_11, " \
-          u" b.inSub FROM order_change_card occ, (select occp.order_id, " \
-          u" sum(case when occp.pay_id = 1 then occp.pay_value else 0 end) as pay_1, " \
-          u" sum(case when occp.pay_id = 2 then occp.pay_value else 0 end) as pay_2, " \
-          u" sum(case when occp.pay_id = 3 then occp.pay_value else 0 end) as pay_3, " \
-          u" sum(case when occp.pay_id = 4 then occp.pay_value else 0 end) as pay_4, " \
-          u" sum(case when occp.pay_id = 5 then occp.pay_value else 0 end) as pay_5, " \
-          u" sum(case when occp.pay_id = 6 then occp.pay_value else 0 end) as pay_6, " \
-          u" sum(case when occp.pay_id = 6 then occp.pay_value * case when p.dis_rate is not null then p.dis_rate else 0 end else 0 end) as disc_6, " \
-          u" sum(case when occp.pay_id = 7 then occp.pay_value else 0 end) as pay_7, " \
-          u" sum(case when occp.pay_id = 7 then occp.pay_value * case when p.dis_rate is not null then p.dis_rate else 0 end else 0 end) as disc_7, " \
-          u" sum(case when occp.pay_id = 8 then occp.pay_value else 0 end) as pay_8, " \
-          u" sum(case when occp.pay_id = 8 then occp.pay_value * case when p.dis_rate is not null then p.dis_rate else 0 end else 0 end) as disc_8, " \
-          u" sum(case when occp.pay_id = 9 then occp.pay_value else 0 end) as pay_9, " \
-          u" sum(case when occp.pay_id = 10 then occp.pay_value else 0 end) as pay_10, " \
-          u" sum(case when occp.pay_id = 10 then occp.pay_value * case when p.dis_rate is not null then p.dis_rate else 0 end else 0 end) as disc_10, " \
-          u" sum(case when occp.pay_id = 11 then occp.pay_value else 0 end) as pay_11, " \
-          u" sum(case when occp.pay_id = 11 then occp.pay_value * case when p.dis_rate is not null then p.dis_rate else 0 end else 0 end) as disc_11, " \
-          u" sum(occp.pay_value) as inSub from order_change_card_payment occp, payment p  " \
-          u" where occp.pay_id = p.id group by occp.order_id ) as b " \
-          u" WHERE occ.order_sn = b.order_id " \
-          u" and occ.add_time>='{start_b}' " \
-          u" and occ.add_time<='{end_b}' " \
-          u" and occ.shop_code ='{shopcode_b}'  " \
-          u" UNION all SELECT DATE_FORMAT( ouc.add_time, '%Y-%m-%d'), 0, 0, " \
-          u" 0, ouc.diff_price, 0, 0, 0, 0, 0, " \
-          u" 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, " \
-          u" 0 FROM order_up_card ouc " \
-          u" WHERE ouc.add_time>='{start_b}' " \
-          u" and ouc.add_time<='{end_b}' " \
-          u" and ouc.shop_code ='{shopcode_b}' ) d group by  d.date_time " \
-        .format(start_a=start, end_a=endTime, shopcode_a=shopcode, start_b=start, end_b=endTime,shopcode_b=shopcode)
-    cur.execute(sql)
-    List = cur.fetchall()
+    sale_disc_sql="select DATE_FORMAT(add_time, '%Y-%m-%d') as add_time," \
+                  "SUM(case when disc_amount>=y_cash then disc_amount else diff_price+disc_amount end) as disc, " \
+                  "SUM(y_cash) as disc_cash,"  \
+                  "SUM(case when disc_amount>=y_cash then disc_amount-y_cash else disc_amount+diff_price-y_cash end) as disc_card " \
+                  "from orders " \
+                  "where add_time>='{start}' and add_time<='{end}' and shop_code ='{shop}' "  \
+                  "group by DATE_FORMAT(add_time, '%Y-%m-%d') " \
+                    .format(start=start, end=endTime, shop=shop)
+    cur.execute(sale_disc_sql)
+    data_sale_disc = cur.fetchall()
+
+    change_sql = "select DATE_FORMAT(a.add_time, '%Y-%m-%d') as add_time,b.pay_id,sum(b.pay_value) as pay_value " \
+               " from order_change_card as a, order_change_card_payment as b" \
+               " where a.order_sn = b.order_id and a.add_time>='{start}' and a.add_time<='{end}' and a.shop_code ='{shop}'" \
+               " group by DATE_FORMAT(a.add_time, '%Y-%m-%d'),b.pay_id" \
+                .format(start=start,end=endTime,shop=shop)
+    cur.execute(change_sql)
+    data_change = cur.fetchall()
+
+    change_disc_sql = "select DATE_FORMAT(add_time, '%Y-%m-%d') as add_time," \
+                      "SUM(case when disc>=disc_cash then disc else disc_pay+disc end) as disc," \
+                    "SUM(disc_cash) as disc_cash," \
+                    "SUM(case when disc>=disc_cash then disc-disc_cash else disc+disc_pay-disc_cash end) as disc_card " \
+                    "from order_change_card " \
+                    "where add_time>='{start}' and add_time<='{end}' and shop_code ='{shop}' " \
+                    "group by  DATE_FORMAT(add_time, '%Y-%m-%d') " \
+        .format(start=start, end=endTime, shop=shop)
+    cur.execute(change_disc_sql)
+    data_change_disc = cur.fetchall()
+
+    fill_sql = "select DATE_FORMAT(add_time, '%Y-%m-%d') as add_time,sum(diff_price) as pay_value" \
+               " from order_up_card" \
+               " where add_time>='{start}' and add_time<='{end}' and shop_code ='{shop}'" \
+               " group by  DATE_FORMAT(add_time, '%Y-%m-%d') " \
+                .format(start=start, end=endTime, shop=shop)
+    cur.execute(fill_sql)
+    data_fill = cur.fetchall()
+
+    dates = mth.dateRange(start,end)
+
+    res_list = []
+    paymentsRate = Payment.objects.values('id', 'dis_rate').filter(dis_rate__gte=0)
+    paymentsRateDict = {item['id']: float(item['dis_rate']) for item in paymentsRate}
+    for date in dates:
+        item = {'date': '',
+                'disc': 0, 'disc_6': 0, 'disc_7': 0, 'disc_8': 0, 'disc_10': 0, 'disc_11': 0, 'disc_cash': 0,
+                'disc_card': 0,
+                'inSub': 0, 'pay_1': 0, 'pay_2': 0, 'pay_3': 0, 'pay_4': 0, 'pay_5': 0, 'pay_6': 0, 'pay_7': 0,
+                'pay_8': 0,
+                'pay_9': 0, 'pay_10': 0, 'pay_11': 0, }
+        item['date'] = date
+        for sale in data_sale:
+            if sale['add_time'] == date:
+                # 横向各门店售卡汇总赋值
+                # pay_id = sale['pay_id']
+                if sale['pay_id'] == 1:
+                    item['pay_1'] += float(sale['pay_value'])
+                    item['inSub'] += float(sale['pay_value'])
+                if sale['pay_id'] == 2:
+                    item['pay_2'] += float(sale['pay_value'])
+                    item['inSub'] += float(sale['pay_value'])
+                if sale['pay_id'] == 3:
+                    item['pay_3'] += float(sale['pay_value'])
+                    item['inSub'] += float(sale['pay_value'])
+                if sale['pay_id'] == 4:
+                    item['pay_4'] += float(sale['pay_value'])
+                    item['inSub'] += float(sale['pay_value'])
+                if sale['pay_id'] == 5:
+                    item['pay_5'] += float(sale['pay_value'])
+                    item['inSub'] += float(sale['pay_value'])
+                if sale['pay_id'] == 6:
+                    item['pay_6'] += float(sale['pay_value'])
+                    item['disc_6'] += float(sale['pay_value']) * paymentsRateDict[6]
+                    item['inSub'] += float(sale['pay_value'])
+                if sale['pay_id'] == 7:
+                    item['pay_7'] += float(sale['pay_value'])
+                    item['disc_7'] += float(sale['pay_value']) * paymentsRateDict[7]
+                    item['inSub'] += float(sale['pay_value'])
+                if sale['pay_id'] == 8:
+                    item['pay_8'] += float(sale['pay_value'])
+                    item['disc_8'] += float(sale['pay_value']) * paymentsRateDict[8]
+                    item['inSub'] += float(sale['pay_value'])
+                if sale['pay_id'] == 9:
+                    item['pay_9'] += float(sale['pay_value'])
+                    item['inSub'] += float(sale['pay_value'])
+                if sale['pay_id'] == 10:
+                    item['pay_10'] += float(sale['pay_value'])
+                    item['disc_10'] += float(sale['pay_value']) * paymentsRateDict[10]
+                    item['inSub'] += float(sale['pay_value'])
+                if sale['pay_id'] == 11:
+                    item['pay_11'] += float(sale['pay_value'])
+                    item['disc_11'] += float(sale['pay_value']) * paymentsRateDict[11]
+                    item['inSub'] += float(sale['pay_value'])
+
+        for saleDisc in data_sale_disc:
+            if saleDisc['add_time'] == date:
+                if not saleDisc['disc']:
+                    saleDisc['disc'] = 0
+                if not saleDisc['disc_cash']:
+                    saleDisc['disc_cash'] = 0
+                if not saleDisc['disc_card']:
+                    saleDisc['disc_card'] = 0
+                item['disc'] += float(saleDisc['disc'])
+                item['disc_cash'] += float(saleDisc['disc_cash'])
+                item['disc_card'] += float(saleDisc['disc_card'])
+
+        for fill in data_fill:
+            if fill['add_time'] == date:
+                if not fill['pay_value']:
+                    fill['pay_value'] = 0
+
+                item['pay_1'] += float(fill['pay_value'])
+                item['inSub'] += float(fill['pay_value'])
+
+        for change in data_change:
+            if change['add_time'] == date:
+                # 横向各门店售卡汇总赋值
+                if change['pay_id'] == 1:
+                    item['pay_1'] += float(change['pay_value'])
+                if change['pay_id'] == 2:
+                    item['pay_2'] += float(change['pay_value'])
+                if change['pay_id'] == 3:
+                    item['pay_3'] += float(change['pay_value'])
+                if change['pay_id'] == 5:
+                    item['pay_5'] += float(change['pay_value'])
+                if change['pay_id'] == 6:
+                    item['pay_6'] += float(change['pay_value'])
+                    item['disc_6'] += float(change['pay_value']) * paymentsRateDict[6]
+                if change['pay_id'] == 7:
+                    item['pay_7'] += float(change['pay_value'])
+                    item['disc_7'] += float(change['pay_value']) * paymentsRateDict[7]
+                if change['pay_id'] == 8:
+                    item['pay_8'] += float(change['pay_value'])
+                    item['disc_8'] += float(change['pay_value']) * paymentsRateDict[8]
+                if change['pay_id'] == 9:
+                    item['pay_9'] += float(change['pay_value'])
+                if change['pay_id'] == 10:
+                    item['pay_10'] += float(change['pay_value'])
+                    item['disc_10'] += float(change['pay_value']) * paymentsRateDict[10]
+                if change['pay_id'] == 11:
+                    item['pay_11'] += float(change['pay_value'])
+                    item['disc_11'] += float(change['pay_value']) * paymentsRateDict[11]
+
+                item['inSub'] += float(change['pay_value'])
+
+        for changeDisc in data_change_disc:
+            if changeDisc['add_time'] == date:
+                if not changeDisc['disc']:
+                    changeDisc['disc'] = 0
+                if not changeDisc['disc_cash']:
+                    changeDisc['disc_cash'] = 0
+                if not changeDisc['disc_card']:
+                    changeDisc['disc_card'] = 0
+                item['disc'] += float(changeDisc['disc'])
+                item['disc_cash'] += float(changeDisc['disc_cash'])
+                item['disc_card'] += float(changeDisc['disc_card'])
+        res_list.append(item)
 
     # 表单分页开始
-    paginator = Paginator(List, 31)
+    paginator = Paginator(res_list, 31)
 
     try:
         List = paginator.page(page)
