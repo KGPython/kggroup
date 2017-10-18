@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
@@ -12,7 +12,10 @@
     .must {
         color: red;
     }
-    #chooseGoods label{padding: 7px 0;}
+
+    #chooseGoods label {
+        padding: 7px 0;
+    }
 </style>
 <!--containt-part-->
 <div id="content">
@@ -36,29 +39,32 @@
             <div class="widget-content nopadding">
                 <div class="collapse in widget-content">
                     <div class="row formline">
-                        <label for="" class="col-md-1 formline-label must">券号批次：</label>
+                        <label for="" class="col-md-1 formline-label must">券号批次</label>
                         <div class="col-md-2">
                             <input type="text" class="form-control" name="sn_batch" id="sn_batch"
                                    required value="{{ sn_batch }}">
+                            <span id="helpBlock" class="help-block">券号前3位数字</span>
                         </div>
-                        <label for="" class="col-md-1 formline-label">制作数量：</label>
+                        <label for="" class="col-md-1 formline-label">制作数量</label>
                         <div class="col-md-2">
                             <input type="text" class="form-control" name="sn_amount" id="sn_amount"
                                    readonly="readonly" value="{{ sn_amount }}">
                         </div>
-                        <label for="" class="col-md-1 formline-label must">券名称：</label>
+                        <label for="" class="col-md-1 formline-label must">券名称</label>
                         <div class="col-md-3">
-                            <input type="text" class="form-control" name="couponname" id="couponname"
+                            <input type="text" class="form-control" name="couponname" id="couponname" maxlength="15"
                                    required value="{{ couponname }}">
+                            <span id="helpBlock" class="help-block">限制在15个字以内</span>
                         </div>
                     </div>
                     <div class="row formline">
-                        <label for="" class="col-md-1 formline-label must">序列号开始：</label>
+                        <label for="" class="col-md-1 formline-label must">序列号开始</label>
                         <div class="col-md-2">
                             <input type="text" class="form-control sn_val" name="sn_start" id="sn_start"
                                    required value="{{ sn_start }}">
+                            <span id="helpBlock" class="help-block">防伪券SN码</span>
                         </div>
-                        <label for="" class="col-md-1 formline-label must">付款方式：</label>
+                        <label for="" class="col-md-1 formline-label must">付款方式</label>
                         <div class="col-md-2">
                             <select name="payment_type" id="payment_type" class="form-control" required>
                                 <option value="1">现金</option>
@@ -67,19 +73,21 @@
                                 <option value="5">POS机消费</option>
                             </select>
                         </div>
-                        <label for="" class="col-md-1 formline-label must">总实收金额：<br/>（去掉返点后）</label>
+                        <label for="" class="col-md-1 formline-label must">应收金额</label>
                         <div class="col-md-3">
                             <input type="text" class="form-control" name="pay_account" id="pay_account"
                                    required value="{{ pay_account }}">
+                            <span id="helpBlock" class="help-block">客户应付的券款</span>
                         </div>
                     </div>
                     <div class="row formline">
-                        <label for="" class="col-md-1 formline-label must">序列号结束：</label>
+                        <label for="" class="col-md-1 formline-label must">序列号结束</label>
                         <div class="col-md-2">
                             <input type="text" class="form-control sn_val" name="sn_end" id="sn_end"
                                    required value="{{ sn_end }}">
+                            <span id="helpBlock" class="help-block">防伪券SN码</span>
                         </div>
-                        <label for="" class="col-md-1 formline-label must">类型：</label>
+                        <label for="" class="col-md-1 formline-label must">类型</label>
                         <div class="col-md-2">
                             <select name="type" id="type" class="form-control" required>
                                 <option value="1">换卡券</option>
@@ -87,7 +95,7 @@
                                 <option value="3">通用券</option>
                             </select>
                         </div>
-                        <label for="" class="col-md-1 formline-label must">截止日期：</label>
+                        <label for="" class="col-md-1 formline-label must">截止日期</label>
                         <div class="col-md-3">
                             <div data-link-format="yyyy-mm-dd" data-link-field="dtp_input2"
                                  data-date-format="yyyy-mm-dd" data-date=""
@@ -102,15 +110,19 @@
                         </div>
                     </div>
                     <div class="row formline">
-                        <label for="" class="col-md-1 formline-label must">代金面值：</label>
+                        <label for="" class="col-md-1 formline-label must">券面值</label>
                         <div class="col-md-2">
                             <input type="text" class="form-control" name="costValue" id="costValue"
                                    required value="{{ costValue }}">
+                            <span id="helpBlock" class="help-block">
+                                如果返点需要计入到券中<br /><b>券面值=券本身金额+返点金额</b><br />如果不需要计入请填写<b>券本身金额</b>
+                            </span>
                         </div>
-                        <label for="" class="col-md-1 formline-label must">返点金额：<br/>(单张返金额)</label>
+                        <label for="" class="col-md-1 formline-label must">返点金额</label>
                         <div class="col-md-2">
                             <input type="text" class="form-control" name="discount" id="discount"
                                    value="{{ discount }}">
+                            <span id="helpBlock" class="help-block">单张券的返点金额</span>
                         </div>
                         <label for="" class="col-md-1 formline-label">使用范围</label>
                         <div class="col-md-2">
@@ -121,8 +133,8 @@
 
                         </div>
                         <div class="col-md-1">
-                                <button type="button" class="btn btn-info save-btn">保存</button>
-                            </div>
+                            <button type="button" class="btn btn-info save-btn">保存</button>
+                        </div>
                     </div>
 
                 </div>
@@ -336,20 +348,20 @@
 
 <!--自动计算数量-->
 <script type="text/javascript">
-        $(document).on('change','.sn_val',function(){
+    $(document).on('change', '.sn_val', function () {
         //1处理号段起始值
         var start = $('#sn_start').val();
 
         //2处理号段截止值
         var end = $('#sn_end').val();
 
-        if(parseInt(end)<parseInt(start)){
+        if (parseInt(end) < parseInt(start)) {
             alert('起始券号不能大于截至券号');
             return false;
         }
-        if(parseInt(end)&&parseInt(start)){
+        if (parseInt(end) && parseInt(start)) {
             //3计算数量
-            $("#sn_amount").val(parseInt(end)-parseInt(start)+1);
+            $("#sn_amount").val(parseInt(end) - parseInt(start) + 1);
         }
 
     });
