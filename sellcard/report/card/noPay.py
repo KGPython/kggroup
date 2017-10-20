@@ -52,10 +52,10 @@ def order2(request):
 
     conn = mth.getMysqlConn()
     cur = conn.cursor()
-    saleSql = 'select a.order_sn,a.shop_code,a.add_time,a.buyer_company,b.pay_value,c.change_time ' \
+    saleSql = 'select a.order_sn,a.shop_code,a.add_time,a.buyer_company,b.pay_value,b.received_time,c.change_time ' \
               ' from orders as a inner join order_payment_info as b on a.order_sn = b.order_id left join order_payment_credit as c on a.order_sn = c.order_id ' \
               ' where a.add_time>="{start}" and a.add_time<="{end}" and b.pay_id=4 and {whereShop}' \
-              ' order by a.shop_code,b.is_pay,a.order_sn' \
+              ' order by a.order_sn' \
         .format(start=startTime, end=endTime,whereShop=whereShop)
 
     cur.execute(saleSql)
@@ -301,7 +301,7 @@ def month_pay4(request):
                     time = datetime.datetime(rowTimeNow.year,rowTimeNow.month,1)+datetime.timedelta(days=-1)
                     if time>=datetime.datetime.strptime(start,'%Y-%m-%d %H:%M:%S'):
                         monthSubitem = MonthSub(MonthPay,MonthNoPay,time)
-                        resData.insert(index+1,monthSubitem)
+                        resData.append(monthSubitem)
                         monthSubTimeList.append(time)
                         MonthNoPay = 0
                         MonthPay = 0
@@ -344,8 +344,8 @@ def month_pay6(request):
     shops = mth.getCityShopsCode()
     if request.method == 'POST':
         postStart = request.POST.get('start')
-        if postStart<'2017-06':
-            postStart = '2017-06'
+        if postStart<'2017-01':
+            postStart = '2017-01'
         postEnd = request.POST.get('end')
 
         start = '{postStart}-01 00:00:00'.format(postStart=postStart)
@@ -357,8 +357,10 @@ def month_pay6(request):
 
         shop_code = request.POST.get('shop','')
         parameterShop = '1=1'
+        parameterShop2 = '1=1'
         if shop_code:
             parameterShop = 'shop="{shop}"'.format(shop=shop_code)
+            parameterShop2 = 'shop_code="{shop}"'.format(shop=shop_code)
 
         conn = mth.getMysqlConn()
         cur = conn.cursor()
@@ -366,9 +368,9 @@ def month_pay6(request):
         #在起始日期之前赊销，在起始日期之前未到账
         sqlBeforeNoPay = ' select sum(b.pay_value) as total' \
                          ' from orders as a, order_payment_info as b' \
-                         ' where a.add_time>="2017-06-01 00:00:00" and a.add_time<="{start}" and a.{shop}' \
+                         ' where a.add_time>="2017-01-01 00:00:00" and a.add_time<="{start}" and {shop}' \
                          ' and b.pay_id =6 and a.order_sn = b.order_id' \
-                        .format(start=start,shop=parameterShop)
+                        .format(start=start,shop=parameterShop2)
         cur.execute(sqlBeforeNoPay)
         beforeNoPay = cur.fetchone()
         totalNoPayBefore = beforeNoPay['total']
@@ -376,9 +378,9 @@ def month_pay6(request):
         #在起始日期之前赊销，在起始日期之后到账
         sqlBeforePaid = 'select sum(b.pay_value) as total' \
                         ' from order_payment_credit as b,orders as a ' \
-                        ' where a.add_time>="2017-06-01 00:00:00" and b.add_time<="{start}"' \
-                        ' and b.change_time>="{start}" and a.{shop} and b.pay_id_old =6' \
-                        .format(start=start, end=end, shop=parameterShop)
+                        ' where a.order_sn=b.order_id and a.add_time>="2017-01-01 00:00:00" and a.add_time<="{start}"' \
+                        ' and b.change_time>="{start}" and {shop} and b.pay_id_old =6' \
+                        .format(start=start, end=end, shop=parameterShop2)
         cur.execute(sqlBeforePaid)
         beforePaid = cur.fetchone()
         totalPaidBefore = beforePaid['total']
@@ -387,24 +389,75 @@ def month_pay6(request):
         totalNoPayBefore = totalNoPayBefore - totalPaidBefore
 
         #赊出记录
-        sqlNoPay =' select a.shop_code,DATE_FORMAT(a.add_time,"%Y-%m") as add_time ,SUM(b.pay_value) as pay_value' \
+        sqlNoPay =' select a.shop_code as shop,DATE_FORMAT(a.add_time,"%Y-%m") as add_time,SUM(b.pay_value) as pay_value,0 as is_pay' \
                   ' from orders as a,order_payment_info as b' \
-                  ' where a.add_time>="2017-06-01 00:00:00" and a.add_time>="{start}" and a.add_time<="{end}" and a.{shop}' \
+                  ' where a.add_time>="2017-01-01 00:00:00" and a.add_time>="{start}" and a.add_time<="{end}" and {shop}' \
                   ' and b.pay_id =6 and a.order_sn = b.order_id' \
                   ' GROUP BY a.shop_code,DATE_FORMAT(a.add_time,"%Y-%m")'\
-            .format(start=start, end=end,shop=parameterShop)
+            .format(start=start, end=end,shop=parameterShop2)
         cur.execute(sqlNoPay)
         noPayList = cur.fetchall()
         #还款记录
-        sqlPaid = ' select shop_code,DATE_FORMAT(a.change_time,"%Y-%m") as change_time,sum(pay_value) as pay_value' \
+        sqlPaid = ' select shop,DATE_FORMAT(change_time,"%Y-%m") as change_time,sum(pay_value) as pay_value,1 is_pay' \
                   ' from order_payment_credit ' \
-                  ' where change_time>="2017-06-01 00:00:00" and change_time>="{start}" and {shop}' \
-                  ' and b.change_time<="{end}" and b.pay_id_old=6' \
-                  ' order by b.change_time'.format(start=start, end=end,shop=parameterShop)
+                  ' where change_time>="2017-01-01 00:00:00" and change_time>="{start}" and change_time<="{end}"' \
+                  ' and {shop} and pay_id_old=6' \
+                  ' GROUP BY shop,DATE_FORMAT(change_time,"%Y-%m")'.format(start=start, end=end,shop=parameterShop)
         cur.execute(sqlPaid)
         paidList = cur.fetchall()
+        noPayList = splitDataPay6('0', noPayList, start, end)
+        paidList = splitDataPay6('1', paidList, start, end)
+        dataSelect = noPayList + paidList
+        totalNoPay = float(totalNoPayBefore)
+        if len(dataSelect) > 0:
+            dataSorted = sorted(dataSelect, key=itemgetter('time'), reverse=False)
+            totalPay, MonthNoPay, MonthPay, index, = 0, 0, 0, 0
+            resData, monthSubTimeList = [], []
 
-        resData = noPayList + paidList
+            for row in dataSorted:
+                rowTimeNow = datetime.datetime.strptime(row['time'],'%Y-%m')
+                if index == 0:
+                    rowTimePre =rowTimeNow
+                else:
+                    rowTimePre = dataSorted[index - 1]['time']
+                    rowTimePre = datetime.datetime.strptime(rowTimePre,'%Y-%m')
+                if isNextMonth(rowTimeNow, rowTimePre) and (rowTimeNow.date() + datetime.timedelta(days=-1) not in monthSubTimeList):
+                    preMonthEnd = datetime.datetime(rowTimeNow.year, rowTimeNow.month, 1) + datetime.timedelta(days=-1)
+                    startDate = datetime.datetime.strptime(start, '%Y-%m-%d %H:%M:%S')
+                    if preMonthEnd >= startDate:
+                        monthSubitem = MonthSub(MonthPay, MonthNoPay, preMonthEnd.date())
+                        resData.append(monthSubitem)
+                        monthSubTimeList.append(preMonthEnd)
+                        MonthNoPay = 0
+                        MonthPay = 0
+                if 'is_pay' in row:
+                    if row['is_pay'] == '1':
+                        MonthPay += float(row['pay'])
+                        totalPay += float(row['pay'])
+                        totalNoPay += -float(row['pay'])
+                        row['sub'] = totalNoPay
+                    else:
+                        MonthNoPay += float(row['noPay'])
+                        totalNoPay += float(row['noPay'])
+                        row['sub'] = totalNoPay
+                    resData.append(row)
+
+                index += 1
+
+            # 最后一行月度合计
+            lastDataTime = resData[len(resData) - 1]['time']
+            lastDataTime = datetime.datetime.strptime(lastDataTime,'%Y-%m')
+            if lastDataTime.month == 12:
+                lastMonthSubTime = datetime.datetime(lastDataTime.year + 1, 1, 1) + datetime.timedelta(-1)
+            else:
+                lastMonthSubTime = datetime.datetime(lastDataTime.year, lastDataTime.month + 1, 1) + datetime.timedelta(-1)
+            if lastMonthSubTime not in monthSubTimeList:
+                monthSubitem = MonthSub(MonthPay, MonthNoPay, lastMonthSubTime.date())
+                resData.append(monthSubitem)
+                monthSubTimeList.append(lastMonthSubTime)
+                MonthNoPay = 0
+                MonthPay = 0
+
 
     return render(request, 'report/card/nopay/month_pay6.html', locals())
 
@@ -449,6 +502,29 @@ def splitData(flag,dataList,start,end):
     return data
 
 
+def splitDataPay6(flag,dataList,start,end):
+    """
+    将起止日期之前的数据，进行到账与未到账的分离
+    :param dataList: 数据列表
+    :param start: 起始月份
+    :param end: 截至日月
+    :return: list
+    """
+    data = []
+    if flag == '1':
+        payList = base.findPays()
+        payDict = {pay['id']: pay['payment_name'] for pay in payList}
+        for order in dataList:
+            itemPay = createPayRowPay6(payDict,order, end)
+            if itemPay:
+                data.append(itemPay)
+    else:
+        for order in dataList:
+            itemNoPay = createNoPayRowPay6(order)
+            data.append(itemNoPay)
+    return data
+
+
 def splitDataBefore(dataList,start,end):
     """
     将起始日期之前的数据，进行到账与未到账的分离
@@ -489,6 +565,20 @@ def createNoPayRow(obj):
     return  item
 
 
+def createNoPayRowPay6(obj):
+    """
+    创建赊销未到账记录
+    :param obj:
+    :return:
+    """
+    item = {}
+    item['time'] = obj['add_time']
+    item['shop'] = obj['shop']
+    item['noPay'] = obj['pay_value']
+    item['is_pay'] = '0'
+    return  item
+
+
 def createPayRow(payDict,obj,time):
     """
     创建赊销到账记录
@@ -508,6 +598,22 @@ def createPayRow(payDict,obj,time):
             info = '赊销到账: '+payDict[pay_id]
         item['info'] = info
         item['shop'] = obj['shop_code']
+        item['pay'] = obj['pay_value']
+        item['is_pay'] = '1'
+        return item
+
+
+def createPayRowPay6(payDict,obj,time):
+    """
+    创建赊销到账记录
+    :param obj:
+    :param time:
+    :return:
+    """
+    if datetime.datetime.strptime(obj['change_time'],'%Y-%m')<time:
+        item = {}
+        item['time'] = obj['change_time']
+        item['shop'] = obj['shop']
         item['pay'] = obj['pay_value']
         item['is_pay'] = '1'
         return item

@@ -48,9 +48,6 @@ def save(request):
     cur = conn.cursor()
     try:
         conn.autocommit(False)
-        # sql = """insert into
-        #          card_inventory_delete
-        #          select ci.*, now(),"""+ s_uid + """,""" + u_name + """ from card_inventory ci WHERE ci.card_no = '""" + card_no + "'"
 
         sql = u" insert into card_inventory_delete( " \
               u" card_no,card_value,card_status,card_action,card_addtime,shop_code, " \

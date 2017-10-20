@@ -145,7 +145,7 @@ def save(request):
                 is_pay = 1
                 if pay['payId'] =='3':
                     is_pay = '0'
-                if pay['payId'] =='4':
+                elif pay['payId'] =='4':
                     is_pay = '0'
                     orderPay.received_time = pay['received_time']
                 elif pay['payId'] == '6':

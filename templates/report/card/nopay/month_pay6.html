@@ -87,7 +87,7 @@
                     </div>
                 </div>
                 <div class="widget-box">
-                    <h3 class="text-center">集团售卡赊销月度汇总</h3>
+                    <h3 class="text-center">储值卡移动积分赊到账月度汇总</h3>
                     <h5 class="text-right">
                         <span class="red" style="margin-right: 30px">赊销累计未到账：{{ totalNoPay | floatformat:2 }}元</span>
                         <span style="margin-right: 30px">金额单位：元</span>
@@ -98,8 +98,6 @@
                                 <tr>
                                    <th>日期</th>
                                    <th>门店</th>
-                                   <th>订单编号</th>
-                                   <th>摘要</th>
                                    <th>赊销金额</th>
                                    <th>还款金额</th>
                                    <th>累计</th>
@@ -108,15 +106,13 @@
                             <tbody class="cardIn" id="nopayList">
                                 <tr class="row-total">
                                     <td></td><td></td><td></td>
-                                    <td>前期累计</td><td></td><td></td>
+                                    <td>前期累计</td>
                                     <td>{{ totalNoPayBefore | default:0.00 }}</td>
                                 </tr>
                                 {% for row in resData %}
                                     <tr class="{% if row.monthSub %}row-total{% elif row.pay %}pay{% endif %}">
-                                        <td>{{ row.time | date:'Y-m-d'}}</td>
-                                        <td>{{ row.shop | transShopCode }}</td>
-                                        <td>{{ row.sn }}</td>
-                                        <td>{{ row.info }} </td>
+                                        <td>{{ row.time}}</td>
+                                        <td>{% if row.monthSub %}月度合计{% else %}{{ row.shop | transShopCode }}{% endif %}</td>
                                         <td>{{ row.noPay | floatformat:2 }}</td>
                                         <td>{{ row.pay | floatformat:2 }}</td>
                                         <td>{{ row.sub | floatformat:2}}</td>
@@ -145,7 +141,7 @@
         minView: 3,
         todayHighlight:0,
         forceParse: 0,
-        startDate:'2017-8'
+        startDate:'2017-03'
     });
 </script>
 <script>
