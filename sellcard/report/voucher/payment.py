@@ -1,7 +1,10 @@
 #-*- coding:utf-8 -*-
 __author__ = 'qixu'
-from django.shortcuts import render
 import datetime
+from operator import itemgetter
+
+from django.shortcuts import render
+
 from sellcard.models import Shops
 from sellcard.common import Method as mth
 
@@ -120,3 +123,147 @@ def index(request):
             total['credit_pos'] += item['credit_pos']
             total['credit'] += item['credit']
     return render(request, 'report/voucher/payment/list.html', locals())
+
+def detail(request):
+    shop = request.session.get('s_shopcode', '')
+    role = request.session.get('s_roleid')
+    start = str(datetime.date.today().replace(day=1))
+    end = str(datetime.date.today())
+    endTime = str(datetime.date.today() + datetime.timedelta(1))
+
+
+def pay_4(request):
+    shops = mth.getCityShopsCode()
+    if request.method == 'POST':
+        start_post = request.POST.get('start','')
+        end_post = request.POST.get('end','')
+        shop_code = request.POST.get('shop', '')
+        parameterShop = '1=1'
+        if shop_code:
+            parameterShop = 'shop_code="{shop}"'.format(shop=shop_code)
+
+        start = '{start}-01 00:00:00'.format(start=start_post)
+        endTemp = datetime.datetime.strptime(end_post, '%Y-%m')
+        if endTemp.month == 12:
+            end = datetime.datetime(endTemp.year + 1, 1, 1)
+        else:
+            end = datetime.datetime(endTemp.year, endTemp.month + 1, 1)
+
+        conn = mth.getMysqlConn()
+        cur = conn.cursor()
+        sql_before_paid = " select sum(b.pay_account) as paid" \
+                     " from kf_jobs_coupon as a,kf_jobs_coupon_credit as b" \
+                     " where a.coupon_code = b.coupon_code and DATE_FORMAT(a.create_date,'%Y-%m-%d')<='{start}'" \
+                     " and b.create_date<='{start}' and a.{parameterShop} and a.payment_type=4" \
+                    .format(start=start,parameterShop=parameterShop)
+        cur.execute(sql_before_paid)
+        data_before_paid = cur.fetchone()
+        data_before_in = data_before_paid['paid'] if data_before_paid['paid'] else 0
+
+
+        sql_before = " select sum(pay_account) as no_pay" \
+                     " from kf_jobs_coupon" \
+                     " where DATE_FORMAT(create_date,'%Y-%m-%d')<='{start}' and {parameterShop} and payment_type=4" \
+                    .format(start=start,parameterShop=parameterShop)
+        cur.execute(sql_before)
+        data_before_nopay = cur.fetchone()
+        data_before_out = data_before_nopay['no_pay'] if data_before_nopay['no_pay'] else 0
+
+        data_before_total = data_before_out - data_before_in
+
+        sql_out = " select coupon_code,coupon_name,DATE_FORMAT(create_date,'%Y-%m-%d') as create_date," \
+                  "shop_code,pay_account,0 as is_pay" \
+                  " from kf_jobs_coupon" \
+                  " where DATE_FORMAT(create_date,'%Y-%m-%d')>='{start}'" \
+                  " and DATE_FORMAT(create_date,'%Y-%m-%d')<='{end}' and {parameterShop} and payment_type=4"\
+                  .format(start=start,end=end,parameterShop=parameterShop)
+        cur.execute(sql_out)
+        data_out = cur.fetchall()
+
+        sql_in = " select a.coupon_code,DATE_FORMAT(a.create_date,'%Y-%m-%d') as create_date," \
+                 "a.pay_account,b.shop_code,b.coupon_name,1 as is_pay" \
+                 " from kf_jobs_coupon_credit as a,kf_jobs_coupon as b" \
+                 " where a.create_date>='{start}' and a.create_date<='{end}' and b.{parameterShop}  and a.coupon_code=b.coupon_code"\
+                 .format(start=start,end=end,parameterShop=parameterShop)
+        cur.execute(sql_in)
+        data_in = cur.fetchall()
+
+        data_io = list(data_in)+list(data_out)
+        if len(data_io)>0:
+            data_sorted = sorted(data_io,key=itemgetter('create_date'),reverse=False)
+            totalPay, MonthNoPay, MonthPay, index, = 0, 0, 0, 0
+            resData, monthSubTimeList = [], []
+            totalNoPay = float(data_before_total)
+            for data in data_sorted:
+                time_this = datetime.datetime.strptime(data['create_date'], '%Y-%m-%d')
+                if index == 0:
+                    time_pre = time_this
+                else:
+                    time_pre = data_sorted[index - 1]['create_date']
+                    time_pre = datetime.datetime.strptime(time_pre, '%Y-%m-%d')
+                if isNextMonth(time_this, time_pre):
+                    yesterday = datetime.datetime(time_this.year, time_this.month, 1) + datetime.timedelta(days=-1)
+                    if yesterday not in monthSubTimeList:
+                        monthSubitem = MonthSub(MonthPay, MonthNoPay, yesterday.date())
+                        resData.append(monthSubitem)
+                        monthSubTimeList.append(yesterday)
+                        MonthNoPay = 0
+                        MonthPay = 0
+                if 'is_pay' in data:
+                    if data['is_pay'] == 1:
+                        MonthPay += float(data['pay_account'])
+                        totalPay += float(data['pay_account'])
+                        totalNoPay += -float(data['pay_account'])
+                        data['sub'] = totalNoPay
+                    else:
+                        MonthNoPay += float(data['pay_account'])
+                        totalNoPay += float(data['pay_account'])
+                        data['sub'] = totalNoPay
+                    resData.append(data)
+
+                index += 1
+
+            # 最后一行月度合计
+            lastDataTime = resData[len(resData) - 1]['create_date']
+            lastDataTime = datetime.datetime.strptime(lastDataTime, '%Y-%m-%d')
+            if lastDataTime.month == 12:
+                lastMonthSubTime = datetime.datetime(lastDataTime.year + 1, 1, 1) + datetime.timedelta(-1)
+            else:
+                lastMonthSubTime = datetime.datetime(lastDataTime.year, lastDataTime.month + 1, 1) + datetime.timedelta(-1)
+            if lastMonthSubTime not in monthSubTimeList:
+                monthSubitem = MonthSub(MonthPay, MonthNoPay, lastMonthSubTime.date())
+                resData.append(monthSubitem)
+                monthSubTimeList.append(lastMonthSubTime)
+                MonthNoPay = 0
+                MonthPay = 0
+
+    return render(request,'report/voucher/payment/month_pay4.html',locals())
+
+def isNextMonth(rowTimeNow,rowTimePre):
+    """
+    判断是否月初
+    :param rowTimeNow: 本条数据的日期
+    :param rowTimePre: 行一条数据的日期
+    :return: bool
+    """
+    rowYearNow = rowTimeNow.year
+    rowYearPre = rowTimePre.year
+    rowMonthNow = rowTimeNow.month
+    rowMonthPre = rowTimePre.month
+    if rowYearNow > rowYearPre :
+        return True
+    elif rowYearNow == rowYearPre:
+        if rowMonthNow > rowMonthPre:
+            return True
+        else:
+            return None
+
+
+def MonthSub(MonthPay,MonthNoPay,time):
+    item = {}
+    item['info'] = '月度合计'
+    item['pay'] = MonthPay
+    item['noPay'] = MonthNoPay
+    item['create_date'] = time
+    item['monthSub'] = True
+    return item

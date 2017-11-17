@@ -439,7 +439,6 @@ function getPayList1(obj){
     data['totalVal'] = totalVal;
     return data;
 }
-
 function getPayList2(obj){
     var list = [];
     var trs = $(obj).find('tr');
@@ -447,20 +446,28 @@ function getPayList2(obj){
         var item = {};
         var checkBox = $(trs[j]).find('td').eq(0).find('input')[0];
         var flag = $(checkBox).is(':checked');
-        var payVal= $(trs[j]).find('td').eq(2).find('input').val();
+        var payVal= $(trs[j]).find('.payVal').val();
         if(flag && payVal){
             var payId = $(checkBox).val();
+            var payRmarks = $(trs[j]).find('.remark').val();
+            item = {'payId':payId,'payVal':payVal,'payRmarks':payRmarks};
             if(!payId){
                 alert('请选择三方支付方式');
                 return false;
+            }else if(payId == 4){
+                var received_time = $(trs[j]).find('.received_time').val();
+                if(!received_time){
+                    alert('使用赊销支付，预计到账日期不能为空');
+                    return false;
+                }
+                item.received_time = received_time;
             }
-            var payRmarks = $(trs[j]).find('td').eq(3).find('input').val();
-            item = {'payId':payId,'payVal':payVal,'payRmarks':payRmarks};
             list.push(item)
         }
     }
     return list;
 }
+
 
 /*
 * 1、设置优惠返点率
@@ -555,7 +562,7 @@ function saveBorrowPayOrder(action_type,url,orderSns){
         YtotalVal =parseFloat($('.discountTotal #totalVal b').text());//优惠列表合计=卡合计+返现合计
     }
     //支付列表
-    var payList = getPayList($('.payList'));
+    var payList = getPayList2($('.payList'));
     if(!payList){
         return false;
     }

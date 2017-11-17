@@ -59,12 +59,16 @@ def getCardsIn(cards):
 
 def getCardsOut(cards):
     listTotal = []
+    conn = mth.getMysqlConn()
+    cur = conn.cursor()
     for obj in cards:
-        list = CardInventory\
-               .objects\
-               .values('card_no','card_value','card_blance','card_status','is_store')\
-               .filter(card_no__gte=obj['start'],card_no__lte=obj['end'])
-        listTotal.extend(list)
+        sql = " SELECT card_no, card_value, card_blance, card_status,is_store"\
+              " FROM card_inventory"\
+              " WHERE (card_no >= {start} AND card_no <= {end})"\
+            .format(start=obj['start'],end=obj['end'])
+        cur.execute(sql)
+        qs_card = cur.fetchall()
+        listTotal.extend(qs_card)
 
     cardNoList = []
     listTotalNew = []
@@ -74,6 +78,9 @@ def getCardsOut(cards):
         else:
             cardNoList.append(item['card_no'])
             item['card_blance']=float(item['card_blance'])
-            item['card_value']=float(item['card_value'])
+            item['card_value']=item['card_value']
             listTotalNew.append(item)
+
+    cur.close()
+    conn.close()
     return listTotalNew

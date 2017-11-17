@@ -240,6 +240,8 @@ def getData(role_id,shop,start,endTime):
                                    - totalDict['total_disc_8'] - totalDict['total_disc_10'] - totalDict['total_disc_11']
 
     return dataList,totalDict
+
+
 def index(request):
     shop = request.session.get('s_shopcode','')
     role_id = request.session.get('s_roleid')

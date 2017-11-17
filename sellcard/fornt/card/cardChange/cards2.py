@@ -3,7 +3,6 @@ from django.shortcuts import render
 from django.http import HttpResponse
 import json
 
-from sellcard.models import CardInventory
 from sellcard.common import Method as mth
 
 

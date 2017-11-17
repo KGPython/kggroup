@@ -133,12 +133,13 @@ def save(request):
         end_no = request.POST.get('end_no')
         try:
             with transaction.atomic():
-                CardInventory.objects.filter(is_store=1,
-                                             shop_code=shop_code,
-                                             username=None,
-                                             card_no__gte=start_no,
-                                             card_no__lte=end_no).update(username=name)
-
+                conn = mth.getMysqlConn()
+                cur = conn.cursor()
+                sql = " update card_inventory set username='{name}'" \
+                      " where is_store=1 and shop_code='{shop}' and username=''" \
+                      " and card_no >= {start} AND card_no <= {end}"\
+                    .format(start=start_no,end=end_no,name=name,shop=shop_code)
+                cur.execute(sql)
                 res['msg'] = 1
                 del request.session['postToken']
 

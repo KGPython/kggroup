@@ -5,7 +5,7 @@
     <meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>储值卡 赊销 赊到帐月度汇总</title>
+    <title>团购券 赊销 赊到帐月度汇总</title>
     <link rel="stylesheet" href="{{ static }}/css/bootstrap-datetimepicker.min.css">
 </head>
 <body>
@@ -34,25 +34,25 @@
             <a data-original-title="Go to Home" href="#" title="" class="tip-bottom">
                 <span class="glyphicon glyphicon-home" aria-hidden="true"> </span> 首页
             </a>
-            <a href="#">储值卡</a>
-            <a href="#" class="current">赊销月度汇总</a>
+            <a href="#">团购券</a>
+            <a href="#" class="current">赊销 赊到帐月度汇总</a>
         </div>
     </div>
     <div class="widget-box">
         <div class="widget-title"><span class="icon"> <span class="glyphicon glyphicon-th"> </span></span>
-            <h5>赊销月度汇总</h5>
+            <h5>赊销 赊到帐月度汇总</h5>
         </div>
         <div class="widget-content nopadding">
             <div class="container-fluid">
                 <div class="widget-box">
                     <div class="widget-content collapse in ">
-                        <form id="form" class="query-list" method="post" action="{% url 'report_card_noPay_month_pay4' %}">
+                        <form id="form" class="query-list" method="post" action="{% url 'voucher_pay4' %}">
                             {% csrf_token %}
                             <div class="row formline">
                                 <label for="" class="col-md-1 formline-label">开始时间：</label>
                                 <div class="col-md-3 col-lg-2">
                                     <div data-link-field="dtp_input2" class="input-group date form_date">
-                                        <input readonly="" value="{{ postStart }}" size="16" name="start" id="start"
+                                        <input readonly="" value="{{ start_post }}" size="16" name="start" id="start"
                                                class="form-control">
                                         <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
                                         <span class="input-group-addon"><span
@@ -62,7 +62,7 @@
                                 <label for="" class="col-md-1 formline-label">结束时间：</label>
                                 <div class="col-md-3 col-lg-2">
                                     <div data-link-field="dtp_input2" class="input-group date form_date">
-                                        <input readonly="" value="{{ postEnd }}" size="16" name="end" id="end"
+                                        <input readonly="" value="{{ end_post }}" size="16" name="end" id="end"
                                                class="form-control">
                                         <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
                                         <span class="input-group-addon"><span
@@ -89,7 +89,7 @@
                     </div>
                 </div>
                 <div class="widget-box">
-                    <h3 class="text-center">储值卡赊到账月度汇总</h3>
+                    <h3 class="text-center">团购券 赊到账月度汇总</h3>
                     <h5 class="text-right">
                         <span class="red" style="margin-right: 30px">赊销累计未到账：{{ totalNoPay | floatformat:2 }}元</span>
                         <span style="margin-right: 30px">金额单位：元</span>
@@ -101,7 +101,7 @@
                                    <th>日期</th>
                                    <th>门店</th>
                                    <th>订单编号</th>
-                                   <th>摘要</th>
+                                   <th>名称</th>
                                    <th>赊销金额</th>
                                    <th>还款金额</th>
                                    <th>累计</th>
@@ -111,18 +111,32 @@
                                 <tr class="row-total">
                                     <td></td><td></td><td></td>
                                     <td>前期累计</td><td></td><td></td>
-                                    <td>{{ totalNoPayBefore | default:0.00 }}</td>
+                                    <td>{{ data_before_total | default:0.00 }}</td>
                                 </tr>
                                 {% for row in resData %}
-                                    <tr class="{% if row.monthSub %}row-total{% elif row.pay %}pay{% endif %}">
-                                        <td>{{ row.time | date:'Y-m-d'}}</td>
-                                        <td>{{ row.shop | transShopCode }}</td>
-                                        <td>{{ row.sn }}</td>
-                                        <td>{{ row.info }} </td>
-                                        <td>{{ row.noPay | floatformat:2 }}</td>
-                                        <td>{{ row.pay | floatformat:2 }}</td>
+                                    {% if row.monthSub %}
+                                        <tr class="row-total">
+                                            <td>{{ row.create_date}}</td>
+                                            <td></td>
+                                            <td></td>
+
+                                            <td>{{ row.info }} </td>
+                                            <td>{{ row.noPay }}</td>
+                                            <td>{{ row.pay }}</td>
+                                            <td></td>
+                                        </tr>
+                                    {% else %}
+                                        <tr class="{% if row.is_pay == 1 %}pay{% endif %}">
+                                        <td>{{ row.create_date}}</td>
+                                        <td>{{ row.shop_code | transShopCode }}</td>
+                                        <td>{{ row.coupon_code }}</td>
+                                        <td>{{ row.coupon_name }}</td>
+                                        <td>{% if row.is_pay == 0 %}{{ row.pay_account }}{% endif %}</td>
+                                        <td>{% if row.is_pay == 1 %}{{ row.pay_account }}{% endif %}</td>
                                         <td>{{ row.sub | floatformat:2}}</td>
                                     </tr>
+                                    {% endif %}
+
                                 {% empty %}
                                     <tr>
                                     <td colspan="7">查无数据</td>
@@ -147,7 +161,7 @@
         minView: 3,
         todayHighlight:0,
         forceParse: 0,
-        startDate:'2017-8'
+        startDate:'2017-3'
     });
 </script>
 <script>

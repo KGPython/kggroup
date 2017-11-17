@@ -6,7 +6,7 @@ import json,datetime
 
 from sellcard import views as base
 from sellcard.common import Method as mth
-from sellcard.models import Allocation,AllocationInfo,CardInventory,ActionLog
+from sellcard.models import Allocation,AllocationInfo,ActionLog
 from sellcard.common.model import MyError
 
 # 门店间卡调拨

@@ -1,10 +1,12 @@
 # -*- coding:utf-8 -*-
 __author__ = 'qixu'
+import datetime, pymssql, json
+
 from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models import Max
 from django.shortcuts import render
-import datetime, pymssql, json
+
 from sellcard.common import Constants
 from sellcard.common import Method as mth
 from sellcard.models import KfJobsCoupon, KfJobsCouponGoodsDetail, KfJobsCouponSn
@@ -77,14 +79,20 @@ def create(request):
     :param request:
     :return: 新建页view
     """
+    if request.method == 'GET':
+        code = request.GET.get('id','')
+        if code :
+            coupon = KfJobsCoupon.objects.values().filter(coupon_code=code).first()
+            goods= KfJobsCouponGoodsDetail.objects.values().filter(batch=code)
+            coupon_sns = KfJobsCouponSn.objects.values().filter(coupon_code=code)
+
+
+
     goodList = []
     if request.method == 'POST':
-        shop = request.session.get("s_shopcode")
-        if (shop is None or shop == ''):
-            shop = '9999'
-        shopCode = request.session.get("s_shopcode")
-        if (shopCode is None or shopCode == ''):
-            shopCode = '9999'
+        shop = request.session.get("s_shopcode",'9999')
+        shopCode = request.session.get("s_shopcode",'9999')
+
         user = request.session.get("s_uid")
         sn_batch = mth.getReqVal(request, 'sn_batch', '')
         sn_start = mth.getReqVal(request, 'sn_start', '')
@@ -115,7 +123,7 @@ def create(request):
         # 判断提交按钮类型：1、保存信息，2、查询商品
         if mth.getReqVal(request, 'buttonvalue', '') == '1':
             today = datetime.datetime.now().strftime('%Y%m%d')
-            if (endDate is not None and endDate != ''):
+            if endDate:
                 endDate = endDate + " 23:59:59"
                 endDate = datetime.datetime.strptime(endDate, "%Y-%m-%d %H:%M:%S")
             else:
@@ -123,11 +131,8 @@ def create(request):
             name = request.session.get("s_unameChinese")
 
             # 获取本次批次号：本次批号为历史最大批号加1，若不存在历史批号则为1
-            batchs = KfJobsCoupon.objects.values('batch'
-                                                      ).filter(shop_code=shopCode,
-                                                               create_date=today)
+            batchs = KfJobsCoupon.objects.values('batch').filter(shop_code=shopCode,create_date=today)
             batch = batchs.aggregate(Max('batch'))
-
             if batch['batch__max'] is None:
                 batch = 1
             else:
@@ -143,15 +148,10 @@ def create(request):
             coupon_code = shopCode+today[2:]+str(batch).zfill(2)
             serial_id = coupon_code
 
-            sqlVoucher = u'select jcs.voucher ' \
-                         u'  from kf_jobs_coupon_sn jcs ' \
-                         u' where jcs.batch = "{batch}" ' \
-                         u'   and jcs.request_shop = "{shop}" ' \
-                         u'   and jcs.state = 1 ' \
-                         u'   and jcs.sn between "{sn_start}" and "{sn_end}"'.format(batch=sn_batch,
-                                                                                     shop=shopCode,
-                                                                                     sn_start=sn_start.zfill(6),
-                                                                                     sn_end=sn_end.zfill(6))
+            sqlVoucher = 'select jcs.voucher from kf_jobs_coupon_sn as jcs' \
+                         ' where jcs.batch = "{batch}" and jcs.request_shop = "{shop}" ' \
+                         'and jcs.state = 1 and jcs.sn between "{sn_start}" and "{sn_end}"'\
+                         .format(batch=sn_batch,shop=shopCode,sn_start=sn_start.zfill(6),sn_end=sn_end.zfill(6))
             conn = mth.getMysqlConn()
             cur = conn.cursor()
             cur.execute(sqlVoucher)
@@ -166,62 +166,34 @@ def create(request):
 
             if len_list != 0:
                 # 插入卡券批次表
-                KfJobsCoupon.objects.create(coupon_code=coupon_code,
-                                            coupon_name=couponname,
-                                            batch=batch,
-                                            shop_code=shop,
-                                            type=type,
-                                            values=costValue,
-                                            start_date=datetime.datetime.now(),
-                                            end_date=endDate,
-                                            range=rangeremark,
-                                            payment_type=payment_type,
-                                            pay_account=pay_account,
-                                            credit_account=0,
-                                            discount=discount,
-                                            amount=len_list,
-                                            print_amount=0,
-                                            state=0,
-                                            remark='',
-                                            create_uesr_id=user,
-                                            create_user_name=name,
-                                            create_date=today,
-                                            start_sn=sn_start.zfill(6),
-                                            end_sn=sn_end.zfill(6))
+                KfJobsCoupon.objects.create(
+                    coupon_code=coupon_code,coupon_name=couponname,batch=batch,shop_code=shop,type=type,
+                    values=costValue,start_date=datetime.datetime.now(),end_date=endDate,range=rangeremark,
+                    payment_type=payment_type,pay_account=pay_account,credit_account=0,discount=discount,
+                    amount=len_list,print_amount=0,state=0,remark='',create_uesr_id=user,create_user_name=name,
+                    create_date=today,start_sn=sn_start.zfill(6),end_sn=sn_end.zfill(6)
+                )
 
                 # 插入卡券商品明细表
                 for var_good in chooseList:
-                    KfJobsCouponGoodsDetail.objects.create(batch=coupon_code,
-                                                           goodname=var_good['ShortName'].strip(),
-                                                           goodcode=var_good['CustomNo'].strip(),
-                                                           amount=var_good['amount'])
+                    KfJobsCouponGoodsDetail.objects.create(
+                        batch=coupon_code,goodname=var_good['ShortName'].strip(),
+                        goodcode=var_good['CustomNo'].strip(),amount=var_good['amount']
+                    )
 
                 if type == '3':
-                    # 传入代金券信息元组：
-                    # 0：shop：门店编码
-                    #   1：couponname：代金券类型名称
-                    #   2：（strat）：创建时间
-                    #   3：endDate：结束日期
-                    #   4：costValue：券面值
-                    #   5：serial_id：批次号
-                    #   6：coupon_code：执行存储过程参数
-                    #   7：name：操作人姓名
-                    #   8：range：是否限定使用范围：0）不限定，1）本店
                     tuple_info = (
-                        shop, couponname, datetime.datetime.now(), endDate, float(costValue), serial_id, coupon_code, name, range)
-                    # 插入SQL-sevser数据库调用方法
+                        shop, couponname, datetime.datetime.now(), endDate, float(costValue),
+                        serial_id, coupon_code, name, range
+                    )
                     InsertCoupon(tuple_info, List)
                 else:
                     serial_id = '0'
 
                 #修改验证码表
                 for var_vou in List:
-                    KfJobsCouponSn.objects.filter(batch=sn_batch,
-                                                  request_shop=shopCode,
-                                                  state=1,
-                                                  voucher=var_vou['voucher']).update(state=2,
-                                                                                     coupon_code=coupon_code,
-                                                                                     serial_id=serial_id)
+                    KfJobsCouponSn.objects.filter(batch=sn_batch,request_shop=shopCode,state=1,voucher=var_vou['voucher'])\
+                        .update(state=2,coupon_code=coupon_code,serial_id=serial_id)
                 msg = 1
             else:
                 msg = 2
@@ -280,19 +252,10 @@ def getGoodsList(goodsname, goodscode):
     :param goodscode: 商品编码
     :return:列表
     """
-    conn = pymssql.connect(host=Constants.KGGROUP_DB_STOCK_SERVER,
-                           port=Constants.KGGROUP_DB_STOCK_PORT,
-                           user=Constants.KGGROUP_DB_STOCK_USER,
-                           password=Constants.KGGROUP_DB_STOCK_PASSWORD,
-                           database=Constants.KGGROUP_DB_STOCK_DATABASE,
-                           charset='utf8',
-                           as_dict=True)
+    conn = mth.getMssqlConn()
     cur = conn.cursor()
-    sql = u"select ShortName, " \
-          u"       CustomNo " \
-          u"  from Goods " \
-          u" where name like '%{goodsname}%'" \
-          u"   and CustomNo like '%{goodscode}%'".format(goodsname=goodsname, goodscode=goodscode)
+    sql = "select ShortName,CustomNo from Goods where name like '%{goodsname}%' and CustomNo like '%{goodscode}%'"\
+        .format(goodsname=goodsname, goodscode=goodscode)
     cur.execute(sql)
     list = cur.fetchall()
     cur.close()
@@ -330,84 +293,49 @@ def InsertCoupon(cardinfo, list):
     a.execute(sql)
     conn.commit()
     a.close()
+
     # 插入类型表
     typecursor = conn.cursor()
-    sql = u" SELECT " \
-          u" CASE " \
-          u" WHEN MAX (CouponTypeID) IS NULL THEN " \
-          u"   800000001 " \
-          u" ELSE " \
-          u"   MAX (CouponTypeID) + 1 " \
-          u" END AS CouponTypeID " \
-          u" FROM " \
-          u"	MyShop_CouponType " \
-          u" WHERE " \
-          u"	CouponTypeID LIKE '8%' "
+    sql = " SELECT CASE WHEN MAX (CouponTypeID) IS NULL THEN 800000001 ELSE MAX (CouponTypeID) + 1 END AS CouponTypeID " \
+          " FROM  MyShop_CouponType " \
+          " WHERE CouponTypeID LIKE '8%' "
     typecursor.execute(sql)
     type = typecursor.fetchone()
     type = type['CouponTypeID']
 
-    sql = u"insert into MyShop_CouponType" \
-          u"(ShopID,CouponTypeID,CouponTypeName,CouponFlag,ValidDay," \
-          u" StartDate,EndDate,Value,MaxValue,Discount," \
-          u" Note,PayValue,UseScope,IfCurrShop,EnableValue,PayType)" \
-          u"values(" \
-          u" 'K001',{coupontypeid},'{coupontypename}',2,0," \
-          u" GETdate(),'{EndDate}',{value},null,100," \
-          u" '',0.00,1,{ifcurrshop},0,'') ".format(coupontypeid=type,
-                                                   coupontypename=cardinfo[1],
-                                                   EndDate=cardinfo[3],
-                                                   value=cardinfo[4],
-                                                   ifcurrshop=cardinfo[8])
+    sql = "insert into MyShop_CouponType" \
+          "(ShopID,CouponTypeID,CouponTypeName,CouponFlag,ValidDay,StartDate,EndDate,Value,MaxValue,Discount," \
+          " Note,PayValue,UseScope,IfCurrShop,EnableValue,PayType) " \
+          "values( 'K001',{coupontypeid},'{coupontypename}',2,0, GETdate(),'{EndDate}',{value},null,100,'',0.00,1,{ifcurrshop},0,'') "\
+        .format(coupontypeid=type,coupontypename=cardinfo[1],EndDate=cardinfo[3],value=cardinfo[4],ifcurrshop=cardinfo[8])
     typecursor.execute(sql)
     conn.commit()
     typecursor.close()
 
     cur = conn.cursor()
-    # 插入临时久久表
-    sql = u"Insert into MyShop_Coupon99" \
-          u"(CouponID,ShopID,CouponNO,CouponTypeID,StartDate,EndDate," \
-          u"CPWdFlag,CPwd,UseTime,MaxUseTime,Value," \
-          u"Discount,Flag,FromSheetType,FromSDate,FromListNO," \
-          u"FromPOSID,SerialID,ClearFlag)" \
-          u"Values({coupon},{shop},{sn},{type},GETdate(),{end}," \
-          u"0,null ,0,1,{value}," \
-          u"0,0,220,{create},null," \
-          u"{name},{batch},0)".format(coupon='%s',
-                                      shop='%s',
-                                      sn='%s',
-                                      type='%s',
-                                      end='%s',
-                                      value='%s',
-                                      create='%s',
-                                      name='%s',
-                                      batch='%s')
+    # 插入临时MyShop_Coupon99
+    sql = "Insert into MyShop_Coupon99" \
+          "(CouponID,ShopID,CouponNO,CouponTypeID,StartDate,EndDate," \
+          "CPWdFlag,CPwd,UseTime,MaxUseTime,Value," \
+          "Discount,Flag,FromSheetType,FromSDate,FromListNO," \
+          "FromPOSID,SerialID,ClearFlag) " \
+          "Values({coupon},{shop},{sn},{type},GETdate(),{end},0,null ,0,1,{value},0,0,220,{create},null,{name},{batch},0)"\
+        .format(coupon='%s',shop='%s',sn='%s',type='%s',end='%s',value='%s',create='%s',name='%s',batch='%s')
 
     params = []
 
     for item in list:
-        param = (
-            cardinfo[6],
-            cardinfo[0],
-            item['voucher'],
-            type,
-            cardinfo[3],
-            cardinfo[4],
-            cardinfo[2],
-            cardinfo[7],
-            cardinfo[6])
+        param = (cardinfo[6],cardinfo[0],item['voucher'],type,cardinfo[3],cardinfo[4],cardinfo[2],cardinfo[7],cardinfo[6])
         params.append(param)
-
     try:
         cur.executemany(sql, params)
         conn.commit()
-
     except:
         conn.rollback()
 
     cur.close()
     cursor = conn.cursor()
-    # 读取久久表调用存储过程插入正式表
+    # 读取99表调用存储过程插入正式表
     sql = "exec IF_MyShop_Coupon99 @CouponID='" + cardinfo[6] + "'"
     cursor.execute(sql)
     conn.commit()

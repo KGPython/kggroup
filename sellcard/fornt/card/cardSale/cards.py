@@ -4,7 +4,7 @@ from django.http import HttpResponse
 import json
 
 from sellcard.models import CardInventory
-from sellcard.common import Method as mtu
+from sellcard.common import Method as mth
 
 
 def index(request):
@@ -23,10 +23,17 @@ def query(request):
     cardsStr = request.POST.get('cards','')
     cards = json.loads(cardsStr)
     listTotal = []
+    conn = mth.getMysqlConn()
+    cur = conn.cursor()
     for obj in cards:
-        list = CardInventory.objects.filter(card_no__gte=obj['start'],card_no__lte=obj['end'])\
-            .values('card_no','card_value','card_status','card_blance').order_by('card_no')
-        listTotal.extend(list)
+        sql = " SELECT card_no, card_value, card_blance, card_status,is_store" \
+              " FROM card_inventory" \
+              " WHERE (card_no >= {start} AND card_no <= {end})" \
+              " ORDER BY card_no" \
+            .format(start=obj['start'], end=obj['end'])
+        cur.execute(sql)
+        qs_card = cur.fetchall()
+        listTotal.extend(qs_card)
 
     cardNoList = []
     listTotalNew = []
@@ -37,4 +44,6 @@ def query(request):
             cardNoList.append(item['card_no'])
             item['card_blance']=float(item['card_blance'])
             listTotalNew.append(item)
+    cur.close()
+    conn.close()
     return HttpResponse(json.dumps(listTotalNew))

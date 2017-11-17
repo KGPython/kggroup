@@ -241,24 +241,6 @@ def updateCard(updateConfList):
         return res
 
 
-    # try:
-    #     conn.autocommit(False)
-    #     cur.execute(sql)
-    #     res = cur.rowcount
-    #     if res != num :
-    #         raise MyError('卡库数据更新失败')
-    #     else:
-    #         conn.commit()
-    #         return type
-    # except Exception as e:
-    #     conn.rollback()
-    #     print(e)
-    #     return False
-    # finally:
-    #     cur.close()
-    #     conn.close()
-
-
 def setOrderSn(mode=None):
     start = datetime.date.today().strftime('%Y-%m-%d 00:00:00')
     end = datetime.date.today().strftime('%Y-%m-%d 23:59:59')

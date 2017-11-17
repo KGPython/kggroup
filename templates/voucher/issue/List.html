@@ -77,7 +77,7 @@
                             <button type="button" class="btn btn-info enter-btn pull-right" id="enter">查询</button>
                         </div>
                         <div class="col-md-1">
-                            <a href="{% url 'voucherIssueCreate' %}" class="btn btn-success pull-right">新建</a>
+                            <a href="{% url 'voucherIssueCreate' %}?code=0" class="btn btn-success pull-right">新建</a>
                         </div>
                     </div>
                     <div class="widget-box">
@@ -117,16 +117,17 @@
                                         <td>
                                             <div class="pull-left">预印张数：</div>
                                             <div class="pull-left">
-                                                <input type="number" id="{{ row.coupon_code }}"
-                                                       class="btn-default btn-sm">
+                                                <input type="number" id="{{ row.coupon_code }}" class="btn-default btn-sm" style="width: 100px">
                                             </div>
                                             <div class="pull-left">
-                                                <button type="button" onclick="toPrint('{{ row.coupon_code }}','1')"
-                                                        class="btn-success btn-sm">打印含金额
+                                                <button type="button" onclick="toPrint('{{ row.coupon_code }}','1')" class="btn-success btn-sm">打印含金额
                                                 </button>
-                                                <button type="button" onclick="toPrint('{{ row.coupon_code }}','0')"
-                                                        class="btn-success btn-sm">打印无金额
+                                                <button type="button" onclick="toPrint('{{ row.coupon_code }}','0')" class="btn-success btn-sm">打印无金额
                                                 </button>
+                                            </div>
+
+                                            <div class="pull-left">
+                                                <a class="btn-warning btn-sm" href="{% url 'voucherIssueCreate' %}?code={{ row.coupon_code }}"> 编辑</a>
                                             </div>
                                         </td>
                                     </tr>

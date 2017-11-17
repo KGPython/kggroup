@@ -295,8 +295,11 @@ def month_pay4(request):
             resData,monthSubTimeList = [],[]
 
             for row in dataSorted:
-                rowTimeNow = row['time']
-                rowTimePre = dataSorted[index-1]['time']
+                if index == 0:
+                    rowTimePre = rowTimeNow
+                else:
+                    rowTimeNow = row['time']
+                    rowTimePre = dataSorted[index-1]['time']
                 if isNextMonth(rowTimeNow,rowTimePre) and (row['time'].date()+datetime.timedelta(days=-1) not in monthSubTimeList):
                     time = datetime.datetime(rowTimeNow.year,rowTimeNow.month,1)+datetime.timedelta(days=-1)
                     if time>=datetime.datetime.strptime(start,'%Y-%m-%d %H:%M:%S'):
@@ -379,7 +382,7 @@ def month_pay6(request):
         sqlBeforePaid = 'select sum(b.pay_value) as total' \
                         ' from order_payment_credit as b,orders as a ' \
                         ' where a.order_sn=b.order_id and a.add_time>="2017-01-01 00:00:00" and a.add_time<="{start}"' \
-                        ' and b.change_time>="{start}" and {shop} and b.pay_id_old =6' \
+                        ' and b.change_time<="{start}" and {shop} and b.pay_id_old =6' \
                         .format(start=start, end=end, shop=parameterShop2)
         cur.execute(sqlBeforePaid)
         beforePaid = cur.fetchone()
@@ -421,15 +424,16 @@ def month_pay6(request):
                 else:
                     rowTimePre = dataSorted[index - 1]['time']
                     rowTimePre = datetime.datetime.strptime(rowTimePre,'%Y-%m')
-                if isNextMonth(rowTimeNow, rowTimePre) and (rowTimeNow.date() + datetime.timedelta(days=-1) not in monthSubTimeList):
-                    preMonthEnd = datetime.datetime(rowTimeNow.year, rowTimeNow.month, 1) + datetime.timedelta(days=-1)
-                    startDate = datetime.datetime.strptime(start, '%Y-%m-%d %H:%M:%S')
-                    if preMonthEnd >= startDate:
-                        monthSubitem = MonthSub(MonthPay, MonthNoPay, preMonthEnd.date())
-                        resData.append(monthSubitem)
-                        monthSubTimeList.append(preMonthEnd)
-                        MonthNoPay = 0
-                        MonthPay = 0
+                if isNextMonth(rowTimeNow, rowTimePre):
+                    yesterday = datetime.datetime(rowTimeNow.year, rowTimeNow.month, 1) + datetime.timedelta(days=-1)
+                    if yesterday not in monthSubTimeList:
+                        startDate = datetime.datetime.strptime(start, '%Y-%m-%d %H:%M:%S')
+                        if yesterday >= startDate:
+                            monthSubitem = MonthSub(MonthPay, MonthNoPay, yesterday.date())
+                            resData.append(monthSubitem)
+                            monthSubTimeList.append(yesterday)
+                            MonthNoPay = 0
+                            MonthPay = 0
                 if 'is_pay' in row:
                     if row['is_pay'] == '1':
                         MonthPay += float(row['pay'])

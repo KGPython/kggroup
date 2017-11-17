@@ -15,11 +15,6 @@ from sellcard.models import KfJobsCoupon, KfJobsCouponCredit
 
 
 def index(request):
-    """
-    赊销金券列表controllers
-    :param request:
-    :return:列表view
-    """
     shop = request.session.get('s_shopcode')
     today = str(datetime.date.today())
     couponType = mth.getReqVal(request, 'couponType', '')
@@ -73,11 +68,6 @@ def index(request):
     return render(request,'voucher/credit/List.html',locals())
 
 def create(request):
-    """
-    赊销金券列表controllers
-    :param request:
-    :return:列表view
-    """
     # 在服务端session中添加key认证，避免用户重复提交表单
     token = 'allow'  # 可以采用随机数
     request.session['postToken'] = token
@@ -87,11 +77,6 @@ def create(request):
     return render(request,'voucher/credit/create.html',locals())
 
 def createSave(request):
-    """
-    赊销金券列表controllers
-    :param request:
-    :return:列表view
-    """
     res = {}
     if request.method == 'POST':
         # 检测session中Token值，判断用户提交动作是否合法
@@ -116,12 +101,10 @@ def createSave(request):
                 if updataNum != 1:
                     raise MyError('修改代金券批次表失败！')
 
-                createNum = KfJobsCouponCredit.objects.create(coupon_code=coupon_code,
-                                                              payment_type=payment_type,
-                                                              pay_account=pay_account,
-                                                              create_uesr_id=create_uesr_id,
-                                                              create_user_name=create_user_name,
-                                                              create_date=datetime.datetime.now())
+                createNum = KfJobsCouponCredit.objects.create(
+                    coupon_code=coupon_code,payment_type=payment_type,pay_account=pay_account,
+                    create_uesr_id=create_uesr_id,create_user_name=create_user_name,create_date=datetime.datetime.now()
+                )
                 if createNum != 1:
                     raise MyError('新增赊销代金券明细记录失败！')
 

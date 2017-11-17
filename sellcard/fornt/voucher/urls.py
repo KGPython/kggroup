@@ -7,11 +7,9 @@ urlpatterns = [
     # 列表
     url(r'^issue/$', 'sellcard.fornt.voucher.issue.index', name="voucherIssueList"),
     # 创建
-    url(r'^issue/create/$',
-        'sellcard.fornt.voucher.issue.create', name="voucherIssueCreate"),
+    url(r'^issue/create/$','sellcard.fornt.voucher.issue.create', name="voucherIssueCreate"),
     # 打印
-    url(r'^issue/printed/$',
-        'sellcard.fornt.voucher.issue.printed', name="voucherIssuePrint"),
+    url(r'^issue/printed/$','sellcard.fornt.voucher.issue.printed', name="voucherIssuePrint"),
 
 
     # 核销代金券

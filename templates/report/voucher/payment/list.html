@@ -108,9 +108,15 @@
                                     <td style="color: #0044cc">{{ row.total_cash }}</td>
                                     <td>{{ row.cash }}</td>
                                     <td>{{ row.credit_cash }}</td>
+
                                     <td style="color: #0044cc">{{ row.total_remit }}</td>
                                     <td>{{ row.remit }}</td>
-                                    <td>{{ row.credit_remit }}</td>
+                                    <td>
+                                        <a href="{% url 'voucherPayment_detail' %}?shop={{ row.shop_code }}&start={{ start }}&end={{ end }}&pay_id=10">
+                                            {{ row.credit_remit }}
+                                        </a>
+                                    </td>
+
                                     <td style="color: #0044cc">{{ row.total_pos }}</td>
                                     <td>{{ row.pos }}</td>
                                     <td>{{ row.credit_pos }}</td>
